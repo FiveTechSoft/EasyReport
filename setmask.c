@@ -1,7 +1,5 @@
-#include "WinTen.h"
-#include "Windows.h"
-#include "ClipApi.h"
-
+#include <Windows.h>
+#include <hbapi.h>
 
 void MaskRegion(HDC hdc, RECT * rct,
                        COLORREF cTransparentColor,
@@ -75,35 +73,23 @@ void SetGrayMasked( HBITMAP hbm )
   
 //----------------------------------------------------------------------------//
 
-#ifdef __HARBOUR__
-   HARBOUR HB_FUN_SETMASKED( PARAMS ) // ( hBitmap , lMaskColor) --> nil
-#else
-   CLIPPER SETMASKED( PARAMS ) // ( hBitmap , lMaskColor) --> nil
-#endif
+HB_FUNC( SETMASKED ) // ( hBitmap , lMaskColor) --> nil
 {
-   SetMasked( ( HBITMAP ) _parnl( 1 ) , _parnl( 2 )  );
+   SetMasked( ( HBITMAP ) hb_parnl( 1 ) , hb_parnl( 2 )  );
 }
 
 //----------------------------------------------------------------------------//
 
-#ifdef __HARBOUR__
-   HARBOUR HB_FUN_CHANGECOL( PARAMS ) // ( hBitmap, lMaskColor, lOldMask) --> nil
-#else
-   CLIPPER CHANGECOL( PARAMS ) // ( hBitmap, lMaskColor, lOldMask) --> nil
-#endif
+HB_FUNC( CHANGECOL ) // ( hBitmap, lMaskColor, lOldMask) --> nil
 {
-   ChangeCol( ( HBITMAP ) _parnl( 1 ) , _parnl( 2 ), _parnl( 3 )  );
+   ChangeCol( ( HBITMAP ) hb_parnl( 1 ) , hb_parnl( 2 ), hb_parnl( 3 )  );
 }
 
 //----------------------------------------------------------------------------//
 
-#ifdef __HARBOUR__
-   HARBOUR HB_FUN_SETGRAYMASED( PARAMS ) // ( hBitmap , lMaskColor, lMaskColor) --> nil
-#else
-   CLIPPER SETGRAYMAS( PARAMS ) //KED ( hBitmap , lMaskColor, lMaskColor) --> nil
-#endif
+HB_FUNC( SETGRAYMASED ) // ( hBitmap , lMaskColor, lMaskColor) --> nil
 {
-   SetGrayMasked( ( HBITMAP ) _parnl( 1 ) );
+   SetGrayMasked( ( HBITMAP ) hb_parnl( 1 ) );
 }
 
 //----------------------------------------------------------------------------//

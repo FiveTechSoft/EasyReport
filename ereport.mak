@@ -24,7 +24,7 @@ eritems.prg  \
 eritems2.prg \
 erstart.prg  \
 ertools.prg  \
-fileedit.prg \
+#fileedit.prg \
 mget.prg     \
 tget.prg     \
 treeitem.prg \

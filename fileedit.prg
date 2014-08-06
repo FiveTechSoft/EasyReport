@@ -1,7 +1,7 @@
 
 #INCLUDE "FiveWin.ch"
 #INCLUDE "Splitter.ch"
-#INCLUDE "C5GRID.CH"
+// #INCLUDE "C5GRID.CH"
 
 STATIC oWnd, oSplit, oVRD, cText, oGet, oLbx, nMeasure, cArea
 STATIC nAktText := 1

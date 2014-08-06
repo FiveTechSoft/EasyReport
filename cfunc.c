@@ -1,6 +1,6 @@
-
-#include "C:\Entwicklung\FiveWin\FWH2007-12\include\fwharb.h"
+// #include "C:\Entwicklung\FiveWin\FWH2007-12\include\fwharb.h"
 #include <windows.h>
+#include <hbapi.h>
 
 // Controls mouse-resizing types in design mode
 #define RES_NW             1
@@ -18,7 +18,7 @@ HB_FUNC( SHOWGRID ) // hDC, @cPS, wGridWidth, wGridHeight, wWidth, wHeight, wTop
 {
    WORD wRow, wCol;
    HDC hDC = ( HDC ) hb_parnl( 1 );
-   PAINTSTRUCT * ps = ( PAINTSTRUCT * ) _parc( 2 );
+   PAINTSTRUCT * ps = ( PAINTSTRUCT * ) hb_parc( 2 );
    WORD wGridWidth  = hb_parni( 3 );
    WORD wGridHeight = hb_parni( 4 );
    WORD wWidth      = hb_parni( 5 );
@@ -139,7 +139,7 @@ HB_FUNC( CTRLDRAWFOCUS )  // hWnd, nOriginRow, nOriginCol, nMRow, nMCol, nMResiz
 HB_FUNC( ROUNDRECT )  // hDC, nLeftRect, nTopRect, nRightRect, nBottomRect,
                       // nEllipseWidth, nEllipseHeight)
 {
-   _retl( RoundRect( ( HDC ) hb_parnl( 1 ), hb_parnl( 2 ), hb_parnl( 3 ), hb_parnl( 4 ),
+   hb_retl( RoundRect( ( HDC ) hb_parnl( 1 ), hb_parnl( 2 ), hb_parnl( 3 ), hb_parnl( 4 ),
                      hb_parnl( 5 ), hb_parnl( 6 ), hb_parnl( 7 ) ) );
 }
 

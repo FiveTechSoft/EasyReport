@@ -2099,7 +2099,7 @@ METHOD PrintDialog() CLASS VRD
 
    DEFINE DIALOG oDlg FROM 0, 0 TO 220, 384 PIXEL TITLE VRD_GL("Print")
 
-   @ 2, 4 TO 106, 132 PROMPT " " + VRD_GL("to Printer") OF oDlg PIXEL
+   @ 2, 4 GROUP TO 106, 132 PROMPT " " + VRD_GL("to Printer") OF oDlg PIXEL
 
    @ 10, 8 LISTBOX cPrinter SIZE 120, 100 OF oDlg PIXEL ITEMS aPrinters
 

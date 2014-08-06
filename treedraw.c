@@ -1,6 +1,5 @@
-#include <WinTen.h>
 #include <Windows.h>
-#include <ClipApi.h>
+#include <hbapi.h>
 
 #define TVS_HASBUTTONS	     1
 #define TVS_HASLINES	     2
@@ -28,41 +27,33 @@ void DrawBitmap( HDC, HBITMAP, WORD, WORD, WORD, WORD, LONG );
 
 
 //----------------------------------------------------------------------------//
-#ifdef __HARBOUR__
-   HARBOUR HB_FUN_TREEMEASURE()
-#else
-   CLIPPER TreeMeasur() // e( LPMEASUREITEMSTRUCT mi, nHeight )
-#endif
+
+HB_FUNC( TREEMEASURE )
 {
-   LPMEASUREITEMSTRUCT pMeasure = ( LPMEASUREITEMSTRUCT ) _parnl( 1 );
+   LPMEASUREITEMSTRUCT pMeasure = ( LPMEASUREITEMSTRUCT ) hb_parnl( 1 );
 
-   pMeasure->itemHeight = _parni( 2 );
+   pMeasure->itemHeight = hb_parni( 2 );
 
-   _retl( TRUE );
+   hb_retl( TRUE );
 }
 
 //----------------------------------------------------------------------------//
-#ifdef __HARBOUR__
-   HARBOUR HB_FUN_TREEDRAWITEM()
-#else
-   CLIPPER TreeDrawIt() // em( LPDRAWITEMSTRUCT lp, cPrompt, nLevel, nIndent,
-                        //     unStyle, aItemStyles, aiBmp, aBitmaps,
-                        //     lDrawFocusRect
-#endif
+
+HB_FUNC( TREEDRAWITEM )
 {
-   LPDRAWITEMSTRUCT lp = ( LPDRAWITEMSTRUCT ) _parnl( 1 );
+   LPDRAWITEMSTRUCT lp = ( LPDRAWITEMSTRUCT ) hb_parnl( 1 );
    RECT tempRct;
    HPEN hDotPen, hOldPen;
    BOOL firstDraw = TRUE;
    int centerX, centerY, x, y;
    COLORREF rgbFore, rgbBack;
    BYTE szName[ 30 ];
-   int nLevel = _parni( 3 );
+   int nLevel = hb_parni( 3 );
    int nLevel1 = nLevel;
-   int nIndent = _parni( 4 );
+   int nIndent = hb_parni( 4 );
    int nIndent1 = nIndent;
-   DWORD nStyle = (DWORD) _parnl( 5 );
-   WORD wItemStyle = _parni( 6, nLevel1 );
+   DWORD nStyle = (DWORD) hb_parnl( 5 );
+   WORD wItemStyle = hb_parvni( 6, nLevel1 );
    HBRUSH hBrush, hOldBrush;
    int iItemID = (int) lp->itemID ;
 
@@ -123,7 +114,7 @@ void DrawBitmap( HDC, HBITMAP, WORD, WORD, WORD, WORD, LONG );
           tempRct.right -= nIndent;
           nIndent1--;
           --nLevel1;
-          wItemStyle = _parni( 6, nLevel1 );
+          wItemStyle = hb_parvni( 6, nLevel1 );
        }
    }
 
@@ -151,7 +142,7 @@ void DrawBitmap( HDC, HBITMAP, WORD, WORD, WORD, WORD, LONG );
        tempRct.top    = centerY - 4;
        tempRct.bottom = centerY + 5;
 
-       wItemStyle = _parni( 6, nLevel );
+       wItemStyle = hb_parvni( 6, nLevel );
 
        if ( wItemStyle & TIS_PARENT ) {
 
@@ -199,22 +190,22 @@ void DrawBitmap( HDC, HBITMAP, WORD, WORD, WORD, WORD, LONG );
    lp->rcItem.left += nLevel * nIndent;
 
    if( wItemStyle & TIS_OPEN ) {
-       if( _parni( 7, 1 ) != 0 ) {
-         DrawBitmap( lp->hDC, (HBITMAP) _parnl( 8, _parni( 7, 1 ) ), lp->rcItem.top, lp->rcItem.left, 0, 0, 0 );
+       if( hb_parvni( 7, 1 ) != 0 ) {
+         DrawBitmap( lp->hDC, (HBITMAP) hb_parvnl( 8, hb_parvni( 7, 1 ) ), lp->rcItem.top, lp->rcItem.left, 0, 0, 0 );
          lp->rcItem.left += 18;
        }
    }
    else {
-       if( _parni( 7, 2 ) != 0 ) {
-         DrawBitmap( lp->hDC, (HBITMAP) _parnl( 8, _parni( 7, 2 ) ), lp->rcItem.top, lp->rcItem.left, 0, 0, 0 );
+       if( hb_parvni( 7, 2 ) != 0 ) {
+         DrawBitmap( lp->hDC, (HBITMAP) hb_parvnl( 8, hb_parvni( 7, 2 ) ), lp->rcItem.top, lp->rcItem.left, 0, 0, 0 );
          lp->rcItem.left += 18;
        }
    }
 
    #ifndef __FLAT__
-       dwSize = GetTextExtent( lp->hDC, _parc( 2 ), _parclen( 2 ) ) ;
+       dwSize = GetTextExtent( lp->hDC, hb_parc( 2 ), hb_parclen( 2 ) ) ;
    #else
-       GetTextExtentPoint32( lp->hDC, _parc( 2 ), _parclen( 2 ), &sz ) ;
+       GetTextExtentPoint32( lp->hDC, hb_parc( 2 ), hb_parclen( 2 ), &sz ) ;
        dwSize = sz.cx;
    #endif
    lp->rcItem.right = lp->rcItem.left + LOWORD( dwSize ) + 4;
@@ -222,7 +213,7 @@ void DrawBitmap( HDC, HBITMAP, WORD, WORD, WORD, WORD, LONG );
    if( iItemID == -1 )
    {
       DrawFocusRect( lp->hDC, &lp->rcItem );
-      _retl( TRUE );
+      hb_retl( TRUE );
       return;
    }
    else
@@ -242,15 +233,15 @@ void DrawBitmap( HDC, HBITMAP, WORD, WORD, WORD, WORD, LONG );
               }
 
               ExtTextOut( lp->hDC, lp->rcItem.left + 2, lp->rcItem.top + 1,
-                          ETO_CLIPPED | ETO_OPAQUE, &lp->rcItem, _parc( 2 ),
-                          _parclen( 2 ), 0 );
+                          ETO_CLIPPED | ETO_OPAQUE, &lp->rcItem, hb_parc( 2 ),
+                          hb_parclen( 2 ), 0 );
 
               if( lp->itemState & ODS_FOCUS )
                  DrawFocusRect( lp->hDC, &lp->rcItem );
 
               if( lp->itemState & ODS_SELECTED )
               {
-                  if( _parl( 9 ) )  // Fix for Win2K Dialog
+                  if( hb_parl( 9 ) )  // Fix for Win2K Dialog
                     DrawFocusRect( lp->hDC, &lp->rcItem );
 
                   SetTextColor( lp->hDC, rgbFore );
@@ -265,42 +256,38 @@ void DrawBitmap( HDC, HBITMAP, WORD, WORD, WORD, WORD, LONG );
               break;
       }
    }
-   _retl( TRUE );
+   hb_retl( TRUE );
 
 }
 
 //----------------------------------------------------------------------------//
-#ifdef __HARBOUR__
-   HARBOUR HB_FUN_LBXGETID() // ( LPDRAWITEMSTRUCT lp )
-#else
-   CLIPPER LbxGetID() // ( LPDRAWITEMSTRUCT lp )
-#endif
+
+HB_FUNC( LBXGETID ) // ( LPDRAWITEMSTRUCT lp )
 {
-   LPDRAWITEMSTRUCT lp = ( LPDRAWITEMSTRUCT ) _parnl( 1 );
-   _retni( lp->itemID );
+   LPDRAWITEMSTRUCT lp = ( LPDRAWITEMSTRUCT ) hb_parnl( 1 );
+   
+   hb_retni( lp->itemID );
 }
 
 //----------------------------------------------------------------------------//
-#ifdef __HARBOUR__
-   HARBOUR HB_FUN_LBGETRECT() // ( hwnd, nIndex )
-#else
-   CLIPPER LBGETRECT() // ( hwnd, nIndex )
-#endif
-{
- RECT rect;
 
-   _retni( SendMessage( (HWND) _parnl( 1 ), LB_GETITEMRECT, _parni( 2 ),
+HB_FUNC( LBGETRECT ) // ( hwnd, nIndex )
+{
+   RECT rect;
+
+   hb_retni( SendMessage( (HWND) hb_parnl( 1 ), LB_GETITEMRECT, hb_parni( 2 ),
 		(LPARAM) (LPRECT) &rect ) );
 
-   _reta( 4 );
+   hb_reta( 4 );
 
-   _storni( rect.top,	 -1, 1 );
-   _storni( rect.left,	 -1, 2 );
-   _storni( rect.bottom, -1, 3 );
-   _storni( rect.right,  -1, 4 );
+   hb_storvni( rect.top,	 -1, 1 );
+   hb_storvni( rect.left,	 -1, 2 );
+   hb_storvni( rect.bottom, -1, 3 );
+   hb_storvni( rect.right,  -1, 4 );
 }
 
 //----------------------------------------------------------------------------//
+
 static void LineToDot( HDC hDC, int xEnd, int yEnd ) // [ByHernanCeccarelli]
 {
  POINT pInicial ;
@@ -317,6 +304,7 @@ static void LineToDot( HDC hDC, int xEnd, int yEnd ) // [ByHernanCeccarelli]
 }
 
 //----------------------------------------------------------------------------//
+
 static void FrameDot( HDC hDC, RECT * pRect )
 {
    HBITMAP hbmp;
@@ -343,5 +331,3 @@ static void FrameDot( HDC hDC, RECT * pRect )
 }
 
 //----------------------------------------------------------------------------//
-
-
