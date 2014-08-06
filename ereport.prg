@@ -1387,7 +1387,7 @@ FUNCTION FillWindow( nArea, cAreaIni )
 
    aWnd[nArea]:bRClicked = {|nRow,nCol,nFlags| PopupMenu( nArea,, nRow, nCol ) }
    aWnd[nArea]:bLClicked = {|nRow,nCol,nFlags| DeactivateItem(), ;
-                              IIF( GetKeyState( VK_SHIFT ), .T., UnSelectAll() ), ;
+                              IIF( GetKeyState( VK_SHIFT ),, UnSelectAll() ), ;
                               StartSelection( nRow, nCol, aWnd[nArea] ) }
    aWnd[nArea]:bLButtonUp = {|nRow,nCol,nFlags| StopSelection( nRow, nCol, aWnd[nArea] ) }
 
