@@ -24,16 +24,22 @@ eritems.prg  \
 eritems2.prg \
 erstart.prg  \
 ertools.prg  \
-example.prg  \
 fileedit.prg \
 mget.prg     \
 tget.prg     \
+treeitem.prg \
+treelink.prg \
+treeview.prg \
+tvitem.prg   \
 vrd.prg      \
 vrdbcode.prg \
 vrditem.prg  
 
 C =          \
-cfunc.c                 
+cfunc.c      \               
+point.c      \
+setmask.c    \
+treedraw.c      
 
 PROJECT    : ereport.exe
 
