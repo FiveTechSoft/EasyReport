@@ -1,17 +1,15 @@
-#Borland make sample, (c) FiveTech Software 2014
+#Borland makefile for EasyReport, (c) FiveTech Software 2014
 
 HBDIR=c:\harbour
 BCDIR=c:\bcc582
 FWDIR=c:\fwteam
 
 #change these paths as needed
-.path.OBJ = .\obj
-.path.PRG = .\
-.path.CH  = $(FWDIR)\include;$(HBDIR)\include
-.path.C   = .\
+.path.obj = .\obj
+.path.prg = .\
+.path.ch  = $(FWDIR)\include;$(HBDIR)\include
+.path.c   = .\
 .path.rc  = .\
-
-#important: Use Uppercase for filenames extensions, in the next two rules!
 
 PRG =        \
 ereport.prg  \ 
