@@ -50,7 +50,7 @@ PROJECT    : ereport.exe
 ereport.exe  : $(OBJS) $(COBJS) ereport.res
    echo off
    echo $(BCDIR)\lib\c0w32.obj + > b32.bc
-   echo $(OBJS), + >> b32.bc
+   echo $(OBJS) $(COBJS), + >> b32.bc
    echo ereport.exe, + >> b32.bc
    echo ereport.map, + >> b32.bc
    echo $(FWDIR)\lib\FiveH.lib $(FWDIR)\lib\FiveHC.lib + >> b32.bc
