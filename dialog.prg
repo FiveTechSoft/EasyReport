@@ -80,7 +80,7 @@ CLASS TDialog FROM TWindow
    METHOD cToChar( hActiveWnd )
    METHOD DefControl( oControl )
 
-   METHOD Destroy() INLINE Super:Destroy(), If( ! ::lModal, .t., nil )
+   METHOD Destroy() INLINE ::Super:Destroy(), If( ! ::lModal, .t., nil )
 
    METHOD Display() INLINE ::BeginPaint(), ::Paint(), ::EndPaint(),;
                            If( ::bStart != nil,;
@@ -455,7 +455,7 @@ METHOD CtlColor( hWndChild, hDCChild ) CLASS TDialog
       endif
    #endif
 
-return Super:CtlColor( hWndChild, hDCChild )
+return ::Super:CtlColor( hWndChild, hDCChild )
 
 //----------------------------------------------------------------------------//
 
@@ -776,12 +776,12 @@ METHOD KeyChar( nKey, nFlags ) CLASS TDialog
                ::End()
             #endif
             else
-               return Super:KeyChar( nKey, nFlags )
+               return ::Super:KeyChar( nKey, nFlags )
             endif
          endif
       endif
    else
-      return Super:KeyChar( nKey, nFlags )
+      return ::Super:KeyChar( nKey, nFlags )
    endif
 
 return nil
@@ -804,12 +804,12 @@ METHOD KeyDown( nKey, nFlags ) CLASS TDialog
                ::End()
             #endif
             else
-               return Super:KeyDown( nKey, nFlags )
+               return ::Super:KeyDown( nKey, nFlags )
             endif
          endif
       endif
    else
-      return Super:KeyDown( nKey, nFlags )
+      return ::Super:KeyDown( nKey, nFlags )
    endif
 
 return nil
@@ -856,7 +856,7 @@ METHOD SetFont( oFont ) CLASS TDialog
    local hCtrl := GetWindow( hDlg, GW_CHILD )
    local hFont := If( ::oFont != nil, ::oFont:hFont, 0 )
 
-   Super:SetFont( oFont )
+   ::Super:SetFont( oFont )
 
    if hFont != 0
       while hCtrl != 0 .and. GetParent( hCtrl ) == hDlg
@@ -880,7 +880,7 @@ METHOD SysCommand( nWParam, nLParam ) CLASS TDialog
       return .f.
    endif
 
-return Super:SysCommand( nWParam, nLParam )
+return ::Super:SysCommand( nWParam, nLParam )
 
 //----------------------------------------------------------------------------//
 
@@ -911,11 +911,11 @@ METHOD HandleEvent( nMsg, nWParam, nLParam ) CLASS TDialog
            if ::lHelpIcon != nil .and. ::lHelpIcon
               ::Help()
            else
-              return Super:HandleEvent( nMsg, nWParam, nLParam )
+              return ::Super:HandleEvent( nMsg, nWParam, nLParam )
            endif
 
       otherwise
-           return Super:HandleEvent( nMsg, nWParam, nLParam )
+           return ::Super:HandleEvent( nMsg, nWParam, nLParam )
    endcase
 
 return nil

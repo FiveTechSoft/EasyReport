@@ -67,7 +67,7 @@ CLASS TMultiGet FROM TControl
                     oCursor, cMsg, lUpdate, bWhen, lReadOnly, bValid,;
                     bChanged ) CONSTRUCTOR
 
-   METHOD AdjClient() INLINE Super:AdjClient(), MoveGet( ::hWnd )
+   METHOD AdjClient() INLINE ::Super:AdjClient(), MoveGet( ::hWnd )
 
    #ifndef __HARBOUR__
       METHOD Append( cText, nLen ) INLINE ;
@@ -82,7 +82,7 @@ CLASS TMultiGet FROM TControl
                      ::Replace( cText )
    #endif
 
-   METHOD cToChar() INLINE  Super:cToChar( "EDIT" )
+   METHOD cToChar() INLINE  ::Super:cToChar( "EDIT" )
 
    METHOD Copy()
 
@@ -344,7 +344,7 @@ return Self
 METHOD Initiate( hDlg ) CLASS TMultiGet
 
    ::LimitText()
-   Super:Initiate( hDlg )
+   ::Super:Initiate( hDlg )
    SetWindowText( ::hWnd, cValToChar( Eval( ::bSetGet ) ) )
    ::Default()
 
@@ -491,7 +491,7 @@ METHOD Destroy() CLASS TMultiGet
       ::hHeap = 0
    endif
 
-return Super:Destroy()
+return ::Super:Destroy()
 
 //---------------------------------------------------------------------------//
 
@@ -554,27 +554,27 @@ METHOD LButtonDown( nRow, nCol, nFlags ) CLASS TMultiGet
 
    ::nPos = nLoWord( ::PostMsg( EM_GETSEL ) )
 
-return Super:LButtonDown( nRow, nCol, nFlags )
+return ::Super:LButtonDown( nRow, nCol, nFlags )
 
 //----------------------------------------------------------------------------//
 
 METHOD LButtonUp( nRow, nCol, nFlags ) CLASS TMultiGet
 
    if ::lDrag
-      Super:LButtonUp( nRow, nCol, nFlags )
+      ::Super:LButtonUp( nRow, nCol, nFlags )
       SysRefresh()
       ::Refresh()
       return 0
    endif
 
-return Super:LButtonUp( nRow, nCol, nFlags )
+return ::Super:LButtonUp( nRow, nCol, nFlags )
 
 //----------------------------------------------------------------------------//
 
 METHOD MouseMove( nRow, nCol, nKeyFlags ) CLASS TMultiGet
 
    if ::lDrag
-      return Super:MouseMove( nRow, nCol, nKeyFlags )
+      return ::Super:MouseMove( nRow, nCol, nKeyFlags )
    else
       ::oWnd:SetMsg( ::cMsg )
       if ::oCursor != nil
@@ -619,7 +619,7 @@ METHOD KeyDown( nKey, nFlags ) CLASS TMultiGet
            endif
    endcase
 
-return Super:KeyDown( nKey, nFlags )
+return ::Super:KeyDown( nKey, nFlags )
 
 //---------------------------------------------------------------------------//
 
@@ -647,7 +647,7 @@ METHOD KeyChar( nKey, nFlags ) CLASS TMultiGet
    endif
 
    if nKey == VK_TAB
-      return Super:KeyChar( nKey, nFlags )
+      return ::Super:KeyChar( nKey, nFlags )
    endif
 
    if !::lReadOnly
@@ -659,7 +659,7 @@ METHOD KeyChar( nKey, nFlags ) CLASS TMultiGet
       return 0
    endif
 
-return Super:KeyChar( nKey, nFlags )
+return ::Super:KeyChar( nKey, nFlags )
 
 //---------------------------------------------------------------------------//
 
@@ -838,7 +838,7 @@ return 0             // Message already processed
 
 METHOD GotFocus() CLASS TMultiGet
 
-   Super:GotFocus()
+   ::Super:GotFocus()
 
    // ::SetPos( ::nPos )
    CallWindowProc( ::nOldProc, ::hWnd, WM_SETFOCUS )
@@ -856,7 +856,7 @@ return 0
 
 METHOD LostFocus( hCtlFocus ) CLASS TMultiGet
 
-   Super:LostFocus( hCtlFocus )
+   ::Super:LostFocus( hCtlFocus )
 
    if ::bSetGet != nil
       Eval( ::bSetGet, GetWindowText( ::hWnd ) )
@@ -882,7 +882,7 @@ return nil
 
 METHOD Move( nTop, nLeft, nBottom, nRight, lRepaint ) CLASS TMultiGet
 
-   Super:Move( nTop, nLeft, nBottom, nRight, lRepaint )
+   ::Super:Move( nTop, nLeft, nBottom, nRight, lRepaint )
    MoveGet( ::hWnd )
 
 return nil
@@ -891,7 +891,7 @@ return nil
 
 METHOD SetCoors( oRect ) CLASS TMultiGet
 
-   Super:SetCoors( oRect )
+   ::Super:SetCoors( oRect )
    MoveGet( ::hWnd )
 
 return nil

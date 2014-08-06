@@ -172,7 +172,7 @@ CLASS TControl FROM TWindow
 
    METHOD l3D() INLINE ::l3DLook
 
-   METHOD LostFocus( hWndGetFocus ) INLINE ::SetMsg(), Super:LostFocus( hWndGetFocus )
+   METHOD LostFocus( hWndGetFocus ) INLINE ::SetMsg(), ::Super:LostFocus( hWndGetFocus )
 
    METHOD Move( nTop, nLeft, nWidth, nHeight, lRepaint )
 
@@ -479,7 +479,7 @@ METHOD LButtonDown( nRow, nCol, nKeyFlags ) CLASS TControl
 
       return 0
    else
-      return Super:LButtonDown( nRow, nCol, nKeyFlags )
+      return ::Super:LButtonDown( nRow, nCol, nKeyFlags )
    endif
 
 return nil
@@ -577,7 +577,7 @@ METHOD LButtonUp( nRow, nCol, nKeyFlags ) CLASS TControl
       return 0
    endif
 
-return Super:LButtonUp( nRow, nCol, nKeyFlags )
+return ::Super:LButtonUp( nRow, nCol, nKeyFlags )
 
 //----------------------------------------------------------------------------//
 
@@ -647,7 +647,7 @@ METHOD MouseMove( nRow, nCol, nKeyFlags ) CLASS TControl
             endif
          endif
       else
-         return Super:MouseMove( nRow, nCol, nKeyFlags )
+         return ::Super:MouseMove( nRow, nCol, nKeyFlags )
       endif
    endif
 
@@ -657,7 +657,7 @@ return 0
 
 METHOD Move( nTop, nLeft, nWidth, nHeight, lRepaint ) CLASS TControl
 
-   Super:Move( nTop, nLeft, nWidth, nHeight, lRepaint )
+   ::Super:Move( nTop, nLeft, nWidth, nHeight, lRepaint )
 
    DEFAULT ::lDrag := .f., ::lFocused := .f.
 
@@ -684,7 +684,7 @@ METHOD End() CLASS TControl
       ::oWnd:oCtlFocus = nil
    endif
 
-return Super:End()
+return ::Super:End()
 
 //----------------------------------------------------------------------------//
 
@@ -729,7 +729,7 @@ METHOD KeyChar( nKey, nFlags ) CLASS TControl
            // endif
    endcase
 
-return Super:KeyChar( nKey, nFlags )
+return ::Super:KeyChar( nKey, nFlags )
 
 //----------------------------------------------------------------------------//
 
@@ -739,12 +739,12 @@ METHOD nTop( nNewTop ) CLASS TControl
       if ! Empty( ::hWnd )
          WndTop( ::hWnd, nNewTop )
       endif
-      Super:nTop = nNewTop
+      ::Super:nTop = nNewTop
    else
       if ! Empty( ::hWnd )
          return WndTop( ::hWnd )
       else
-         return Super:nTop
+         return ::Super:nTop
       endif
    endif
 
@@ -758,12 +758,12 @@ METHOD nLeft( nNewLeft ) CLASS TControl
       if ! Empty( ::hWnd )
          WndLeft( ::hWnd, nNewLeft )
       endif
-      Super:nLeft = nNewLeft
+      ::Super:nLeft = nNewLeft
    else
       if ! Empty( ::hWnd )
          return WndLeft( ::hWnd )
       else
-         return Super:nLeft
+         return ::Super:nLeft
       endif
    endif
 
@@ -825,7 +825,7 @@ METHOD KeyDown( nKey, nFlags ) CLASS TControl
               endif
       endcase
    else */
-      return Super:KeyDown( nKey, nFlags )
+      return ::Super:KeyDown( nKey, nFlags )
    //endif
 
 return nil
@@ -1048,7 +1048,7 @@ METHOD Inspect( cDataName ) CLASS TControl
            return { "None", "Top", "Left", "Bottom", "Right", "Client" }
 
       otherwise
-           return Super:Inspect( cDataName )
+           return ::Super:Inspect( cDataName )
    endcase
 
 return nil
@@ -1413,7 +1413,7 @@ METHOD HandleEvent( nMsg, nWParam, nLParam ) CLASS TControl
 
    endcase
 
-return Super:HandleEvent( nMsg, nWParam, nLParam )
+return ::Super:HandleEvent( nMsg, nWParam, nLParam )
 
 #endif
 
