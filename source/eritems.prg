@@ -1622,7 +1622,8 @@ FUNCTION MsgBarItem( nItem, nArea, cAreaIni, nRow, nCol, lResize )
       SetReticule( aItemPixelPos[2] + nRulerTop, aItemPixelPos[1] + nRuler, nArea )
 
    ELSE
-
+      nInfoRow := 0; nRulerTop := 0; nInfoCol := 0; nRuler := 0 // FiveTech
+      
       nTop  := aItems[nArea,nItem]:nTop  + ;
                   ( nLoWord( aItems[nArea,nItem]:nPoint ) - nInfoRow ) - nRulerTop
       nLeft := aItems[nArea,nItem]:nLeft + ;
@@ -1630,11 +1631,13 @@ FUNCTION MsgBarItem( nItem, nArea, cAreaIni, nRow, nCol, lResize )
 
       SetReticule( nTop + nRulerTop, nLeft + nRuler, nArea )
 
+      /* FiveTech
       oMsgInfo:SetText( GL("ID") + ": " + cItemID + "  " + ;
                         GL("Top:")    + " " + ALLTRIM(STR( GetCmInch( nTop ), 5, IIF( nMeasure = 2, 2, 0 ) )) + "  " + ;
                         GL("Left:")   + " " + ALLTRIM(STR( GetCmInch( nLeft), 5, IIF( nMeasure = 2, 2, 0 ) )) + "  " + ;
                         GL("Width:")  + " " + ALLTRIM( cInfoWidth ) + "  " + ;
                         GL("Height:") + " " + ALLTRIM( cInfoHeight ) )
+      */                  
 
    ENDIF
 
