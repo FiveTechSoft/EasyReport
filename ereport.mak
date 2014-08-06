@@ -12,39 +12,42 @@ FWDIR=c:\fwteam
 .path.rc  = .\
 
 PRG =        \
-ereport.prg  \ 
-vrdini.prg   \
-control.prg  \
-dialog.prg   \
-easyprev.prg \
-erfile.prg   \
-eritems.prg  \
-eritems2.prg \
-erstart.prg  \
-ertools.prg  \
-#fileedit.prg \
-mget.prg     \
-tget.prg     \
-treeitem.prg \
-treelink.prg \
-treeview.prg \
-tvitem.prg   \
-vrd.prg      \
-vrdbcode.prg \
-vrditem.prg  
+.\ereport.prg  \ 
+.\vrdini.prg   \
+.\control.prg  \
+.\dialog.prg   \
+.\easyprev.prg \
+.\erfile.prg   \
+.\eritems.prg  \
+.\eritems2.prg \
+.\erstart.prg  \
+.\ertools.prg  \
+#.\fileedit.prg \
+.\mget.prg     \
+.\tget.prg     \
+.\treeitem.prg \
+.\treelink.prg \
+.\treeview.prg \
+.\tvitem.prg   \
+.\vrd.prg      \
+.\vrdbcode.prg \
+.\vrditem.prg  
 
-C =          \
-cfunc.c      \               
-point.c      \
-setmask.c    \
-treedraw.c      
+C =            \
+.\cfunc.c      \               
+.\point.c      \
+.\setmask.c    \
+.\treedraw.c      
+
+OBJ=$(PRG:.prg=.obj)
+OBJS=$(OBJ:.\=.\obj\)
 
 PROJECT    : ereport.exe
 
 ereport.exe  : $(PRG:.prg=.obj) $(C:.c=.obj) ereport.res
    echo off
    echo $(BCDIR)\lib\c0w32.obj + > b32.bc
-   echo $(PRG:.prg=.obj), + >> b32.bc
+   echo $(OBJS), + >> b32.bc
    echo ereport.exe, + >> b32.bc
    echo ereport.map, + >> b32.bc
    echo $(FWDIR)\lib\FiveH.lib $(FWDIR)\lib\FiveHC.lib + >> b32.bc
