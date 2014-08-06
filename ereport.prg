@@ -1309,6 +1309,7 @@ FUNCTION ClientWindows()
 
          aWndTitle[nWnd] := cTitle
 
+         /*
          IF ( lDemo .OR. lBeta ) .AND. nWindowNr = 1
             //Demo-Version
             @ 44, nDemoWidth - 200 ;
@@ -1316,6 +1317,7 @@ FUNCTION ClientWindows()
                OF aWnd[nWnd] PIXEL COLOR RGB( 192, 192, 192 ), RGB( 255, 255, 255 ) ;
                SIZE 200, 16 RIGHT
          ENDIF
+         */
 
          FillWindow( nWnd, aAreaIni[nWnd] )
 
@@ -3137,11 +3139,5 @@ return nil
 function TScript()
 
    MsgInfo( "TScript not linked yet" )
-   
-return nil   
-
-function MsgStop()
-
-   x++
    
 return nil   

@@ -838,7 +838,7 @@ FUNCTION MainCaption()
    IF lBeta = .T.
       cVersion := " - Beta Version"
    ELSEIF lDemo = .T.
-      cVersion := " - Unregistered Demo Version"
+      cVersion := " - Full version" // " - Unregistered Demo Version" FiveTech
    ENDIF
 
    IF .NOT. EMPTY( cDefIni )
@@ -1315,7 +1315,7 @@ RETURN CheckRegist( cSerial, cRegist )
 FUNCTION VRDMsgPersonal()
 
    LOCAL oDlg, oFont, oFont2
-   LOCAL lOK          := .F.
+   LOCAL lOK          := .T. // .F.
    LOCAL lTestVersion := .F.
    LOCAL nClr1        := RGB( 128, 128, 128 )
    LOCAL nClrBack     := RGB( 255, 255, 255 )
@@ -1364,7 +1364,7 @@ FUNCTION VRDMsgPersonal()
    REDEFINE SAY ID 174 OF oDlg COLOR 0, nClrBack FONT oFont
 
    REDEFINE BUTTON ID 101 OF oDlg ;
-      ACTION ( lOK := CheckRegist( cSerial, cRegist ), oDlg:End() )
+      ACTION ( lOK := .T. /* := CheckRegist( cSerial, cRegist ) */, oDlg:End() )
    REDEFINE BUTTON ID 104 OF oDlg ACTION ( lTestVersion := .T., oDlg:End() )
    REDEFINE BUTTON ID 102 OF oDlg ACTION ;
       ShellExecute( 0, "Open", "http://www.reportdesigner.info", Nil, Nil, 1 )
@@ -1529,6 +1529,9 @@ FUNCTION GetRegistInfos()
                               SUBSTR( cRegText, 101, 10 ) )
       ENDIF
    ENDIF
+
+   lDemo = .F. // FiveTech
+   cRegText = "FiveTech Software full version" // FiveTech
 
 RETURN ( cRegText )
 
