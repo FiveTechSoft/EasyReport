@@ -1,0 +1,68 @@
+
+[Version]
+Type=xMate
+Number=1.13
+
+[Info]
+Type=Executable
+Architecture=FWHX-2006-05
+Include=C:\Entwicklung\FiveWin\Include;C:\Entwicklung\FiveWin\FWH2006-05\INCLUDE
+Define=
+
+[xMate]
+Create Map/List File=No
+
+[Project]
+Run=
+Params=
+Final Path=C:\Entwicklung\EasyReport
+Maintain LNK=Yes
+Default Type=1
+Error log=
+
+[Data Path]
+Dbf=C:\Entwicklung\Source\EasyPreview
+
+[Editor]
+C:\Entwicklung\FiveWin\Addons\TSBUTTON\SOURCE\FUNCTION\BPAINT.C=1,N,Y
+
+[Files]
+%HOME%\erstart.prg=1,.F.,0,0,
+%HOME%\easyprev.prg=2,.F.,0,0,
+%HOME%\vrd.prg=3,.F.,0,0,
+%HOME%\vrditem.prg=4,.F.,0,0,
+%HOME%\vrdbcode.prg=5,.F.,0,0,
+%HOME%\cFunc.c=6,.F.,2,44,
+C:\Entwicklung\FiveWin\Addons\OZScript\Source\TscrLin.prg=7,.F.,0,0,
+C:\Entwicklung\FiveWin\Addons\OZScript\Source\TScript.prg=8,.F.,0,0,
+C:\Entwicklung\FiveWin\Addons\OZScript\Source\TScrFun.prg=9,.F.,0,0,
+C:\Entwicklung\xHarbour\Addons\tsmtp\TSOCKET.PRG=10,.F.,0,0,
+C:\Entwicklung\xHarbour\Addons\tsmtp\TPOP3.PRG=11,.F.,0,0,
+C:\Entwicklung\xHarbour\Addons\tsmtp\WINSOCK.C=12,.F.,1,1,
+C:\Entwicklung\Source\EasyPreview\epclass.prg=13,.F.,0,0,
+C:\Entwicklung\Source\EasyPreview\epmeta.prg=14,.F.,0,0,
+C:\Entwicklung\Source\EasyPreview\mypdf.prg=15,.F.,0,0,
+C:\Entwicklung\Source\EasyPreview\epdav32.c=16,.F.,1,13,
+C:\Entwicklung\Source\EasyPreview\wpdf.c=17,.F.,1,1,
+C:\Entwicklung\FiveWin\Bugfixes\ERRSYSW.prg=18,.F.,0,0,
+C:\Entwicklung\xHarbour\Addons\mail\mail.lib=19,.F.,0,0,
+%HB_LIB_INSTALL%\hbzip.lib=20,.F.,0,0,
+%HOME%\erstart.res=21,.F.,0,0,
+C:\Entwicklung\FiveWin\FWH2006-05\LIB\Fivehc.lib=22,.T.,0,0,
+C:\Entwicklung\FiveWin\FWH2006-05\LIB\Fivehx.lib=23,.T.,0,0,
+%HB_LIB_INSTALL%\dbffpt.lib=24,.T.,0,0,
+%HB_LIB_INSTALL%\hbsix.lib=25,.T.,0,0,
+%HB_LIB_INSTALL%\rtl.lib=26,.T.,0,0,
+%HB_LIB_INSTALL%\vm.lib=27,.T.,0,0,
+%HB_LIB_INSTALL%\gtwin.lib=28,.T.,0,0,
+%HB_LIB_INSTALL%\lang.lib=29,.T.,0,0,
+%HB_LIB_INSTALL%\macro.lib=30,.T.,0,0,
+%HB_LIB_INSTALL%\common.lib=31,.T.,0,0,
+%HB_LIB_INSTALL%\pp.lib=32,.T.,0,0,
+%HB_LIB_INSTALL%\rdd.lib=33,.T.,0,0,
+%HB_LIB_INSTALL%\dbfntx.lib=34,.T.,0,0,
+%HB_LIB_INSTALL%\dbfcdx.lib=35,.T.,0,0,
+%C_LIB_INSTALL%\C0W32.OBJ=36,.T.,0,0,
+%C_LIB_INSTALL%\CW32.LIB=37,.T.,0,0,
+%C_LIB_INSTALL%\IMPORT32.LIB=38,.T.,0,0,
+%HB_LIB_INSTALL%\debug.lib=39,.T.,0,0,
