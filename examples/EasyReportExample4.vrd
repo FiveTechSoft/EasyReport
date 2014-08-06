@@ -1,0 +1,55 @@
+[General]
+EditProperties=1
+EditAreaProperties=1
+EditLanguage=1
+DeveloperMode=1
+InsertMode=1
+Title=Report with groups
+Measure=1
+GridWidth=1
+GridHeight=1
+ShowGrid=0
+TopMargin=20
+LeftMargin=10
+Expressions=1
+GeneralExpressions=EasyReport General.dbf
+UserExpressions=EasyReport User.dbf
+DataExpressions=EasyReport Database.dbf
+PageBreak=240
+Orientation=1
+ShowInfoMsg=1
+PrintIDs=1
+Group=Order
+
+[Fonts]
+1=Arial| 0| -12| 0| 0| 0| 0| 0
+2=Arial| 0| -26| 1| 0| 0| 0| 0
+3=Arial| 0| -12| 0| 0| 0| 0| 0
+4=Courier| 5| -12| 0| 1| 1| 0| 0
+5=Arial| 0| -18| 1| 1| 1| 0| 200
+6=Arial| 0| -8| 0| 0| 0| 0| 0
+7=Arial| 0| -12| 0| 0| 0| 0| 0
+
+[Colors]
+1=10485760
+2=16777215
+3=0
+4=4227072
+5=8421376
+6=65535
+7=12039936
+
+[Infos]
+Author=
+Company=
+Comment=
+Revision=95
+SaveDate=15.10.2004
+SaveTime=16:35:29
+
+[Areas]
+1=EASYREPORTEXAMPLE4.V01
+2=EASYREPORTEXAMPLE4.V02
+3=EASYREPORTEXAMPLE4.V03
+4=EASYREPORTEXAMPLE4.V04
+

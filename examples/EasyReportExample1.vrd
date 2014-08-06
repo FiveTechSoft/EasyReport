@@ -1,0 +1,80 @@
+[General]
+EditProperties=1
+EditAreaProperties=1
+EditLanguage=1
+DeveloperMode=1
+InsertMode=1
+Title=Order form
+Measure=1
+GridWidth=1
+GridHeight=1
+ShowGrid=0
+TopMargin=25
+LeftMargin=10
+Expressions=1
+GeneralExpressions=EasyReport General.dbf
+UserExpressions=EasyReport User.dbf
+DataExpressions=EasyReport Database.dbf
+PageBreak=240
+Orientation=1
+ShowInfoMsg=1
+PrintIDs=1
+Group=Order
+AreaFilesDir=.\Examples\
+PaperSize=9
+PaperWidth=0
+PaperHeight=0
+
+[Fonts]
+// maximal 20
+// Parameters: name| nWidth| nHeight| bold| italic| underline| strikeout| escapement
+1=Arial| 0| -12| 0| 0| 0| 0| 0
+2=Arial| 0| -26| 1| 0| 0| 0| 0
+3=Arial| 0| -12| 0| 0| 0| 0| 0
+4=Courier| 5| -12| 0| 1| 1| 0| 0
+5=Arial| 0| -18| 1| 1| 1| 0| 200
+6=Arial| 0| -8| 0| 0| 0| 0| 0
+7=Arial| 0| -12| 0| 0| 0| 0| 0
+8=Arial| 0| -12| 0| 0| 0| 0| 2700
+9=Arial| 0| -12| 0| 0| 0| 0| 900
+
+[Colors]
+// Parameters: RGB - A numeric (RGB) value corresponding to the red| green
+//                   and blue values specified.
+1=10485760                     
+2=16777215                     
+3=0                                          
+4=4227072                        
+5=8421376                        
+6=65535                              
+
+
+[Infos]
+Author=Timm Sodtalbers
+Company=Sodtalbers+Partner
+Comment=EasyReport example order form
+Revision=1563
+SaveDate=06.08.2014
+SaveTime=23:00:37
+
+[Databases]
+1=C:\Harbour\EReport\examples\GeneralVariables.txt|generalvariables
+2=|
+3=|
+4=|
+5=|
+6=|
+7=|
+8=|
+9=|
+10=|
+11=|
+12=|
+
+[Areas]
+1=EasyReportExample1.v01
+2=EasyReportExample1.v02
+3=EasyReportExample1.v03
+4=EasyReportExample1.v06
+5=EasyReportExample1.v04
+6=EasyReportExample1.v05

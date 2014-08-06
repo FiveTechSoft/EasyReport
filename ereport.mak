@@ -10,6 +10,7 @@ FWDIR=c:\fwteam
 .path.ch  = $(FWDIR)\include;$(HBDIR)\include
 .path.c   = .\
 .path.rc  = .\
+.path.res = .\
 
 PRG =        \
 .\ereport.prg  \ 
@@ -98,4 +99,4 @@ ereport.exe  : $(OBJS) $(COBJS) ereport.res
   del tmp
 
 ereport.res : ereport.rc
-  $(BCDIR)\bin\brc32.exe -r ereport.rc
+  $(BCDIR)\bin\brc32.exe -r -I$(BCDIR)\include ereport.rc

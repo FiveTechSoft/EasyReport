@@ -3139,3 +3139,9 @@ function TScript()
    MsgInfo( "TScript not linked yet" )
    
 return nil   
+
+function MsgStop()
+
+   x++
+   
+return nil   
