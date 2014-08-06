@@ -97,7 +97,7 @@
 #define LB_GETCARETINDEX       ( LISTBOX_BASE + 32 )
 
 #define LB_ERR              (-1)
-#define LBS_MULTIPLESEL      8 // 0x0008L
+// #define LBS_MULTIPLESEL      8 // 0x0008L
 #define GWL_STYLE           (-16)
 
 #define COLOR_WINDOW       5
@@ -141,16 +141,16 @@ CLASS TTreeView FROM TControl
    /////////////////////////////
    /// [ByHernanCeccarelli]  ///
    METHOD Init( hDlg ) INLINE  ::lProcessInit:= .t.,;
-                               Super:Init( hDlg ), ;
+                               ::Super:Init( hDlg ), ;
 			       ::UpdateTV()
 
    /////////////////////////////
    /// [ByHernanCeccarelli]  ///
    METHOD Display() INLINE If( !::lProcessInit,;
                                ( ::lProcessInit:= .t., ::Init( ::oWnd:hWnd ) ), ),;
-                           Super:Display()
+                           ::Super:Display()
 
-   METHOD cToChar() INLINE Super:cToChar( "LISTBOX" )
+   METHOD cToChar() INLINE ::Super:cToChar( "LISTBOX" )
 
    METHOD GetDlgCode( nLastKey )
 
@@ -385,7 +385,7 @@ METHOD SetColor( nClrText, nClrPane ) CLASS TTreeView
        // [ByHernanCeccarelli]
    NEXT
 
-RETURN Super:SetColor( nClrText, nClrPane )
+RETURN ::Super:SetColor( nClrText, nClrPane )
 
 //----------------------------------------------------------------------------//
 
@@ -431,7 +431,7 @@ METHOD Destroy() CLASS TTreeView
       next
    endif
 
-return Super:Destroy()
+return ::Super:Destroy()
 
 //----------------------------------------------------------------------------//
 
@@ -679,7 +679,7 @@ METHOD KeyDown( nKey, nFlags ) CLASS TTreeView
 
       endcase
 
-return Super:KeyDown( nKey, nFlags )
+return ::Super:KeyDown( nKey, nFlags )
 
 //----------------------------------------------------------------------------//
 
@@ -705,7 +705,7 @@ METHOD LButtonDown( nRow, nCol, nFlags ) CLASS TTreeView
 
    endif
 
-return Super:LButtonDown( nRow, nCol, nFlags )
+return ::Super:LButtonDown( nRow, nCol, nFlags )
 
 //----------------------------------------------------------------------------//
 
@@ -735,7 +735,7 @@ METHOD LDblClick( nRow, nCol, nFlags ) CLASS TTreeView
       ::SetHorExt()
    endif
 
-return Super:LDblClick( nRow, nCol, nFlags )
+return ::Super:LDblClick( nRow, nCol, nFlags )
 
 //----------------------------------------------------------------------------//
 
@@ -1140,7 +1140,7 @@ METHOD MouseMove( nRow, nCol, nFlags ) CLASS TTreeView
  Local aPoint := { nRow, nCol }, ;
        nIndex := ::IndexFromPoint( nRow, nCol )
 
-   Super:MouseMove( nRow, nCol, nFlags )
+   ::Super:MouseMove( nRow, nCol, nFlags )
 
    if lTreeTip
       ClientToScreen( ::hWnd, aPoint )
@@ -1389,7 +1389,7 @@ METHOD GotFocus() CLASS TTreeview
        ::Refresh( .f. )
     endif
 
-return Super:GotFocus()
+return ::Super:GotFocus()
 
 //----------------------------------------------------------------------------//
 
@@ -1400,7 +1400,7 @@ METHOD LostFocus() CLASS TTreeview
        ::Refresh( .f. )
     endif
 
-return Super:GotFocus()
+return ::Super:GotFocus()
 
 //----------------------------------------------------------------------------//
 
@@ -1412,7 +1412,7 @@ METHOD HandleEvent( nMsg, nWParam, nLParam ) CLASS TTreeView
            return ::DrawItem( nWParam, nLParam )
 
       otherwise
-           return Super:HandleEvent( nMsg, nWParam, nLParam )
+           return ::Super:HandleEvent( nMsg, nWParam, nLParam )
 
    endcase
 
