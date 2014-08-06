@@ -6,9 +6,9 @@ FWDIR=c:\fwteam
 
 #change these paths as needed
 .path.obj = .\obj
-.path.prg = .\
+.path.prg = .\source
 .path.ch  = $(FWDIR)\include;$(HBDIR)\include
-.path.c   = .\
+.path.c   = .\source
 .path.rc  = .\
 .path.res = .\
 
@@ -89,13 +89,13 @@ ereport.exe  : $(OBJS) $(COBJS) ereport.res
    del b32.bc
 
 .PRG.OBJ:
-  $(HBDIR)\bin\harbour $< /L /N /W /Oobj\ /I$(FWDIR)\include;$(HBDIR)\include
+  $(HBDIR)\bin\harbour $< /L /N /W /Oobj\ /I$(FWDIR)\include;$(HBDIR)\include;.\source
   $(BCDIR)\bin\bcc32 -c -tWM -I$(HBDIR)\include -oobj\$& obj\$&.c
 
 .C.OBJ:
   echo -c -tWM -D__HARBOUR__ -DHB_API_MACROS > tmp
   echo -I$(HBDIR)\include;$(FWDIR)\include >> tmp
-  $(BCDIR)\bin\bcc32 -oobj\$& @tmp $&.c
+  $(BCDIR)\bin\bcc32 -oobj\$& @tmp $<
   del tmp
 
 ereport.res : ereport.rc
