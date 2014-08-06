@@ -42,9 +42,12 @@ C =            \
 OBJ=$(PRG:.prg=.obj)
 OBJS=$(OBJ:.\=.\obj\)
 
+COBJ=$(C:.c=.obj)
+COBJS=$(COBJ:.\=.\obj\)
+
 PROJECT    : ereport.exe
 
-ereport.exe  : $(PRG:.prg=.obj) $(C:.c=.obj) ereport.res
+ereport.exe  : $(OBJS) $(COBJS) ereport.res
    echo off
    echo $(BCDIR)\lib\c0w32.obj + > b32.bc
    echo $(OBJS), + >> b32.bc
