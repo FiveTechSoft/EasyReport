@@ -2339,7 +2339,7 @@ FONT 6, "MS Sans Serif"
 // Cursor resources
 //
 LANGUAGE 7, SUBLANG_DEFAULT
-LUPA               CURSOR         "cursor2.cur"
+LUPA               CURSOR         "\resources\cursor2.cur"
 
 
 
@@ -2347,7 +2347,7 @@ LUPA               CURSOR         "cursor2.cur"
 // Icon resources
 //
 LANGUAGE 7, SUBLANG_DEFAULT
-ICON1              ICON           "icon2.ico"
+ICON1              ICON           "\resources\icon2.ico"
 
 
 
