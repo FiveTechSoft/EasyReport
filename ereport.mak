@@ -67,6 +67,10 @@ ereport.exe  : $(PRG:.prg=.obj) $(C:.c=.obj) ereport.res
    echo $(HBDIR)\lib\hbwin.lib + >> b32.bc
    echo $(HBDIR)\lib\hbcpage.lib + >> b32.bc
    echo $(HBDIR)\lib\hbct.lib + >> b32.bc
+   echo $(HBDIR)\lib\hbcplr.lib + >> b32.bc
+   echo $(HBDIR)\lib\png.lib + >> b32.bc
+   echo $(HBDIR)\lib\hbzlib.lib + >> b32.bc
+   echo $(HBDIR)\lib\xhb.lib + >> b32.bc
 
    echo $(BCDIR)\lib\cw32.lib + >> b32.bc
    echo $(BCDIR)\lib\import32.lib + >> b32.bc
