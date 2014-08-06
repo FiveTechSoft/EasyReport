@@ -7,7 +7,7 @@
 
 MEMVAR oGenVar  //Timm
 
-#define ES_PASSWORD         32   // 0x020
+// #define ES_PASSWORD         32   // 0x020
 #define GWL_STYLE          -16
 
 #define COLOR_WINDOW         5
@@ -23,7 +23,7 @@ MEMVAR oGenVar  //Timm
 #define WM_PASTE           770
 #define WM_CLEAR           771
 
-#define MB_ICONEXCLAMATION  48   // 0x0030
+// #define MB_ICONEXCLAMATION  48   // 0x0030
 
 #define CW_USEDEFAULT    32768
 
@@ -88,7 +88,7 @@ CLASS TGet FROM TControl
 
    METHOD Assign() INLINE ::oGet:Assign()
 
-   METHOD cToChar() INLINE Super:cToChar( "EDIT" )
+   METHOD cToChar() INLINE ::Super:cToChar( "EDIT" )
 
    METHOD Copy()
 
@@ -457,7 +457,7 @@ METHOD GetDlgCode( nLastKey ) CLASS TGet
    #endif
 
 #ifdef __CLIPPER__
-   return Super:GetDlgCode( nLastKey )
+   return ::Super:GetDlgCode( nLastKey )
 #else
    ::oWnd:nLastKey = nLastKey
    return DLGC_WANTALLKEYS
@@ -498,13 +498,13 @@ METHOD HandleEvent( nMsg, nWParam, nLParam ) CLASS TGet
            return 0
    endcase
 
-return Super:HandleEvent( nMsg, nWParam, nLParam )
+return ::Super:HandleEvent( nMsg, nWParam, nLParam )
 
 //----------------------------------------------------------------------------//
 
 METHOD Initiate( hDlg ) CLASS TGet
 
-   Super:Initiate( hDlg )
+   ::Super:Initiate( hDlg )
    ::oGet:SetFocus()
 
    if lAnd( GetWindowLong( ::hWnd, GWL_STYLE ), ES_PASSWORD )
@@ -607,7 +607,7 @@ return nil
 METHOD MouseMove( nRow, nCol, nKeyFlags ) CLASS TGet
 
    if ::lDrag
-      return Super:MouseMove( nRow, nCol, nKeyFlags )
+      return ::Super:MouseMove( nRow, nCol, nKeyFlags )
    else
       ::oWnd:SetMsg( ::cMsg )        // Many thanks to HMP
       if ::oCursor != nil
@@ -665,7 +665,7 @@ METHOD Destroy() CLASS TGet
       ::hHeap = 0
    endif
 
-return Super:Destroy()
+return ::Super:Destroy()
 
 //---------------------------------------------------------------------------//
 
@@ -821,7 +821,7 @@ METHOD KeyDown( nKey, nFlags ) CLASS TGet
            endif
 
            if ::lDrag
-              return Super:KeyDown( nKey, nFlags )
+              return ::Super:KeyDown( nKey, nFlags )
            endif
 
            ::GetSelPos( @nLo, @nHi )
@@ -847,7 +847,7 @@ METHOD KeyDown( nKey, nFlags ) CLASS TGet
            return 0
    endcase
 
-return Super:KeyDown( nKey, nFlags )
+return ::Super:KeyDown( nKey, nFlags )
 
 //---------------------------------------------------------------------------//
 
@@ -927,7 +927,7 @@ METHOD KeyChar( nKey, nFlags ) CLASS TGet
 
            #ifndef __CLIPPER__
                if nKey == VK_RETURN  // Execute DEFPUSHBUTTON Action
-                  Super:KeyChar( nKey, nFlags )
+                  ::Super:KeyChar( nKey, nFlags )
                endif
            #endif
 
@@ -988,7 +988,7 @@ METHOD KeyChar( nKey, nFlags ) CLASS TGet
            Eval( ::bPostKey, Self, ::oGet:Buffer )
 
       otherwise
-           return Super:KeyChar( nKey, nFlags )
+           return ::Super:KeyChar( nKey, nFlags )
    endcase
 
 return 0
@@ -1022,7 +1022,7 @@ METHOD LostFocus( hCtlFocus ) CLASS TGet
 
    local nClrFocus
 
-   Super:LostFocus( hCtlFocus )
+   ::Super:LostFocus( hCtlFocus )
 
    if ! ::lPassword
       if ::oGet:buffer != GetWindowText( ::hWnd )  // right click popup action
@@ -1196,7 +1196,7 @@ return nil
 
 METHOD Move( nTop, nLeft, nBottom, nRight, lRepaint ) CLASS TGet
 
-   Super:Move( nTop, nLeft, nBottom, nRight, lRepaint )
+   ::Super:Move( nTop, nLeft, nBottom, nRight, lRepaint )
    MoveGet( ::hWnd, ::nRight - ::nLeft, ::nBottom - ::nTop )
 
 return nil
@@ -1255,7 +1255,7 @@ METHOD GotFocus( hCtlLost ) CLASS TGet
        HideCaret( ::hWnd )
     endif
 
-    Super:GotFocus( hCtlLost )
+    ::Super:GotFocus( hCtlLost )
 
 return 0
 
@@ -1266,7 +1266,7 @@ METHOD LButtonDown( nRow, nCol, nFlags ) CLASS TGet
    local nLo, nHi
 
    if ::lDrag
-      return Super:LButtonDown( nRow, nCol, nFlags )
+      return ::Super:LButtonDown( nRow, nCol, nFlags )
    else
       CallWindowProc( ::nOldProc, ::hWnd, WM_LBUTTONDOWN, nFlags,;
                       nMakeLong( nCol, nRow ) )
@@ -1293,7 +1293,7 @@ METHOD LButtonUp( nRow, nCol, nFlags ) CLASS TGet
    local nLo, nHi, cText
 
    if ::lDrag
-      Super:LButtonUp( nRow, nCol, nFlags )
+      ::Super:LButtonUp( nRow, nCol, nFlags )
       SysRefresh()
       ::Refresh()
       return 0
@@ -1365,7 +1365,7 @@ METHOD Resize( nType, nWidth, nHeight ) CLASS TGet
       ::Refresh()
    endif
 
-return Super:ReSize( nType, nWidth, nHeight )
+return ::Super:ReSize( nType, nWidth, nHeight )
 
 //----------------------------------------------------------------------------//
 
