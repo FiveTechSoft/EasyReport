@@ -53,9 +53,9 @@ PaperHeight=0
 Author=Timm Sodtalbers
 Company=Sodtalbers+Partner
 Comment=EasyReport example order form
-Revision=1563
+Revision=1593
 SaveDate=06.08.2014
-SaveTime=23:00:37
+SaveTime=23:39:46
 
 [Databases]
 1=C:\Harbour\EReport\examples\GeneralVariables.txt|generalvariables
