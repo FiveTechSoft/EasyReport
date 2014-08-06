@@ -18,7 +18,7 @@ HB_FUNC( SHOWGRID ) // hDC, @cPS, wGridWidth, wGridHeight, wWidth, wHeight, wTop
 {
    WORD wRow, wCol;
    HDC hDC = ( HDC ) hb_parnl( 1 );
-   PAINTSTRUCT * ps = ( PAINTSTRUCT * ) hb_parc( 2 );
+   // PAINTSTRUCT * ps = ( PAINTSTRUCT * ) hb_parc( 2 );
    WORD wGridWidth  = hb_parni( 3 );
    WORD wGridHeight = hb_parni( 4 );
    WORD wWidth      = hb_parni( 5 );
