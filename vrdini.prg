@@ -179,8 +179,10 @@ DLL32 FUNCTION GetProfSect( cSection AS LPSTR, @cData AS LPSTR, ;
    FROM "GetProfileSectionA" ;
    LIB "Kernel32.dll"
 
+/*
 DLL32 FUNCTION GetPPSection( cSection AS LPSTR, @cData AS LPSTR, ;
                              nSize AS DWORD, cFile AS LPSTR ) ;
    AS DWORD PASCAL ;
    FROM "GetPrivateProfileSectionA" ;
    LIB "Kernel32.dll"
+*/   

@@ -781,9 +781,9 @@ FUNCTION AddToRecentDocs( cFullPathFile )
 
    ELSE
 
-      cFarProc := GetProc32( hDLL, "SHAddToRecentDocs", .T., 7, 7, 8 )
-      uResult  := CallDLL32( cFarProc, 2, cFullPathFile + Chr(0) )
-      FreeLib32( hDLL )
+      cFarProc := GetProcAdd( hDLL, "SHAddToRecentDocs", .T., 7, 7, 8 )
+      uResult  := FWCallDLL( cFarProc, 2, cFullPathFile + Chr(0) )
+      FreeLibrary( hDLL )
 
    ENDIF
 

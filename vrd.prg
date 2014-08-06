@@ -3245,8 +3245,8 @@ RETURN   FindClose( nHandle )
 
 DLLFUNCTION FindClose( nHandle ) USING STDCALL FROM KERNEL32.DLL
 
-FUNCTION GetPPSection( cSection, cData, nSize, cFile )
-RETURN   GetPrivateProfileSectionA( cSection, @cData, nSize, cFile )
+// FUNCTION GetPPSection( cSection, cData, nSize, cFile )
+// RETURN   GetPrivateProfileSectionA( cSection, @cData, nSize, cFile )
 
 DLLFUNCTION GetPrivateProfileSectionA( cSection, @cData, nSize, cFile ) ;
             USING STDCALL FROM KERNEL32.DLL

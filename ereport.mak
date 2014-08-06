@@ -14,7 +14,7 @@ FWDIR=c:\fwteam
 PRG =        \
 .\ereport.prg  \ 
 .\vrdini.prg   \
-.\control.prg  \
+#.\control.prg  \
 .\dialog.prg   \
 .\easyprev.prg \
 .\erfile.prg   \

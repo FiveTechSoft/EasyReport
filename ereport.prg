@@ -32,10 +32,10 @@ MEMVAR lPersonal, lStandard, oGenVar, oCurDlg
 *  Rückgabewert:
 *  Author......: Timm Sodtalbers
 * --------------------------------------------------------------------------
-FUNCTION Start( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 )
+FUNCTION Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 )
 
    LOCAL i, oBrush, oIni, aTest, nTime1, nTime2, cTest, oIcon, cDateFormat
-   LOCAL cOldDir  := CurDrive() + ":\" + GetCurDir()
+   LOCAL cOldDir  := hb_CurDrive() + ":\" + GetCurDir()
    LOCAL cDefFile := ""
 
    lChDir( cFilePath( GetModuleFileName( GetInstance() ) ) )
@@ -3125,3 +3125,17 @@ FUNCTION AreaHide( nArea )
    nTotalHeight += nDifferenz
 
 RETURN (.T.)
+
+// dummy for now
+
+function EasyPreview()
+
+   MsgInfo( "EasyPreview Not linked yet" )
+   
+return nil   
+
+function TScript()
+
+   MsgInfo( "TScript not linked yet" )
+   
+return nil   
