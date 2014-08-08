@@ -3202,7 +3202,7 @@ RETURN ( cReturn )
 * Rückgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION ERStart( cRptFile, lPreview )
+FUNCTION vrd_ERStart( cRptFile, lPreview ) // FiveTech
 
    DEFAULT lPreview := .F.
 

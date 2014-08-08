@@ -89,7 +89,7 @@ ereport.exe  : $(OBJS) $(COBJS) ereport.res
    del b32.bc
 
 .PRG.OBJ:
-  $(HBDIR)\bin\harbour $< /L /N /W /Oobj\ /I$(FWDIR)\include;$(HBDIR)\include;.\source
+  $(HBDIR)\bin\harbour $< /N /W /Oobj\ /I$(FWDIR)\include;$(HBDIR)\include;.\source
   $(BCDIR)\bin\bcc32 -c -tWM -I$(HBDIR)\include -oobj\$& obj\$&.c
 
 .C.OBJ:

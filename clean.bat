@@ -4,5 +4,7 @@
 @del *.tds
 @del ereport.exe
 @del ereport.res
+@del 4*.*
 @del 6*.*
+@del 7*.*
 @del *.log
