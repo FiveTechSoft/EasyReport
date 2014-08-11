@@ -1,0 +1,194 @@
+vkpr-003       ]bergabedatei f}r SD-ORDER                                                 Bearbeiter: hainke    Blatt:     1
+                                                                                           Druckdatum: 21.09.04 Zeit : 14:52
+-------------------------------------------------------------------------------------------------------------------------------------
+
+Art-Nr.  PE  ME   Artikelbezeichnung 1           Artikelbezeichnung 2            Artikelbezeichnung 3             Profill{nge
+-------------------------------------------------------------------------------------------------------------------------------------
+120001   1   M    Legro PVC Weichlippe                                                                                0         2,26
+120002   0   M    Legro Mauerschiene  110 mm                                                                          0         3,94
+120003   0   M    Lehr Sturzschiene lfdm.                                                                             0         6,63
+120006   0   STK  Lehr Verst.Mittelgetr.o.Lager                                                                       0        12,53
+120007   0   STK  Lehr Gegenscheibe f.Mittellage                                                                      0         1,41
+120008   0   STK  Lehr Verst.Mittelgetr. lose                                                                         0         5,68
+120020   1   M    Lehr Halbschale 29x28 Styropor                                                                   6,00        11,45
+12002001 1   KG   Lehr Leichtbaupl.stifte 3.4x70                                                                      0        14,73
+12002002 1   KG   Lehr Leichtbaupl.stifte 3.4x90                                                                      0        14,73
+120021   0   M    Lehr Halbschale 24 cm Stabil                                                                        0        15,76
+120022   0   M    Lehr Halbschale 30 cm Stabil                                                                        0        15,72
+120023   0   M    Lehr Halbschale 36 cm Stabil                                                                        0        17,94
+120026   0   M    Legro Vollkasten 24cm Putzaus.                                                                      0        13,84
+120027   0   M    Lehr Halbschale 30 x 27 cm     inkl.Sonderh|henzuschlag                                             0        16,83
+120028   0   M    Lehr Halbschale 30 x 25 cm     inkl.Sonderh|henzuschlag                                             0        16,83
+120033   0   M    Lehr Vollkasten 30cm Putzausf.                                                                      0        20,25
+120038   0   M    Lehr Vollkasten 36cm Putzausf.                                                                      0        20,76
+12006101 0   M    Lehr Deckel Perfekt 14cm weiss mit Schraubkanal                                                     0         8,00
+12006203 0   M    Lehr Deckel Perfekt 16cm weiss mit Schraubkanal                                                     0         8,45
+12006301 0   M    Lehr Deckel Perfekt 18cm weiss mit Schraubkanal                                                     0         8,95
+120065   0   M    Lehr Deckel Perfekt 22cm weiss                                                                      0         5,97
+12006501 0   M    Lehr Deckel Perfekt 22cm weiss mit Schraubkanal                                                     0         9,50
+120066   0   M    Legro PVC Deckel 22cm braun                                                                         0         5,97
+12006602 0   M    Lehr Deckel Perfekt 24cm weiss                                                                      0         6,03
+12006603 0   M    Lehr Deckel Perfekt 27cm weiss mit Schraubkanal                                                     0        10,00
+12006701 0   M    Lehr Deckel Perfekt 27cm weiss mit Schraubkanal                                                     0         9,70
+120071   0   STK  Lehr Kopfst}ck 24 cm                                                                                0         1,06
+120072   0   STK  Lehr Kopfst}ck 30 cm                                                                                0         1,19
+120073   0   STK  Lehr Kopfst}ck 36 cm                                                                                0         1,35
+120074   1   STK  Lehr Kopfst}ck 29 x 28 cm      Styropor                                                             0         1,27
+120075   1   STK  Lehr Kopfst}ck 30 x 27 cm                                                                           0         1,19
+120076   1   STK  Lehr Kopfst}ck 30 x 25 cm                                                                           0         1,19
+120079   0   M    Lehr Halbsch.Zuschn. 29 x 28   Styropor                                                             0        14,62
+120080   0   M    Lehr Halbsch.Zuschnitt 24 cm   Stabil                                                               0        20,16
+120081   0   M    Lehr Halbsch.Zuschnitt 30 cm   Stabil                                                               0        19,69
+120082   1   M    Lehr Halbsch.Zuschnitt 36 cm   Stabil                                                               0        20,71
+120084   0   M    Lehr Halbsch.Zuschnitt 27 cm   Stabil                                                               0        19,69
+120085   0   M    Lehr Halbsch.Zuschnitt 25 cm   Stabil                                                               0        19,69
+120086   0   M    Lehr Vollk.Zuschn. 30 cm Putz.                                                                      0        18,66
+120089   1   M    Lehr Vollk.Zuschn. 36 cm Putz.                                                                      0        19,58
+120090   100 STK  Leichtbauplattenn{gel                                                                               0         8,82
+120091   1   STK  B}gelschrauben incl. Muttern                                                                        0         0,22
+120100   1   STK  Gurtdurchf}hrung ESM 37                                                                             0         3,37
+120101   1   STK  Gurtdurchf}hrung ESM 57                                                                             0         4,70
+120103   1   PAR  Kopfst}ck isoliert  24er rs/ls Halbschale stabil                                                    0        12,90
+120104   1   PAR  Kopfst}ck isoliert  30er rs/ls Halbschale stabil                                                    0        12,90
+120105   1   PAR  Kopfst}ck isoliert  36er rs/ls Halbschale stabil                                                    0        12,90
+120106   1   PAR  Kopfst}ck isoliert rs/ls ST200                                                                      0        12,90
+121000   1   STK  Legro Fertigk{sten allgemein                                                                        0         0, 0
+121001   0   STK  L.Halb.24er 101,0cm 60er Welle                                                                      0        48,00
+121002   0   STK  L.Halb.24er 113,5cm 60er Welle                                                                      0        51,00
+121003   0   STK  L.Halb.24er 126,0cm 60er Welle                                                                      0        54,00
+121004   0   STK  L.Halb.24er 138,5cm 60er Welle                                                                      0        60,00
+121005   0   STK  L.Halb.24er 151,0cm 60er Welle                                                                      0        64,00
+121006   0   STK  L.Halb.24er 163,5cm 60er Welle                                                                      0        67,00
+121007   0   STK  L.Halb.24er 176,0cm 60er Welle                                                                      0        75,00
+121008   0   STK  L.Halb.24er 188,5cm 60er Welle                                                                      0        78,00
+121009   0   STK  L.Halb.24er 201,0cm 60er Welle                                                                      0        82,00
+121010   0   STK  L.Halb.24er 213,5cm 60er Welle                                                                      0        85,00
+121011   0   STK  L.Halb.24er 226,0cm 60er Welle                                                                      0        89,00
+121012   0   STK  L.Halb.24er 238,5cm 60er Welle                                                                      0        92,00
+121013   0   STK  L.Halb.24er 251,0cm 60er Welle                                                                      0        95,00
+121014   0   STK  L.Halb.24er 263,5cm 60er Welle                                                                      0       100,00
+121015   0   STK  L.Halb.24er 276,0cm 60er Welle                                                                      0       103,00
+121016   0   STK  L.Halb.24er 288,5cm 60er Welle                                                                      0       106,00
+121017   0   STK  L.Halb.24er 301,0cm 60er Welle                                                                      0       109,00
+vkpr-003       ]bergabedatei f}r SD-ORDER                                                 Bearbeiter: hainke    Blatt:     2
+                                                                                           Druckdatum: 21.09.04 Zeit : 14:52
+-------------------------------------------------------------------------------------------------------------------------------------
+
+Art-Nr.  PE  ME   Artikelbezeichnung 1           Artikelbezeichnung 2            Artikelbezeichnung 3             Profill{nge
+-------------------------------------------------------------------------------------------------------------------------------------
+121018   0   STK  L.Halb.24er 313,5cm 60er Welle                                                                      0       113,00
+121019   0   STK  L.Halb.24er 326,0cm 60er Welle                                                                      0       117,00
+121020   0   STK  L.Halb.24er 338,5cm 60er Welle                                                                      0       120,00
+121021   0   STK  L.Halb.24er 351,0cm 60er Welle                                                                      0       124,00
+121041   0   STK  L.Halb.30er 101,0cm 60er Welle                                                                      0        49,00
+121042   0   STK  L.Halb.30er 113,5cm 60er Welle                                                                      0        52,00
+121043   0   STK  L.Halb.30er 126,0cm 60er Welle                                                                      0        55,00
+121044   0   STK  L.Halb.30er 138,5cm 60er Welle                                                                      0        61,00
+121045   0   STK  L.Halb.30er 151,0cm 60er Welle                                                                      0        66,00
+121046   0   STK  L.Halb.30er 163,5cm 60er Welle                                                                      0        69,00
+121047   0   STK  L.Halb.30er 176,0cm 60er Welle                                                                      0        76,00
+121048   0   STK  L.Halb.30er 188,5cm 60er Welle                                                                      0        80,00
+121049   0   STK  L.Halb.30er 201,0cm 60er Welle                                                                      0        84,00
+121050   0   STK  L.Halb.30er 213,5cm 60er Welle                                                                      0        87,00
+121051   0   STK  L.Halb.30er 226,0cm 60er Welle                                                                      0        90,00
+121052   0   STK  L.Halb.30er 238,5cm 60er Welle                                                                      0        94,00
+121053   0   STK  L.Halb.30er 251,0cm 60er Welle                                                                      0        98,00
+121054   0   STK  L.Halb.30er 263,5cm 60er Welle                                                                      0       101,00
+121055   0   STK  L.Halb.30er 276,0cm 60er Welle                                                                      0       105,00
+121056   0   STK  L.Halb.30er 288,5cm 60er Welle                                                                      0       108,00
+121057   0   STK  L.Halb.30er 301,0cm 60er Welle                                                                      0       112,00
+121058   0   STK  L.Halb.30er 313,5cm 60er Welle                                                                      0       116,00
+121059   0   STK  L.Halb.30er 326,0cm 60er Welle                                                                      0       119,00
+121060   0   STK  L.Halb.30er 338,5cm 60er Welle                                                                      0       123,00
+121061   0   STK  L.Halb.30er 351,0cm 60er Welle                                                                      0       126,00
+121081   0   STK  L.Halb.36er 101,0cm 60er Welle                                                                      0        53,00
+121082   0   STK  L.Halb.36er 113,5cm 60er Welle                                                                      0        56,00
+121083   0   STK  L.Halb.36er 126,0cm 60er Welle                                                                      0        60,00
+121084   0   STK  L.Halb.36er 138,5cm 60er Welle                                                                      0        67,00
+121085   0   STK  L.Halb.36er 151,0cm 60er Welle                                                                      0        70,00
+121086   0   STK  L.Halb.36er 163,5cm 60er Welle                                                                      0        74,00
+121087   0   STK  L.Halb.36er 176,0cm 60er Welle                                                                      0        83,00
+121088   0   STK  L.Halb.36er 188,5cm 60er Welle                                                                      0        87,00
+121089   0   STK  L.Halb.36er 201,0cm 60er Welle                                                                      0        91,00
+121090   0   STK  L.Halb.36er 213,5cm 60er Welle                                                                      0        94,00
+121091   0   STK  L.Halb.36er 226,0cm 60er Welle                                                                      0        99,00
+121092   0   STK  L.Halb.36er 238,5cm 60er Welle                                                                      0       103,00
+121093   0   STK  L.Halb.36er 251,0cm 60er Welle                                                                      0       107,00
+121094   0   STK  L.Halb.36er 263,5cm 60er Welle                                                                      0       110,00
+121095   0   STK  L.Halb.36er 276,0cm 60er Welle                                                                      0       114,00
+121096   0   STK  L.Halb.36er 288,5cm 60er Welle                                                                      0       119,00
+121097   0   STK  L.Halb.36er 301,0cm 60er Welle                                                                      0       123,00
+121098   0   STK  L.Halb.36er 313,5cm 60er Welle                                                                      0       126,00
+121099   0   STK  L.Halb.36er 326,0cm 60er Welle                                                                      0       130,00
+121101   0   STK  L.Halb.36er 338,5cm 60er Welle                                                                      0       135,00
+121102   0   STK  L.Halb.36er 351,0cm 60er Welle                                                                      0       139,00
+121121   0   STK  L.Halb.24er 151,0cm 60We.+ Get                                                                      0        86,00
+121122   0   STK  L.Halb.24er 163,5cm 60We.+ Get                                                                      0        89,00
+121123   0   STK  L.Halb.24er 176,0cm 60We.+ Get                                                                      0        98,00
+121124   0   STK  L.Halb.24er 188,5cm 60We.+ Get                                                                      0       101,00
+121125   0   STK  L.Halb.24er 201,0cm 60We.+ Get                                                                      0       104,00
+121126   0   STK  L.Halb.24er 213,5cm 60We.+ Get                                                                      0       107,00
+121127   0   STK  L.Halb.24er 226,0cm 60We.+ Get                                                                      0       111,00
+121128   0   STK  L.Halb.24er 238,5cm 60We.+ Get                                                                      0       114,00
+121129   0   STK  L.Halb.24er 251,0cm 60We.+ Get                                                                      0       118,00
+121130   0   STK  L.Halb.24er 263,5cm 60We.+ Get                                                                      0       122,00
+121131   0   STK  L.Halb.24er 276,0cm 60We.+ Get                                                                      0       125,00
+121132   0   STK  L.Halb.24er 288,5cm 60We.+ Get                                                                      0       128,00
+121133   0   STK  L.Halb.24er 301,0cm 60We.+ Get                                                                      0       131,00
+121134   0   STK  L.Halb.24er 313,5cm 60We.+ Get                                                                      0       136,00
+121135   0   STK  L.Halb.24er 326,0cm 60We.+ Get                                                                      0       139,00
+121141   0   STK  L.Halb.30er 151,0cm 60We.+ Get                                                                      0        88,00
+121142   0   STK  L.Halb.30er 163,5cm 60We.+ Get                                                                      0        91,00
+121143   0   STK  L.Halb.30er 176,0cm 60We.+ Get                                                                      0        99,00
+121144   0   STK  L.Halb.30er 188,5cm 60We.+ Get                                                                      0       102,00
+121145   0   STK  L.Halb.30er 201,0cm 60We.+ Get                                                                      0       106,00
+vkpr-003       ]bergabedatei f}r SD-ORDER                                                 Bearbeiter: hainke    Blatt:     3
+                                                                                           Druckdatum: 21.09.04 Zeit : 14:52
+-------------------------------------------------------------------------------------------------------------------------------------
+
+Art-Nr.  PE  ME   Artikelbezeichnung 1           Artikelbezeichnung 2            Artikelbezeichnung 3             Profill{nge
+-------------------------------------------------------------------------------------------------------------------------------------
+121146   0   STK  L.Halb.30er 213,5cm 60We.+ Get                                                                      0       109,00
+121147   0   STK  L.Halb.30er 226,0cm 60We.+ Get                                                                      0       112,00
+121148   0   STK  L.Halb.30er 238,5cm 60We.+ Get                                                                      0       117,00
+121149   0   STK  L.Halb.30er 251,0cm 60We.+ Get                                                                      0       120,00
+121150   0   STK  L.Halb.30er 263,5cm 60We.+ Get                                                                      0       124,00
+121151   0   STK  L.Halb.30er 276,0cm 60We.+ Get                                                                      0       127,00
+121152   0   STK  L.Halb.30er 288,5cm 60We.+ Get                                                                      0       130,00
+121153   0   STK  L.Halb.30er 301,0cm 60We.+ Get                                                                      0       135,00
+121154   0   STK  L.Halb.30er 313,5cm 60We.+ Get                                                                      0       138,00
+121155   0   STK  L.Halb.30er 326,0cm 60We.+ Get                                                                      0       141,00
+121161   0   STK  L Halb.36er 151,0cm 60We.+ Get                                                                      0        92,00
+121162   0   STK  L.Halb.36er 163,5cm 60We.+ Get                                                                      0        96,00
+121163   0   STK  L.Halb.36er 176,0cm 60We.+ Get                                                                      0       105,00
+299790   1   STK  Jed Air Matic Dachl}fter                                                                            0       700,00
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

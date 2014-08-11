@@ -1,0 +1,47 @@
+[General]
+Title=Order title
+Width=200
+Height=86
+Top1=20
+Top2=20
+TopVariable=0
+Condition=3
+DelEmptySpace=0
+BreakBefore=0
+BreakAfter=0
+PrintBeforeBreak=0
+PrintAfterBreak=0
+ControlDBF=keine
+Formula1=
+Formula2=
+Formula3=
+Formula4=
+Formula5=
+Formula6=
+Formula7=
+Formula8=
+Formula9=
+Formula10=
+Formula11=
+Formula12=
+
+[Items]
+// Parameters:
+// Text   : say| name| ID| show| deleteable| editable| top| left| width| height| font| text color| background color| orientation | border | transparent
+// Image  : say| name| ID| show| deleteable| editable| top| left| width| height| filename| border
+// Graphic: say| style| ID| show| deleteable| editable| top| left| width| height| color | fill color | Style | Pen Size
+// Barcode: say| value| ID| show| deleteable| editable| top| left| width| height| barcode font | color | fill color | orientation | transparent | Pin width
+10=TEXT|Name|102|1|1|1|45|10|70|5|3|1|2|1|0|1||0||||||||||||||0                                                                                                                                                                                                 
+11=TEXT|Name2|103|1|1|1|50|10|70|5|3|3|2|1|0|0||0||||||||||||||0
+12=TEXT|Street|104|1|1|1|55|10|70|5|3|3|2|1|0|0||0||||||||||||||0
+13=TEXT|Zipcode / City|105|1|1|1|61|10|70|5|3|3|2|1|0|0||0||||||||||||||0
+14=TEXT|ORDER|-1|1|1|1|47|130|53|10|2|3|2|2|1|0||0||||||||||||
+15=TEXT|Nr. / Date|202|1|1|1|58|130|53|5|3|3|6|2|1|0||0||||||||||||||0
+16=Image|Image 1|301|1|1|1|10|136|55|19|.\examples\EasyReport image.jpg|0|
+17=Text|Company 1|302|  0|1|1|18|130|58|17|3|4|2|3|0
+18=TEXT|[ Sodtalbers+Partner - Plaggefelder Str. 42 - 26632 Ihlow ]|101|1|1|1|40|10|70|4|6|3|2|1|0|0||0||||||||||||||0
+21=Rectangle|Rectangle|401|  0|1|1|8|37|59|22|3|6|1|1|4|1
+400=BARCODE|285000|150|1|1|1|70|133|47|10|1|5|2|1|0|0.30|||||||||||
+401=Rectangle|Rectangle|-1|1|1|1|37|7|76|32|1|2|1|1|0|0|1||||||||||                                                                                                                                                                                                                                                                                                                                                                                                   
+402=IMAGE||452|1|1|1|7|4|38|13||0|||||||
+403=Rectangle|Rectangle|-1|1|1|1|44|127|59|22|1|2|1|1|3|3|1||||||||||

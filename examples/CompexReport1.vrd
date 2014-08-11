@@ -1,0 +1,76 @@
+[General]
+EditProperties=1
+EditAreaProperties=1
+EditLanguage=1
+DeveloperMode=1
+InsertMode=1
+Title=Compex-Report
+Measure=1
+GridWidth=1
+GridHeight=1
+ShowGrid=0
+TopMargin=10
+LeftMargin=10
+Expressions=1
+GeneralExpressions=EasyReport General.dbf
+UserExpressions=EasyReport User.dbf
+DataExpressions=EasyReport Database.dbf
+PageBreak=260
+Orientation=1
+ShowInfoMsg=1
+PrintIDs=1
+Group=Test
+AreaFilesDir=.\EXAMPLES\
+Standalone=1
+PaperSize=9
+PaperWidth=0
+PaperHeight=0
+
+[Fonts]
+1=Arial| 0| -12| 0| 0| 0| 0| 0
+2=Arial| 0| -26| 1| 0| 0| 0| 0
+3=Arial| 0| -11| 0| 0| 0| 0| 0| 0| 0
+4=Courier| 5| -12| 0| 1| 1| 0| 0
+5=Arial| 0| -18| 1| 1| 1| 0| 200
+6=Arial| 0| -8| 0| 0| 0| 0| 0
+7=Arial| 0| -12| 0| 0| 0| 0| 0
+
+[Colors]
+1=10485760       
+2=16777215       
+3=0              
+4=4227072        
+5=8421376        
+6=65535          
+7=12039936       
+
+[Infos]
+Author=
+Company=
+Comment=
+Revision=365
+SaveDate=09.11.2004
+SaveTime=07:53:26
+
+[Databases]
+Separator=;
+DelQuotations=1
+Unix2Windows=1
+//1=.\examples\compex.txt|compex|VAL( cRec ) <> 0|Artikelnr;PE;ME;Bezeichnung;Lagerlänge;Preis|1-9;10-13;14-18;19-53;115-123;124-133
+1=.\examples\compex.txt|compex|VAL( cRec ) <> 0|Artikelnr;PE;ME;Bezeichnung;Lagerlänge;Preis|1-9;10-13;14-18;19-53;115-123;124-133
+2=||||
+3=||||
+4=||||
+5=||||
+6=||||
+7=||||
+8=||||
+9=||||
+10=||||
+11=||||
+12=||||
+
+[Areas]
+1=COMPEXREPORT1.V01
+2=COMPEXREPORT1.V02
+4=COMPEXREPORT1.V04

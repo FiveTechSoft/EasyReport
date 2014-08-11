@@ -1,0 +1,37 @@
+[General]
+Title=Order positions
+Width=200
+Height=36
+Top1=112
+Top2=52
+TopVariable=1
+Condition=1
+DelEmptySpace=1
+BreakBefore=0
+BreakAfter=0
+PrintBeforeBreak=0
+PrintAfterBreak=0
+ControlDBF=keine
+Formula1=
+Formula2=
+Formula3=
+Formula4=
+Formula5=
+Formula6=
+Formula7=
+Formula8=
+Formula9=
+Formula10=
+Formula11=
+Formula12=
+
+[Items]
+401=Text|Item number|-1|1|1|1|2|8|27|6|3|3|2|1|0|0|example->number|0
+402=Text|Item|-1|1|1|1|2|36|60|6|3|3|2|1|0|0|example->item
+403=Text|Quantity|-1|1|1|1|2|97|22|6|3|3|2|3|0|0|ALLTRIM(STR( EXAMPLE->QUANTITY, 8, 2 ))
+4=Text|Unit|104|1|1|1|2|120|16|6|3|3|2|1|0|0|
+5=Text|Price|105|1|0|1|2|137|23|6|3|3|2|3|0|0
+6=Text|Total price|106|1|1|1|2|161|30|6|3|3|2|3|0|0
+7=IMAGE|Image 1|107|1|1|1|9|36|35|23|.\examples\EasyReport Example3.bmp|0|||||||
+=0|0|0|0|0|0|0|0|0|0|
+1=Image|Image 1|301|  0|1|1|10|136|55|19|.\examples\EasyReport image.jpg|0|

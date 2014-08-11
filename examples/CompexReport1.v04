@@ -1,0 +1,32 @@
+[General]
+Title=Seitenfuß
+Width=200
+Height=10
+Top1=264
+Top2=264
+TopVariable=0
+Condition=1
+BreakBefore=0
+BreakAfter=0
+DelEmptySpace=0
+PrintBeforeBreak=1
+PrintAfterBreak=0
+ControlDBF=none
+Formula1=
+Formula2=
+Formula3=
+Formula4=
+Formula5=
+Formula6=
+Formula7=
+Formula8=
+Formula9=
+Formula10=
+Formula11=
+Formula12=
+TopMinimum=0
+Formula13=
+
+[Items]
+5=TEXT|Schüt-Duis - Aurich|101|1|1|1|2|113|78|5|3|3|2|3|0|0||0||||||||||||||0                                                                                                                                                                                                              
+400=LineHorizontal|Line horizontal|-1|1|1|1|1|8|183|2|3|2|1|1|0|0

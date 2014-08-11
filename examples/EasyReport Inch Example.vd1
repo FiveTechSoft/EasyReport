@@ -1,0 +1,18 @@
+[General]
+Title=Order title
+Width=6.00
+Height=3.50
+
+[Items]
+// Parameters:
+// Text:  say| name| show| deleteable| editable| top| left| width| height| font| text color| background color| orientation
+// Image: say| name| show| deleteable| editable|  top| left| width| height| filename| border
+1=Text| [ Sodtalbers+Partner - Plaggefelder Str. 42 - 26632 Ihlow ]| 101| 1| 1| 1|2.00|0.36|2.00|0.14| 6| 3| 2| 1| 0
+2=Text| Name| 102| 1| 1| 1| 2.20| 0.36| 2.00| 0.16| 3| 3| 2| 1| 0
+3=Text| Name 2| 103| 1| 1| 1| 2.40| 0.36| 2.00| 0.16| 3| 3| 2| 1| 0
+4=Text| Street| 104| 1| 1| 1| 2.60| 0.36| 2.00| 0.18| 3| 3| 2| 1| 0
+5=Text| Zipcode / City| 105| 1| 1| 1| 2.92| 0.36| 2.00| 0.18| 3| 3| 2| 1| 0
+6=Text| ORDER| 201| 1| 1| 1| 2.34| 3.76| 2.00| 0.28| 2| 1| 2| 2| 0
+7=Text| Nr. / Date| 202| 1| 1| 1| 2.66| 3.76| 2.00| 0.16| 3| 3| 6| 2| 1
+8=Image| Image 1|301|1|1|1|0.22|4.24|1.65|0.56|.\examples\EasyReport image.jpg|1
+9=Text| Company 1| 302| 1| 1| 1|0.78|3.82|2.06|0.44| 3| 3| 2| 3| 0

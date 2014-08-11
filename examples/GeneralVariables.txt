@@ -1,0 +1,2 @@
+Barcode; Company; Total
+27000120;"[ Sodtalbers+Partner - Plaggefelder Str. 42 - 26632 Ihlow ]";259,00

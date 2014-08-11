@@ -1,0 +1,38 @@
+[General]
+EditProperties=1
+EditAreaProperties=1
+EditLanguage=1
+Title=Order form
+Measure=2
+GridWidth=0.02
+GridHeight=0.02
+ShowGrid=0
+TopMargin=1.00
+LeftMargin=1.00
+GeneralExpressions=EasyReport General.dbf
+UserExpressions=EasyReport User.dbf
+DataExpressions=EasyReport Database.dbf
+
+[Fonts]
+1=Arial| 16| -36| 1| 0| 1| 0| -200
+2=Arial| 0| -26| 1| 0| 0| 0| 0
+3=Arial| 0| -12| 0| 0| 0| 0| 0
+4=Courier| 5| -12| 0| 1| 1| 0| 0
+5=Arial| 7| -16| 1| 1| 1| 0| 200
+6=Arial| 0| -8| 0| 0| 0| 0| 0
+
+[Colors]
+1=10485760
+2=16777215
+3=0
+4=4227072
+5=8421376
+6=65535
+
+[Areas]
+1=EasyReport Inch Example.VD1
+
+[Infos]
+Revision=14
+SaveDate=28.07.2004
+SaveTime=09:01:56

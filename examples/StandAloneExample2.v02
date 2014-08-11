@@ -1,0 +1,36 @@
+[General]
+Title=Positions
+Width=200
+Height=7
+Top1=36
+Top2=36
+TopVariable=1
+Condition=1
+BreakBefore=0
+BreakAfter=0
+DelEmptySpace=0
+PrintBeforeBreak=0
+PrintAfterBreak=0
+ControlDBF=example
+Formula1=
+Formula2=
+Formula3=
+Formula4=
+Formula5=
+Formula6=
+Formula7=
+Formula8=
+Formula9=IF( oVRD:DBPrevValue( "state" ) <> oVRD:DBValue( "state" ) .and. oVRD:nDBFRecord > 1, 1, 0 )
+Formula10=
+Formula11=
+Formula12=
+TopMinimum=36
+Formula13=
+
+[Items]
+401=TEXT|State|-1|1|1|1|1|8|26|6|3|3|2|1|0|0|[example:state]|0||||||||||||
+402=TEXT|first+last|-1|1|1|1|1|35|93|6|3|3|2|1|0|0|alltrim( [example:first] ) + " " + alltrim( [example:last] )|0||||||||||||
+403=TEXT|City|-1|1|1|1|1|128|34|6|3|3|2|1|0|0|[example:city]|0||||||||||||
+4=Text|Unit|104|  0|1|1|2|151|16|6|3|3|2|1|0|0|example3->unit
+5=Text|Price|105|  0|0|1|2|168|23|6|3|3|2|3|0|0|ALLTRIM(STR( EXAMPLE3->PRICE, 12, 2 ))
+400=TEXT|Salary|-1|1|1|1|1|162|29|6|3|3|2|3|0|0|[example:salary]|0||||||||||||                                                                                                                                                                                

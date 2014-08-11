@@ -1,0 +1,14 @@
+[General]
+Title=Position footer
+Width=200
+Height=13
+Top1=230
+Top2=230
+TopVariable=1
+Condition=1
+
+[Items]
+2=Text|Total records:|103|1|1|1|5|121|46|6|3|3|2|3|0|0|
+5=Text|Total|106|1|1|1|5|167|24|6|3|1|2|3|0|0|ALLTRIM(STR( EXAMPLE3->(LASTREC()), 5 ))
+400=LineHorizontal|Line horizontal|-1|1|1|1|2|8|183|2|3|2|1|1|0|0
+=0|0|0|0|0|0|0|0|0|0|

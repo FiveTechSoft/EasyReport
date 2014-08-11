@@ -1,0 +1,19 @@
+[General]
+Title=Positions
+Width=200
+Height=7
+Top1=32
+Top2=32
+TopVariable=1
+Condition=1
+BreakBefore=0
+BreakAfter=0
+
+[Items]
+401=Text|State|-1|1|1|1|1|8|26|6|3|3|2|1|0|0|example4->state
+402=Text|first+last|-1|1|1|1|1|35|93|6|3|3|2|1|0|0|alltrim( example4->first ) + " " + alltrim( example4->last )
+403=Text|City|-1|1|1|1|1|128|34|6|3|3|2|1|0|0|example4->city
+4=Text|Unit|104|  0|1|1|2|151|16|6|3|3|2|1|0|0|example3->unit
+5=Text|Price|105|  0|0|1|2|168|23|6|3|3|2|3|0|0|ALLTRIM(STR( EXAMPLE3->PRICE, 12, 2 ))
+400=Text|Salary|-1|1|1|1|1|162|29|6|3|3|2|3|0|0|alltrim(str( example4->salary, 9, 2 ))
+

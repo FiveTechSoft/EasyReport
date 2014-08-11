@@ -1,0 +1,30 @@
+[General]
+Title=Order footer
+Width=200
+Height=20
+Top1=260
+Top2=260
+TopVariable=0
+Condition=1
+DelEmptySpace=0
+BreakBefore=0
+BreakAfter=0
+PrintBeforeBreak=1
+PrintAfterBreak=0
+ControlDBF=keine
+Formula1=
+Formula2=
+Formula3=
+Formula4=
+Formula5=
+Formula6=
+Formula7=
+Formula8=
+Formula9=
+Formula10=
+Formula11=
+Formula12=
+
+[Items]
+1=TEXT|Company 2|101|1|1|1|4|7|66|12|3|3|2|1|0|0|oVRD:Cargo[7]|1||||||||||||||0
+2=TEXT|Internet|102|1|1|1|4|110|80|12|3|3|2|3|0|0|oVRD:Cargo[8]|1||||||||||||||0

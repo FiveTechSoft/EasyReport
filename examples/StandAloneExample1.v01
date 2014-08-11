@@ -1,0 +1,39 @@
+[General]
+Title=Order title
+Width=200
+Height=75
+Top1=20
+Top2=20
+TopVariable=0
+Condition=3
+DelEmptySpace=0
+BreakBefore=0
+BreakAfter=0
+Formula1=
+Formula2=
+Formula3=
+Formula4=
+Formula5=
+Formula6=
+Formula7=
+Formula8=
+Formula9=
+Formula10=
+ControlDBF=none
+PrintBeforeBreak=0
+PrintAfterBreak=0
+Formula11=
+Formula12=
+
+[Items]
+1=TEXT|[client:name1]|-1|1|1|1|45|10|70|6|3|3|2|1|0|0||0||||||||||||||0                                                                                                                                                                                        
+2=TEXT|[client:name2]|-1|1|1|1|50|10|70|5|3|3|2|1|0|0||0||||||||||||
+3=TEXT|[client:street]|104|1|1|1|55|10|70|5|3|3|2|1|0|0||0||||||||||||
+4=TEXT|[client:city]|104|1|1|1|61|10|70|5|3|3|2|1|0|0||0||||||||||||
+5=TEXT|Number + Date|202|1|1|1|58|130|60|5|10|3|6|2|0|0|"Nr.: " + [client:number] + "    Date: " + [client:date]|0|||||||2||||1|
+11=TEXT|ORDER|201|1|1|1|46|130|60|10|2|3|2|2|0|0||0||||||||||||
+12=IMAGE|Image 1|301|1|1|1|11|136|55|19|.\examples\EasyReport image.jpg|0|||||||
+13=TEXT|[general:Company]|101|1|1|1|40|10|70|4|6|3|2|1|0|0||0||||||||||||
+14=BARCODE|2700301|150|1|1|1|67|140|50|4|1|3|2|1|0|0.30|||||||"6"||||                                                                                                                                                                                                     
+15=LineHorizontal|Line horizontal|-1|1|1|1|56|130|60|2|1|2|1|1|0|0||||||||||                                                                                                                                                                                                                                                                                                                                                                  
+400=TEXT|123m|-1|1|1|1|6|5|33|9|11|3|2|2|0|0||0||||||||||||

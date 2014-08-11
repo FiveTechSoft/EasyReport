@@ -1,0 +1,38 @@
+[General]
+Title=Position footer
+Width=200
+Height=32
+Top1=230
+Top2=230
+TopVariable=1
+Condition=1
+DelEmptySpace=0
+BreakBefore=0
+BreakAfter=0
+PrintBeforeBreak=0
+PrintAfterBreak=0
+ControlDBF=none
+Formula1=
+Formula2=
+Formula3=
+Formula4=
+Formula5=
+Formula6=
+Formula7=
+Formula8=
+Formula9=
+Formula10=
+Formula11=
+Formula12=
+
+[Items]
+1=Text|Sum:|101|1|1|1|4|126|27|6|3|3|2|3|0
+2=Text|Total:|103|1|1|1|20|107|46|6|3|3|2|3|0
+3=Text|V.A.T.:|102|1|1|1|11|126|27|6|3|3|2|3|0
+4=TEXT|Sum|104|1|1|1|4|154|36|6|3|1|2|3|0|0|oVRD:Cargo[9]|0||||||||||||||0
+5=TEXT|Total|106|1|1|1|20|154|36|6|3|1|2|3|0|0|oVRD:Cargo[11]|0||||||||||||||0
+6=TEXT|V.A.T.|105|1|1|1|11|154|36|6|3|1|2|3|0|0|oVRD:Cargo[10]|0||||||||||||||0
+11=LineHorizontal|Line horizontal|404|1|1|1|26|107|84|2|3|2|1|1
+12=LineHorizontal|Line horizontal|401|1|1|1|17|107|84|2|3|2|1|1
+13=Rectangle|Rectangle|402|1|1|1|5|6|68|23|1|2|2|1|4|4
+14=LineHorizontal|Line horizontal|403|1|1|1|28|107|84|2|3|2|1|1

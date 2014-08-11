@@ -1,0 +1,39 @@
+[General]
+Title=Order positions
+Width=200
+Height=46
+Top1=110
+Top2=50
+TopVariable=0
+Condition=1
+DelEmptySpace=1
+BreakBefore=0
+BreakAfter=0
+Formula1=
+Formula2=
+Formula3=
+Formula4=
+Formula5=
+Formula6=
+Formula7=
+Formula8=
+Formula9=
+Formula10=
+ControlDBF=example
+PrintBeforeBreak=0
+PrintAfterBreak=0
+Formula11=
+Formula12=
+
+[Items]
+401=TEXT|[example:number]|-1|1|1|1|2|8|27|6|3|3|2|1|0|0||0||||||||||||
+402=TEXT|[example:item]|-1|1|1|1|2|36|60|6|3|3|2|1|0|0||0||||||||||||
+403=TEXT|[example:quantity]|-1|1|1|1|2|97|22|6|3|3|2|3|0|0||0||||||||||||
+4=TEXT|[example:unit]|104|1|1|1|2|120|16|6|3|3|2|1|0|0||0||||||||||||                                                                                                                                                                                                               
+5=TEXT|[example:price]|105|1|0|1|2|137|24|6|3|3|2|3|0|0||0||||||||||||
+6=TEXT|[example:totalprice]|106|1|1|1|2|161|30|6|3|3|2|3|0|0||0||||||||||||
+7=IMAGE|Image 1|107|1|1|1|9|36|35|23|.\examples\EasyReport Example3.bmp|0|||||||                                                                                                                                                                                                                                                                                                                                                       
+400=Rectangle|Rectangle|110|  0|1|1|9|174|17|5|1|2|1|1|0|0
+8=TEXT|Subtotal|106|1|1|1|34|161|30|6|3|3|2|3|0|0|Cargo := example->(recno()), oVRD:DBSum( "example", "totalprice",,, "example->(recno()) <= Cargo" )|0|||||||||iif( example->number = "150606", 1, 0 )|||
+9=LineHorizontal|Line horizontal|401|1|1|1|33|140|51|1|3|2|1|1|0|0|0|||||||iif( example->number = "150606", 1, 0 )|||                                                                                                                                                                                              
+10=TEXT|Subtotal:|101|1|1|1|34|133|28|6|3|3|2|3|0|0||0|||||||||iif( example->number = "150606", 1, 0 )|||                                                                                                                                                                        
