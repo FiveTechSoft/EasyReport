@@ -153,24 +153,15 @@ FUNCTION BarMenu()
    LOCAL aBtn[3]
    LOCAL lPrompt := ( GetSysMetrics( 0 ) > 800 )
 
-   DEFINE BUTTONBAR oBar OF oMainWnd SIZE 30, 30 2007
-
-   DEFINE BUTTON OF oBar RESOURCE "B_OPEN", "B_OPEN2", "B_OPEN3" TOP ;
-      TOOLTIP GL("Open") ;
-      ACTION OpenFile()
-
-//   DEFINE SBUTTONBAR oBar 3D size 30,30 OF oMainWnd
-   oBar:SetBrush( oGenVar:oBarBrush )
+   DEFINE BUTTONBAR oBar OF oMainWnd SIZE 50, 50 2010
 
    DEFINE BUTTON RESOURCE "B_OPEN", "B_OPEN2", "B_OPEN3", "B_OPEN2" ;
       OF oBar ;
-      PROMPT IIF( lPrompt, " " + GL("Open"), "" ) ;
       TOOLTIP GL("Open") ;
       ACTION OpenFile()
 
    DEFINE BUTTON RESOURCE "B_SAVE", "B_SAVE2", "B_SAVE3", "B_SAVE2" ;
       OF oBar ;
-      PROMPT IIF( lPrompt, " " + GL("Save"), "" ) ;
       TOOLTIP GL("Save") ;
       ACTION SaveFile() ;
       WHEN .NOT. EMPTY( cDefIni ) .AND. lVRDSave = .F.
@@ -178,7 +169,6 @@ FUNCTION BarMenu()
    IF nDeveloper = 1 .OR. oGenVar:lStandalone = .T.
       DEFINE BUTTON aBtn[1] RESOURCE "B_PREVIEW", "B_PREVIEW2", "B_PREVIEW3", "B_PREVIEW2" ;
          OF oBar ;
-         PROMPT IIF( lPrompt, " " + GL("Preview"), "" ) ;
          TOOLTIP GL("Preview") ;
          ACTION PrintReport( .T., !oGenVar:lStandalone ) ;
          WHEN .NOT. EMPTY( cDefIni )
@@ -229,28 +219,24 @@ FUNCTION BarMenu()
    IF VAL( GetPvProfString( "General", "InsertMode", "1", cDefIni ) ) = 1
       DEFINE BUTTON RESOURCE "B_TEXT", "B_TEXT2", "B_TEXT3", "B_TEXT2" ;
          OF oBar GROUP ;
-         PROMPT  IIF( lPrompt, " " + GL("Text"), "" ) ;
          TOOLTIP STRTRAN( GL("Insert &Text"), "&" ) ;
          ACTION NewItem( "TEXT", nAktArea ) ;
          WHEN .NOT. EMPTY( cDefIni )
 
       DEFINE BUTTON RESOURCE "B_IMAGE", "B_IMAGE2", "B_IMAGE3", "B_IMAGE2" ;
          OF oBar ;
-         PROMPT  IIF( lPrompt, " " + GL("Image"), "" ) ;
          TOOLTIP STRTRAN( GL("Insert &Image"), "&" ) ;
          ACTION NewItem( "IMAGE", nAktArea ) ;
          WHEN .NOT. EMPTY( cDefIni )
 
       DEFINE BUTTON RESOURCE "B_GRAPHIC", "B_GRAPHIC2", "B_GRAPHIC3", "B_GRAPHIC2" ;
          OF oBar ;
-         PROMPT  IIF( lPrompt, " " + GL("Graphic"), "" ) ;
          TOOLTIP STRTRAN( GL("Insert &Graphic"), "&" ) ;
          ACTION NewItem( "GRAPHIC", nAktArea ) ;
          WHEN .NOT. EMPTY( cDefIni )
 
       DEFINE BUTTON RESOURCE "B_BARCODE", "B_BARCODE2", "B_BARCODE3", "B_BARCODE2" ;
          OF oBar ;
-         PROMPT  IIF( lPrompt, " " + GL("Barcode"), "" ) ;
          TOOLTIP STRTRAN( GL("Insert &Barcode"), "&" ) ;
          ACTION NewItem( "BARCODE", nAktArea ) ;
          WHEN .NOT. EMPTY( cDefIni )
