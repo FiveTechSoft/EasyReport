@@ -87,7 +87,7 @@ HB_FUNC( CHANGECOL ) // ( hBitmap, lMaskColor, lOldMask) --> nil
 
 //----------------------------------------------------------------------------//
 
-HB_FUNC( SETGRAYMASED ) // ( hBitmap , lMaskColor, lMaskColor) --> nil
+HB_FUNC( SETGRAYMASKED ) // ( hBitmap , lMaskColor, lMaskColor) --> nil
 {
    SetGrayMasked( ( HBITMAP ) hb_parnl( 1 ) );
 }

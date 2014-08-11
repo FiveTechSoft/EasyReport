@@ -100,8 +100,9 @@ FUNCTION Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
    DEFINE FONT oAppFont NAME "Arial" SIZE 0, -12
    DEFINE ICON oIcon FILE ".\vrd.ico"
 
-   SetBalloon( .T. )
-
+   // SetBalloon( .T. )
+   SetDlgGradient( { { 1, RGB( 199, 216, 237 ), RGB( 237, 242, 248 ) } } )
+   
    DEFINE WINDOW oMainWnd FROM 2, 3 TO 28, 85 VSCROLL HSCROLL ;
       TITLE MainCaption() ;
       BRUSH oBrush MDI ;
@@ -155,7 +156,7 @@ FUNCTION BarMenu()
 
    DEFINE BUTTONBAR oBar OF oMainWnd SIZE 50, 50 2010
 
-   DEFINE BUTTON RESOURCE "B_OPEN", "B_OPEN2", "B_OPEN3", "B_OPEN2" ;
+   DEFINE BUTTON RESOURCE "B_OPEN" ;
       OF oBar ;
       TOOLTIP GL("Open") ;
       ACTION OpenFile()
