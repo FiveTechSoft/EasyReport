@@ -12,4 +12,5 @@
 @del 7*.*
 @del 8*.*
 @del 9*.*
+del vrdt*.*
 @del *.log
