@@ -92,7 +92,7 @@ B_EDIT3            BITMAP         "\bitmaps\bitmap18.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_EXIT             BITMAP         "\bitmaps\bitmap19.bmp"
+B_EXIT             BITMAP         "\bitmaps\exit.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
@@ -160,7 +160,7 @@ B_LIST3            BITMAP         "\bitmaps\bitmap35.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_OPEN             BITMAP         "\bitmaps\bitmap36.bmp"
+B_OPEN             BITMAP         "\bitmaps\open.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
@@ -172,7 +172,7 @@ B_OPEN3            BITMAP         "\bitmaps\bitmap38.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_PREVIEW          BITMAP         "\bitmaps\bitmap39.bmp"
+B_PREVIEW          BITMAP         "\bitmaps\preview.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
@@ -188,7 +188,7 @@ B_PRINT            BITMAP         "\bitmaps\bitmap42.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_REDO             BITMAP         "\bitmaps\bitmap43.bmp"
+B_REDO             BITMAP         "\bitmaps\redo.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
@@ -200,7 +200,7 @@ B_REDO3            BITMAP         "\bitmaps\bitmap45.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_SAVE             BITMAP         "\bitmaps\bitmap46.bmp"
+B_SAVE             BITMAP         "\bitmaps\save.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
@@ -248,7 +248,7 @@ B_TEXT3            BITMAP         "\bitmaps\bitmap57.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_UNDO             BITMAP         "\bitmaps\bitmap58.bmp"
+B_UNDO             BITMAP         "\bitmaps\undo.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
@@ -332,7 +332,7 @@ EP_EMAIL           BITMAP         "\bitmaps\bitmap78.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-EP_EXIT            BITMAP         "\bitmaps\bitmap79.bmp"
+EP_EXIT            BITMAP         "\bitmaps\exit.bmp"
 
 
 LANGUAGE 0, SUBLANG_NEUTRAL

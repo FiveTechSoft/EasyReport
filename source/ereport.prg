@@ -154,15 +154,17 @@ FUNCTION BarMenu()
    LOCAL aBtn[3]
    LOCAL lPrompt := ( GetSysMetrics( 0 ) > 800 )
 
-   DEFINE BUTTONBAR oBar OF oMainWnd SIZE 50, 50 2010
+   DEFINE BUTTONBAR oBar OF oMainWnd SIZE 70, 70 2010
 
    DEFINE BUTTON RESOURCE "B_OPEN" ;
       OF oBar ;
+      PROMPT FWString( "Open" ) ;
       TOOLTIP GL("Open") ;
       ACTION OpenFile()
 
    DEFINE BUTTON RESOURCE "B_SAVE" ;
       OF oBar ;
+      PROMPT FWString( "Save" ) ;
       TOOLTIP GL("Save") ;
       ACTION SaveFile() ;
       WHEN .NOT. EMPTY( cDefIni ) .AND. lVRDSave = .F.
@@ -170,6 +172,7 @@ FUNCTION BarMenu()
    IF nDeveloper = 1 .OR. oGenVar:lStandalone = .T.
       DEFINE BUTTON aBtn[1] RESOURCE "B_PREVIEW" ;
          OF oBar ;
+         PROMPT FWString( "Preview" ) ;
          TOOLTIP GL("Preview") ;
          ACTION PrintReport( .T., !oGenVar:lStandalone ) ;
          WHEN .NOT. EMPTY( cDefIni )
@@ -177,6 +180,7 @@ FUNCTION BarMenu()
 
    DEFINE BUTTON aBtn[2] RESOURCE "B_UNDO" ;
       OF oBar GROUP ;
+      PROMPT FWString( "Undo" ) ;
       TOOLTIP STRTRAN( GL("&Undo"), "&" ) ;
       ACTION Undo() ;
       WHEN .NOT. EMPTY( cDefIni ) .AND. nUndoCount > 0 
@@ -184,6 +188,7 @@ FUNCTION BarMenu()
 
    DEFINE BUTTON aBtn[3] RESOURCE "B_REDO" ;
       OF oBar ;
+      PROMPT FWString( "Redo" ) ;
       TOOLTIP STRTRAN( GL("&Redo"), "&" ) ;
       ACTION Redo() ;
       WHEN .NOT. EMPTY( cDefIni ) .AND. nRedoCount > 0
@@ -191,6 +196,7 @@ FUNCTION BarMenu()
 
    DEFINE BUTTON RESOURCE "B_ITEMLIST", "B_ITEMLIST2", "B_ITEMLIST3", "B_ITEMLIST2" ;
       OF oBar GROUP ;
+      PROMPT FWSTring( "Area and Item list" ) ;
       TOOLTIP GL("Area and Item List") ;
       ACTION Itemlist() ;
       WHEN .NOT. EMPTY( cDefIni )
@@ -198,6 +204,7 @@ FUNCTION BarMenu()
    IF VAL( GetPvProfString( "General", "EditSetting", "1", cDefIni ) ) = 1
       DEFINE BUTTON RESOURCE "B_FONTCOLOR", "B_FONTCOLOR2", "B_FONTCOLOR3", "B_FONTCOLOR2" ;
          OF oBar ;
+         PROMPT FWString( "Fonts and Colors" ) ;
          TOOLTIP GL("Fonts and Colors") ;
          ACTION GeneralSettings() ;
          WHEN .NOT. EMPTY( cDefIni )
@@ -206,6 +213,7 @@ FUNCTION BarMenu()
    IF VAL( GetPvProfString( "General", "EditAreaProperties", "1", cDefIni ) ) = 1
       DEFINE BUTTON RESOURCE "B_AREA", "B_AREA2", "B_AREA3", "B_AREA2" ;
          OF oBar ;
+         PROMPT FWSTring( "Area properties" ) ; 
          TOOLTIP GL("Area Properties") ;
          ACTION AreaProperties( nAktArea ) ;
          WHEN .NOT. EMPTY( cDefIni )
@@ -213,6 +221,7 @@ FUNCTION BarMenu()
 
    DEFINE BUTTON RESOURCE "B_EDIT", "B_EDIT2", "B_EDIT3", "B_EDIT2" ;
       OF oBar ;
+      PROMPT FWString( "Item Properties" ) ;
       TOOLTIP GL("Item Properties") ;
       ACTION IIF( LEN( aSelection ) <> 0, MultiItemProperties(), ItemProperties( nAktItem, nAktArea ) ) ;
       WHEN .NOT. EMPTY( cDefIni )
@@ -220,6 +229,7 @@ FUNCTION BarMenu()
    IF VAL( GetPvProfString( "General", "InsertMode", "1", cDefIni ) ) = 1
       DEFINE BUTTON RESOURCE "B_TEXT", "B_TEXT2", "B_TEXT3", "B_TEXT2" ;
          OF oBar GROUP ;
+         PROMPT FWString( "Insert &Text" ) ;
          TOOLTIP STRTRAN( GL("Insert &Text"), "&" ) ;
          ACTION NewItem( "TEXT", nAktArea ) ;
          WHEN .NOT. EMPTY( cDefIni )

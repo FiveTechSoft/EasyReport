@@ -1531,7 +1531,7 @@ FUNCTION GetRegistInfos()
    ENDIF
 
    lDemo = .F. // FiveTech
-   cRegText = "FiveTech Software full version" // FiveTech
+   cRegText = "(c) FiveTech Software 2014" // FiveTech
 
 RETURN ( cRegText )
 
