@@ -256,6 +256,7 @@ FUNCTION BarMenu()
    IF VAL( GetPvProfString( "General", "ShowExitButton", "0", cGeneralIni ) ) = 1
 
       DEFINE BUTTON RESOURCE "B_EXIT" ;
+         PROMPT FWString( "Exit" ) ;
          OF oBar GROUP ;
          ACTION oMainWnd:End() TOOLTIP GL("Exit")
 
