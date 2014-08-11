@@ -1,9 +1,11 @@
 @del *.bak
 @del *.map
+@del obj\*.c
 @del obj\*.obj
 @del *.tds
 @del ereport.exe
 @del ereport.res
+@del 1*.*
 @del 2*.*
 @del 3*.*
 @del 4*.*

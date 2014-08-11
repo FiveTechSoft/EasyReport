@@ -56,7 +56,7 @@ EP_EMAIL           BITMAP         "\bitmaps\bitmap9.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-EP_EXIT            BITMAP         "\bitmaps\bitmap10.bmp"
+EP_EXIT            BITMAP         "\bitmaps\exit.bmp"
 
 
 LANGUAGE 0, SUBLANG_NEUTRAL

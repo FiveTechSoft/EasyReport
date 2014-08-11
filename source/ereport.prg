@@ -161,28 +161,28 @@ FUNCTION BarMenu()
       TOOLTIP GL("Open") ;
       ACTION OpenFile()
 
-   DEFINE BUTTON RESOURCE "B_SAVE", "B_SAVE2", "B_SAVE3", "B_SAVE2" ;
+   DEFINE BUTTON RESOURCE "B_SAVE" ;
       OF oBar ;
       TOOLTIP GL("Save") ;
       ACTION SaveFile() ;
       WHEN .NOT. EMPTY( cDefIni ) .AND. lVRDSave = .F.
 
    IF nDeveloper = 1 .OR. oGenVar:lStandalone = .T.
-      DEFINE BUTTON aBtn[1] RESOURCE "B_PREVIEW", "B_PREVIEW2", "B_PREVIEW3", "B_PREVIEW2" ;
+      DEFINE BUTTON aBtn[1] RESOURCE "B_PREVIEW" ;
          OF oBar ;
          TOOLTIP GL("Preview") ;
          ACTION PrintReport( .T., !oGenVar:lStandalone ) ;
          WHEN .NOT. EMPTY( cDefIni )
    ENDIF
 
-   DEFINE BUTTON aBtn[2] RESOURCE "B_UNDO", "B_UNDO2", "B_UNDO3", "B_UNDO2" ;
+   DEFINE BUTTON aBtn[2] RESOURCE "B_UNDO" ;
       OF oBar GROUP ;
       TOOLTIP STRTRAN( GL("&Undo"), "&" ) ;
       ACTION Undo() ;
       WHEN .NOT. EMPTY( cDefIni ) .AND. nUndoCount > 0 
       // MENU UndoRedoMenu( 1, aBtn[2] ) ;
 
-   DEFINE BUTTON aBtn[3] RESOURCE "B_REDO", "B_REDO2", "B_REDO3", "B_REDO2" ;
+   DEFINE BUTTON aBtn[3] RESOURCE "B_REDO" ;
       OF oBar ;
       TOOLTIP STRTRAN( GL("&Redo"), "&" ) ;
       ACTION Redo() ;
@@ -245,7 +245,7 @@ FUNCTION BarMenu()
 
    IF VAL( GetPvProfString( "General", "ShowExitButton", "0", cGeneralIni ) ) = 1
 
-      DEFINE BUTTON RESOURCE "B_EXIT", "B_EXIT2", "B_EXIT2", "B_EXIT2" ;
+      DEFINE BUTTON RESOURCE "B_EXIT" ;
          OF oBar GROUP ;
          ACTION oMainWnd:End() TOOLTIP GL("Exit")
 

@@ -7,7 +7,7 @@ void MaskRegion(HDC hdc, RECT * rct,
 
 //----------------------------------------------------------------------------//
 
-void SetMasked( HBITMAP hbm , DWORD lMaskColor)
+static void SetMasked( HBITMAP hbm , DWORD lMaskColor)
 {
    HDC     hdc;
    BITMAP  bm;
@@ -48,7 +48,7 @@ void ChangeCol( HBITMAP hbm , DWORD lMaskColor, DWORD lOldMask)
 
 //----------------------------------------------------------------------------//
 
-void SetGrayMasked( HBITMAP hbm )
+static void SetGrayMasked( HBITMAP hbm )
 {
    HDC      hdc;
    BITMAP   bm;
