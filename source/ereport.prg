@@ -159,97 +159,97 @@ FUNCTION BarMenu()
       TOOLTIP GL("Open") ;
       ACTION OpenFile()
 
-/*   DEFINE SBUTTONBAR oBar 3D size 30,30 OF oMainWnd
+//   DEFINE SBUTTONBAR oBar 3D size 30,30 OF oMainWnd
    oBar:SetBrush( oGenVar:oBarBrush )
 
-   DEFINE SBUTTON RESOURCE "B_OPEN", "B_OPEN2", "B_OPEN3", "B_OPEN2" ;
-      OF oBar BRUSH oGenVar:oBarBrush ;
+   DEFINE BUTTON RESOURCE "B_OPEN", "B_OPEN2", "B_OPEN3", "B_OPEN2" ;
+      OF oBar ;
       PROMPT IIF( lPrompt, " " + GL("Open"), "" ) ;
       TOOLTIP GL("Open") ;
       ACTION OpenFile()
 
-   DEFINE SBUTTON RESOURCE "B_SAVE", "B_SAVE2", "B_SAVE3", "B_SAVE2" ;
-      OF oBar BRUSH oGenVar:oBarBrush ;
+   DEFINE BUTTON RESOURCE "B_SAVE", "B_SAVE2", "B_SAVE3", "B_SAVE2" ;
+      OF oBar ;
       PROMPT IIF( lPrompt, " " + GL("Save"), "" ) ;
       TOOLTIP GL("Save") ;
       ACTION SaveFile() ;
       WHEN .NOT. EMPTY( cDefIni ) .AND. lVRDSave = .F.
 
    IF nDeveloper = 1 .OR. oGenVar:lStandalone = .T.
-      DEFINE SBUTTON aBtn[1] RESOURCE "B_PREVIEW", "B_PREVIEW2", "B_PREVIEW3", "B_PREVIEW2" ;
-         OF oBar BRUSH oGenVar:oBarBrush ;
+      DEFINE BUTTON aBtn[1] RESOURCE "B_PREVIEW", "B_PREVIEW2", "B_PREVIEW3", "B_PREVIEW2" ;
+         OF oBar ;
          PROMPT IIF( lPrompt, " " + GL("Preview"), "" ) ;
          TOOLTIP GL("Preview") ;
          ACTION PrintReport( .T., !oGenVar:lStandalone ) ;
          WHEN .NOT. EMPTY( cDefIni )
    ENDIF
 
-   DEFINE SBUTTON aBtn[2] RESOURCE "B_UNDO", "B_UNDO2", "B_UNDO3", "B_UNDO2" ;
-      OF oBar BRUSH oGenVar:oBarBrush GROUP ;
+   DEFINE BUTTON aBtn[2] RESOURCE "B_UNDO", "B_UNDO2", "B_UNDO3", "B_UNDO2" ;
+      OF oBar GROUP ;
       TOOLTIP STRTRAN( GL("&Undo"), "&" ) ;
       ACTION Undo() ;
-      MENU UndoRedoMenu( 1, aBtn[2] ) ;
-      WHEN .NOT. EMPTY( cDefIni ) .AND. nUndoCount > 0
+      WHEN .NOT. EMPTY( cDefIni ) .AND. nUndoCount > 0 
+      // MENU UndoRedoMenu( 1, aBtn[2] ) ;
 
-   DEFINE SBUTTON aBtn[3] RESOURCE "B_REDO", "B_REDO2", "B_REDO3", "B_REDO2" ;
-      OF oBar BRUSH oGenVar:oBarBrush ;
+   DEFINE BUTTON aBtn[3] RESOURCE "B_REDO", "B_REDO2", "B_REDO3", "B_REDO2" ;
+      OF oBar ;
       TOOLTIP STRTRAN( GL("&Redo"), "&" ) ;
       ACTION Redo() ;
-      MENU UndoRedoMenu( 2, aBtn[2] ) ;
       WHEN .NOT. EMPTY( cDefIni ) .AND. nRedoCount > 0
+      // MENU UndoRedoMenu( 2, aBtn[2] ) ;
 
-   DEFINE SBUTTON RESOURCE "B_ITEMLIST", "B_ITEMLIST2", "B_ITEMLIST3", "B_ITEMLIST2" ;
-      OF oBar BRUSH oGenVar:oBarBrush GROUP ;
+   DEFINE BUTTON RESOURCE "B_ITEMLIST", "B_ITEMLIST2", "B_ITEMLIST3", "B_ITEMLIST2" ;
+      OF oBar GROUP ;
       TOOLTIP GL("Area and Item List") ;
       ACTION Itemlist() ;
       WHEN .NOT. EMPTY( cDefIni )
 
    IF VAL( GetPvProfString( "General", "EditSetting", "1", cDefIni ) ) = 1
-      DEFINE SBUTTON RESOURCE "B_FONTCOLOR", "B_FONTCOLOR2", "B_FONTCOLOR3", "B_FONTCOLOR2" ;
-         OF oBar BRUSH oGenVar:oBarBrush ;
+      DEFINE BUTTON RESOURCE "B_FONTCOLOR", "B_FONTCOLOR2", "B_FONTCOLOR3", "B_FONTCOLOR2" ;
+         OF oBar ;
          TOOLTIP GL("Fonts and Colors") ;
          ACTION GeneralSettings() ;
          WHEN .NOT. EMPTY( cDefIni )
    ENDIF
 
    IF VAL( GetPvProfString( "General", "EditAreaProperties", "1", cDefIni ) ) = 1
-      DEFINE SBUTTON RESOURCE "B_AREA", "B_AREA2", "B_AREA3", "B_AREA2" ;
-         OF oBar BRUSH oGenVar:oBarBrush ;
+      DEFINE BUTTON RESOURCE "B_AREA", "B_AREA2", "B_AREA3", "B_AREA2" ;
+         OF oBar ;
          TOOLTIP GL("Area Properties") ;
          ACTION AreaProperties( nAktArea ) ;
          WHEN .NOT. EMPTY( cDefIni )
    ENDIF
 
-   DEFINE SBUTTON RESOURCE "B_EDIT", "B_EDIT2", "B_EDIT3", "B_EDIT2" ;
-      OF oBar BRUSH oGenVar:oBarBrush ;
+   DEFINE BUTTON RESOURCE "B_EDIT", "B_EDIT2", "B_EDIT3", "B_EDIT2" ;
+      OF oBar ;
       TOOLTIP GL("Item Properties") ;
       ACTION IIF( LEN( aSelection ) <> 0, MultiItemProperties(), ItemProperties( nAktItem, nAktArea ) ) ;
       WHEN .NOT. EMPTY( cDefIni )
 
    IF VAL( GetPvProfString( "General", "InsertMode", "1", cDefIni ) ) = 1
-      DEFINE SBUTTON RESOURCE "B_TEXT", "B_TEXT2", "B_TEXT3", "B_TEXT2" ;
-         OF oBar BRUSH oGenVar:oBarBrush GROUP ;
+      DEFINE BUTTON RESOURCE "B_TEXT", "B_TEXT2", "B_TEXT3", "B_TEXT2" ;
+         OF oBar GROUP ;
          PROMPT  IIF( lPrompt, " " + GL("Text"), "" ) ;
          TOOLTIP STRTRAN( GL("Insert &Text"), "&" ) ;
          ACTION NewItem( "TEXT", nAktArea ) ;
          WHEN .NOT. EMPTY( cDefIni )
 
-      DEFINE SBUTTON RESOURCE "B_IMAGE", "B_IMAGE2", "B_IMAGE3", "B_IMAGE2" ;
-         OF oBar BRUSH oGenVar:oBarBrush ;
+      DEFINE BUTTON RESOURCE "B_IMAGE", "B_IMAGE2", "B_IMAGE3", "B_IMAGE2" ;
+         OF oBar ;
          PROMPT  IIF( lPrompt, " " + GL("Image"), "" ) ;
          TOOLTIP STRTRAN( GL("Insert &Image"), "&" ) ;
          ACTION NewItem( "IMAGE", nAktArea ) ;
          WHEN .NOT. EMPTY( cDefIni )
 
-      DEFINE SBUTTON RESOURCE "B_GRAPHIC", "B_GRAPHIC2", "B_GRAPHIC3", "B_GRAPHIC2" ;
-         OF oBar BRUSH oGenVar:oBarBrush ;
+      DEFINE BUTTON RESOURCE "B_GRAPHIC", "B_GRAPHIC2", "B_GRAPHIC3", "B_GRAPHIC2" ;
+         OF oBar ;
          PROMPT  IIF( lPrompt, " " + GL("Graphic"), "" ) ;
          TOOLTIP STRTRAN( GL("Insert &Graphic"), "&" ) ;
          ACTION NewItem( "GRAPHIC", nAktArea ) ;
          WHEN .NOT. EMPTY( cDefIni )
 
-      DEFINE SBUTTON RESOURCE "B_BARCODE", "B_BARCODE2", "B_BARCODE3", "B_BARCODE2" ;
-         OF oBar BRUSH oGenVar:oBarBrush ;
+      DEFINE BUTTON RESOURCE "B_BARCODE", "B_BARCODE2", "B_BARCODE3", "B_BARCODE2" ;
+         OF oBar ;
          PROMPT  IIF( lPrompt, " " + GL("Barcode"), "" ) ;
          TOOLTIP STRTRAN( GL("Insert &Barcode"), "&" ) ;
          ACTION NewItem( "BARCODE", nAktArea ) ;
@@ -258,12 +258,11 @@ FUNCTION BarMenu()
 
    IF VAL( GetPvProfString( "General", "ShowExitButton", "0", cGeneralIni ) ) = 1
 
-      DEFINE SBUTTON RESOURCE "B_EXIT", "B_EXIT2", "B_EXIT2", "B_EXIT2" ;
-         OF oBar BRUSH oGenVar:oBarBrush GROUP ;
+      DEFINE BUTTON RESOURCE "B_EXIT", "B_EXIT2", "B_EXIT2", "B_EXIT2" ;
+         OF oBar GROUP ;
          ACTION oMainWnd:End() TOOLTIP GL("Exit")
 
    ENDIF
-*/
 
    oBar:bLClicked := {|| NIL }
    oBar:bRClicked := {|| NIL }
