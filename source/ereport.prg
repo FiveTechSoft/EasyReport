@@ -111,7 +111,7 @@ FUNCTION Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
    //Clipboard
    DEFINE CLIPBOARD oClpGeneral OF oMainWnd
 
-   SET MESSAGE OF oMainWnd TO oGenVar:cRegistInfo CENTERED
+   SET MESSAGE OF oMainWnd TO oGenVar:cRegistInfo CENTERED 2010
 
    DEFINE MSGITEM oMsgInfo OF oMainWnd:oMsgBar SIZE 280
 
