@@ -196,6 +196,8 @@ B_PRINT            BITMAP         "\bitmaps\bitmap42.bmp"
 LANGUAGE 7, SUBLANG_DEFAULT
 B_REDO             BITMAP         "\bitmaps\redo.bmp"
 
+LANGUAGE 7, SUBLANG_DEFAULT
+B_REDO_16          BITMAP         "\bitmaps\redo16x16.bmp"
 
 LANGUAGE 7, SUBLANG_DEFAULT
 B_REDO2            BITMAP         "\bitmaps\bitmap44.bmp"
@@ -258,6 +260,8 @@ B_TEXT3            BITMAP         "\bitmaps\bitmap57.bmp"
 LANGUAGE 7, SUBLANG_DEFAULT
 B_UNDO             BITMAP         "\bitmaps\undo.bmp"
 
+LANGUAGE 7, SUBLANG_DEFAULT
+B_UNDO_16          BITMAP         "\bitmaps\undo16x16.bmp"
 
 LANGUAGE 7, SUBLANG_DEFAULT
 B_UNDO2            BITMAP         "\bitmaps\bitmap59.bmp"

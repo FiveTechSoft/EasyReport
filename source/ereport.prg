@@ -919,11 +919,11 @@ FUNCTION BuildMenu()
 
    MENUITEM GL("&Edit")
    MENU
-   MENUITEM GL("&Undo") + chr(9) + GL("Ctrl+Z") RESOURCE "B_UNDO" ;
+   MENUITEM GL("&Undo") + chr(9) + GL("Ctrl+Z") RESOURCE "B_UNDO_16" ;
       ACTION Undo() ;
       ACCELERATOR ACC_CONTROL, ASC( GL("Z") ) ;
       WHEN .NOT. EMPTY( cDefIni ) .AND. nUndoCount > 0
-   MENUITEM GL("&Redo") + chr(9) + GL("Ctrl+Y") RESOURCE "B_REDO" ;
+   MENUITEM GL("&Redo") + chr(9) + GL("Ctrl+Y") RESOURCE "B_REDO_16" ;
       ACTION Redo() ;
       ACCELERATOR ACC_CONTROL, ASC( GL("Y") ) ;
       WHEN .NOT. EMPTY( cDefIni ) .AND. nRedoCount > 0
