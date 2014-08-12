@@ -94,6 +94,9 @@ B_EDIT3            BITMAP         "\bitmaps\bitmap18.bmp"
 LANGUAGE 7, SUBLANG_DEFAULT
 B_EXIT             BITMAP         "\bitmaps\exit.bmp"
 
+LANGUAGE 7, SUBLANG_DEFAULT
+B_EXIT_16          BITMAP         "\bitmaps\exit16x16.bmp"
+
 
 LANGUAGE 7, SUBLANG_DEFAULT
 B_EXIT2            BITMAP         "\bitmaps\bitmap20.bmp"
@@ -164,6 +167,9 @@ B_OPEN             BITMAP         "\bitmaps\open.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
+B_OPEN_16          BITMAP         "\bitmaps\open16x16.bmp"
+
+LANGUAGE 7, SUBLANG_DEFAULT
 B_OPEN2            BITMAP         "\bitmaps\bitmap37.bmp"
 
 
@@ -202,6 +208,8 @@ B_REDO3            BITMAP         "\bitmaps\bitmap45.bmp"
 LANGUAGE 7, SUBLANG_DEFAULT
 B_SAVE             BITMAP         "\bitmaps\save.bmp"
 
+LANGUAGE 7, SUBLANG_DEFAULT
+B_SAVE_16          BITMAP         "\bitmaps\save16x16.bmp"
 
 LANGUAGE 7, SUBLANG_DEFAULT
 B_SAVE2            BITMAP         "\bitmaps\bitmap47.bmp"

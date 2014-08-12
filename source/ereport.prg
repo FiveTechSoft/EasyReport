@@ -875,11 +875,11 @@ FUNCTION BuildMenu()
       MENUITEM GL("&New") ;
          ACTION NewReport()
    ENDIF
-   MENUITEM GL("&Open") + chr(9) + GL("Ctrl+O") RESOURCE "B_OPEN" ;
+   MENUITEM GL("&Open") + chr(9) + GL("Ctrl+O") RESOURCE "B_OPEN_16" ;
       ACCELERATOR ACC_CONTROL, ASC( GL("O") ) ;
       ACTION OpenFile()
    SEPARATOR
-   MENUITEM GL("&Save") + chr(9) + GL("Ctrl+S") RESOURCE "B_SAVE" ;
+   MENUITEM GL("&Save") + chr(9) + GL("Ctrl+S") RESOURCE "B_SAVE_16" ;
       ACCELERATOR ACC_CONTROL, ASC( GL("S") ) ;
       ACTION SaveFile() ;
       WHEN .NOT. EMPTY( cDefIni ) .AND. lVRDSave = .F.
@@ -913,7 +913,7 @@ FUNCTION BuildMenu()
             ACTION   OpenFile( cMruItem ) ;
             SIZE     VAL( GetPvProfString( "General", "MruList"  , "4", cGeneralIni ) )
    SEPARATOR
-   MENUITEM GL("&Exit") RESOURCE "B_EXIT" ;
+   MENUITEM GL("&Exit") RESOURCE "B_EXIT_16" ;
       ACTION oMainWnd:End()
    ENDMENU
 
