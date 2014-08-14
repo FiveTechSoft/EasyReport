@@ -107,14 +107,14 @@ ereport.res : ereport.rc
    cl.exe -c -TC -W3 -I$(HBDIR)\include -I$(SDKDIR)\include -I$(VCDIR)\include $<   
 
 .\obj\cfunc.obj : .\source\cfunc.c
-   cl.exe -c -TC -W3 -I$(HBDIR)\include -I$(SDKDIR)\include -I$(VCDIR)\include .\source\cfunc.c 
+   cl.exe -c -TC -W3 -I$(HBDIR)\include -I$(SDKDIR)\include -I$(VCDIR)\include -Fo.\obj\cfunc.obj .\source\cfunc.c 
 
 .\obj\point.obj : .\source\point.c
-   cl.exe -c -TC -W3 -I$(HBDIR)\include -I$(SDKDIR)\include -I$(VCDIR)\include .\source\point.c 
+   cl.exe -c -TC -W3 -I$(HBDIR)\include -I$(SDKDIR)\include -I$(VCDIR)\include -Fo.\obj\point.obj .\source\point.c 
 
 .\obj\setmask.obj : .\source\setmask.c
-   cl.exe -c -TC -W3 -I$(HBDIR)\include -I$(SDKDIR)\include -I$(VCDIR)\include .\source\setmask.c 
+   cl.exe -c -TC -W3 -I$(HBDIR)\include -I$(SDKDIR)\include -I$(VCDIR)\include -Fo.\obj\setmask.obj .\source\setmask.c 
 
 .\obj\treedraw.obj : .\source\treedraw.c
-   cl.exe -c -TC -W3 -I$(HBDIR)\include -I$(SDKDIR)\include -I$(VCDIR)\include .\source\treedraw.c 
+   cl.exe -c -TC -W3 -I$(HBDIR)\include -I$(SDKDIR)\include -I$(VCDIR)\include -Fo.\obj\treedraw.obj   .\source\treedraw.c 
  
