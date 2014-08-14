@@ -5,10 +5,8 @@ FWDIR=c:\fwteam
 VCDIR="c:\Program Files (x86)\Microsoft Visual Studio 12.0\VC"
 SDKDIR="c:\Program Files (x86)\Windows Kits\8.1"
 
-.SUFFIXES: .prg .c .obj .rc .res
-
-PRGS =       \
-.\ereport.prg  \ 
+PRGS = \
+.\ereport.prg \
 .\vrdini.prg   \
 .\easyprev.prg \
 .\erfile.prg   \
@@ -21,19 +19,23 @@ PRGS =       \
 .\tvitem.prg   \
 .\vrd.prg      \
 .\vrdbcode.prg \
-.\vrditem.prg :
+.\vrditem.prg 
 
-C =	         \
-.\cfunc.c    \               
-.\point.c    \
-.\setmask.c  \
-.\treedraw.c :
+C =	\
+.\cfunc.c \
+.\point.c \
+.\setmask.c \
+.\treedraw.c 
+
+.SUFFIXES: .prg .c .obj .rc .res
 
 OBJ=$(PRG:.prg=.obj)
 OBJS=$(OBJ:.\=.\obj\)
 
 COBJ=$(C:.c=.obj)
 COBJS=$(COBJ:.\=.\obj\)
+
+CFILES=$(C:.\=.\source\)
 
 ereport.exe : $(OBJS) $(COBJS) ereport.res
    echo $(OBJS) > msvc.tmp
@@ -92,9 +94,6 @@ ereport.exe : $(OBJS) $(COBJS) ereport.res
    @type link.log
    @del $(PRGS:.prg=.obj)
 
-$(PRGS:.prg=.obj) : $(PRGS:.prg=.c)
-$(PRGS:.prg=.c) : $(PRGS)
-
 ereport.res : ereport.rc
    rc.exe -r -d__FLAT__ ereport.rc 
    
@@ -103,4 +102,19 @@ ereport.res : ereport.rc
 
 .c.obj:
    cl.exe -c -TC -W3 -I$(HBDIR)\include -I$(SDKDIR)\include -I$(VCDIR)\include $<
+   
+.c.obj:
+   cl.exe -c -TC -W3 -I$(HBDIR)\include -I$(SDKDIR)\include -I$(VCDIR)\include $<   
+
+.\obj\cfunc.obj : .\source\cfunc.c
+   cl.exe -c -TC -W3 -I$(HBDIR)\include -I$(SDKDIR)\include -I$(VCDIR)\include .\source\cfunc.c 
+
+.\obj\point.obj : .\source\point.c
+   cl.exe -c -TC -W3 -I$(HBDIR)\include -I$(SDKDIR)\include -I$(VCDIR)\include .\source\point.c 
+
+.\obj\setmask.obj : .\source\setmask.c
+   cl.exe -c -TC -W3 -I$(HBDIR)\include -I$(SDKDIR)\include -I$(VCDIR)\include .\source\setmask.c 
+
+.\obj\treedraw.obj : .\source\treedraw.c
+   cl.exe -c -TC -W3 -I$(HBDIR)\include -I$(SDKDIR)\include -I$(VCDIR)\include .\source\treedraw.c 
  
