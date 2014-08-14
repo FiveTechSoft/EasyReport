@@ -1622,7 +1622,7 @@ FUNCTION MsgBarItem( nItem, nArea, cAreaIni, nRow, nCol, lResize )
       SetReticule( aItemPixelPos[2] + nRulerTop, aItemPixelPos[1] + nRuler, nArea )
 
    ELSE
-      nInfoRow := 0; nRulerTop := 0; nInfoCol := 0; nRuler := 0 // FiveTech
+      nInfoRow := 0; nInfoCol := 0 // nRulerTop := 0; nRuler := 0 // FiveTech
       
       nTop  := aItems[nArea,nItem]:nTop  + ;
                   ( nLoWord( aItems[nArea,nItem]:nPoint ) - nInfoRow ) - nRulerTop

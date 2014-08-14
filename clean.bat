@@ -2,6 +2,7 @@
 @del *.map
 @del obj\*.c
 @del obj\*.obj
+@del source\*.bak
 @del *.tds
 @del ereport.exe
 @del ereport.res
