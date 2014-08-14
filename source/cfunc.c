@@ -33,7 +33,7 @@ HB_FUNC( SHOWGRID ) // hDC, @cPS, wGridWidth, wGridHeight, wWidth, wHeight, wTop
 
 //----------------------------------------------------------------------------//
 
-HB_FUNC( CTRLDRAWFOCUS )  // hWnd, nOriginRow, nOriginCol, nMRow, nMCol, nMResize
+HB_FUNC( ER_CTRLDRAWFOCUS )  // hWnd, nOriginRow, nOriginCol, nMRow, nMCol, nMResize
 {
    HWND hWnd = ( HWND ) hb_parnl( 1 );
    #ifdef __XPP__
@@ -133,14 +133,6 @@ HB_FUNC( CTRLDRAWFOCUS )  // hWnd, nOriginRow, nOriginCol, nMRow, nMCol, nMResiz
    DeleteObject( hReg );
    DeleteObject( hBr );
 
-}
-
-//----------------------------------------------------------------------------//
-HB_FUNC( ROUNDRECT )  // hDC, nLeftRect, nTopRect, nRightRect, nBottomRect,
-                      // nEllipseWidth, nEllipseHeight)
-{
-   hb_retl( RoundRect( ( HDC ) hb_parnl( 1 ), hb_parnl( 2 ), hb_parnl( 3 ), hb_parnl( 4 ),
-                     hb_parnl( 5 ), hb_parnl( 6 ), hb_parnl( 7 ) ) );
 }
 
 //----------------------------------------------------------------------------//
