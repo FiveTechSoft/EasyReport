@@ -79,7 +79,7 @@ FUNCTION Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
    SET DATE FORMAT IIF( EMPTY( cDateFormat ), "dd.mm.yyyy", cDateFormat )
 
    //File-Handles erhöhen
-   SetHandleCount(100)
+   // SetHandleCount(100)    FiveTech
 
    //Open Undo database
    OpenUndo()
@@ -548,8 +548,8 @@ FUNCTION SetGeneralSettings()
    oGenVar:lShowGrid   := ( GetPvProfString( "General", "ShowGrid"     , "0", cDefIni ) = "1" )
    oGenVar:nGridWidth  := VAL( GetPvProfString( "General", "GridWidth" , "1", cDefIni ) )
    oGenVar:nGridHeight := VAL( GetPvProfString( "General", "GridHeight", "1", cDefIni ) )
-   nXMove := GetPixel( oGenVar:nGridWidth )
-   nYMove := GetPixel( oGenVar:nGridHeight )
+   nXMove := ER_GetPixel( oGenVar:nGridWidth )
+   nYMove := ER_GetPixel( oGenVar:nGridHeight )
 
    OpenDatabases()
 
@@ -1289,8 +1289,8 @@ FUNCTION ClientWindows()
             { VAL( GetPvProfString( "General", "Width", "600", aAreaIni[nWnd] ) ), ;
               VAL( GetPvProfString( "General", "Height", "300", aAreaIni[nWnd] ) ) }
 
-         nWidth  := GetPixel( oGenVar:aAreaSizes[nWnd,1] )
-         nHeight := GetPixel( oGenVar:aAreaSizes[nWnd,2] )
+         nWidth  := ER_GetPixel( oGenVar:aAreaSizes[nWnd,1] )
+         nHeight := ER_GetPixel( oGenVar:aAreaSizes[nWnd,2] )
 
          nDemoWidth := nWidth
          IF oGenVar:lFixedAreaWidth = .T.
@@ -1428,26 +1428,26 @@ FUNCTION SetReticule( nRow, nCol, nArea )
 
    IF nRow <= nRulerTop
       nRowPos := nRulerTop
-   ELSEIF nRow >= GetPixel( oGenVar:aAreaSizes[nArea,2] ) + nRulerTop
-      nRowPos := GetPixel( oGenVar:aAreaSizes[nArea,2] ) + nRulerTop
+   ELSEIF nRow >= ER_GetPixel( oGenVar:aAreaSizes[nArea,2] ) + nRulerTop
+      nRowPos := ER_GetPixel( oGenVar:aAreaSizes[nArea,2] ) + nRulerTop
    ENDIF
 
    IF nCol <= nRuler
       nColPos := nRuler
-   ELSEIF nCol >= GetPixel( oGenVar:aAreaSizes[nArea,1] ) + nRuler
-      nColPos := GetPixel( oGenVar:aAreaSizes[nArea,1] ) + nRuler
+   ELSEIF nCol >= ER_GetPixel( oGenVar:aAreaSizes[nArea,1] ) + nRuler
+      nColPos := ER_GetPixel( oGenVar:aAreaSizes[nArea,1] ) + nRuler
    ENDIF
 
    aRuler[nArea,2]:Move( nRowPos, 0, ;
-      IIF( lShow, GetPixel( oGenVar:aAreaSizes[nArea,1] ) + nRuler, nRuler ), 1, .T. )
+      IIF( lShow, ER_GetPixel( oGenVar:aAreaSizes[nArea,1] ) + nRuler, nRuler ), 1, .T. )
 
    AEVAL( aRuler, {|x,y| IIF( x[1] <> NIL, ;
       ( x[1]:Move( nRulerTop-nRuler, nColPos, 1, ;
-          IIF( lShow, GetPixel( oGenVar:aAreaSizes[y,2] ) + nRuler, nRuler ), .T. ) ), ) } )
+          IIF( lShow, ER_GetPixel( oGenVar:aAreaSizes[y,2] ) + nRuler, nRuler ), .T. ) ), ) } )
 
    //AEVAL( aRuler, {|x,y| IIF( x[1] <> NIL, ;
    //   ( x[1]:Move( nRulerTop-nRuler, nColPos, 1, ;
-   //                IIF( lShow, GetPixel( oGenVar:aAreaSizes[y,2] ) + nRuler, nRuler ), .T. ), ;
+   //                IIF( lShow, ER_GetPixel( oGenVar:aAreaSizes[y,2] ) + nRuler, nRuler ), .T. ), ;
    //     x[1]:Refresh(), x[2]:Refresh() ), ) } )
 
 RETURN (.T.)
@@ -1482,10 +1482,10 @@ RETURN (.T.)
 *-----------------------------------------------------------------------------
 FUNCTION ZeichneHintergrund( nArea )
 
-   LOCAL nWidth  := GetPixel( oGenVar:aAreaSizes[nArea,1] )
-   LOCAL nHeight := GetPixel( oGenVar:aAreaSizes[nArea,2] )
+   LOCAL nWidth  := ER_GetPixel( oGenVar:aAreaSizes[nArea,1] )
+   LOCAL nHeight := ER_GetPixel( oGenVar:aAreaSizes[nArea,2] )
 
-   SetGridSize( GetPixel( oGenVar:nGridWidth ), GetPixel( oGenVar:nGridHeight ) )
+   SetGridSize( ER_GetPixel( oGenVar:nGridWidth ), ER_GetPixel( oGenVar:nGridHeight ) )
 
    //Hintergrund
    Rectangle( aWnd[nArea]:hDC, ;
@@ -1494,7 +1494,7 @@ FUNCTION ZeichneHintergrund( nArea )
    //Grid zeichnen
    IF oGenVar:lShowGrid = .T.
       ShowGrid( aWnd[nArea]:hDC, aWnd[nArea]:cPS, ;
-                GetPixel( oGenVar:nGridWidth ), GetPixel( oGenVar:nGridHeight ), ;
+                ER_GetPixel( oGenVar:nGridWidth ), ER_GetPixel( oGenVar:nGridHeight ), ;
                 nWidth, nHeight, nRulerTop, nRuler )
    ENDIF
 
@@ -2617,9 +2617,9 @@ FUNCTION Options()
          ENDIF
       NEXT
 
-      SetGridSize( GetPixel( nGridWidth ), GetPixel( nGridHeight ) )
-      nXMove := GetPixel( nGridWidth )
-      nYMove := GetPixel( nGridHeight )
+      SetGridSize( ER_GetPixel( nGridWidth ), ER_GetPixel( nGridHeight ) )
+      nXMove := ER_GetPixel( nGridWidth )
+      nYMove := ER_GetPixel( nGridHeight )
 
       oGenVar:nGridWidth  := nGridWidth
       oGenVar:nGridHeight := nGridHeight
@@ -3075,17 +3075,17 @@ FUNCTION AreaChange( nArea, cAreaTitle, nOldWidth, nWidth, nOldHeight, nHeight )
    IF nOldHeight <> nHeight
 
       aWnd[nArea]:Move( aWnd[nArea]:nTop, aWnd[nArea]:nLeft, ;
-         IIF( oGenVar:lFixedAreaWidth, 1200, GetPixel( nWidth ) + nRuler + nAreaZugabe2 ), ;
-         IIF( oGenVar:aAreaHide[nArea], nRulerTop, GetPixel( nHeight ) + nAreaZugabe ), .T. )
+         IIF( oGenVar:lFixedAreaWidth, 1200, ER_GetPixel( nWidth ) + nRuler + nAreaZugabe2 ), ;
+         IIF( oGenVar:aAreaHide[nArea], nRulerTop, ER_GetPixel( nHeight ) + nAreaZugabe ), .T. )
 
       FOR i := nArea+1 TO 100
          IF aWnd[i] <> NIL
-            aWnd[i]:Move( aWnd[i]:nTop + GetPixel( nHeight - nOldHeight ), ;
+            aWnd[i]:Move( aWnd[i]:nTop + ER_GetPixel( nHeight - nOldHeight ), ;
                aWnd[i]:nLeft,,, .T. )
          ENDIF
       NEXT
 
-      nTotalHeight += GetPixel( nHeight - nOldHeight )
+      nTotalHeight += ER_GetPixel( nHeight - nOldHeight )
 
    ENDIF
 
@@ -3108,12 +3108,12 @@ FUNCTION AreaHide( nArea )
 
    oGenVar:aAreaHide[nAktArea] := !oGenVar:aAreaHide[nAktArea]
 
-   nDifferenz := ( GetPixel( nAreaHeight ) + nAreaZugabe - 18 ) * ;
+   nDifferenz := ( ER_GetPixel( nAreaHeight ) + nAreaZugabe - 18 ) * ;
                  IIF( oGenVar:aAreaHide[nAktArea], -1, 1 )
 
    aWnd[nArea]:Move( aWnd[nArea]:nTop, aWnd[nArea]:nLeft, ;
-      IIF( oGenVar:lFixedAreaWidth, 1200, GetPixel( nWidth ) + nRuler + nAreaZugabe2 ), ;
-      IIF( oGenVar:aAreaHide[nAktArea], 18, GetPixel( nAreaHeight ) + nAreaZugabe ), .T. )
+      IIF( oGenVar:lFixedAreaWidth, 1200, ER_GetPixel( nWidth ) + nRuler + nAreaZugabe2 ), ;
+      IIF( oGenVar:aAreaHide[nAktArea], 18, ER_GetPixel( nAreaHeight ) + nAreaZugabe ), .T. )
 
    FOR i := nArea+1 TO 100
       IF aWnd[i] <> NIL

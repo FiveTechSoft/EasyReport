@@ -425,7 +425,7 @@ FUNCTION UpdateItems( nValue, nTyp, lAddValue, aOldValue )
 
    LOCAL i, aWerte, nTop, nLeft, nWidth, nHeight
    LOCAL lStop     := .F.
-   LOCAL nPixValue := GetPixel( nValue )
+   LOCAL nPixValue := ER_GetPixel( nValue )
 
    DO CASE
    CASE nTyp = 1 .AND. nValue = aOldValue[1] ; lStop := .T.
@@ -831,11 +831,11 @@ FUNCTION SaveTextItem( oVar, oItem )
 
       aItems[oVar:nArea,oVar:i]:End()
       aItems[oVar:nArea,oVar:i] := ;
-         TSay():New( nRulerTop + GetPixel( oItem:nTop ), nRuler + GetPixel( oItem:nLeft ), ;
+         TSay():New( nRulerTop + ER_GetPixel( oItem:nTop ), nRuler + ER_GetPixel( oItem:nLeft ), ;
                      {|| oItem:cText }, aWnd[oVar:nArea],, ;
                      oFont, lCenter, lRight, ( oItem:lBorder .OR. oGenVar:lShowBorder ), ;
                      .T., GetColor( oItem:nColText ), GetColor( oItem:nColPane ), ;
-                     GetPixel( oItem:nWidth ), GetPixel( oItem:nHeight ), ;
+                     ER_GetPixel( oItem:nWidth ), ER_GetPixel( oItem:nHeight ), ;
                      .F., .T., .F., .F., .F. )
 
       aItems[oVar:nArea,oVar:i]:lDrag := .T.
@@ -1067,8 +1067,8 @@ FUNCTION SaveImgItem( oVar, oItem )
    IF oItem:nShow = 1
 
       aItems[oVar:nArea,oVar:i]:End()
-      aItems[oVar:nArea,oVar:i] := TImage():New( nRulerTop + GetPixel( oItem:nTop ), ;
-         nRuler + GetPixel( oItem:nLeft ), GetPixel( oItem:nWidth ), GetPixel( oItem:nHeight ),,, ;
+      aItems[oVar:nArea,oVar:i] := TImage():New( nRulerTop + ER_GetPixel( oItem:nTop ), ;
+         nRuler + ER_GetPixel( oItem:nLeft ), ER_GetPixel( oItem:nWidth ), ER_GetPixel( oItem:nHeight ),,, ;
          IIF( oItem:lBorder, .F., .T. ), aWnd[oVar:nArea],,, .F., .T.,,, .T.,, .T. )
       aItems[oVar:nArea,oVar:i]:Progress(.F.)
       aItems[oVar:nArea,oVar:i]:LoadBmp( VRD_LF2SF( oItem:cFile ) )
@@ -1269,17 +1269,17 @@ FUNCTION SaveGraItem( oVar, oItem )
 
       aItems[oVar:nArea,oVar:i]:End()
 
-      aItems[oVar:nArea,oVar:i] := TBitmap():New( nRulerTop + GetPixel( oItem:nTop ), ;
-          nRuler + GetPixel( oItem:nLeft ), GetPixel( oItem:nWidth ), GetPixel( oItem:nHeight ), ;
+      aItems[oVar:nArea,oVar:i] := TBitmap():New( nRulerTop + ER_GetPixel( oItem:nTop ), ;
+          nRuler + ER_GetPixel( oItem:nLeft ), ER_GetPixel( oItem:nWidth ), ER_GetPixel( oItem:nHeight ), ;
           "GRAPHIC",, .T., aWnd[oVar:nArea],,, .F., .T.,,, .T.,, .T. )
       aItems[oVar:nArea,oVar:i]:lTransparent := .T.
 
       aItems[oVar:nArea,oVar:i]:bPainted = {| hDC, cPS | ;
          DrawGraphic( hDC, ALLTRIM(UPPER( oItem:cType )), ;
-                      GetPixel( oItem:nWidth ), GetPixel( oItem:nHeight ), ;
+                      ER_GetPixel( oItem:nWidth ), ER_GetPixel( oItem:nHeight ), ;
                       GetColor( oItem:nColor ), GetColor( oItem:nColFill ), ;
                       oItem:nStyle, oItem:nPenWidth, ;
-                      GetPixel( oItem:nRndWidth ), GetPixel( oItem:nRndHeight ) ) }
+                      ER_GetPixel( oItem:nRndWidth ), ER_GetPixel( oItem:nRndHeight ) ) }
 
       aItems[oVar:nArea,oVar:i]:lDrag := .T.
       ElementActions( aItems[oVar:nArea,oVar:i], oVar:i, "", oVar:nArea, oVar:cAreaIni )
@@ -1472,16 +1472,16 @@ FUNCTION SaveBarItem( oVar, oItem )
 
       aItems[oVar:nArea,oVar:i]:End()
 
-         aItems[oVar:nArea,oVar:i] := TBitmap():New( nRulerTop + GetPixel( oItem:nTop ), ;
-             nRuler + GetPixel( oItem:nLeft ), GetPixel( oItem:nWidth ), GetPixel( oItem:nHeight ), ;
+         aItems[oVar:nArea,oVar:i] := TBitmap():New( nRulerTop + ER_GetPixel( oItem:nTop ), ;
+             nRuler + ER_GetPixel( oItem:nLeft ), ER_GetPixel( oItem:nWidth ), ER_GetPixel( oItem:nHeight ), ;
              "GRAPHIC",, .T., aWnd[oVar:nArea],,, .F., .T.,,, .T.,, .T. )
          aItems[oVar:nArea,oVar:i]:lTransparent := .T.
 
          aItems[oVar:nArea,oVar:i]:bPainted = {| hDC, cPS | ;
             DrawBarcode( hDC, ALLTRIM( oItem:cText ), 0, 0, ;
-                         GetPixel( oItem:nWidth ), GetPixel( oItem:nHeight ), ;
+                         ER_GetPixel( oItem:nWidth ), ER_GetPixel( oItem:nHeight ), ;
                          oItem:nBCodeType, GetColor( oItem:nColText ), GetColor( oItem:nColPane ), ;
-                         oItem:nOrient, oItem:lTrans, GetPixel( oItem:nPinWidth ) ) }
+                         oItem:nOrient, oItem:lTrans, ER_GetPixel( oItem:nPinWidth ) ) }
 
       aItems[oVar:nArea,oVar:i]:lDrag := .T.
       ElementActions( aItems[oVar:nArea,oVar:i], oVar:i, "", oVar:nArea, oVar:cAreaIni )
@@ -1541,9 +1541,9 @@ FUNCTION SetItemSize( i, nArea, cAreaIni )
 
          aItems[nArea,i]:bPainted = {| hDC, cPS | ;
             DrawGraphic( hDC, cTyp, ;
-            GetPixel( nWidth ), GetPixel( nHeight ), ;
+            ER_GetPixel( nWidth ), ER_GetPixel( nHeight ), ;
             GetColor( nColor ), GetColor( nColFill ), ;
-            nStyle, nPenWidth, GetPixel( nRndWidth ), GetPixel( nRndHeight ) ) }
+            nStyle, nPenWidth, ER_GetPixel( nRndWidth ), ER_GetPixel( nRndHeight ) ) }
 
       ELSEIF UPPER( cTyp ) = "BARCODE"
 
@@ -1551,11 +1551,11 @@ FUNCTION SetItemSize( i, nArea, cAreaIni )
 
          aItems[nArea,i]:bPainted = {| hDC, cPS | ;
             DrawBarcode( hDC, oItem:cText, 0, 0, ;
-            GetPixel( nWidth ), GetPixel( nHeight ), ;
+            ER_GetPixel( nWidth ), ER_GetPixel( nHeight ), ;
             oItem:nBCodeType, ;
             GetColor( oItem:nColText ), GetColor( oItem:nColPane ), ;
             oItem:nOrient, IIF( oItem:nTrans = 1, .T., .F. ), ;
-            GetPixel( oItem:nPinWidth ) ) }
+            ER_GetPixel( oItem:nPinWidth ) ) }
 
       ENDIF
 
@@ -1578,18 +1578,18 @@ FUNCTION SetItemSize( i, nArea, cAreaIni )
    ENDIF
 
    lFillWindow := .T.
-   aItems[nArea,i]:Move( nRulerTop + GetPixel( VAL( GetField( cItemDef, 7 ) ) ), ;
-      nRuler + GetPixel( VAL( GetField( cItemDef, 8 ) ) ), ;
-      GetPixel( VAL( GetField( cItemDef, 9 ) ) ), ;
-      GetPixel( VAL( GetField( cItemDef, 10 ) ) ), .T. )
+   aItems[nArea,i]:Move( nRulerTop + ER_GetPixel( VAL( GetField( cItemDef, 7 ) ) ), ;
+      nRuler + ER_GetPixel( VAL( GetField( cItemDef, 8 ) ) ), ;
+      ER_GetPixel( VAL( GetField( cItemDef, 9 ) ) ), ;
+      ER_GetPixel( VAL( GetField( cItemDef, 10 ) ) ), .T. )
    lFillWindow := .F.
 
    aItemPosition := { GetField( cItemDef, 7 ), GetField( cItemDef, 8 ), ;
                       GetField( cItemDef, 9 ), GetField( cItemDef, 10 ) }
-   aItemPixelPos := { GetPixel( VAL( GetField( cItemDef, 7 ) ) ), ;
-                      GetPixel( VAL( GetField( cItemDef, 8 ) ) ), ;
-                      GetPixel( VAL( GetField( cItemDef, 9 ) ) ), ;
-                      GetPixel( VAL( GetField( cItemDef, 10 ) ) ) }
+   aItemPixelPos := { ER_GetPixel( VAL( GetField( cItemDef, 7 ) ) ), ;
+                      ER_GetPixel( VAL( GetField( cItemDef, 8 ) ) ), ;
+                      ER_GetPixel( VAL( GetField( cItemDef, 9 ) ) ), ;
+                      ER_GetPixel( VAL( GetField( cItemDef, 10 ) ) ) }
 
    aItems[nArea,i]:Refresh()
 
@@ -1916,10 +1916,10 @@ FUNCTION NewItem( cTyp, nArea, nTmpCopyArea, nTmpCopyEntry, cTmpItemCopy )
    /*
    aItemPosition := { GetField( cItemDef, 7 ), GetField( cItemDef, 8 ), ;
                       GetField( cItemDef, 9 ), GetField( cItemDef, 10 ) }
-   aItemPixelPos := { GetPixel( VAL( aItemPosition[1] ) ), ;
-                      GetPixel( VAL( aItemPosition[2] ) ), ;
-                      GetPixel( VAL( aItemPosition[3] ) ), ;
-                      GetPixel( VAL( aItemPosition[4] ) ) }
+   aItemPixelPos := { ER_GetPixel( VAL( aItemPosition[1] ) ), ;
+                      ER_GetPixel( VAL( aItemPosition[2] ) ), ;
+                      ER_GetPixel( VAL( aItemPosition[3] ) ), ;
+                      ER_GetPixel( VAL( aItemPosition[4] ) ) }
    aItems[nArea,i]:CheckDots()
    aItems[nArea,i]:Move( nRulerTop + aItemPixelPos[1], nRuler + aItemPixelPos[2],,, .T. )
    */
@@ -1964,10 +1964,10 @@ FUNCTION ShowItem( i, nArea, cAreaIni, aFirst, nElemente, aIniEntries, nIndex )
 
       cTyp      := UPPER(ALLTRIM( GetField( cItemDef, 1 ) ))
       cName     := GetField( cItemDef, 2 )
-      nTop      := nRulerTop + GetPixel( VAL( GetField( cItemDef, 7 ) ) )
-      nLeft     := nRuler    + GetPixel( VAL( GetField( cItemDef, 8 ) ) )
-      nWidth    := GetPixel( VAL( GetField( cItemDef, 9 ) ) )
-      nHeight   := GetPixel( VAL( GetField( cItemDef, 10 ) ) )
+      nTop      := nRulerTop + ER_GetPixel( VAL( GetField( cItemDef, 7 ) ) )
+      nLeft     := nRuler    + ER_GetPixel( VAL( GetField( cItemDef, 8 ) ) )
+      nWidth    := ER_GetPixel( VAL( GetField( cItemDef, 9 ) ) )
+      nHeight   := ER_GetPixel( VAL( GetField( cItemDef, 10 ) ) )
 
       IF aFirst[1] = .F.
          aFirst[2] := nTop
@@ -2039,8 +2039,8 @@ FUNCTION ShowItem( i, nArea, cAreaIni, aFirst, nElemente, aIniEntries, nIndex )
          nColFill   := VAL( GetField( cItemDef, 12 ) )
          nStyle     := VAL( GetField( cItemDef, 13 ) )
          nPenWidth  := VAL( GetField( cItemDef, 14 ) )
-         nRndWidth  := GetPixel( VAL( GetField( cItemDef, 15 ) ) )
-         nRndHeight := GetPixel( VAL( GetField( cItemDef, 16 ) ) )
+         nRndWidth  := ER_GetPixel( VAL( GetField( cItemDef, 15 ) ) )
+         nRndHeight := ER_GetPixel( VAL( GetField( cItemDef, 16 ) ) )
 
          aItems[nArea,i] := TBitmap():New( nTop, nLeft, nWidth, nHeight, "GRAPHIC",, ;
              .T., aWnd[nArea],,, .F., .T.,,, .T.,, .T. )
@@ -2057,7 +2057,7 @@ FUNCTION ShowItem( i, nArea, cAreaIni, aFirst, nElemente, aIniEntries, nIndex )
          nColPane    := VAL( GetField( cItemDef, 13 ) )
          nOrient     := VAL( GetField( cItemDef, 14 ) )
          lTrans      := IIF( VAL( GetField( cItemDef, 15 ) ) = 1, .T., .F. )
-         nPinWidth   := GetPixel( VAL( GetField( cItemDef, 16 ) ) )
+         nPinWidth   := ER_GetPixel( VAL( GetField( cItemDef, 16 ) ) )
 
          aItems[nArea,i] := TBitmap():New( nTop, nLeft, nWidth, nHeight, "GRAPHIC",, ;
              .T., aWnd[nArea],,, .F., .T.,,, .T.,, .T. )

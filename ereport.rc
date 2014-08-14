@@ -1,5 +1,7 @@
 // place your resources here
 
+1 24 "./resources/WindowsXP.Manifest"
+
 #include "vrd.rc"
 
 

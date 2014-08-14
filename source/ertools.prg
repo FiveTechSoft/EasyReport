@@ -1673,13 +1673,13 @@ RETURN (.T.)
 
 
 *-- FUNCTION -----------------------------------------------------------------
-* Name........: GetPixel
+* Name........: ER_GetPixel
 * Beschreibung:
 * Argumente...: None
 * Rückgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION GetPixel( nValue )
+FUNCTION ER_GetPixel( nValue )
 
    IF Upper( ValType( nMeasure ) ) = "L"
       nMeasure := 1
