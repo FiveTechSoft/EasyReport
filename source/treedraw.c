@@ -13,18 +13,9 @@
 void LineToDot( HDC hDC, int xEnd, int yEnd ); // [ByHernanCeccarelli]
 void FrameDot( HDC hDC, RECT * pRect );        // [ByHernanCeccarelli]
 
-void DrawBitmap( HDC, HBITMAP, WORD, WORD, WORD, WORD, LONG );
+void DrawBitmap( HDC, HBITMAP, LONG, LONG, LONG, LONG, LONG );
 
-
-#ifdef __FLAT__
-   DWORD MoveTo( HDC hdc, int x, int y );
-#endif
-
-#ifdef __XPP__
-   #define _parni( x, y ) PARNI( x, params, y )
-   #define _storni( x, y, z ) STORNI( x, params, y, z )
-#endif
-
+DWORD MoveTo( HDC hdc, int x, int y );
 
 //----------------------------------------------------------------------------//
 
@@ -57,7 +48,6 @@ HB_FUNC( TREEDRAWITEM )
    HBRUSH hBrush, hOldBrush;
    int iItemID = (int) lp->itemID ;
 
-   RECT rect;    // [HernanCeccarelli]
    DWORD dwSize; // [HernanCeccarelli]
    SIZE sz;      // [HernanCeccarelli]
 
@@ -191,7 +181,7 @@ HB_FUNC( TREEDRAWITEM )
 
    if( wItemStyle & TIS_OPEN ) {
        if( hb_parvni( 7, 1 ) != 0 ) {
-         DrawBitmap( lp->hDC, (HBITMAP) hb_parvnl( 8, hb_parvni( 7, 1 ) ), lp->rcItem.top, lp->rcItem.left, 0, 0, 0 );
+         DrawBitmap( lp->hDC, (HBITMAP) hb_parvnl( 8, hb_parvnl( 7, 1 ) ), lp->rcItem.top, lp->rcItem.left, 0, 0, 0 );
          lp->rcItem.left += 18;
        }
    }
@@ -202,12 +192,8 @@ HB_FUNC( TREEDRAWITEM )
        }
    }
 
-   #ifndef __FLAT__
-       dwSize = GetTextExtent( lp->hDC, hb_parc( 2 ), hb_parclen( 2 ) ) ;
-   #else
-       GetTextExtentPoint32( lp->hDC, hb_parc( 2 ), hb_parclen( 2 ), &sz ) ;
-       dwSize = sz.cx;
-   #endif
+   GetTextExtentPoint32( lp->hDC, hb_parc( 2 ), hb_parclen( 2 ), &sz ) ;
+   dwSize = sz.cx;
    lp->rcItem.right = lp->rcItem.left + LOWORD( dwSize ) + 4;
 
    if( iItemID == -1 )

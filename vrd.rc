@@ -20,555 +20,555 @@
 // Bitmap resources
 //
 LANGUAGE 7, SUBLANG_DEFAULT
-ALIGN_BLOCK        BITMAP         "\bitmaps\bitmap1.bmp"
+ALIGN_BLOCK        BITMAP         ".\bitmaps\bitmap1.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-ALIGN_CENTER       BITMAP         "\bitmaps\bitmap2.bmp"
+ALIGN_CENTER       BITMAP         ".\bitmaps\bitmap2.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-ALIGN_LEFT         BITMAP         "\bitmaps\bitmap3.bmp"
+ALIGN_LEFT         BITMAP         ".\bitmaps\bitmap3.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-ALIGN_RIGHT        BITMAP         "\bitmaps\bitmap4.bmp"
+ALIGN_RIGHT        BITMAP         ".\bitmaps\bitmap4.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-ALIGN_WRAP         BITMAP         "\bitmaps\bitmap5.bmp"
+ALIGN_WRAP         BITMAP         ".\bitmaps\bitmap5.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-AREAMINMAX         BITMAP         "\bitmaps\bitmap6.bmp"
+AREAMINMAX         BITMAP         ".\bitmaps\bitmap6.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-AREAPROP           BITMAP         "\bitmaps\bitmap7.bmp"
+AREAPROP           BITMAP         ".\bitmaps\bitmap7.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-AREAPROP2          BITMAP         "\bitmaps\bitmap8.bmp"
+AREAPROP2          BITMAP         ".\bitmaps\bitmap8.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_AREA             BITMAP         "\bitmaps\bitmap9.bmp"
+B_AREA             BITMAP         ".\bitmaps\bitmap9.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_AREA2            BITMAP         "\bitmaps\bitmap10.bmp"
+B_AREA2            BITMAP         ".\bitmaps\bitmap10.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_AREA3            BITMAP         "\bitmaps\bitmap11.bmp"
+B_AREA3            BITMAP         ".\bitmaps\bitmap11.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_BARCODE          BITMAP         "\bitmaps\bitmap12.bmp"
+B_BARCODE          BITMAP         ".\bitmaps\bitmap12.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_BARCODE2         BITMAP         "\bitmaps\bitmap13.bmp"
+B_BARCODE2         BITMAP         ".\bitmaps\bitmap13.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_BARCODE3         BITMAP         "\bitmaps\bitmap14.bmp"
+B_BARCODE3         BITMAP         ".\bitmaps\bitmap14.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_DEL              BITMAP         "\bitmaps\bitmap15.bmp"
+B_DEL              BITMAP         ".\bitmaps\bitmap15.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_EDIT             BITMAP         "\bitmaps\bitmap16.bmp"
+B_EDIT             BITMAP         ".\bitmaps\bitmap16.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_EDIT2            BITMAP         "\bitmaps\bitmap17.bmp"
+B_EDIT2            BITMAP         ".\bitmaps\bitmap17.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_EDIT3            BITMAP         "\bitmaps\bitmap18.bmp"
+B_EDIT3            BITMAP         ".\bitmaps\bitmap18.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_EXIT             BITMAP         "\bitmaps\exit.bmp"
+B_EXIT             BITMAP         ".\bitmaps\exit.bmp"
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_EXIT_16          BITMAP         "\bitmaps\exit16x16.bmp"
+B_EXIT_16          BITMAP         ".\bitmaps\exit16x16.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_EXIT2            BITMAP         "\bitmaps\bitmap20.bmp"
+B_EXIT2            BITMAP         ".\bitmaps\bitmap20.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_FONTCOLOR        BITMAP         "\bitmaps\bitmap21.bmp"
+B_FONTCOLOR        BITMAP         ".\bitmaps\bitmap21.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_FONTCOLOR2       BITMAP         "\bitmaps\bitmap22.bmp"
+B_FONTCOLOR2       BITMAP         ".\bitmaps\bitmap22.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_FONTCOLOR3       BITMAP         "\bitmaps\bitmap23.bmp"
+B_FONTCOLOR3       BITMAP         ".\bitmaps\bitmap23.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_GRAPHIC          BITMAP         "\bitmaps\bitmap24.bmp"
+B_GRAPHIC          BITMAP         ".\bitmaps\bitmap24.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_GRAPHIC2         BITMAP         "\bitmaps\bitmap25.bmp"
+B_GRAPHIC2         BITMAP         ".\bitmaps\bitmap25.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_GRAPHIC3         BITMAP         "\bitmaps\bitmap26.bmp"
+B_GRAPHIC3         BITMAP         ".\bitmaps\bitmap26.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_IMAGE            BITMAP         "\bitmaps\bitmap27.bmp"
+B_IMAGE            BITMAP         ".\bitmaps\bitmap27.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_IMAGE2           BITMAP         "\bitmaps\bitmap28.bmp"
+B_IMAGE2           BITMAP         ".\bitmaps\bitmap28.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_IMAGE3           BITMAP         "\bitmaps\bitmap29.bmp"
+B_IMAGE3           BITMAP         ".\bitmaps\bitmap29.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_ITEMLIST         BITMAP         "\bitmaps\bitmap30.bmp"
+B_ITEMLIST         BITMAP         ".\bitmaps\bitmap30.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_ITEMLIST2        BITMAP         "\bitmaps\bitmap31.bmp"
+B_ITEMLIST2        BITMAP         ".\bitmaps\bitmap31.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_ITEMLIST3        BITMAP         "\bitmaps\bitmap32.bmp"
+B_ITEMLIST3        BITMAP         ".\bitmaps\bitmap32.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_LIST             BITMAP         "\bitmaps\bitmap33.bmp"
+B_LIST             BITMAP         ".\bitmaps\bitmap33.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_LIST2            BITMAP         "\bitmaps\bitmap34.bmp"
+B_LIST2            BITMAP         ".\bitmaps\bitmap34.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_LIST3            BITMAP         "\bitmaps\bitmap35.bmp"
+B_LIST3            BITMAP         ".\bitmaps\bitmap35.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_OPEN             BITMAP         "\bitmaps\open.bmp"
+B_OPEN             BITMAP         ".\bitmaps\open.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_OPEN_16          BITMAP         "\bitmaps\open16x16.bmp"
+B_OPEN_16          BITMAP         ".\bitmaps\open16x16.bmp"
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_OPEN2            BITMAP         "\bitmaps\bitmap37.bmp"
+B_OPEN2            BITMAP         ".\bitmaps\bitmap37.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_OPEN3            BITMAP         "\bitmaps\bitmap38.bmp"
+B_OPEN3            BITMAP         ".\bitmaps\bitmap38.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_PREVIEW          BITMAP         "\bitmaps\preview.bmp"
+B_PREVIEW          BITMAP         ".\bitmaps\preview.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_PREVIEW2         BITMAP         "\bitmaps\bitmap40.bmp"
+B_PREVIEW2         BITMAP         ".\bitmaps\bitmap40.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_PREVIEW3         BITMAP         "\bitmaps\bitmap41.bmp"
+B_PREVIEW3         BITMAP         ".\bitmaps\bitmap41.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_PRINT            BITMAP         "\bitmaps\bitmap42.bmp"
+B_PRINT            BITMAP         ".\bitmaps\bitmap42.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_REDO             BITMAP         "\bitmaps\redo.bmp"
+B_REDO             BITMAP         ".\\bitmaps\\redo.bmp"
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_REDO_16          BITMAP         "\bitmaps\redo16x16.bmp"
+B_REDO_16          BITMAP         ".\\bitmaps\\redo16x16.bmp"
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_REDO2            BITMAP         "\bitmaps\bitmap44.bmp"
+B_REDO2            BITMAP         ".\bitmaps\bitmap44.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_REDO3            BITMAP         "\bitmaps\bitmap45.bmp"
+B_REDO3            BITMAP         ".\bitmaps\bitmap45.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_SAVE             BITMAP         "\bitmaps\save.bmp"
+B_SAVE             BITMAP         ".\bitmaps\save.bmp"
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_SAVE_16          BITMAP         "\bitmaps\save16x16.bmp"
+B_SAVE_16          BITMAP         ".\bitmaps\save16x16.bmp"
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_SAVE2            BITMAP         "\bitmaps\bitmap47.bmp"
+B_SAVE2            BITMAP         ".\bitmaps\bitmap47.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_SAVE3            BITMAP         "\bitmaps\bitmap48.bmp"
+B_SAVE3            BITMAP         ".\bitmaps\bitmap48.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_SOURCE_NO        BITMAP         "\bitmaps\bitmap49.bmp"
+B_SOURCE_NO        BITMAP         ".\bitmaps\bitmap49.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_SOURCE_NO2       BITMAP         "\bitmaps\bitmap50.bmp"
+B_SOURCE_NO2       BITMAP         ".\bitmaps\bitmap50.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_SOURCE_NO3       BITMAP         "\bitmaps\bitmap51.bmp"
+B_SOURCE_NO3       BITMAP         ".\bitmaps\bitmap51.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_SOURCE_NO4       BITMAP         "\bitmaps\bitmap52.bmp"
+B_SOURCE_NO4       BITMAP         ".\bitmaps\bitmap52.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_SOURCE_YES       BITMAP         "\bitmaps\bitmap53.bmp"
+B_SOURCE_YES       BITMAP         ".\bitmaps\bitmap53.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_SOURCE_YES2      BITMAP         "\bitmaps\bitmap54.bmp"
+B_SOURCE_YES2      BITMAP         ".\bitmaps\bitmap54.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_TEXT             BITMAP         "\bitmaps\bitmap55.bmp"
+B_TEXT             BITMAP         ".\bitmaps\bitmap55.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_TEXT2            BITMAP         "\bitmaps\bitmap56.bmp"
+B_TEXT2            BITMAP         ".\bitmaps\bitmap56.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_TEXT3            BITMAP         "\bitmaps\bitmap57.bmp"
+B_TEXT3            BITMAP         ".\bitmaps\bitmap57.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_UNDO             BITMAP         "\bitmaps\undo.bmp"
+B_UNDO             BITMAP         ".\bitmaps\undo.bmp"
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_UNDO_16          BITMAP         "\bitmaps\undo16x16.bmp"
+B_UNDO_16          BITMAP         ".\bitmaps\undo16x16.bmp"
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_UNDO2            BITMAP         "\bitmaps\bitmap59.bmp"
+B_UNDO2            BITMAP         ".\bitmaps\bitmap59.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_UNDO3            BITMAP         "\bitmaps\bitmap60.bmp"
+B_UNDO3            BITMAP         ".\bitmaps\bitmap60.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-BARBRUSH5          BITMAP         "\bitmaps\bitmap61.bmp"
+BARBRUSH5          BITMAP         ".\bitmaps\bitmap61.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-BCODE_HORI         BITMAP         "\bitmaps\bitmap62.bmp"
+BCODE_HORI         BITMAP         ".\bitmaps\bitmap62.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-BCODE_VERT         BITMAP         "\bitmaps\bitmap63.bmp"
+BCODE_VERT         BITMAP         ".\bitmaps\bitmap63.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-BRUSH1             BITMAP         "\bitmaps\bitmap64.bmp"
+BRUSH1             BITMAP         ".\bitmaps\bitmap64.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-BRUSH2             BITMAP         "\bitmaps\bitmap65.bmp"
+BRUSH2             BITMAP         ".\bitmaps\bitmap65.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-BRUSH3             BITMAP         "\bitmaps\bitmap66.bmp"
+BRUSH3             BITMAP         ".\bitmaps\bitmap66.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-BRUSH4             BITMAP         "\bitmaps\bitmap67.bmp"
+BRUSH4             BITMAP         ".\bitmaps\bitmap67.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-CHECKED            BITMAP         "\bitmaps\bitmap68.bmp"
+CHECKED            BITMAP         ".\bitmaps\bitmap68.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-ELLIPSE            BITMAP         "\bitmaps\bitmap69.bmp"
+ELLIPSE            BITMAP         ".\bitmaps\bitmap69.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-EP_BOTTOM          BITMAP         "\bitmaps\bitmap70.bmp"
+EP_BOTTOM          BITMAP         ".\bitmaps\bitmap70.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-EP_BRUSH1          BITMAP         "\bitmaps\bitmap71.bmp"
+EP_BRUSH1          BITMAP         ".\bitmaps\bitmap71.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-EP_BRUSH2          BITMAP         "\bitmaps\bitmap72.bmp"
+EP_BRUSH2          BITMAP         ".\bitmaps\bitmap72.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-EP_BRUSH3          BITMAP         "\bitmaps\bitmap73.bmp"
+EP_BRUSH3          BITMAP         ".\bitmaps\bitmap73.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-EP_BRUSH4          BITMAP         "\bitmaps\bitmap74.bmp"
+EP_BRUSH4          BITMAP         ".\bitmaps\bitmap74.bmp"
 
 
 LANGUAGE 0, SUBLANG_NEUTRAL
-EP_COPY            BITMAP         "\bitmaps\bitmap75.bmp"
+EP_COPY            BITMAP         ".\bitmaps\bitmap75.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-EP_DEL             BITMAP         "\bitmaps\bitmap76.bmp"
+EP_DEL             BITMAP         ".\bitmaps\bitmap76.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-EP_EIGHT_PAGES3    BITMAP         "\bitmaps\bitmap77.bmp"
+EP_EIGHT_PAGES3    BITMAP         ".\bitmaps\bitmap77.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-EP_EMAIL           BITMAP         "\bitmaps\bitmap78.bmp"
+EP_EMAIL           BITMAP         ".\bitmaps\bitmap78.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-EP_EXIT            BITMAP         "\bitmaps\exit.bmp"
+EP_EXIT            BITMAP         ".\bitmaps\exit.bmp"
 
 
 LANGUAGE 0, SUBLANG_NEUTRAL
-EP_LOGO            BITMAP         "\bitmaps\bitmap80.bmp"
+EP_LOGO            BITMAP         ".\bitmaps\bitmap80.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-EP_MINUS           BITMAP         "\bitmaps\bitmap81.bmp"
+EP_MINUS           BITMAP         ".\bitmaps\bitmap81.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-EP_NEXT            BITMAP         "\bitmaps\bitmap82.bmp"
+EP_NEXT            BITMAP         ".\bitmaps\bitmap82.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-EP_ONE_PAGE        BITMAP         "\bitmaps\bitmap83.bmp"
+EP_ONE_PAGE        BITMAP         ".\bitmaps\bitmap83.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-EP_OPEN            BITMAP         "\bitmaps\bitmap84.bmp"
+EP_OPEN            BITMAP         ".\bitmaps\bitmap84.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-EP_PAGES4          BITMAP         "\bitmaps\bitmap85.bmp"
+EP_PAGES4          BITMAP         ".\bitmaps\bitmap85.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-EP_PAGES6          BITMAP         "\bitmaps\bitmap86.bmp"
+EP_PAGES6          BITMAP         ".\bitmaps\bitmap86.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-EP_PAGES8          BITMAP         "\bitmaps\bitmap87.bmp"
+EP_PAGES8          BITMAP         ".\bitmaps\bitmap87.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-EP_PLUS            BITMAP         "\bitmaps\bitmap88.bmp"
+EP_PLUS            BITMAP         ".\bitmaps\bitmap88.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-EP_PREVIOUS        BITMAP         "\bitmaps\bitmap89.bmp"
+EP_PREVIOUS        BITMAP         ".\bitmaps\bitmap89.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-EP_PREXIT          BITMAP         "\bitmaps\bitmap90.bmp"
+EP_PREXIT          BITMAP         ".\bitmaps\bitmap90.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-EP_PRINTER         BITMAP         "\bitmaps\bitmap91.bmp"
+EP_PRINTER         BITMAP         ".\bitmaps\bitmap91.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-EP_PRINTEXIT       BITMAP         "\bitmaps\bitmap92.bmp"
+EP_PRINTEXIT       BITMAP         ".\bitmaps\bitmap92.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-EP_SAVE            BITMAP         "\bitmaps\bitmap93.bmp"
+EP_SAVE            BITMAP         ".\bitmaps\bitmap93.bmp"
 
 
 LANGUAGE 0, SUBLANG_NEUTRAL
-EP_SEARCH          BITMAP         "\bitmaps\bitmap94.bmp"
+EP_SEARCH          BITMAP         ".\bitmaps\bitmap94.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-EP_TOP             BITMAP         "\bitmaps\bitmap95.bmp"
+EP_TOP             BITMAP         ".\bitmaps\bitmap95.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-EP_TWO_PAGES       BITMAP         "\bitmaps\bitmap96.bmp"
+EP_TWO_PAGES       BITMAP         ".\bitmaps\bitmap96.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-EP_UNZOOM          BITMAP         "\bitmaps\bitmap97.bmp"
+EP_UNZOOM          BITMAP         ".\bitmaps\bitmap97.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-EP_ZOOM            BITMAP         "\bitmaps\bitmap98.bmp"
+EP_ZOOM            BITMAP         ".\bitmaps\bitmap98.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-FOLDCLOSE          BITMAP         "\bitmaps\bitmap99.bmp"
+FOLDCLOSE          BITMAP         ".\bitmaps\bitmap99.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-FOLDOPEN           BITMAP         "\bitmaps\bitmap100.bmp"
+FOLDOPEN           BITMAP         ".\bitmaps\bitmap100.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-GRAPHIC            BITMAP         "\bitmaps\bitmap101.bmp"
+GRAPHIC            BITMAP         ".\bitmaps\bitmap101.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-LINEDOWN           BITMAP         "\bitmaps\bitmap102.bmp"
+LINEDOWN           BITMAP         ".\bitmaps\bitmap102.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-LINEHORI           BITMAP         "\bitmaps\bitmap103.bmp"
+LINEHORI           BITMAP         ".\bitmaps\bitmap103.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-LINEUP             BITMAP         "\bitmaps\bitmap104.bmp"
+LINEUP             BITMAP         ".\bitmaps\bitmap104.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-LINEVERT           BITMAP         "\bitmaps\bitmap105.bmp"
+LINEVERT           BITMAP         ".\bitmaps\bitmap105.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-LOGO               BITMAP         "\bitmaps\bitmap106.bmp"
+LOGO               BITMAP         ".\bitmaps\bitmap106.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-RECTANGLE          BITMAP         "\bitmaps\bitmap107.bmp"
+RECTANGLE          BITMAP         ".\bitmaps\bitmap107.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-RULER1_IN          BITMAP         "\bitmaps\bitmap108.bmp"
+RULER1_IN          BITMAP         ".\bitmaps\bitmap108.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-RULER1_MM          BITMAP         "\bitmaps\bitmap109.bmp"
+RULER1_MM          BITMAP         ".\bitmaps\bitmap109.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-RULER1_PI          BITMAP         "\bitmaps\bitmap110.bmp"
+RULER1_PI          BITMAP         ".\bitmaps\bitmap110.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-RULER2_IN          BITMAP         "\bitmaps\bitmap111.bmp"
+RULER2_IN          BITMAP         ".\bitmaps\bitmap111.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-RULER2_MM          BITMAP         "\bitmaps\bitmap112.bmp"
+RULER2_MM          BITMAP         ".\bitmaps\bitmap112.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-RULER2_PI          BITMAP         "\bitmaps\bitmap113.bmp"
+RULER2_PI          BITMAP         ".\bitmaps\bitmap113.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-SELECT             BITMAP         "\bitmaps\bitmap114.bmp"
+SELECT             BITMAP         ".\bitmaps\bitmap114.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-SELECT1            BITMAP         "\bitmaps\bitmap115.bmp"
+SELECT1            BITMAP         ".\bitmaps\bitmap115.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-SELECT2            BITMAP         "\bitmaps\bitmap116.bmp"
+SELECT2            BITMAP         ".\bitmaps\bitmap116.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-SELECT4            BITMAP         "\bitmaps\bitmap117.bmp"
+SELECT4            BITMAP         ".\bitmaps\bitmap117.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-STYLE1             BITMAP         "\bitmaps\bitmap118.bmp"
+STYLE1             BITMAP         ".\bitmaps\bitmap118.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-STYLE2             BITMAP         "\bitmaps\bitmap119.bmp"
+STYLE2             BITMAP         ".\bitmaps\bitmap119.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-STYLE3             BITMAP         "\bitmaps\bitmap120.bmp"
+STYLE3             BITMAP         ".\bitmaps\bitmap120.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-STYLE4             BITMAP         "\bitmaps\bitmap121.bmp"
+STYLE4             BITMAP         ".\bitmaps\bitmap121.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-STYLE5             BITMAP         "\bitmaps\bitmap122.bmp"
+STYLE5             BITMAP         ".\bitmaps\bitmap122.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-TITLEAERAS         BITMAP         "\bitmaps\bitmap123.bmp"
+TITLEAERAS         BITMAP         ".\bitmaps\bitmap123.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-TITLEAERAS1        BITMAP         "\bitmaps\bitmap124.bmp"
+TITLEAERAS1        BITMAP         ".\bitmaps\bitmap124.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-TREEGRAPH1         BITMAP         "\bitmaps\bitmap125.bmp"
+TREEGRAPH1         BITMAP         ".\bitmaps\bitmap125.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-TREEGRAPH2         BITMAP         "\bitmaps\bitmap126.bmp"
+TREEGRAPH2         BITMAP         ".\bitmaps\bitmap126.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-TREEGRAPH3         BITMAP         "\bitmaps\bitmap127.bmp"
+TREEGRAPH3         BITMAP         ".\bitmaps\bitmap127.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-TREEGRAPH4         BITMAP         "\bitmaps\bitmap128.bmp"
+TREEGRAPH4         BITMAP         ".\bitmaps\bitmap128.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-TREEGRAPH5         BITMAP         "\bitmaps\bitmap129.bmp"
+TREEGRAPH5         BITMAP         ".\bitmaps\bitmap129.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-TREEGRAPH6         BITMAP         "\bitmaps\bitmap130.bmp"
+TREEGRAPH6         BITMAP         ".\bitmaps\bitmap130.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-TYP_BARCODE        BITMAP         "\bitmaps\bitmap131.bmp"
+TYP_BARCODE        BITMAP         ".\bitmaps\bitmap131.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-TYP_GRAPHIC        BITMAP         "\bitmaps\bitmap132.bmp"
+TYP_GRAPHIC        BITMAP         ".\bitmaps\bitmap132.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-TYP_IMAGE          BITMAP         "\bitmaps\bitmap133.bmp"
+TYP_IMAGE          BITMAP         ".\bitmaps\bitmap133.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-TYP_TEXT           BITMAP         "\bitmaps\bitmap134.bmp"
+TYP_TEXT           BITMAP         ".\bitmaps\bitmap134.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-UNCHECKED          BITMAP         "\bitmaps\bitmap135.bmp"
+UNCHECKED          BITMAP         ".\bitmaps\bitmap135.bmp"
 
 
 
@@ -844,8 +844,8 @@ FONT 6, "MS Sans Serif"
     PUSHBUTTON      "Files...", 114, 6, 171, 50, 14, BS_CENTER, WS_EX_LEFT
     PUSHBUTTON      "&Options", 103, 6, 196, 60, 14, BS_CENTER, WS_EX_LEFT
     EDITTEXT        206, 58, 172, 320, 12, WS_VSCROLL | ES_MULTILINE, WS_EX_LEFT
-    CONTROL         "Rahmen1", 112, WC_STATIC, SS_ETCHEDFRAME, 6, 190, 372, 1, WS_EX_LEFT
-    CTEXT           "Subject:", 114, 8, 57, 48, 8, NOT WS_GROUP | SS_CENTER, WS_EX_LEFT
+    CONTROL         "Rahmen1", 115, WC_STATIC, SS_ETCHEDFRAME, 6, 190, 372, 1, WS_EX_LEFT
+    CTEXT           "Subject:", 116, 8, 57, 48, 8, NOT WS_GROUP | SS_CENTER, WS_EX_LEFT
     PUSHBUTTON      "Sent &emails", 104, 68, 196, 60, 14, BS_CENTER, WS_EX_LEFT
 }
 
@@ -958,7 +958,7 @@ FONT 8, "MS Sans Serif"
     RTEXT           "", 202, 12, 104, 272, 8, NOT WS_GROUP | SS_RIGHT, WS_EX_LEFT
     CONTROL         "", 65535, WC_STATIC, SS_ETCHEDHORZ, 0, 98, 320, 1, WS_EX_LEFT
     CONTROL         "", 301, WC_STATIC, SS_OWNERDRAW, 0, 2, 200, 54, WS_EX_LEFT
-    CONTROL         "", 65535, WC_STATIC, SS_ETCHEDHORZ, 4294967290, 62, 320, 1, WS_EX_LEFT
+    CONTROL         "", -1, WC_STATIC, SS_ETCHEDHORZ, 4294967290, 62, 320, 1, WS_EX_LEFT
 }
 
 
@@ -2351,7 +2351,7 @@ FONT 6, "MS Sans Serif"
 // Cursor resources
 //
 LANGUAGE 7, SUBLANG_DEFAULT
-LUPA               CURSOR         "\resources\cursor2.cur"
+LUPA               CURSOR         ".\\resources\cursor2.cur"
 
 
 
@@ -2359,7 +2359,7 @@ LUPA               CURSOR         "\resources\cursor2.cur"
 // Icon resources
 //
 LANGUAGE 7, SUBLANG_DEFAULT
-ICON1              ICON           "\resources\icon2.ico"
+ICON1              ICON           ".\\resources\icon2.ico"
 
 
 
