@@ -14,9 +14,6 @@ FWDIR=c:\fwteam
 
 PRG =        \
 .\ereport.prg  \ 
-.\vrdini.prg   \
-#.\control.prg  \
-#.\dialog.prg   \
 .\easyprev.prg \
 .\erfile.prg   \
 .\eritems.prg  \
@@ -24,9 +21,6 @@ PRG =        \
 .\erstart.prg  \
 .\ertools.prg  \
 #.\fileedit.prg \
-#.\mget.prg     \
-#.\tget.prg     \
-#.\treeitem.prg \
 .\treelink.prg \
 .\treeview.prg \
 .\tvitem.prg   \
