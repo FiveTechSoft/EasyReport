@@ -86,19 +86,11 @@ FUNCTION Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
 
    SET HELPFILE TO "VRD.HLP"
 
-   IF EMPTY( oGenVar:cBrush )
-      DEFINE BRUSH oBrush COLOR nHinCol1
-   ELSE
-      IF AT( ".BMP", oGenVar:cBrush ) <> 0
-         DEFINE BRUSH oBrush FILE oGenVar:cBrush
-      ELSE
-         DEFINE BRUSH oBrush RESOURCE oGenVar:cBrush
-      ENDIF
-   ENDIF
-
    //Fonts definieren
    DEFINE FONT oAppFont NAME "Arial" SIZE 0, -12
    DEFINE ICON oIcon FILE ".\vrd.ico"
+
+   DEFINE BRUSH oBrush RESOURCE "background"
 
    // SetBalloon( .T. )
    SetDlgGradient( { { 1, RGB( 199, 216, 237 ), RGB( 237, 242, 248 ) } } )

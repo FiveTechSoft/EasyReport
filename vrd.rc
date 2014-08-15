@@ -50,6 +50,8 @@ AREAPROP           BITMAP         ".\bitmaps\bitmap7.bmp"
 LANGUAGE 7, SUBLANG_DEFAULT
 AREAPROP2          BITMAP         ".\bitmaps\bitmap8.bmp"
 
+LANGUAGE 7, SUBLANG_DEFAULT
+BACKGROUND         BITMAP         ".\bitmaps\iosbg.bmp"
 
 LANGUAGE 7, SUBLANG_DEFAULT
 B_AREA32           BITMAP         ".\bitmaps\areas.bmp"
