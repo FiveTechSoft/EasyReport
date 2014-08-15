@@ -227,27 +227,30 @@ FUNCTION BarMenu()
       WHEN .NOT. EMPTY( cDefIni )
 
    IF VAL( GetPvProfString( "General", "InsertMode", "1", cDefIni ) ) = 1
-      DEFINE BUTTON RESOURCE "B_TEXT", "B_TEXT2", "B_TEXT3", "B_TEXT2" ;
+      DEFINE BUTTON RESOURCE "B_TEXT32" ;
          OF oBar GROUP ;
-         PROMPT FWString( "Insert &Text" ) ;
+         PROMPT FWString( "&Text" ) ;
          TOOLTIP STRTRAN( GL("Insert &Text"), "&" ) ;
          ACTION NewItem( "TEXT", nAktArea ) ;
          WHEN .NOT. EMPTY( cDefIni )
 
-      DEFINE BUTTON RESOURCE "B_IMAGE", "B_IMAGE2", "B_IMAGE3", "B_IMAGE2" ;
+      DEFINE BUTTON RESOURCE "B_IMAGE32" ;
          OF oBar ;
-         TOOLTIP STRTRAN( GL("Insert &Image"), "&" ) ;
+         PROMPT FWString( "Image" ) ;
+         TOOLTIP STRTRAN( GL("&Image"), "&" ) ;
          ACTION NewItem( "IMAGE", nAktArea ) ;
          WHEN .NOT. EMPTY( cDefIni )
 
-      DEFINE BUTTON RESOURCE "B_GRAPHIC", "B_GRAPHIC2", "B_GRAPHIC3", "B_GRAPHIC2" ;
+      DEFINE BUTTON RESOURCE "B_GRAPHIC32" ;
          OF oBar ;
+         PROMPT FWString( "Graphic" ) ;
          TOOLTIP STRTRAN( GL("Insert &Graphic"), "&" ) ;
          ACTION NewItem( "GRAPHIC", nAktArea ) ;
          WHEN .NOT. EMPTY( cDefIni )
 
-      DEFINE BUTTON RESOURCE "B_BARCODE", "B_BARCODE2", "B_BARCODE3", "B_BARCODE2" ;
+      DEFINE BUTTON RESOURCE "B_BARCODE32" ;
          OF oBar ;
+         PROMPT FWString( "Barcode" ) ;
          TOOLTIP STRTRAN( GL("Insert &Barcode"), "&" ) ;
          ACTION NewItem( "BARCODE", nAktArea ) ;
          WHEN .NOT. EMPTY( cDefIni )

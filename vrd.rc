@@ -65,10 +65,11 @@ B_AREA2            BITMAP         ".\bitmaps\bitmap10.bmp"
 LANGUAGE 7, SUBLANG_DEFAULT
 B_AREA3            BITMAP         ".\bitmaps\bitmap11.bmp"
 
+LANGUAGE 7, SUBLANG_DEFAULT
+B_BARCODE32        BITMAP         ".\bitmaps\barcode.bmp"
 
 LANGUAGE 7, SUBLANG_DEFAULT
 B_BARCODE          BITMAP         ".\bitmaps\bitmap12.bmp"
-
 
 LANGUAGE 7, SUBLANG_DEFAULT
 B_BARCODE2         BITMAP         ".\bitmaps\bitmap13.bmp"
@@ -124,6 +125,9 @@ B_FONTCOLOR3       BITMAP         ".\bitmaps\bitmap23.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
+B_GRAPHIC32        BITMAP         ".\bitmaps\graphic.bmp"
+
+LANGUAGE 7, SUBLANG_DEFAULT
 B_GRAPHIC          BITMAP         ".\bitmaps\bitmap24.bmp"
 
 
@@ -134,6 +138,8 @@ B_GRAPHIC2         BITMAP         ".\bitmaps\bitmap25.bmp"
 LANGUAGE 7, SUBLANG_DEFAULT
 B_GRAPHIC3         BITMAP         ".\bitmaps\bitmap26.bmp"
 
+LANGUAGE 7, SUBLANG_DEFAULT
+B_IMAGE32          BITMAP         ".\bitmaps\image.bmp"
 
 LANGUAGE 7, SUBLANG_DEFAULT
 B_IMAGE            BITMAP         ".\bitmaps\bitmap27.bmp"
@@ -256,6 +262,8 @@ B_SOURCE_YES       BITMAP         ".\bitmaps\bitmap53.bmp"
 LANGUAGE 7, SUBLANG_DEFAULT
 B_SOURCE_YES2      BITMAP         ".\bitmaps\bitmap54.bmp"
 
+LANGUAGE 7, SUBLANG_DEFAULT
+B_TEXT32           BITMAP         ".\bitmaps\text.bmp"
 
 LANGUAGE 7, SUBLANG_DEFAULT
 B_TEXT             BITMAP         ".\bitmaps\bitmap55.bmp"
