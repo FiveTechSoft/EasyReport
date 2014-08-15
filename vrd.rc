@@ -52,6 +52,9 @@ AREAPROP2          BITMAP         ".\bitmaps\bitmap8.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
+B_AREA32           BITMAP         ".\bitmaps\areas.bmp"
+
+LANGUAGE 7, SUBLANG_DEFAULT
 B_AREA             BITMAP         ".\bitmaps\bitmap9.bmp"
 
 
@@ -80,6 +83,9 @@ B_DEL              BITMAP         ".\bitmaps\bitmap15.bmp"
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
+B_EDIT32           BITMAP         ".\bitmaps\properties.bmp"
+
+LANGUAGE 7, SUBLANG_DEFAULT
 B_EDIT             BITMAP         ".\bitmaps\bitmap16.bmp"
 
 
@@ -101,6 +107,9 @@ B_EXIT_16          BITMAP         ".\bitmaps\exit16x16.bmp"
 LANGUAGE 7, SUBLANG_DEFAULT
 B_EXIT2            BITMAP         ".\bitmaps\bitmap20.bmp"
 
+
+LANGUAGE 7, SUBLANG_DEFAULT
+B_FONTCOLOR32      BITMAP         ".\bitmaps\fontcolor.bmp"
 
 LANGUAGE 7, SUBLANG_DEFAULT
 B_FONTCOLOR        BITMAP         ".\bitmaps\bitmap21.bmp"
@@ -137,6 +146,9 @@ B_IMAGE2           BITMAP         ".\bitmaps\bitmap28.bmp"
 LANGUAGE 7, SUBLANG_DEFAULT
 B_IMAGE3           BITMAP         ".\bitmaps\bitmap29.bmp"
 
+
+LANGUAGE 7, SUBLANG_DEFAULT
+B_ITEMLIST32       BITMAP         ".\bitmaps\itemlist.bmp"
 
 LANGUAGE 7, SUBLANG_DEFAULT
 B_ITEMLIST         BITMAP         ".\bitmaps\bitmap30.bmp"

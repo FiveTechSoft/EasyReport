@@ -194,34 +194,34 @@ FUNCTION BarMenu()
       WHEN .NOT. EMPTY( cDefIni ) .AND. nRedoCount > 0
       // MENU UndoRedoMenu( 2, aBtn[2] ) ;
 
-   DEFINE BUTTON RESOURCE "B_ITEMLIST", "B_ITEMLIST2", "B_ITEMLIST3", "B_ITEMLIST2" ;
+   DEFINE BUTTON RESOURCE "B_ITEMLIST32" ;
       OF oBar GROUP ;
-      PROMPT FWSTring( "Area and Item list" ) ;
+      PROMPT FWSTring( "Items" ) ;
       TOOLTIP GL("Area and Item List") ;
       ACTION Itemlist() ;
       WHEN .NOT. EMPTY( cDefIni )
 
    IF VAL( GetPvProfString( "General", "EditSetting", "1", cDefIni ) ) = 1
-      DEFINE BUTTON RESOURCE "B_FONTCOLOR", "B_FONTCOLOR2", "B_FONTCOLOR3", "B_FONTCOLOR2" ;
+      DEFINE BUTTON RESOURCE "B_FONTCOLOR32" ;
          OF oBar ;
-         PROMPT FWString( "Fonts and Colors" ) ;
+         PROMPT FWString( "Fonts" ) ;
          TOOLTIP GL("Fonts and Colors") ;
          ACTION GeneralSettings() ;
          WHEN .NOT. EMPTY( cDefIni )
    ENDIF
 
    IF VAL( GetPvProfString( "General", "EditAreaProperties", "1", cDefIni ) ) = 1
-      DEFINE BUTTON RESOURCE "B_AREA", "B_AREA2", "B_AREA3", "B_AREA2" ;
+      DEFINE BUTTON RESOURCE "B_AREA32" ;
          OF oBar ;
-         PROMPT FWSTring( "Area properties" ) ; 
+         PROMPT FWSTring( "Areas" ) ; 
          TOOLTIP GL("Area Properties") ;
          ACTION AreaProperties( nAktArea ) ;
          WHEN .NOT. EMPTY( cDefIni )
    ENDIF
 
-   DEFINE BUTTON RESOURCE "B_EDIT", "B_EDIT2", "B_EDIT3", "B_EDIT2" ;
+   DEFINE BUTTON RESOURCE "B_EDIT32" ;
       OF oBar ;
-      PROMPT FWString( "Item Properties" ) ;
+      PROMPT FWString( "Properties" ) ;
       TOOLTIP GL("Item Properties") ;
       ACTION IIF( LEN( aSelection ) <> 0, MultiItemProperties(), ItemProperties( nAktItem, nAktArea ) ) ;
       WHEN .NOT. EMPTY( cDefIni )

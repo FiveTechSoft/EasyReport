@@ -1,4 +1,5 @@
 @del *.bak
+@del *.exp
 @del *.map
 @del obj\*.c
 @del obj\*.obj
