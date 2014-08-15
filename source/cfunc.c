@@ -33,17 +33,14 @@ HB_FUNC( SHOWGRID ) // hDC, @cPS, wGridWidth, wGridHeight, wWidth, wHeight, wTop
 
 //----------------------------------------------------------------------------//
 
-HB_FUNC( ER_CTRLDRAWFOCUS )  // hWnd, nOriginRow, nOriginCol, nMRow, nMCol, nMResize
+HB_FUNC( CTRLDRAWFOCUS )  // ( hWnd, nOriginRow, nOriginCol, nMRow, nMCol, nMResize )
 {
    HWND hWnd = ( HWND ) hb_parnl( 1 );
-   #ifdef __XPP__
-      #define hb_parni( x ) PARNI( x, params )
-   #endif
-   int wRow  = hb_parni( 2 );
-   int wCol  = hb_parni( 3 );
-   int wMRow = hb_parni( 4 );
-   int wMCol = hb_parni( 5 );
-   WORD wMResize = hb_parni( 6 );
+   int wRow  = hb_parnl( 2 );
+   int wCol  = hb_parnl( 3 );
+   int wMRow = hb_parnl( 4 );
+   int wMCol = hb_parnl( 5 );
+   WORD wMResize = hb_parnl( 6 );
    HWND hWndParent = GetParent( hWnd );
    HDC hDC;
    RECT rct;
@@ -51,12 +48,47 @@ HB_FUNC( ER_CTRLDRAWFOCUS )  // hWnd, nOriginRow, nOriginCol, nMRow, nMCol, nMRe
    HRGN hReg;
    HBRUSH hBr = CreateSolidBrush( RGB( 127, 127, 127 ) );
    int iRop;
+   int iParentsWithCaption = 0;
+
+   if( ( GetWindowLong( hWndParent, GWL_STYLE ) & WS_CAPTION ) == WS_CAPTION )
+      iParentsWithCaption++;
+
+   while( GetParent( hWndParent ) )
+   {
+      #ifndef UNICODE
+   	     char ClassName[ 100 ];
+   	  
+   	     GetClassName( hWndParent, ClassName, 99 );
+
+      	 if( strcmp( ClassName, "#32770" ) == 0 ) // a Modal Dialog
+   	        break;
+
+   	     if( lstrcmp( ClassName, "MDIClient" ) == 0 ) // MDIClient
+   	        iParentsWithCaption++;	  
+
+   	  #else   
+   	     WCHAR ClassName[ 100 ];
+   	  
+   	     GetClassName( hWndParent, ClassName, 99 * sizeof( WCHAR ) );
+
+   	     if( lstrcmp( ClassName, L"#32770" ) == 0 ) // a Modal Dialog
+   	        break;
+
+   	     if( lstrcmp( ClassName, L"MDIClient" ) == 0 ) // MDIClient
+   	        iParentsWithCaption++;	  
+
+      #endif
+         	  
+      hWndParent = GetParent( hWndParent );
+      
+      if( ( GetWindowLong( hWndParent, GWL_STYLE ) & WS_CAPTION ) == WS_CAPTION )
+   	     iParentsWithCaption++;
+   }   
 
    GetWindowRect( hWnd, &rct );
 
    if( ! wMResize || ( ! wRow && ! wCol ) )
    {
-
       rct.bottom += wRow;
       rct.right  += wCol;
       rct.top    += wRow;
@@ -112,27 +144,41 @@ HB_FUNC( ER_CTRLDRAWFOCUS )  // hWnd, nOriginRow, nOriginCol, nMRow, nMCol, nMRe
 
    pt.x = rct.left;
    pt.y = rct.top;
-
    ScreenToClient( hWndParent, &pt );
-   rct.left = pt.x + 1;
-   rct.top  = pt.y + 1;
+   rct.left = pt.x + ( iParentsWithCaption * GetSystemMetrics( SM_CXFRAME ) );
+   rct.top  = pt.y + ( iParentsWithCaption * ( GetSystemMetrics( SM_CYCAPTION	) + GetSystemMetrics( SM_CYFRAME ) ) );
+   
    pt.x     = rct.right;
    pt.y     = rct.bottom;
-
    ScreenToClient( hWndParent, &pt );
-   rct.right  = pt.x - 1;
-   rct.bottom = pt.y - 1;
+   rct.right  = pt.x + ( iParentsWithCaption * GetSystemMetrics( SM_CXFRAME ) );
+   rct.bottom = pt.y + ( iParentsWithCaption * ( GetSystemMetrics( SM_CYCAPTION	) + GetSystemMetrics( SM_CYFRAME ) ) );
 
-   hReg = CreateRectRgn( rct.left - 1, rct.top - 1, rct.right + 1, rct.bottom + 1 );
-   //hReg = CreateRectRgn( rct.left - 2, rct.top - 2, rct.right + 2, rct.bottom + 2 );
-   hDC  =  GetDCEx( hWndParent, hReg, DCX_CACHE );
+   if( ( GetWindowLong( hWndParent, GWL_STYLE ) & DS_MODALFRAME ) == DS_MODALFRAME ) 
+   {
+      rct.left   -= 4;
+      rct.top    -= 4;
+      rct.right  -= 4;
+      rct.bottom -= 4;		
+   } 
+ 
+   if( iParentsWithCaption > 1 )
+   {
+      rct.left   -=  8;
+      rct.top    -= 10;
+      rct.right  -=  7;
+      rct.bottom -=  9;		
+   } 
+ 
+   hReg = CreateRectRgn( rct.left, rct.top, rct.right, rct.bottom );
+
+   hDC = GetWindowDC( hWndParent ); 
    iRop = SetROP2( hDC, R2_XORPEN );
    FrameRgn( hDC, hReg, hBr, 2, 2 );
    SetROP2( hDC, iRop );
    ReleaseDC( hWndParent, hDC );
    DeleteObject( hReg );
    DeleteObject( hBr );
-
 }
 
 //----------------------------------------------------------------------------//

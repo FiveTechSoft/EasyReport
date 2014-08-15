@@ -1298,7 +1298,7 @@ FUNCTION ClientWindows()
             BRUSH oGenVar:oAreaBrush ;
             FROM nTop, 0 TO nTop + nHeight + nAreaZugabe, nWidth PIXEL ;
             STYLE nOr( WS_BORDER )
-
+            
          aWndTitle[nWnd] := cTitle
 
          /*
