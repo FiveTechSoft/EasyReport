@@ -928,7 +928,7 @@ FUNCTION ImageProperties( i, nArea, cAreaIni, lFromList, lNew )
    REDEFINE GET aGet[2] VAR oItem:cText ID 201 OF oCurDlg WHEN oItem:nEdit <> 0 MEMO
    REDEFINE GET aGet[1] VAR oItem:cFile ID 202 OF oCurDlg WHEN oItem:nEdit <> 0 ;
       VALID ( aSize := GetImageSize( oItem:cFile ), AEVAL( aSizeSay, {|x| x:Refresh() } ), .T. )
-   REDEFINE BTNBMP ID 150 OF oCurDlg RESOURCE "B_OPEN" TRANSPARENT NOBORDER WHEN oItem:nEdit <> 0 ;
+   REDEFINE BTNBMP ID 150 OF oCurDlg RESOURCE "B_OPEN_16" TRANSPARENT NOBORDER WHEN oItem:nEdit <> 0 ;
       TOOLTIP GL("Open") ACTION ( oItem:cFile := GetImage( oItem:cFile ), aGet[1]:Refresh() )
 
    REDEFINE BTNBMP aBtn[2] ID 152 OF oCurDlg RESOURCE "SELECT" TRANSPARENT NOBORDER ;
