@@ -6,7 +6,7 @@
 @del source\*.bak
 @del *.tds
 @del ereport.exe
-@del ereport.res
+@del *.res
 @del 1*.*
 @del 2*.*
 @del 3*.*
