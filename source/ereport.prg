@@ -790,7 +790,7 @@ FUNCTION IniAreasOnBar()
 
    //@ 9, nAreaStart - 75 SAY GL("Area") + ":" OF oBar PIXEL SIZE 70, 16 FONT oFont1 RIGHT
 
-   @ 5, nAreaStart COMBOBOX oCbxArea VAR cCbxItem ITEMS aCbxItems OF oBar ;
+   @ 25, nAreaStart - 40 COMBOBOX oCbxArea VAR cCbxItem ITEMS aCbxItems OF oBar ;
       PIXEL SIZE 200, 300 FONT oFont1 ;
       WHEN .NOT. EMPTY( cDefIni ) ;
 
