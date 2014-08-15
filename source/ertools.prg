@@ -1226,6 +1226,8 @@ FUNCTION VRDAbout()
    LOCAL oDlg, oFont, cVersion := ""
    LOCAL nClrBack := RGB( 255, 255, 255 )
 
+   oGenVar:cRelease = "3.0"
+
    IIF( lProfi   , cVersion := "Professional", )
    IIF( lPersonal, cVersion := "Personal"    , )
    IIF( lStandard, cVersion := "Standard"    , )
