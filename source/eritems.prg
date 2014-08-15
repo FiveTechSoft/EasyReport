@@ -498,7 +498,7 @@ FUNCTION TextProperties( i, nArea, cAreaIni, lFromList, lNew )
 
    REDEFINE GET aGet[4] VAR oItem:cText ID 201 OF oCurDlg WHEN oItem:nEdit <> 0 MEMO
 
-   REDEFINE BTNBMP oBtn2 ID 154 OF oCurDlg NOBORDER RESOURCE "SELECT" ;
+   REDEFINE BTNBMP oBtn2 ID 154 OF oCurDlg NOBORDER RESOURCE "SELECT" TRANSPARENT ;
       TOOLTIP GL("Databases and Expressions") WHEN oItem:nEdit <> 0 ;
       ACTION GetDBField( aGet[4] )
 
@@ -548,15 +548,15 @@ FUNCTION TextProperties( i, nArea, cAreaIni, lFromList, lNew )
       IIF( oItem:nFont > 0, " " + GetCurrentFont( oItem:nFont, GetFonts(), 1 ), "" ) ;
       ID 403 OF oCurDlg
 
-   REDEFINE BTNBMP RESOURCE "SELECT" NOBORDER ID 151 OF oCurDlg ;
+   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 151 OF oCurDlg ;
       ACTION ( nColor := ShowColorChoice( oItem:nColText ), ;
                IIF( nColor <> 0, EVAL( {|| oItem:nColText := nColor, aGet[1]:Refresh(), ;
                Set2Color( aSay[1], IIF( oItem:nColText > 0, oVar:aColors[oItem:nColText], ""), nDefClr ) } ), ) )
-   REDEFINE BTNBMP RESOURCE "SELECT" NOBORDER ID 152 OF oCurDlg ;
+   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 152 OF oCurDlg ;
       ACTION ( nColor := ShowColorChoice( oItem:nColPane ), ;
                IIF( nColor <> 0, EVAL( {|| oItem:nColPane := nColor, aGet[2]:Refresh(), ;
                Set2Color( aSay[2], IIF( oItem:nColPane > 0, oVar:aColors[oItem:nColPane], ""), nDefClr ) } ), ) )
-   REDEFINE BTNBMP RESOURCE "SELECT" NOBORDER ID 153 OF oCurDlg ;
+   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 153 OF oCurDlg ;
       ACTION ( oItem:nFont := ShowFontChoice( oItem:nFont ), aGet[3]:Refresh(), aSay[3]:Refresh() )
 
    REDEFINE BUTTON PROMPT GL("&OK")     ID 101 OF oCurDlg ;
@@ -582,7 +582,7 @@ FUNCTION TextProperties( i, nArea, cAreaIni, lFromList, lNew )
    SetFormulaBtn( 21, oItem )
    SetFormulaBtn( 24, oItem )
 
-   REDEFINE BTNBMP ID 111 OF oCurDlg NOBORDER RESOURCE "B_SAVE3" ;
+   REDEFINE BTNBMP ID 111 OF oCurDlg NOBORDER RESOURCE "B_SAVE3" TRANSPARENT ;
       TOOLTIP GL("Set these properties to default") ;
       ACTION SetItemDefault( oItem )
 
@@ -675,7 +675,7 @@ FUNCTION SetFormulaBtn( nID, oItem )
    ENDCASE
 
    REDEFINE BTNBMP oBtn ID nID OF oCurDlg NOBORDER ;
-      RESOURCE "B_SOURCE_" + IIF( EMPTY( cSource ), "NO", "YES" ) ;
+      RESOURCE "B_SOURCE_" + IIF( EMPTY( cSource ), "NO", "YES" ) TRANSPARENT ;
       TOOLTIP GetSourceToolTip( cSource ) ;
       WHEN oItem:nEdit <> 0 ;
       ACTION ( cSource := EditSourceCode( nID, cSource, oItem ), ;
@@ -928,10 +928,10 @@ FUNCTION ImageProperties( i, nArea, cAreaIni, lFromList, lNew )
    REDEFINE GET aGet[2] VAR oItem:cText ID 201 OF oCurDlg WHEN oItem:nEdit <> 0 MEMO
    REDEFINE GET aGet[1] VAR oItem:cFile ID 202 OF oCurDlg WHEN oItem:nEdit <> 0 ;
       VALID ( aSize := GetImageSize( oItem:cFile ), AEVAL( aSizeSay, {|x| x:Refresh() } ), .T. )
-   REDEFINE BTNBMP ID 150 OF oCurDlg RESOURCE "B_OPEN" NOBORDER WHEN oItem:nEdit <> 0 ;
+   REDEFINE BTNBMP ID 150 OF oCurDlg RESOURCE "B_OPEN" TRANSPARENT NOBORDER WHEN oItem:nEdit <> 0 ;
       TOOLTIP GL("Open") ACTION ( oItem:cFile := GetImage( oItem:cFile ), aGet[1]:Refresh() )
 
-   REDEFINE BTNBMP aBtn[2] ID 152 OF oCurDlg RESOURCE "SELECT" NOBORDER ;
+   REDEFINE BTNBMP aBtn[2] ID 152 OF oCurDlg RESOURCE "SELECT" TRANSPARENT NOBORDER ;
       TOOLTIP GL("Databases and Expressions") WHEN oItem:nEdit <> 0 ;
       ACTION GetDBField( aGet[1] )
 
@@ -983,7 +983,7 @@ FUNCTION ImageProperties( i, nArea, cAreaIni, lFromList, lNew )
    SetFormulaBtn( 15, oItem )
    SetFormulaBtn( 20, oItem )
 
-   REDEFINE BTNBMP ID 111 OF oCurDlg NOBORDER RESOURCE "B_SAVE3" ;
+   REDEFINE BTNBMP ID 111 OF oCurDlg NOBORDER RESOURCE "B_SAVE3" TRANSPARENT ;
       TOOLTIP GL("Set these properties to default") ;
       ACTION SetItemDefault( oItem )
 
@@ -1165,11 +1165,11 @@ FUNCTION GraphicProperties( i, nArea, cAreaIni, lFromList, lNew )
    REDEFINE SAY aSay[1] PROMPT "" ID 401 OF oCurDlg COLORS GetColor( oItem:nColText ), GetColor( oItem:nColText )
    REDEFINE SAY aSay[2] PROMPT "" ID 402 OF oCurDlg COLORS GetColor( oItem:nColPane ), GetColor( oItem:nColPane )
 
-   REDEFINE BTNBMP ID 151 OF oCurDlg NOBORDER RESOURCE "SELECT" ;
+   REDEFINE BTNBMP ID 151 OF oCurDlg NOBORDER RESOURCE "SELECT" TRANSPARENT ;
       ACTION ( nColor := ShowColorChoice( oItem:nColor ), ;
                IIF( nColor <> 0, EVAL( {|| oItem:nColor := nColor, aGet[1]:Refresh(), ;
                Set2Color( aSay[1], IIF( oItem:nColor > 0, oVar:aColors[oItem:nColor], ""), nDefClr ) } ), ) )
-   REDEFINE BTNBMP ID 152 OF oCurDlg NOBORDER RESOURCE "SELECT" ;
+   REDEFINE BTNBMP ID 152 OF oCurDlg NOBORDER RESOURCE "SELECT" TRANSPARENT ;
       ACTION ( nColor := ShowColorChoice( oItem:nColFill ), ;
                IIF( nColor <> 0, EVAL( {|| oItem:nColFill := nColor, aGet[2]:Refresh(), ;
                Set2Color( aSay[2], IIF( oItem:nColFill > 0, oVar:aColors[oItem:nColFill], ""), nDefClr ) } ), ) )
@@ -1200,7 +1200,7 @@ FUNCTION GraphicProperties( i, nArea, cAreaIni, lFromList, lNew )
    SetFormulaBtn( 22, oItem )
    SetFormulaBtn( 23, oItem )
 
-   REDEFINE BTNBMP ID 111 OF oCurDlg NOBORDER RESOURCE "B_SAVE3" ;
+   REDEFINE BTNBMP ID 111 OF oCurDlg NOBORDER RESOURCE "B_SAVE3" TRANSPARENT ;
       TOOLTIP GL("Set these properties to default") ;
       ACTION SetItemDefault( oItem )
 
@@ -1324,7 +1324,7 @@ FUNCTION BarcodeProperties( i, nArea, cAreaIni, lFromList, lNew )
 
    REDEFINE GET aGet[4] VAR oItem:cText ID 203 OF oCurDlg WHEN oItem:nEdit <> 0 MEMO
 
-   REDEFINE BTNBMP aBtn[2] ID 153 OF oCurDlg RESOURCE "SELECT" NOBORDER ;
+   REDEFINE BTNBMP aBtn[2] ID 153 OF oCurDlg RESOURCE "SELECT" TRANSPARENT NOBORDER ;
       TOOLTIP GL("Databases and Expressions") WHEN oItem:nEdit <> 0 ;
       ACTION GetDBField( aGet[4] )
 
@@ -1399,7 +1399,7 @@ FUNCTION BarcodeProperties( i, nArea, cAreaIni, lFromList, lNew )
    SetFormulaBtn( 21, oItem )
    SetFormulaBtn( 22, oItem )
 
-   REDEFINE BTNBMP ID 111 OF oCurDlg NOBORDER RESOURCE "B_SAVE3" ;
+   REDEFINE BTNBMP ID 111 OF oCurDlg NOBORDER RESOURCE "B_SAVE3" TRANSPARENT ;
       TOOLTIP GL("Set these properties to default") ;
       ACTION SetItemDefault( oItem )
 

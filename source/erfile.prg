@@ -553,7 +553,7 @@ FUNCTION NewReport()
    REDEFINE GET aGet[2] VAR cSourceCode  ID 202 OF oFld:aDialogs[i] UPDATE
    REDEFINE GET aGet[3] VAR cReportName  ID 203 OF oFld:aDialogs[i] UPDATE
 
-   REDEFINE BTNBMP aBtn[1] ID 151 OF oFld:aDialogs[i] RESOURCE "B_OPEN" UPDATE ;
+   REDEFINE BTNBMP aBtn[1] ID 151 OF oFld:aDialogs[i] RESOURCE "B_OPEN" TRANSPARENT UPDATE ;
       TOOLTIP GL("Open") ;
       ACTION ( cTmpFile := GetFile( GL("Designer Files") + " (*.vrd)|*.vrd|" + ;
                                     GL("All Files") + " (*.*)|*.*", ;
@@ -561,7 +561,7 @@ FUNCTION NewReport()
                IIF( EMPTY( cTmpFile ),, cGeneralName := cTmpFile ), ;
                aGet[1]:Refresh() )
 
-   REDEFINE BTNBMP aBtn[2] ID 152 OF oFld:aDialogs[i] RESOURCE "B_OPEN" UPDATE ;
+   REDEFINE BTNBMP aBtn[2] ID 152 OF oFld:aDialogs[i] RESOURCE "B_OPEN" TRANSPARENT UPDATE ;
       TOOLTIP GL("Open") ;
       ACTION ( cTmpFile := GetFile( GL("All Files") + " (*.*)|*.*", ;
                                     GL("Source code file name"), 1 ), ;

@@ -1159,7 +1159,7 @@ FUNCTION GenerateSource( nArea )
 
    REDEFINE SAY PROMPT GL("Use method") + ":" ID 171 OF oDlg
 
-   REDEFINE BTNBMP ID 151 OF oDlg RESOURCE "OPEN" UPDATE ;
+   REDEFINE BTNBMP ID 151 OF oDlg RESOURCE "OPEN" TRANSPARENT UPDATE ;
       TOOLTIP GL("Directory") ;
       ACTION ( cDir := cGetDir32( GL("Select a directory") ), ;
                IIF( AT( "\", cFile ) = 0 .AND. .NOT. EMPTY( cDir ), ;
@@ -2018,36 +2018,36 @@ FUNCTION GeneralSettings()
    REDEFINE GET aColorGet[29] VAR aColors[29] ID 229 OF oFld:aDialogs[i] VALID Set2Color( aColorSay[29], aColors[29], nDefClr )
    REDEFINE GET aColorGet[30] VAR aColors[30] ID 230 OF oFld:aDialogs[i] VALID Set2Color( aColorSay[30], aColors[30], nDefClr )
 
-   REDEFINE BTNBMP RESOURCE "SELECT" NOBORDER ID 301 OF oFld:aDialogs[i] ACTION ( aColors[1 ] := Set3Color( aColorSay[1 ], aColors[1 ], nDefClr ), aColorGet[1 ]:Refresh() )
-   REDEFINE BTNBMP RESOURCE "SELECT" NOBORDER ID 302 OF oFld:aDialogs[i] ACTION ( aColors[2 ] := Set3Color( aColorSay[2 ], aColors[2 ], nDefClr ), aColorGet[2 ]:Refresh() )
-   REDEFINE BTNBMP RESOURCE "SELECT" NOBORDER ID 303 OF oFld:aDialogs[i] ACTION ( aColors[3 ] := Set3Color( aColorSay[3 ], aColors[3 ], nDefClr ), aColorGet[3 ]:Refresh() )
-   REDEFINE BTNBMP RESOURCE "SELECT" NOBORDER ID 304 OF oFld:aDialogs[i] ACTION ( aColors[4 ] := Set3Color( aColorSay[4 ], aColors[4 ], nDefClr ), aColorGet[4 ]:Refresh() )
-   REDEFINE BTNBMP RESOURCE "SELECT" NOBORDER ID 305 OF oFld:aDialogs[i] ACTION ( aColors[5 ] := Set3Color( aColorSay[5 ], aColors[5 ], nDefClr ), aColorGet[5 ]:Refresh() )
-   REDEFINE BTNBMP RESOURCE "SELECT" NOBORDER ID 306 OF oFld:aDialogs[i] ACTION ( aColors[6 ] := Set3Color( aColorSay[6 ], aColors[6 ], nDefClr ), aColorGet[6 ]:Refresh() )
-   REDEFINE BTNBMP RESOURCE "SELECT" NOBORDER ID 307 OF oFld:aDialogs[i] ACTION ( aColors[7 ] := Set3Color( aColorSay[7 ], aColors[7 ], nDefClr ), aColorGet[7 ]:Refresh() )
-   REDEFINE BTNBMP RESOURCE "SELECT" NOBORDER ID 308 OF oFld:aDialogs[i] ACTION ( aColors[8 ] := Set3Color( aColorSay[8 ], aColors[8 ], nDefClr ), aColorGet[8 ]:Refresh() )
-   REDEFINE BTNBMP RESOURCE "SELECT" NOBORDER ID 309 OF oFld:aDialogs[i] ACTION ( aColors[9 ] := Set3Color( aColorSay[9 ], aColors[9 ], nDefClr ), aColorGet[9 ]:Refresh() )
-   REDEFINE BTNBMP RESOURCE "SELECT" NOBORDER ID 310 OF oFld:aDialogs[i] ACTION ( aColors[10] := Set3Color( aColorSay[10], aColors[10], nDefClr ), aColorGet[10]:Refresh() )
-   REDEFINE BTNBMP RESOURCE "SELECT" NOBORDER ID 311 OF oFld:aDialogs[i] ACTION ( aColors[11] := Set3Color( aColorSay[11], aColors[11], nDefClr ), aColorGet[11]:Refresh() )
-   REDEFINE BTNBMP RESOURCE "SELECT" NOBORDER ID 312 OF oFld:aDialogs[i] ACTION ( aColors[12] := Set3Color( aColorSay[12], aColors[12], nDefClr ), aColorGet[12]:Refresh() )
-   REDEFINE BTNBMP RESOURCE "SELECT" NOBORDER ID 313 OF oFld:aDialogs[i] ACTION ( aColors[13] := Set3Color( aColorSay[13], aColors[13], nDefClr ), aColorGet[13]:Refresh() )
-   REDEFINE BTNBMP RESOURCE "SELECT" NOBORDER ID 314 OF oFld:aDialogs[i] ACTION ( aColors[14] := Set3Color( aColorSay[14], aColors[14], nDefClr ), aColorGet[14]:Refresh() )
-   REDEFINE BTNBMP RESOURCE "SELECT" NOBORDER ID 315 OF oFld:aDialogs[i] ACTION ( aColors[15] := Set3Color( aColorSay[15], aColors[15], nDefClr ), aColorGet[15]:Refresh() )
-   REDEFINE BTNBMP RESOURCE "SELECT" NOBORDER ID 316 OF oFld:aDialogs[i] ACTION ( aColors[16] := Set3Color( aColorSay[16], aColors[16], nDefClr ), aColorGet[16]:Refresh() )
-   REDEFINE BTNBMP RESOURCE "SELECT" NOBORDER ID 317 OF oFld:aDialogs[i] ACTION ( aColors[17] := Set3Color( aColorSay[17], aColors[17], nDefClr ), aColorGet[17]:Refresh() )
-   REDEFINE BTNBMP RESOURCE "SELECT" NOBORDER ID 318 OF oFld:aDialogs[i] ACTION ( aColors[18] := Set3Color( aColorSay[18], aColors[18], nDefClr ), aColorGet[18]:Refresh() )
-   REDEFINE BTNBMP RESOURCE "SELECT" NOBORDER ID 319 OF oFld:aDialogs[i] ACTION ( aColors[19] := Set3Color( aColorSay[19], aColors[19], nDefClr ), aColorGet[19]:Refresh() )
-   REDEFINE BTNBMP RESOURCE "SELECT" NOBORDER ID 320 OF oFld:aDialogs[i] ACTION ( aColors[20] := Set3Color( aColorSay[20], aColors[20], nDefClr ), aColorGet[20]:Refresh() )
-   REDEFINE BTNBMP RESOURCE "SELECT" NOBORDER ID 321 OF oFld:aDialogs[i] ACTION ( aColors[21] := Set3Color( aColorSay[21], aColors[21], nDefClr ), aColorGet[21]:Refresh() )
-   REDEFINE BTNBMP RESOURCE "SELECT" NOBORDER ID 322 OF oFld:aDialogs[i] ACTION ( aColors[22] := Set3Color( aColorSay[22], aColors[22], nDefClr ), aColorGet[22]:Refresh() )
-   REDEFINE BTNBMP RESOURCE "SELECT" NOBORDER ID 323 OF oFld:aDialogs[i] ACTION ( aColors[23] := Set3Color( aColorSay[23], aColors[23], nDefClr ), aColorGet[23]:Refresh() )
-   REDEFINE BTNBMP RESOURCE "SELECT" NOBORDER ID 324 OF oFld:aDialogs[i] ACTION ( aColors[24] := Set3Color( aColorSay[24], aColors[24], nDefClr ), aColorGet[24]:Refresh() )
-   REDEFINE BTNBMP RESOURCE "SELECT" NOBORDER ID 325 OF oFld:aDialogs[i] ACTION ( aColors[25] := Set3Color( aColorSay[25], aColors[25], nDefClr ), aColorGet[25]:Refresh() )
-   REDEFINE BTNBMP RESOURCE "SELECT" NOBORDER ID 326 OF oFld:aDialogs[i] ACTION ( aColors[26] := Set3Color( aColorSay[26], aColors[26], nDefClr ), aColorGet[26]:Refresh() )
-   REDEFINE BTNBMP RESOURCE "SELECT" NOBORDER ID 327 OF oFld:aDialogs[i] ACTION ( aColors[27] := Set3Color( aColorSay[27], aColors[27], nDefClr ), aColorGet[27]:Refresh() )
-   REDEFINE BTNBMP RESOURCE "SELECT" NOBORDER ID 328 OF oFld:aDialogs[i] ACTION ( aColors[28] := Set3Color( aColorSay[28], aColors[28], nDefClr ), aColorGet[28]:Refresh() )
-   REDEFINE BTNBMP RESOURCE "SELECT" NOBORDER ID 329 OF oFld:aDialogs[i] ACTION ( aColors[29] := Set3Color( aColorSay[29], aColors[29], nDefClr ), aColorGet[29]:Refresh() )
-   REDEFINE BTNBMP RESOURCE "SELECT" NOBORDER ID 330 OF oFld:aDialogs[i] ACTION ( aColors[30] := Set3Color( aColorSay[30], aColors[30], nDefClr ), aColorGet[30]:Refresh() )
+   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 301 OF oFld:aDialogs[i] ACTION ( aColors[1 ] := Set3Color( aColorSay[1 ], aColors[1 ], nDefClr ), aColorGet[1 ]:Refresh() )
+   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 302 OF oFld:aDialogs[i] ACTION ( aColors[2 ] := Set3Color( aColorSay[2 ], aColors[2 ], nDefClr ), aColorGet[2 ]:Refresh() )
+   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 303 OF oFld:aDialogs[i] ACTION ( aColors[3 ] := Set3Color( aColorSay[3 ], aColors[3 ], nDefClr ), aColorGet[3 ]:Refresh() )
+   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 304 OF oFld:aDialogs[i] ACTION ( aColors[4 ] := Set3Color( aColorSay[4 ], aColors[4 ], nDefClr ), aColorGet[4 ]:Refresh() )
+   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 305 OF oFld:aDialogs[i] ACTION ( aColors[5 ] := Set3Color( aColorSay[5 ], aColors[5 ], nDefClr ), aColorGet[5 ]:Refresh() )
+   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 306 OF oFld:aDialogs[i] ACTION ( aColors[6 ] := Set3Color( aColorSay[6 ], aColors[6 ], nDefClr ), aColorGet[6 ]:Refresh() )
+   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 307 OF oFld:aDialogs[i] ACTION ( aColors[7 ] := Set3Color( aColorSay[7 ], aColors[7 ], nDefClr ), aColorGet[7 ]:Refresh() )
+   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 308 OF oFld:aDialogs[i] ACTION ( aColors[8 ] := Set3Color( aColorSay[8 ], aColors[8 ], nDefClr ), aColorGet[8 ]:Refresh() )
+   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 309 OF oFld:aDialogs[i] ACTION ( aColors[9 ] := Set3Color( aColorSay[9 ], aColors[9 ], nDefClr ), aColorGet[9 ]:Refresh() )
+   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 310 OF oFld:aDialogs[i] ACTION ( aColors[10] := Set3Color( aColorSay[10], aColors[10], nDefClr ), aColorGet[10]:Refresh() )
+   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 311 OF oFld:aDialogs[i] ACTION ( aColors[11] := Set3Color( aColorSay[11], aColors[11], nDefClr ), aColorGet[11]:Refresh() )
+   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 312 OF oFld:aDialogs[i] ACTION ( aColors[12] := Set3Color( aColorSay[12], aColors[12], nDefClr ), aColorGet[12]:Refresh() )
+   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 313 OF oFld:aDialogs[i] ACTION ( aColors[13] := Set3Color( aColorSay[13], aColors[13], nDefClr ), aColorGet[13]:Refresh() )
+   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 314 OF oFld:aDialogs[i] ACTION ( aColors[14] := Set3Color( aColorSay[14], aColors[14], nDefClr ), aColorGet[14]:Refresh() )
+   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 315 OF oFld:aDialogs[i] ACTION ( aColors[15] := Set3Color( aColorSay[15], aColors[15], nDefClr ), aColorGet[15]:Refresh() )
+   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 316 OF oFld:aDialogs[i] ACTION ( aColors[16] := Set3Color( aColorSay[16], aColors[16], nDefClr ), aColorGet[16]:Refresh() )
+   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 317 OF oFld:aDialogs[i] ACTION ( aColors[17] := Set3Color( aColorSay[17], aColors[17], nDefClr ), aColorGet[17]:Refresh() )
+   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 318 OF oFld:aDialogs[i] ACTION ( aColors[18] := Set3Color( aColorSay[18], aColors[18], nDefClr ), aColorGet[18]:Refresh() )
+   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 319 OF oFld:aDialogs[i] ACTION ( aColors[19] := Set3Color( aColorSay[19], aColors[19], nDefClr ), aColorGet[19]:Refresh() )
+   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 320 OF oFld:aDialogs[i] ACTION ( aColors[20] := Set3Color( aColorSay[20], aColors[20], nDefClr ), aColorGet[20]:Refresh() )
+   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 321 OF oFld:aDialogs[i] ACTION ( aColors[21] := Set3Color( aColorSay[21], aColors[21], nDefClr ), aColorGet[21]:Refresh() )
+   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 322 OF oFld:aDialogs[i] ACTION ( aColors[22] := Set3Color( aColorSay[22], aColors[22], nDefClr ), aColorGet[22]:Refresh() )
+   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 323 OF oFld:aDialogs[i] ACTION ( aColors[23] := Set3Color( aColorSay[23], aColors[23], nDefClr ), aColorGet[23]:Refresh() )
+   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 324 OF oFld:aDialogs[i] ACTION ( aColors[24] := Set3Color( aColorSay[24], aColors[24], nDefClr ), aColorGet[24]:Refresh() )
+   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 325 OF oFld:aDialogs[i] ACTION ( aColors[25] := Set3Color( aColorSay[25], aColors[25], nDefClr ), aColorGet[25]:Refresh() )
+   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 326 OF oFld:aDialogs[i] ACTION ( aColors[26] := Set3Color( aColorSay[26], aColors[26], nDefClr ), aColorGet[26]:Refresh() )
+   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 327 OF oFld:aDialogs[i] ACTION ( aColors[27] := Set3Color( aColorSay[27], aColors[27], nDefClr ), aColorGet[27]:Refresh() )
+   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 328 OF oFld:aDialogs[i] ACTION ( aColors[28] := Set3Color( aColorSay[28], aColors[28], nDefClr ), aColorGet[28]:Refresh() )
+   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 329 OF oFld:aDialogs[i] ACTION ( aColors[29] := Set3Color( aColorSay[29], aColors[29], nDefClr ), aColorGet[29]:Refresh() )
+   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 330 OF oFld:aDialogs[i] ACTION ( aColors[30] := Set3Color( aColorSay[30], aColors[30], nDefClr ), aColorGet[30]:Refresh() )
 
    ACTIVATE DIALOG oDlg CENTERED
 
@@ -3028,7 +3028,7 @@ FUNCTION SetAreaFormulaBtn( nID, nField, oDlg )
    LOCAL oBtn
 
    REDEFINE BTNBMP oBtn ID nID OF oDlg NOBORDER ;
-      RESOURCE "B_SOURCE_" + IIF( EMPTY( aTmpSource[ nField ] ), "NO", "YES" ) ;
+      RESOURCE "B_SOURCE_" + IIF( EMPTY( aTmpSource[ nField ] ), "NO", "YES" ) TRANSPARENT ;
       TOOLTIP GetSourceToolTip( aTmpSource[ nField ] ) ;
       ACTION ( aTmpSource[ nField ] := EditSourceCode( 0, aTmpSource[ nField ] ), ;
                oBtn:LoadBitmaps( "B_SOURCE_" + IIF( EMPTY( aTmpSource[ nField ] ), "NO", "YES" ) ), ;
