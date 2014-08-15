@@ -95,7 +95,7 @@ FUNCTION Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
    // SetBalloon( .T. )
    SetDlgGradient( { { 1, RGB( 199, 216, 237 ), RGB( 237, 242, 248 ) } } )
    
-   DEFINE WINDOW oMainWnd FROM 2, 3 TO 28, 85 VSCROLL HSCROLL ;
+   DEFINE WINDOW oMainWnd FROM 2, 3 TO 28, 85 VSCROLL ;
       TITLE MainCaption() ;
       BRUSH oBrush MDI ;
       ICON oIcon ;
@@ -594,9 +594,9 @@ FUNCTION SetScrollBar()
    LOCAL oVScroll
 
    oMainWnd:oWndClient:oVScroll:SetRange( 0, 100 )
-   oMainWnd:oWndClient:oHScroll:SetRange( 0, 100 )
-   //oMainWnd:oWndClient:oVScroll:SetRange( 0, nTotalHeight )
-   //oMainWnd:oWndClient:oHScroll:SetRange( 0, nTotalWidth )
+   // oMainWnd:oWndClient:oHScroll:SetRange( 0, 100 )
+   // oMainWnd:oWndClient:oVScroll:SetRange( 0, nTotalHeight )
+   // oMainWnd:oWndClient:oHScroll:SetRange( 0, nTotalWidth )
 
    oMainWnd:oWndClient:oVScroll:bGoUp     = {|| ScrollVertical( .T. ) }
    oMainWnd:oWndClient:oVScroll:bGoDown   = {|| ScrollVertical( , .T. ) }
@@ -605,15 +605,15 @@ FUNCTION SetScrollBar()
    oMainWnd:oWndClient:oVScroll:bPos      = {| nWert | ScrollVertical( ,,,, .T., nWert ) }
    oMainWnd:oWndClient:oVScroll:nPgStep   = 392
 
-   oMainWnd:oWndClient:oHScroll:bGoUp     = {|| ScrollHorizont( .T. ) }
-   oMainWnd:oWndClient:oHScroll:bGoDown   = {|| ScrollHorizont( , .T. ) }
-   oMainWnd:oWndClient:oHScroll:bPageUp   = {|| ScrollHorizont( ,, .T. ) }
-   oMainWnd:oWndClient:oHScroll:bPageDown = {|| ScrollHorizont( ,,, .T. ) }
-   oMainWnd:oWndClient:oHScroll:bPos      = {| nWert | ScrollHorizont( ,,,, .T., nWert ) }
-   oMainWnd:oWndClient:oHScroll:nPgStep   = 602
+   // oMainWnd:oWndClient:oHScroll:bGoUp     = {|| ScrollHorizont( .T. ) }
+   // oMainWnd:oWndClient:oHScroll:bGoDown   = {|| ScrollHorizont( , .T. ) }
+   // oMainWnd:oWndClient:oHScroll:bPageUp   = {|| ScrollHorizont( ,, .T. ) }
+   // oMainWnd:oWndClient:oHScroll:bPageDown = {|| ScrollHorizont( ,,, .T. ) }
+   // oMainWnd:oWndClient:oHScroll:bPos      = {| nWert | ScrollHorizont( ,,,, .T., nWert ) }
+   // oMainWnd:oWndClient:oHScroll:nPgStep   = 602
 
-   oMainWnd:oWndClient:oVScroll:SetPos(0)
-   oMainWnd:oWndClient:oHScroll:SetPos(0)
+   oMainWnd:oWndClient:oVScroll:SetPos( 0 )
+   // oMainWnd:oWndClient:oHScroll:SetPos(0)
 
 RETURN (.T.)
 
