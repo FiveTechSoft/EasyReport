@@ -95,12 +95,12 @@ FUNCTION Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
    // SetBalloon( .T. )
    SetDlgGradient( { { 1, RGB( 199, 216, 237 ), RGB( 237, 242, 248 ) } } )
    
-   DEFINE WINDOW oMainWnd FROM 2, 3 TO 28, 85 VSCROLL ;
+   DEFINE WINDOW oMainWnd FROM 0, 0 TO 50, 200 VSCROLL ;
       TITLE MainCaption() ;
       BRUSH oBrush MDI ;
       ICON oIcon ;
       MENU BuildMenu()
-
+      
    //Clipboard
    DEFINE CLIPBOARD oClpGeneral OF oMainWnd
 
@@ -589,34 +589,41 @@ RETURN (.T.)
 * Rückgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
+
 FUNCTION SetScrollBar()
 
    LOCAL oVScroll
+   LOCAL nPageZugabe := 392
 
-   oMainWnd:oWndClient:oVScroll:SetRange( 0, 100 )
-   // oMainWnd:oWndClient:oHScroll:SetRange( 0, 100 )
-   // oMainWnd:oWndClient:oVScroll:SetRange( 0, nTotalHeight )
-   // oMainWnd:oWndClient:oHScroll:SetRange( 0, nTotalWidth )
+   if !empty( oMainWnd:oWndClient:oVScroll )
+      oMainWnd:oWndClient:oVScroll:SetRange( 0, 100 )
+      //oMainWnd:oWndClient:oVScroll:SetRange( 0, nTotalHeight )
 
-   oMainWnd:oWndClient:oVScroll:bGoUp     = {|| ScrollVertical( .T. ) }
-   oMainWnd:oWndClient:oVScroll:bGoDown   = {|| ScrollVertical( , .T. ) }
-   oMainWnd:oWndClient:oVScroll:bPageUp   = {|| ScrollVertical( ,, .T. ) }
-   oMainWnd:oWndClient:oVScroll:bPageDown = {|| ScrollVertical( ,,, .T. ) }
-   oMainWnd:oWndClient:oVScroll:bPos      = {| nWert | ScrollVertical( ,,,, .T., nWert ) }
-   oMainWnd:oWndClient:oVScroll:nPgStep   = 392
+      oMainWnd:oWndClient:oVScroll:bGoUp     = {|| ScrollVertical( .T. ) }
+      oMainWnd:oWndClient:oVScroll:bGoDown   = {|| ScrollVertical( , .T. ) }
+      oMainWnd:oWndClient:oVScroll:bPageUp   = {|| ScrollVertical( ,, .T. ) }
+      oMainWnd:oWndClient:oVScroll:bPageDown = {|| ScrollVertical( ,,, .T. ) }
+      oMainWnd:oWndClient:oVScroll:bPos      = {| nWert | ScrollVertical( ,,,, .T., nWert ) }
+      oMainWnd:oWndClient:oVScroll:nPgStep   = nPageZugabe   //392
 
-   // oMainWnd:oWndClient:oHScroll:bGoUp     = {|| ScrollHorizont( .T. ) }
-   // oMainWnd:oWndClient:oHScroll:bGoDown   = {|| ScrollHorizont( , .T. ) }
-   // oMainWnd:oWndClient:oHScroll:bPageUp   = {|| ScrollHorizont( ,, .T. ) }
-   // oMainWnd:oWndClient:oHScroll:bPageDown = {|| ScrollHorizont( ,,, .T. ) }
-   // oMainWnd:oWndClient:oHScroll:bPos      = {| nWert | ScrollHorizont( ,,,, .T., nWert ) }
-   // oMainWnd:oWndClient:oHScroll:nPgStep   = 602
+      oMainWnd:oWndClient:oVScroll:SetPos(0)
+   endif
 
-   oMainWnd:oWndClient:oVScroll:SetPos( 0 )
-   // oMainWnd:oWndClient:oHScroll:SetPos(0)
+   if ! Empty( oMainWnd:oWndClient:oHScroll )
+      oMainWnd:oWndClient:oHScroll:SetRange( 0, 100 )
+      //oMainWnd:oWndClient:oHScroll:SetRange( 0, nTotalWidth )
+
+      oMainWnd:oWndClient:oHScroll:bGoUp     = {|| ScrollHorizont( .T. ) }
+      oMainWnd:oWndClient:oHScroll:bGoDown   = {|| ScrollHorizont( , .T. ) }
+      oMainWnd:oWndClient:oHScroll:bPageUp   = {|| ScrollHorizont( ,, .T. ) }
+      oMainWnd:oWndClient:oHScroll:bPageDown = {|| ScrollHorizont( ,,, .T. ) }
+      oMainWnd:oWndClient:oHScroll:bPos      = {| nWert | ScrollHorizont( ,,,, .T., nWert ) }
+      oMainWnd:oWndClient:oHScroll:nPgStep   = 602
+
+      oMainWnd:oWndClient:oHScroll:SetPos(0)
+   endif
 
 RETURN (.T.)
-
 
 *-- FUNCTION -----------------------------------------------------------------
 * Name........: ScrollVertical
@@ -766,6 +773,7 @@ FUNCTION SetMainWnd()
 
    IF VAL( GetPvProfString( "General", "Maximize", "1", cGeneralIni ) ) = 1
       oMainWnd:Maximize()
+      SysRefresh()
    ENDIF
 
 RETURN (.T.)
@@ -1438,8 +1446,8 @@ FUNCTION SetReticule( nRow, nCol, nArea )
 
    AEVAL( aRuler, {|x,y| IIF( x[1] <> NIL, ;
       ( x[1]:Move( nRulerTop-nRuler, nColPos, 1, ;
-          IIF( lShow, ER_GetPixel( oGenVar:aAreaSizes[y,2] ) + nRuler, nRuler ), .T. ) ), ) } )
-
+          IIF( lShow, ER_GetPixel( oGenVar:aAreaSizes[y,2] ) + nRuler, nRuler ), .T. ) ),) } )
+          
    //AEVAL( aRuler, {|x,y| IIF( x[1] <> NIL, ;
    //   ( x[1]:Move( nRulerTop-nRuler, nColPos, 1, ;
    //                IIF( lShow, ER_GetPixel( oGenVar:aAreaSizes[y,2] ) + nRuler, nRuler ), .T. ), ;
