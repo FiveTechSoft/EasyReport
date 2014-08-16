@@ -30,7 +30,6 @@ PRG =        \
 
 C =            \
 .\cfunc.c      \               
-.\point.c      \
 .\setmask.c    \
 .\treedraw.c      
 
