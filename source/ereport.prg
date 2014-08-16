@@ -1474,7 +1474,8 @@ function DrawRulerLines( oRulerBmp, nColPos )
       InvertRect( hDC, oRulerBmp:Cargo )
    endif   
    
-   oRulerBmp:Cargo = { 0, nColPos - 1, oRulerBmp:nHeight(), nColPos }
+   oRulerBmp:Cargo = { 0, nColPos - 1 - oRulerBmp:nLeft,;
+                       oRulerBmp:nHeight(), nColPos - oRulerBmp:nLeft }
    InvertRect( hDC, oRulerBmp:Cargo )
 
    oRulerBmp:ReleaseDC()
