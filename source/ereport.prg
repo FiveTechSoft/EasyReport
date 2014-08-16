@@ -25,14 +25,14 @@ MEMVAR oClpGeneral, cDefIni, cDefIniPath, cGeneralIni, nMeasure, cMeasure, lDemo
 MEMVAR oMainWnd, lProfi, nUndoCount, nRedoCount, nDlgTextCol, nDlgBackCol
 MEMVAR lPersonal, lStandard, oGenVar, oCurDlg
 
-* - FUNCTION ---------------------------------------------------------------
-*  Function....: Start()
+* - function ---------------------------------------------------------------
+*  function....: Start()
 *  Beschreibung:
 *  Argumente...: None
 *  Rückgabewert:
 *  Author......: Timm Sodtalbers
 * --------------------------------------------------------------------------
-FUNCTION Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 )
+function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 )
 
    LOCAL i, oBrush, oIni, aTest, nTime1, nTime2, cTest, oIcon, cDateFormat
    LOCAL cOldDir  := hb_CurDrive() + ":\" + GetCurDir()
@@ -40,21 +40,21 @@ FUNCTION Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
 
    lChDir( cFilePath( GetModuleFileName( GetInstance() ) ) )
 
-   IF P1  <> NIL ; cDefFile += P1  + " " ; ENDIF
-   IF P2  <> NIL ; cDefFile += P2  + " " ; ENDIF
-   IF P3  <> NIL ; cDefFile += P3  + " " ; ENDIF
-   IF P4  <> NIL ; cDefFile += P4  + " " ; ENDIF
-   IF P5  <> NIL ; cDefFile += P5  + " " ; ENDIF
-   IF P6  <> NIL ; cDefFile += P6  + " " ; ENDIF
-   IF P7  <> NIL ; cDefFile += P7  + " " ; ENDIF
-   IF P8  <> NIL ; cDefFile += P8  + " " ; ENDIF
-   IF P9  <> NIL ; cDefFile += P9  + " " ; ENDIF
-   IF P10 <> NIL ; cDefFile += P10 + " " ; ENDIF
-   IF P11 <> NIL ; cDefFile += P11 + " " ; ENDIF
-   IF P12 <> NIL ; cDefFile += P12 + " " ; ENDIF
-   IF P13 <> NIL ; cDefFile += P13 + " " ; ENDIF
-   IF P14 <> NIL ; cDefFile += P14 + " " ; ENDIF
-   IF P15 <> NIL ; cDefFile += P15 + " " ; ENDIF
+   IF P1  <> nil ; cDefFile += P1  + " " ; ENDIF
+   IF P2  <> nil ; cDefFile += P2  + " " ; ENDIF
+   IF P3  <> nil ; cDefFile += P3  + " " ; ENDIF
+   IF P4  <> nil ; cDefFile += P4  + " " ; ENDIF
+   IF P5  <> nil ; cDefFile += P5  + " " ; ENDIF
+   IF P6  <> nil ; cDefFile += P6  + " " ; ENDIF
+   IF P7  <> nil ; cDefFile += P7  + " " ; ENDIF
+   IF P8  <> nil ; cDefFile += P8  + " " ; ENDIF
+   IF P9  <> nil ; cDefFile += P9  + " " ; ENDIF
+   IF P10 <> nil ; cDefFile += P10 + " " ; ENDIF
+   IF P11 <> nil ; cDefFile += P11 + " " ; ENDIF
+   IF P12 <> nil ; cDefFile += P12 + " " ; ENDIF
+   IF P13 <> nil ; cDefFile += P13 + " " ; ENDIF
+   IF P14 <> nil ; cDefFile += P14 + " " ; ENDIF
+   IF P15 <> nil ; cDefFile += P15 + " " ; ENDIF
 
    cDefFile := STRTRAN( ALLTRIM( cDefFile ), '"' )
 
@@ -125,23 +125,23 @@ FUNCTION Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
    oGenVar:oBarBrush:End()
 
    AEVAL( oGenVar:aAppFonts, {|x| x:End() } )
-   AEVAL( aFonts, {|x| IIF( x <> NIL, x:End(), ) } )
+   AEVAL( aFonts, {|x| IIF( x <> nil, x:End(), ) } )
 
    CloseUndo()
 
    lChDir( cOldDir )
 
-RETURN( NIL )
+return( nil )
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 *         Name: BarMenu
 *  Description:
 *    Arguments: None
-* Return Value: .T.
+* return Value: .T.
 *       Author: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION BarMenu()
+function BarMenu()
 
    LOCAL aBtn[3]
    LOCAL lPrompt := ( GetSysMetrics( 0 ) > 800 )
@@ -168,7 +168,7 @@ FUNCTION BarMenu()
       WHEN .NOT. EMPTY( cDefIni ) .AND. lVRDSave = .F.
 
    IF nDeveloper = 1 .OR. oGenVar:lStandalone = .T.
-      DEFINE BUTTON aBtn[1] RESOURCE "B_PREVIEW" ;
+      DEFINE BUTTON aBtn[ 1 ] RESOURCE "B_PREVIEW" ;
          OF oBar ;
          PROMPT FWString( "Preview" ) ;
          TOOLTIP GL("Preview") ;
@@ -263,20 +263,20 @@ FUNCTION BarMenu()
 
    ENDIF
 
-   oBar:bLClicked := {|| NIL }
-   oBar:bRClicked := {|| NIL }
+   oBar:bLClicked := {|| nil }
+   oBar:bRClicked := {|| nil }
 
-RETURN (.T.)
+return .T.
 
 
-* - FUNCTION ---------------------------------------------------------------
-*  Function....: PreviewMenu
+* - function ---------------------------------------------------------------
+*  function....: PreviewMenu
 *  Beschreibung:
 *  Argumente...: None
-*  Rückgabewert: ( NIL )
+*  Rückgabewert: ( nil )
 *  Author......: Timm Sodtalbers
 * --------------------------------------------------------------------------
-FUNCTION PreviewMenu( oBtn )
+function PreviewMenu( oBtn )
 
    LOCAL oMenu
    LOCAL aRect := GetClientRect( oBtn:hWnd )
@@ -295,17 +295,17 @@ FUNCTION PreviewMenu( oBtn )
 
    ACTIVATE POPUP oMenu AT aRect[3], aRect[2] OF oBtn
 
-RETURN( oMenu )
+return( oMenu )
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: StartMessage
 * Beschreibung:
 * Argumente...: None
 * Rückgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION StartMessage()
+function StartMessage()
 
    IF lBeta = .T.
       BetaVersion()
@@ -320,17 +320,17 @@ FUNCTION StartMessage()
       ENDIF
   ENDIF
 
-RETURN (.T.)
+return .T.
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: DeclarePublics
 * Beschreibung:
 * Argumente...: None
 * Rückgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION DeclarePublics( cDefFile )
+function DeclarePublics( cDefFile )
 
    PUBLIC oMainWnd, oClpGeneral, oTimer
    PUBLIC cDefIni, cDefIniPath
@@ -348,8 +348,8 @@ FUNCTION DeclarePublics( cDefFile )
 
    PUBLIC aItems, aFonts, oAppFont, aAreaIni, aWnd, aWndTitle, oBar, oMru
    PUBLIC aCbxItems, nAktuellItem, aRuler, cLongDefIni, cDefaultPath
-   PUBLIC oCbxArea := NIL
-   PUBLIC oCurDlg  := NIL
+   PUBLIC oCbxArea := nil
+   PUBLIC oCurDlg  := nil
 
    //Gesamthöhe und Breite
    PUBLIC nTotalHeight, nTotalWidth
@@ -379,7 +379,7 @@ FUNCTION DeclarePublics( cDefFile )
    PUBLIC oMsgInfo
 
    //Sichern
-   PUBLIC aVRDSave[102,2]
+   PUBLIC aVRDSave[102, 2 ]
    PUBLIC lVRDSave    := .T.
    PUBLIC lFillWindow := .F.
 
@@ -472,7 +472,7 @@ FUNCTION DeclarePublics( cDefFile )
    oGenVar:AddMember( "cBarBrush",, ALLTRIM( GetPvProfString( "General", "ButtonbarBrush" , "", cGeneralIni ) ) )
    oGenVar:AddMember( "cBrushArea"     ,, GetPvProfString( "General", "AreaBackBrush"     , "", cGeneralIni ) )
 
-   oGenVar:AddMember( "oBarBrush",, NIL )
+   oGenVar:AddMember( "oBarBrush",, nil )
 
    IF EMPTY( oGenVar:cBarBrush )
       DEFINE BRUSH oGenVar:oBarBrush COLOR GetSysColor( 15 )  // COLOR_BTNFACE
@@ -484,7 +484,7 @@ FUNCTION DeclarePublics( cDefFile )
       ENDIF
    ENDIF
 
-   oGenVar:AddMember( "oAreaBrush",, NIL )
+   oGenVar:AddMember( "oAreaBrush",, nil )
 
    IF EMPTY( oGenVar:cBrushArea )
       DEFINE BRUSH oGenVar:oAreaBrush COLOR oGenVar:nClrArea
@@ -513,7 +513,7 @@ FUNCTION DeclarePublics( cDefFile )
 
    oGenVar:AddMember( "aAppFonts",, ARRAY(2) )
 
-   DEFINE FONT oGenVar:aAppFonts[1] NAME GetSysFont() SIZE 0,-11 BOLD
+   DEFINE FONT oGenVar:aAppFonts[ 1 ] NAME GetSysFont() SIZE 0,-11 BOLD
    DEFINE FONT oGenVar:aAppFonts[2] NAME GetSysFont() SIZE 0,-10 BOLD
 
    oGenVar:AddMember( "lItemDlg",, .F. )
@@ -526,17 +526,17 @@ FUNCTION DeclarePublics( cDefFile )
    oGenVar:AddMember( "cLoadFile" ,, "" )
    oGenVar:AddMember( "lFirstFile",, .T. )
 
-RETURN (.T.)
+return .T.
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 *         Name: SetGeneralSettings
 *  Description:
 *    Arguments: None
-* Return Value: .T.
+* return Value: .T.
 *       Author: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION SetGeneralSettings()
+function SetGeneralSettings()
 
    nMeasure := VAL( GetPvProfString( "General", "Measure", "1", cDefIni ) )
    IIF( nMeasure = 1, cMeasure := GL("mm"), )
@@ -554,17 +554,17 @@ FUNCTION SetGeneralSettings()
 
    OpenDatabases()
 
-RETURN (.T.)
+return .T.
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: IniMainWindow
 * Beschreibung:
 * Argumente...: None
 * Rückgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION IniMainWindow()
+function IniMainWindow()
 
    IF .NOT. EMPTY( cDefIni )
 
@@ -585,10 +585,10 @@ FUNCTION IniMainWindow()
       CreateBackup()
    ENDIF
 
-RETURN (.T.)
+return .T.
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: SetScrollBar
 * Beschreibung:
 * Argumente...: None
@@ -596,7 +596,7 @@ RETURN (.T.)
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
 
-FUNCTION SetScrollBar()
+function SetScrollBar()
 
    LOCAL oVScroll
    LOCAL nPageZugabe := 392
@@ -629,16 +629,16 @@ FUNCTION SetScrollBar()
       oMainWnd:oWndClient:oHScroll:SetPos(0)
    endif
 
-RETURN (.T.)
+return .T.
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: ScrollVertical
 * Beschreibung:
 * Argumente...: None
 * Rückgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION ScrollVertical( lUp, lDown, lPageUp, lPageDown, lPos, nPosZugabe )
+function ScrollVertical( lUp, lDown, lPageUp, lPageDown, lPos, nPosZugabe )
 
    LOCAL i, aFirstWndCoors, nAltWert
    LOCAL nZugabe     := 14
@@ -654,23 +654,23 @@ FUNCTION ScrollVertical( lUp, lDown, lPageUp, lPageDown, lPos, nPosZugabe )
    UnSelectAll()
 
    FOR i := 1 TO 100
-      IF aWnd[i] <> NIL
+      IF aWnd[i] <> nil
          aFirstWndCoors := GetCoors( aWnd[i]:hWnd )
          EXIT
       ENDIF
    NEXT
 
    IF lUp = .T. .OR. lPageUp = .T.
-      IF aFirstWndCoors[1] = 0
+      IF aFirstWndCoors[ 1 ] = 0
          nZugabe := 0
-      ELSEIF aFirstWndCoors[1] + IIF( lUp, nZugabe, nPageZugabe ) >= 0
-         nZugabe     := -1 * aFirstWndCoors[1]
-         nPageZugabe := -1 * aFirstWndCoors[1]
+      ELSEIF aFirstWndCoors[ 1 ] + IIF( lUp, nZugabe, nPageZugabe ) >= 0
+         nZugabe     := -1 * aFirstWndCoors[ 1 ]
+         nPageZugabe := -1 * aFirstWndCoors[ 1 ]
       ENDIF
    ENDIF
 
    IF lDown = .T. .OR. lPageDown = .T.
-      IF aFirstWndCoors[1] + nTotalHeight <= aCliRect[3] - 80
+      IF aFirstWndCoors[ 1 ] + nTotalHeight <= aCliRect[3] - 80
          nZugabe     := 0
          nPageZugabe := 0
       ENDIF
@@ -683,7 +683,7 @@ FUNCTION ScrollVertical( lUp, lDown, lPageUp, lPageDown, lPos, nPosZugabe )
    ENDIF
 
    FOR i := 1 TO 100
-      IF aWnd[i] <> NIL
+      IF aWnd[i] <> nil
          IF lUp = .T. .OR. lPos = .T.
             aWnd[i]:Move( aWnd[i]:nTop + nZugabe, aWnd[i]:nLeft, 0, 0, .T. )
          ELSEIF lDown = .T.
@@ -696,17 +696,17 @@ FUNCTION ScrollVertical( lUp, lDown, lPageUp, lPageDown, lPos, nPosZugabe )
       ENDIF
    NEXT
 
-RETURN (.T.)
+return .T.
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: ScrollHorizont
 * Beschreibung:
 * Argumente...: None
 * Rückgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION ScrollHorizont( lLeft, lRight, lPageLeft, lPageRight, lPos, nPosZugabe )
+function ScrollHorizont( lLeft, lRight, lPageLeft, lPageRight, lPos, nPosZugabe )
 
    LOCAL i, aFirstWndCoors, nAltWert
    LOCAL nZugabe     := 14
@@ -722,7 +722,7 @@ FUNCTION ScrollHorizont( lLeft, lRight, lPageLeft, lPageRight, lPos, nPosZugabe 
    UnSelectAll()
 
    FOR i := 1 TO 100
-      IF aWnd[i] <> NIL
+      IF aWnd[i] <> nil
          aFirstWndCoors := GetCoors( aWnd[i]:hWnd )
          EXIT
       ENDIF
@@ -752,7 +752,7 @@ FUNCTION ScrollHorizont( lLeft, lRight, lPageLeft, lPageRight, lPos, nPosZugabe 
 
 
    FOR i := 1 TO 100
-      IF aWnd[i] <> NIL
+      IF aWnd[i] <> nil
          IF lLeft = .T. .OR. lPos = .T.
             aWnd[i]:Move( aWnd[i]:nTop, aWnd[i]:nLeft + nZugabe , 0, 0, .T. )
          ELSEIF lRight = .T.
@@ -765,34 +765,34 @@ FUNCTION ScrollHorizont( lLeft, lRight, lPageLeft, lPageRight, lPos, nPosZugabe 
       ENDIF
    NEXT
 
-RETURN (.T.)
+return .T.
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: SetMainWnd
 * Beschreibung:
 * Argumente...: None
 * Rückgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION SetMainWnd()
+function SetMainWnd()
 
    IF VAL( GetPvProfString( "General", "Maximize", "1", cGeneralIni ) ) = 1
       oMainWnd:Maximize()
       SysRefresh()
    ENDIF
 
-RETURN (.T.)
+return .T.
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: IniAreasOnBar
 * Beschreibung:
 * Argumente...: None
 * Rückgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION IniAreasOnBar()
+function IniAreasOnBar()
 
    LOCAL i, oFont1
    LOCAL cCbxItem   := ""
@@ -810,41 +810,41 @@ FUNCTION IniAreasOnBar()
 
    oFont1:End()
 
-RETURN (.T.)
+return .T.
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: SetWinNull
 * Beschreibung:
 * Argumente...: None
 * Rückgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION SetWinNull()
+function SetWinNull()
 
    LOCAL i
    LOCAL nAltPos := aWnd[nAktArea]:nTop
 
    FOR i := 1 TO 100
-      IF aWnd[i] <> NIL
+      IF aWnd[i] <> nil
          aWnd[i]:Move( aWnd[i]:nTop - nAltPos, aWnd[i]:nLeft, 0, 0, .T. )
       ENDIF
    NEXT
 
-RETURN (.T.)
+return .T.
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: ShowAreasOnBar
 * Beschreibung:
 * Argumente...: None
 * Rückgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION ShowAreasOnBar()
+function ShowAreasOnBar()
 
    LOCAL i, oFont1
-   LOCAL cCbxItem  := aWndTitle[1]
+   LOCAL cCbxItem  := aWndTitle[ 1 ]
 
    aCbxItems := {}
 
@@ -855,23 +855,23 @@ FUNCTION ShowAreasOnBar()
    NEXT
 
    //Fokus auf das erste Fenster legen
-   aWnd[ ASCAN( aWnd, {|x| x <> NIL } ) ]:SetFocus()
+   aWnd[ ASCAN( aWnd, {|x| x <> nil } ) ]:SetFocus()
 
    oCbxArea:SetItems( aCbxItems )
    oCbxArea:Select( 1 )
    oCbxArea:bChange = {|| aWnd[ASCAN( aWndTitle, oCbxArea:cTitle )]:SetFocus(), SetWinNull() }
 
-RETURN (.T.)
+return .T.
 
 
-* - FUNCTION ---------------------------------------------------------------
-*  Function....: BuildMenu
+* - function ---------------------------------------------------------------
+*  function....: BuildMenu
 *  Beschreibung: Shell-Menu anzeigen
 *  Argumente...: None
-*  Rückgabewert: ( NIL )
+*  Rückgabewert: ( nil )
 *  Author......: Timm Sodtalbers
 * --------------------------------------------------------------------------
-FUNCTION BuildMenu()
+function BuildMenu()
 
    LOCAL oMenu
    LOCAL nMruList := VAL( GetPvProfString( "General", "MruList"  , "4", cGeneralIni ) )
@@ -1084,16 +1084,16 @@ FUNCTION BuildMenu()
 
    ENDMENU
 
-RETURN( oMenu )
+return( oMenu )
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 *         Name: PopupMenu
 * Beschreibung:
 *    Argumente: None
 * Rückgabewert: .T.                   Autor: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION PopupMenu( nArea, oItem, nRow, nCol, lItem )
+function PopupMenu( nArea, oItem, nRow, nCol, lItem )
 
    LOCAL oMenu
 
@@ -1116,7 +1116,7 @@ FUNCTION PopupMenu( nArea, oItem, nRow, nCol, lItem )
       ACTION GeneralSettings()
    SEPARATOR
    MENUITEM GL("&Area Properties") + CHR(9) + GL("Ctrl+A")    RESOURCE "B_AREA" ;
-      ACTION ( aWnd[nArea]:SetFocus(), AreaProperties( nAktArea ) )
+      ACTION ( aWnd[ nArea]:SetFocus(), AreaProperties( nAktArea ) )
    SEPARATOR
    MENUITEM GL("&Report Settings") ACTION ReportSettings()
    MENUITEM GL("&Options")         ACTION Options()
@@ -1136,19 +1136,19 @@ FUNCTION PopupMenu( nArea, oItem, nRow, nCol, lItem )
 
    ENDMENU
 
-   ACTIVATE POPUP oMenu OF IIF( lItem = .T., oItem, aWnd[nArea] ) AT nRow, nCol
+   ACTIVATE POPUP oMenu OF IIF( lItem = .T., oItem, aWnd[ nArea] ) AT nRow, nCol
 
-RETURN (.T.)
+return .T.
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: GenerateSource
 * Beschreibung:
 * Argumente...: None
 * Rückgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION GenerateSource( nArea )
+function GenerateSource( nArea )
 
    LOCAL i, oDlg, oGet1, cDir, cAreaDef, cAreaTitle, cItemDef, oRad1
    LOCAL cFile     := SPACE(120)
@@ -1181,7 +1181,7 @@ FUNCTION GenerateSource( nArea )
                oGet1:Refresh() )
 
    ACTIVATE DIALOG oDlg CENTER ;
-      ON INIT( oRad1:aItems[1]:SetText( GL("Copy to clipboard") ), ;
+      ON INIT( oRad1:aItems[ 1 ]:SetText( GL("Copy to clipboard") ), ;
                oRad1:aItems[2]:SetText( GL("Copy to file") + ":" ) )
 
    IF lGenerate = .T.
@@ -1189,7 +1189,7 @@ FUNCTION GenerateSource( nArea )
       cAreaDef := GetPvProfString( "Areas", ALLTRIM(STR(nArea,5)) , "", cDefIni )
       cAreaDef := VRD_LF2SF( ALLTRIM( cAreaDef ) )
 
-      cAreaTitle := ALLTRIM( GetPvProfString( "General", "Title" , "", aAreaIni[nArea] ) )
+      cAreaTitle := ALLTRIM( GetPvProfString( "General", "Title" , "", aAreaIni[ nArea] ) )
 
       IF .NOT. EMPTY( cAreaTitle )
          cSource += SPACE(3) + "//--- Area: " + cAreaTitle + " ---" + CRLF
@@ -1197,7 +1197,7 @@ FUNCTION GenerateSource( nArea )
 
       FOR i := 1 TO 1000
 
-         cItemDef := ALLTRIM( GetPvProfString( "Items", ALLTRIM(STR(i,5)) , "", aAreaIni[nArea] ) )
+         cItemDef := ALLTRIM( GetPvProfString( "Items", ALLTRIM(STR(i,5)) , "", aAreaIni[ nArea] ) )
 
          IF .NOT. EMPTY( cItemDef )
             IF nStyle = 1
@@ -1239,17 +1239,17 @@ FUNCTION GenerateSource( nArea )
 
    ENDIF
 
-RETURN (NIL)
+return (nil)
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: ClientWindow
 * Beschreibung:
 * Argumente...: None
 * Rückgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION ClientWindows()
+function ClientWindows()
 
    LOCAL i, nWnd, cItemDef, cTitle, nWidth, nHeight, nDemoWidth
    LOCAL lFirstWnd     := .F.
@@ -1260,10 +1260,10 @@ FUNCTION ClientWindows()
 
    //Sichern
    aVRDSave := ARRAY( 102, 2 )
-   aVRDSave[101,1] := cDefIni
-   aVRDSave[101,2] := MEMOREAD( cDefIni )
-   aVRDSave[102,1] := cGeneralIni
-   aVRDSave[102,2] := MEMOREAD( cGeneralIni )
+   aVRDSave[101, 1 ] := cDefIni
+   aVRDSave[101, 2 ] := MEMOREAD( cDefIni )
+   aVRDSave[102, 1 ] := cGeneralIni
+   aVRDSave[102, 2 ] := MEMOREAD( cGeneralIni )
 
    FOR i := 1 TO LEN( aIniEntries )
 
@@ -1286,8 +1286,8 @@ FUNCTION ClientWindows()
 
          cItemDef := VRD_LF2SF( ALLTRIM( cAreaFilesDir + cItemDef ) )
 
-         aVRDSave[nWnd,1] := cItemDef
-         aVRDSave[nWnd,2] := MEMOREAD( cItemDef )
+         aVRDSave[nWnd, 1 ] := cItemDef
+         aVRDSave[nWnd, 2 ] := MEMOREAD( cItemDef )
 
          nWindowNr += 1
          aAreaIni[nWnd] := IIF( AT( "\", cItemDef ) = 0, ".\", "" ) + cItemDef
@@ -1298,8 +1298,8 @@ FUNCTION ClientWindows()
             { VAL( GetPvProfString( "General", "Width", "600", aAreaIni[nWnd] ) ), ;
               VAL( GetPvProfString( "General", "Height", "300", aAreaIni[nWnd] ) ) }
 
-         nWidth  := ER_GetPixel( oGenVar:aAreaSizes[nWnd,1] )
-         nHeight := ER_GetPixel( oGenVar:aAreaSizes[nWnd,2] )
+         nWidth  := ER_GetPixel( oGenVar:aAreaSizes[nWnd, 1 ] )
+         nHeight := ER_GetPixel( oGenVar:aAreaSizes[nWnd, 2 ] )
 
          nDemoWidth := nWidth
          IF oGenVar:lFixedAreaWidth = .T.
@@ -1340,17 +1340,17 @@ FUNCTION ClientWindows()
    nTotalHeight := nTop
    nTotalWidth  := nWidth
 
-RETURN (.T.)
+return .T.
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: FillWindow
 * Beschreibung:
 * Argumente...: None
 * Rückgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION FillWindow( nArea, cAreaIni )
+function FillWindow( nArea, cAreaIni )
 
    LOCAL i, cRuler1, cRuler2, aWerte, nEntry, nTmpCol
    LOCAL nFirstTop, nFirstLeft, nFirstWidth, nFirstHeight, nFirstItem
@@ -1364,42 +1364,42 @@ FUNCTION FillWindow( nArea, cAreaIni )
    IF nMeasure = 3 ; cRuler1 := "RULER1_PI" ; cRuler2 := "RULER2_PI" ; ENDIF
 
    @ 0, 0 SAY " " SIZE 1200, nRulerTop-nRuler PIXEL ;
-      COLORS 0, oGenVar:nBClrAreaTitle OF aWnd[nArea]
+      COLORS 0, oGenVar:nBClrAreaTitle OF aWnd[ nArea]
 
    @ 2,  3 BTNBMP RESOURCE "AREAMINMAX" SIZE 12,12 ACTION AreaHide( nAktArea )
    @ 2, 17 BTNBMP RESOURCE "AREAPROP"   SIZE 12,12 ACTION AreaProperties( nAktArea )
 
-   @ 2, 29 SAY oGenVar:aAreaTitle[nArea] ;
+   @ 2, 29 SAY oGenVar:aAreaTitle[ nArea] ;
       PROMPT " " + ALLTRIM( GetPvProfString( "General", "Title" , "", cAreaIni ) ) ;
-      SIZE 400, nRulerTop-nRuler-2 PIXEL FONT oGenVar:aAppFonts[1] ;
-      COLORS oGenVar:nF1ClrAreaTitle, oGenVar:nBClrAreaTitle OF aWnd[nArea]
+      SIZE 400, nRulerTop-nRuler-2 PIXEL FONT oGenVar:aAppFonts[ 1 ] ;
+      COLORS oGenVar:nF1ClrAreaTitle, oGenVar:nBClrAreaTitle OF aWnd[ nArea]
 
-   @ nRulerTop-nRuler, 20 BITMAP oRulerBmp2 RESOURCE cRuler1 OF aWnd[nArea] PIXEL NOBORDER
-   @ nRulerTop-nRuler, 0 BITMAP oRulerBmp2 RESOURCE cRuler2 OF aWnd[nArea] PIXEL NOBORDER
+   @ nRulerTop-nRuler, 20 BITMAP oRulerBmp2 RESOURCE cRuler1 OF aWnd[ nArea] PIXEL NOBORDER
+   @ nRulerTop-nRuler, 0 BITMAP oRulerBmp2 RESOURCE cRuler2 OF aWnd[ nArea] PIXEL NOBORDER
 
-   @ nRulerTop-nRuler, 20 SAY aRuler[nArea,1] PROMPT "" SIZE  1, 20 PIXEL ;
-      COLORS oGenVar:nClrReticule, oGenVar:nClrReticule OF aWnd[nArea]
-   @ 20, 0 SAY aRuler[nArea,2] PROMPT "" SIZE 20,  1 PIXEL ;
-      COLORS oGenVar:nClrReticule, oGenVar:nClrReticule OF aWnd[nArea]
+   @ nRulerTop-nRuler, 20 SAY aRuler[ nArea, 1 ] PROMPT "" SIZE  1, 20 PIXEL ;
+      COLORS oGenVar:nClrReticule, oGenVar:nClrReticule OF aWnd[ nArea]
+   @ 20, 0 SAY aRuler[ nArea, 2 ] PROMPT "" SIZE 20,  1 PIXEL ;
+      COLORS oGenVar:nClrReticule, oGenVar:nClrReticule OF aWnd[ nArea]
 
-   aWnd[nArea]:bPainted  = {| hDC, cPS | ZeichneHintergrund( nArea ) }
+   aWnd[ nArea]:bPainted  = {| hDC, cPS | ZeichneHintergrund( nArea ) }
 
-   aWnd[nArea]:bGotFocus = {|| SetTitleColor( .F. ), ;
-                               nAktArea := nArea, oCbxArea:Set( aWndTitle[nArea] ), ;
+   aWnd[ nArea]:bGotFocus = {|| SetTitleColor( .F. ), ;
+                               nAktArea := nArea, oCbxArea:Set( aWndTitle[ nArea] ), ;
                                SetTitleColor( .T. ) }
 
-   aWnd[nArea]:bMMoved = {|nRow,nCol,nFlags| ;
+   aWnd[ nArea]:bMMoved = {|nRow,nCol,nFlags| ;
                            SetReticule( nRow, nCol, nArea ), ;
                            MsgBarInfos( nRow, nCol ), ;
-                           MoveSelection( nRow, nCol, aWnd[nArea] ) }
+                           MoveSelection( nRow, nCol, aWnd[ nArea] ) }
 
-   aWnd[nArea]:bRClicked = {|nRow,nCol,nFlags| PopupMenu( nArea,, nRow, nCol ) }
-   aWnd[nArea]:bLClicked = {|nRow,nCol,nFlags| DeactivateItem(), ;
+   aWnd[ nArea]:bRClicked = {|nRow,nCol,nFlags| PopupMenu( nArea,, nRow, nCol ) }
+   aWnd[ nArea]:bLClicked = {|nRow,nCol,nFlags| DeactivateItem(), ;
                               IIF( GetKeyState( VK_SHIFT ),, UnSelectAll() ), ;
-                              StartSelection( nRow, nCol, aWnd[nArea] ) }
-   aWnd[nArea]:bLButtonUp = {|nRow,nCol,nFlags| StopSelection( nRow, nCol, aWnd[nArea] ) }
+                              StartSelection( nRow, nCol, aWnd[ nArea] ) }
+   aWnd[ nArea]:bLButtonUp = {|nRow,nCol,nFlags| StopSelection( nRow, nCol, aWnd[ nArea] ) }
 
-   aWnd[nArea]:bKeyDown   = {|nKey| WndKeyDownAction( nKey, nArea, cAreaIni ) }
+   aWnd[ nArea]:bKeyDown   = {|nKey| WndKeyDownAction( nKey, nArea, cAreaIni ) }
 
    FOR i := 1 TO LEN( aIniEntries )
       nEntry := EntryNr( aIniEntries[i] )
@@ -1411,25 +1411,25 @@ FUNCTION FillWindow( nArea, cAreaIni )
    //Durch diese Anweisung werden alle Controls resizable
    IF nElemente <> 0
       lFillWindow := .T.
-      aItems[nArea,aFirst[6]]:CheckDots()
-      aItems[nArea,aFirst[6]]:Move( aFirst[2], aFirst[3], aFirst[4], aFirst[5], .T. )
+      aItems[ nArea,aFirst[6]]:CheckDots()
+      aItems[ nArea,aFirst[6]]:Move( aFirst[2], aFirst[3], aFirst[4], aFirst[5], .T. )
       lFillWindow := .F.
    ENDIF
 
    Memory(-1)
    SysRefresh()
 
-RETURN (.T.)
+return .T.
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 *         Name: SetReticule
 *  Description:
 *    Arguments: None
-* Return Value: .T.
+* return Value: .T.
 *       Author: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION SetReticule( nRow, nCol, nArea )
+function SetReticule( nRow, nCol, nArea )
 
    LOCAL nRowPos := nRow
    LOCAL nColPos := nCol
@@ -1437,39 +1437,58 @@ FUNCTION SetReticule( nRow, nCol, nArea )
 
    IF nRow <= nRulerTop
       nRowPos := nRulerTop
-   ELSEIF nRow >= ER_GetPixel( oGenVar:aAreaSizes[nArea,2] ) + nRulerTop
-      nRowPos := ER_GetPixel( oGenVar:aAreaSizes[nArea,2] ) + nRulerTop
+   ELSEIF nRow >= ER_GetPixel( oGenVar:aAreaSizes[ nArea, 2 ] ) + nRulerTop
+      nRowPos := ER_GetPixel( oGenVar:aAreaSizes[ nArea, 2 ] ) + nRulerTop
    ENDIF
 
    IF nCol <= nRuler
       nColPos := nRuler
-   ELSEIF nCol >= ER_GetPixel( oGenVar:aAreaSizes[nArea,1] ) + nRuler
-      nColPos := ER_GetPixel( oGenVar:aAreaSizes[nArea,1] ) + nRuler
+   ELSEIF nCol >= ER_GetPixel( oGenVar:aAreaSizes[ nArea, 1 ] ) + nRuler
+      nColPos := ER_GetPixel( oGenVar:aAreaSizes[ nArea, 1 ] ) + nRuler
    ENDIF
 
-   aRuler[nArea,2]:Move( nRowPos, 0, ;
-      IIF( lShow, ER_GetPixel( oGenVar:aAreaSizes[nArea,1] ) + nRuler, nRuler ), 1, .T. )
+   aRuler[ nArea, 2 ]:Move( nRowPos, 0, ;
+      IIF( lShow, ER_GetPixel( oGenVar:aAreaSizes[ nArea, 1 ] ) + nRuler, nRuler ), 1, .T. )
 
-   AEVAL( aRuler, {|x,y| IIF( x[1] <> NIL, ;
-      ( x[1]:Move( nRulerTop-nRuler, nColPos, 1, ;
-          IIF( lShow, ER_GetPixel( oGenVar:aAreaSizes[y,2] ) + nRuler, nRuler ), .T. ) ),) } )
+   AEVAL( aRuler, { | x, y | If( x[ 1 ] <> nil, ;
+          DrawRulerLines( x[ 1 ], nColPos ), ) } )
+
+   /* 
+   AEVAL( aRuler, {|x,y| IIF( x[ 1 ] <> nil, ;
+      ( x[ 1 ]:Move( nRulerTop-nRuler, nColPos, 1, ;
+          IIF( lShow, ER_GetPixel( oGenVar:aAreaSizes[y, 2 ] ) + nRuler, nRuler ), .T. ) ), ) } )
+   */
           
-   //AEVAL( aRuler, {|x,y| IIF( x[1] <> NIL, ;
-   //   ( x[1]:Move( nRulerTop-nRuler, nColPos, 1, ;
-   //                IIF( lShow, ER_GetPixel( oGenVar:aAreaSizes[y,2] ) + nRuler, nRuler ), .T. ), ;
-   //     x[1]:Refresh(), x[2]:Refresh() ), ) } )
+   //AEVAL( aRuler, {|x,y| IIF( x[ 1 ] <> nil, ;
+   //   ( x[ 1 ]:Move( nRulerTop-nRuler, nColPos, 1, ;
+   //                IIF( lShow, ER_GetPixel( oGenVar:aAreaSizes[y, 2 ] ) + nRuler, nRuler ), .T. ), ;
+   //     x[ 1 ]:Refresh(), x[2]:Refresh() ), ) } )
 
-RETURN (.T.)
+return .T.
 
+function DrawRulerLines( oRulerBmp, nColPos )
 
-*-- FUNCTION -----------------------------------------------------------------
+   local hDC := oRulerBmp:GetDC()
+
+   if ! Empty( oRulerBmp:Cargo ) 
+      InvertRect( hDC, oRulerBmp:Cargo )
+   endif   
+   
+   oRulerBmp:Cargo = { 0, nColPos - 1, oRulerBmp:nHeight(), nColPos }
+   InvertRect( hDC, oRulerBmp:Cargo )
+
+   oRulerBmp:ReleaseDC()
+
+return nil
+
+*-- function -----------------------------------------------------------------
 *         Name: SetTitleColor
 *  Description:
 *    Arguments: None
-* Return Value: .T.
+* return Value: .T.
 *       Author: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION SetTitleColor( lOff )
+function SetTitleColor( lOff )
 
    IF lOff = .T.
       oGenVar:aAreaTitle[nAktArea]:SetColor( oGenVar:nF2ClrAreaTitle, oGenVar:nBClrAreaTitle )
@@ -1479,45 +1498,45 @@ FUNCTION SetTitleColor( lOff )
 
    oGenVar:aAreaTitle[ nAktArea ]:Refresh()
 
-RETURN (.T.)
+return .T.
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: ZeichneHintergrund
 * Beschreibung:
 * Argumente...: None
 * Rückgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION ZeichneHintergrund( nArea )
+function ZeichneHintergrund( nArea )
 
-   LOCAL nWidth  := ER_GetPixel( oGenVar:aAreaSizes[nArea,1] )
-   LOCAL nHeight := ER_GetPixel( oGenVar:aAreaSizes[nArea,2] )
+   LOCAL nWidth  := ER_GetPixel( oGenVar:aAreaSizes[ nArea, 1 ] )
+   LOCAL nHeight := ER_GetPixel( oGenVar:aAreaSizes[ nArea, 2 ] )
 
    SetGridSize( ER_GetPixel( oGenVar:nGridWidth ), ER_GetPixel( oGenVar:nGridHeight ) )
 
    //Hintergrund
-   Rectangle( aWnd[nArea]:hDC, ;
+   Rectangle( aWnd[ nArea]:hDC, ;
               nRulerTop, nRuler, nRulerTop + nHeight + 1, nRuler + nWidth + 1 )
 
    //Grid zeichnen
    IF oGenVar:lShowGrid = .T.
-      ShowGrid( aWnd[nArea]:hDC, aWnd[nArea]:cPS, ;
+      ShowGrid( aWnd[ nArea]:hDC, aWnd[ nArea]:cPS, ;
                 ER_GetPixel( oGenVar:nGridWidth ), ER_GetPixel( oGenVar:nGridHeight ), ;
                 nWidth, nHeight, nRulerTop, nRuler )
    ENDIF
 
-RETURN (.T.)
+return .T.
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: WndKeyDownAction
 * Beschreibung:
 * Argumente...: None
 * Rückgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION WndKeyDownAction( nKey, nArea, cAreaIni )
+function WndKeyDownAction( nKey, nArea, cAreaIni )
 
    LOCAL i, aWerte, nTop, nLeft, nHeight, nWidth
    LOCAL lMove    := .T.
@@ -1527,7 +1546,7 @@ FUNCTION WndKeyDownAction( nKey, nArea, cAreaIni )
    LOCAL nBottom  := 0
 
    IF LEN( aSelection ) = 0
-      RETURN(.F.)
+      return(.F.)
    ENDIF
 
    //Delete item
@@ -1535,7 +1554,7 @@ FUNCTION WndKeyDownAction( nKey, nArea, cAreaIni )
       DelSelectItems()
    ENDIF
 
-   //Return to edit properties
+   //return to edit properties
    IF nKey == VK_RETURN .AND. LEN( aSelection ) <> 0
       MultiItemProperties()
    ENDIF
@@ -1575,15 +1594,15 @@ FUNCTION WndKeyDownAction( nKey, nArea, cAreaIni )
 
       FOR i := 1 TO LEN( aSelection )
 
-         IF aItems[ aSelection[i,1], aSelection[i,2] ] <> NIL
+         IF aItems[ aSelection[i, 1 ], aSelection[i, 2 ] ] <> nil
 
-            aWerte   := GetCoors( aItems[ aSelection[i,1], aSelection[i,2] ]:hWnd )
-            nTop     := aWerte[1]
+            aWerte   := GetCoors( aItems[ aSelection[i, 1 ], aSelection[i, 2 ] ]:hWnd )
+            nTop     := aWerte[ 1 ]
             nLeft    := aWerte[2]
-            nHeight  := aWerte[3] - aWerte[1]
+            nHeight  := aWerte[3] - aWerte[ 1 ]
             nWidth   := aWerte[4] - aWerte[2]
 
-            aItems[ aSelection[i,1], aSelection[i,2] ]:Move( nTop + nY, nLeft + nX, nWidth + nRight, nHeight + nBottom, .T. )
+            aItems[ aSelection[i, 1 ], aSelection[i, 2 ] ]:Move( nTop + nY, nLeft + nX, nWidth + nRight, nHeight + nBottom, .T. )
 
          ENDIF
 
@@ -1593,17 +1612,17 @@ FUNCTION WndKeyDownAction( nKey, nArea, cAreaIni )
 
    ENDIF
 
-RETURN (.T.)
+return .T.
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: DelSelectItems
 * Beschreibung:
 * Argumente...: None
 * Rückgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION DelSelectItems()
+function DelSelectItems()
 
    LOCAL i
 
@@ -1611,10 +1630,10 @@ FUNCTION DelSelectItems()
 
       FOR i := 1 TO LEN( aSelection )
 
-         IF aItems[ aSelection[i,1], aSelection[i,2] ] <> NIL
+         IF aItems[ aSelection[i, 1 ], aSelection[i, 2 ] ] <> nil
 
-            MarkItem( aItems[ aSelection[i,1], aSelection[i,2] ]:hWnd )
-            DelItemWithKey( aSelection[i,2], aSelection[i,1] )
+            MarkItem( aItems[ aSelection[i, 1 ], aSelection[i, 2 ] ]:hWnd )
+            DelItemWithKey( aSelection[i, 2 ], aSelection[i, 1 ] )
 
          ENDIF
 
@@ -1622,17 +1641,17 @@ FUNCTION DelSelectItems()
 
    ENDIF
 
-RETURN (.T.)
+return .T.
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: MsgBarInfos
 * Beschreibung:
 * Argumente...: None
 * Rückgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION MsgBarInfos( nRow, nCol )
+function MsgBarInfos( nRow, nCol )
 
    DEFAULT nRow := 0
    DEFAULT nCol := 0
@@ -1640,33 +1659,33 @@ FUNCTION MsgBarInfos( nRow, nCol )
    oMsgInfo:SetText( GL("Row:")    + " " + ALLTRIM(STR( GetCmInch( nRow - nRulerTop ), 5, IIF( nMeasure = 2, 2, 0 ) ) ) + "    " + ;
                      GL("Column:") + " " + ALLTRIM(STR( GetCmInch( nCol - nRuler ), 5, IIF( nMeasure = 2, 2, 0 ) ) ) )
 
-RETURN (.T.)
+return .T.
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: CheckStyle
 * Beschreibung:
 * Argumente...: None
 * Rückgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION CheckStyle( nPenSize, cStyle )
+function CheckStyle( nPenSize, cStyle )
 
    IF nPenSize > 1
       cStyle := "1"
    ENDIF
 
-RETURN (.T.)
+return .T.
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: ShowFontChoice
 * Beschreibung:
 * Argumente...: None
 * Rückgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION ShowFontChoice( nCurrentFont )
+function ShowFontChoice( nCurrentFont )
 
    LOCAL i, oDlg, oLbx, oSay1, oGet1
    LOCAL nFont      := 0
@@ -1699,9 +1718,9 @@ FUNCTION ShowFontChoice( nCurrentFont )
    oLbx:nDlgCode = DLGC_WANTALLKEYS
 
    REDEFINE SAY oSay1 PROMPT CRLF + CRLF + GL("Test 123") ;
-      ID 301 OF oDlg UPDATE FONT aFonts[1]
+      ID 301 OF oDlg UPDATE FONT aFonts[ 1 ]
 
-   REDEFINE GET oGet1 VAR cFontText ID 311 OF oDlg UPDATE FONT aFonts[1] MEMO
+   REDEFINE GET oGet1 VAR cFontText ID 311 OF oDlg UPDATE FONT aFonts[ 1 ] MEMO
 
    ACTIVATE DIALOG oDlg CENTERED ON INIT PreviewRefresh( oSay1, oLbx, oGet1 )
 
@@ -1709,17 +1728,17 @@ FUNCTION ShowFontChoice( nCurrentFont )
       nFont := VAL(SUBSTR( ALLTRIM(cFont), 1, 2 ))
    ENDIF
 
-RETURN ( IIF( nFont = 0, nCurrentFont, nFont ) )
+return ( IIF( nFont = 0, nCurrentFont, nFont ) )
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: GetCurrentFont
 * Beschreibung:
 * Argumente...: None
 * Rückgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION GetCurrentFont( nCurrentFont, aGetFonts, nTyp )
+function GetCurrentFont( nCurrentFont, aGetFonts, nTyp )
 
    LOCAL cCurFont := ""
 
@@ -1729,8 +1748,8 @@ FUNCTION GetCurrentFont( nCurrentFont, aGetFonts, nTyp )
       cCurFont := GL("Current:") + " " + ALLTRIM(STR( nCurrentFont, 3)) + ". "
    ENDIF
 
-   IF aGetFonts[nCurrentFont,1] <> NIL
-      cCurFont += aGetFonts[nCurrentFont,1] + ;
+   IF aGetFonts[nCurrentFont, 1 ] <> nil
+      cCurFont += aGetFonts[nCurrentFont, 1 ] + ;
          " " + ALLTRIM(STR( aGetFonts[nCurrentFont,3], 5 )) + ;
          IIF( aGetFonts[nCurrentFont,4], " " + GL("bold"), "") + ;
          IIF( aGetFonts[nCurrentFont,5], " " + GL("italic"), "") + ;
@@ -1741,17 +1760,17 @@ FUNCTION GetCurrentFont( nCurrentFont, aGetFonts, nTyp )
       cCurFont := ""
    ENDIF
 
-RETURN cCurFont
+return cCurFont
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: ShowColorChoice
 * Beschreibung:
 * Argumente...: None
 * Rückgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION ShowColorChoice( nCurrentClr )
+function ShowColorChoice( nCurrentClr )
 
    LOCAL oIni, oDlg, nDefClr
    LOCAL aColors := GetAllColors()
@@ -1835,28 +1854,28 @@ FUNCTION ShowColorChoice( nCurrentClr )
    ACTIVATE DIALOG oDlg CENTERED
 
    //Speichervariablen freigeben
-   aColors := NIL
-   aSay    := NIL
-   aBtn    := NIL
+   aColors := nil
+   aSay    := nil
+   aBtn    := nil
    MEMORY(-1)
    SYSREFRESH()
 
-RETURN ( nColor )
+return ( nColor )
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: DefineFonts
 * Beschreibung:
 * Argumente...: None
 * Rückgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION DefineFonts()
+function DefineFonts()
 
    LOCAL i, cFontDef
    LOCAL aGetFonts := GetFonts()
 
-   aFonts := NIL
+   aFonts := nil
    aFonts := Array( 50 )
 
    FOR i := 1 TO 20
@@ -1874,29 +1893,29 @@ FUNCTION DefineFonts()
                                 aGetFonts[i, 9] )    // nCharSet
    NEXT
 
-RETURN (.T.)
+return .T.
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: GetColor
 * Beschreibung:
 * Argumente...: None
 * Rückgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION GetColor( nNr )
+function GetColor( nNr )
 
-RETURN VAL( GetPvProfString( "Colors", ALLTRIM(STR( nNr, 5 )) , "", cDefIni ) )
+return VAL( GetPvProfString( "Colors", ALLTRIM(STR( nNr, 5 )) , "", cDefIni ) )
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: GetAllColors
 * Beschreibung:
 * Argumente...: None
 * Rückgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION GetAllColors()
+function GetAllColors()
 
    LOCAL i
    LOCAL aColors := {}
@@ -1905,23 +1924,23 @@ FUNCTION GetAllColors()
       AADD( aColors, PADR( GetPvProfString( "Colors", ALLTRIM(STR( i, 5 )) , "", cDefIni ), 15 ) )
    NEXT
 
-RETURN ( aColors )
+return ( aColors )
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: GeneralSettings
 * Beschreibung:
 * Argumente...: None
 * Rückgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION GeneralSettings()
+function GeneralSettings()
 
    LOCAL i, oDlg, oFld, oLbx, oSay1, oGet1, nDefClr, oIni
    LOCAL aColorGet[30], aColorSay[30]
    LOCAL aGetFonts  := GetFonts()
    LOCAL aShowFonts := GetFontText( aGetFonts )
-   LOCAL cFont      := aGetFonts [1,1]
+   LOCAL cFont      := aGetFonts [1, 1 ]
    LOCAL aColors    := GetAllColors()
    LOCAL cFontText  := ""
 
@@ -1958,9 +1977,9 @@ FUNCTION GeneralSettings()
    REDEFINE SAY PROMPT GL("Doubleclick to edit the font properties") ID 172 OF oFld:aDialogs[i]
 
    REDEFINE SAY oSay1 PROMPT CRLF + CRLF + GL("Test 123") ;
-      ID 301 OF oFld:aDialogs[i] UPDATE FONT aFonts[1]
+      ID 301 OF oFld:aDialogs[i] UPDATE FONT aFonts[ 1 ]
 
-   REDEFINE GET oGet1 VAR cFontText ID 311 OF oFld:aDialogs[i] UPDATE FONT aFonts[1] MEMO
+   REDEFINE GET oGet1 VAR cFontText ID 311 OF oFld:aDialogs[i] UPDATE FONT aFonts[ 1 ] MEMO
 
    i := 2
    REDEFINE SAY PROMPT GL("Nr.")   ID 170 OF oFld:aDialogs[i]
@@ -2076,47 +2095,47 @@ FUNCTION GeneralSettings()
 
    SetSave( .F. )
 
-RETURN (.T.)
+return .T.
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: Set2Color
 * Beschreibung:
 * Argumente...: None
 * Rückgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION Set2Color( oColorSay, cColor, nDefClr )
+function Set2Color( oColorSay, cColor, nDefClr )
 
    oColorSay:SetColor( SetColor( cColor, nDefClr ), SetColor( cColor, nDefClr ) )
    oColorSay:Refresh()
 
-RETURN (.T.)
+return .T.
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: Set3Color
 * Beschreibung:
 * Argumente...: None
 * Rückgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION Set3Color( oColorSay, cColor, nDefClr )
+function Set3Color( oColorSay, cColor, nDefClr )
 
    cColor := PADR(ALLTRIM(STR( ChooseColor( VAL(cColor) ), 20 )), 40 )
    Set2Color( oColorSay, cColor, nDefClr )
 
-RETURN ( cColor )
+return ( cColor )
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: SetColor
 * Beschreibung:
 * Argumente...: None
 * Rückgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION SetColor( cColor, nDefClr )
+function SetColor( cColor, nDefClr )
 
    LOCAL nColor
 
@@ -2126,17 +2145,17 @@ FUNCTION SetColor( cColor, nDefClr )
       nColor := VAL( cColor )
    ENDIF
 
-RETURN ( nColor )
+return ( nColor )
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: GetFontText
 * Beschreibung:
 * Argumente...: None
 * Rückgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION GetFontText( aGetFonts, lShowEmpty )
+function GetFontText( aGetFonts, lShowEmpty )
 
    LOCAL i, cText
    LOCAL aShowFonts := {}
@@ -2144,9 +2163,9 @@ FUNCTION GetFontText( aGetFonts, lShowEmpty )
    DEFAULT lShowEmpty := .T.
 
    FOR i := 1 TO 20
-      IF .NOT. EMPTY(aGetFonts[i,1])
+      IF .NOT. EMPTY(aGetFonts[i, 1 ])
          cText :=  ALLTRIM(STR( i, 3)) + ". " + ;
-                   aGetFonts[i,1] + ;
+                   aGetFonts[i, 1 ] + ;
                    " " + ALLTRIM(STR( aGetFonts[i,3], 5 )) + ;
                    IIF( aGetFonts[i,4], " " + GL("bold"), "") + ;
                    IIF( aGetFonts[i,5], " " + GL("italic"), "") + ;
@@ -2161,17 +2180,17 @@ FUNCTION GetFontText( aGetFonts, lShowEmpty )
       ENDIF
    NEXT
 
-RETURN ( aShowFonts )
+return ( aShowFonts )
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: PreviewRefresh()
 * Beschreibung:
 * Argumente...: None
 * Rückgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION PreviewRefresh( oSay, oLbx, oGet )
+function PreviewRefresh( oSay, oLbx, oGet )
 
    LOCAL nID := VAL(SUBSTR( oLbx:GetItem(oLbx:GetPos()), 1, 2))
 
@@ -2182,17 +2201,17 @@ FUNCTION PreviewRefresh( oSay, oLbx, oGet )
    oGet:SetFont( aFonts[nID] )
    oGet:Refresh()
 
-RETURN (.T.)
+return .T.
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: SelectFont
 * Beschreibung:
 * Argumente...: None
 * Rückgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION SelectFont( oSay, oLbx, oGet )
+function SelectFont( oSay, oLbx, oGet )
 
    LOCAL oDlg, cFontDef, oFontGet, oIni, oNewFont, aShowFonts, nPos, aFontNames
    LOCAL i, y, cItemDef, aIniEntries, nEntry
@@ -2200,8 +2219,8 @@ FUNCTION SelectFont( oSay, oLbx, oGet )
    LOCAL aCbx        := ARRAY(4)
    LOCAL nID         := VAL(SUBSTR( oLbx:GetItem(oLbx:GetPos()), 1, 2))
    LOCAL aGetFonts   := GetFonts()
-   LOCAL cFontGet    := aGetFonts[nID,1]
-   LOCAL nWidth      := aGetFonts[nID,2]
+   LOCAL cFontGet    := aGetFonts[nID, 1 ]
+   LOCAL nWidth      := aGetFonts[nID, 2 ]
    LOCAL nHeight     := aGetFonts[nID,3] * -1
    LOCAL lBold       := aGetFonts[nID,4]
    LOCAL lItalic     := aGetFonts[nID,5]
@@ -2214,7 +2233,7 @@ FUNCTION SelectFont( oSay, oLbx, oGet )
 
    IF EMPTY( aFontNames := GetFontNames( hDC ) )
       MsgStop( GL("Error getting font names."), GL("Stop!") )
-      RETURN( GetFontText( GetFonts() ) )
+      return( GetFontText( GetFonts() ) )
    ELSE
       ASORT( aFontNames,,, { |x, y| UPPER( x ) < UPPER( y ) } )
    ENDIF
@@ -2232,7 +2251,7 @@ FUNCTION SelectFont( oSay, oLbx, oGet )
    REDEFINE GET nOrient     ID 204 OF oDlg PICTURE "999999" SPINNER
    REDEFINE GET nCharSet    ID 205 OF oDlg PICTURE "99"     SPINNER
 
-   REDEFINE CHECKBOX aCbx[1] VAR lBold      ID 301 OF oDlg
+   REDEFINE CHECKBOX aCbx[ 1 ] VAR lBold      ID 301 OF oDlg
    REDEFINE CHECKBOX aCbx[2] VAR lItalic    ID 302 OF oDlg
    REDEFINE CHECKBOX aCbx[3] VAR lUnderline ID 303 OF oDlg
    REDEFINE CHECKBOX aCbx[4] VAR lStrikeOut ID 304 OF oDlg
@@ -2244,7 +2263,7 @@ FUNCTION SelectFont( oSay, oLbx, oGet )
    REDEFINE SAY PROMPT GL("Character set") + ":" ID 174 OF oDlg
 
    ACTIVATE DIALOG oDlg CENTERED ;
-      ON INIT ( aCbx[1]:SetText( GL("bold") ), ;
+      ON INIT ( aCbx[ 1 ]:SetText( GL("bold") ), ;
                 aCbx[2]:SetText( GL("italic") ), ;
                 aCbx[3]:SetText( GL("underline") ), ;
                 aCbx[4]:SetText( GL("strikeout") ) )
@@ -2283,7 +2302,7 @@ FUNCTION SelectFont( oSay, oLbx, oGet )
       //Alle Elemente aktualisieren
       FOR i := 1 TO 100
 
-         IF aWnd[i] <> NIL
+         IF aWnd[i] <> nil
 
             aIniEntries := GetIniSection( "Items", aAreaIni[i] )
 
@@ -2291,7 +2310,7 @@ FUNCTION SelectFont( oSay, oLbx, oGet )
 
                nEntry := EntryNr( aIniEntries[y] )
 
-               IF nEntry <> 0 .AND. aItems[i,nEntry] <> NIL
+               IF nEntry <> 0 .AND. aItems[i,nEntry] <> nil
 
                   cItemDef := GetIniEntry( aIniEntries, ALLTRIM(STR(nEntry,5)) , "" )
 
@@ -2313,17 +2332,17 @@ FUNCTION SelectFont( oSay, oLbx, oGet )
 
    ENDIF
 
-RETURN ( aShowFonts )
+return ( aShowFonts )
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: GetFonts
 * Beschreibung:
 * Argumente...: None
 * Rückgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION GetFonts()
+function GetFonts()
 
    LOCAL i, cFontDef
    LOCAL aWerte := ARRAY( 20, 10 )
@@ -2364,19 +2383,19 @@ FUNCTION GetFonts()
 
    NEXT
 
-RETURN ( aWerte )
+return ( aWerte )
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: ReportSettings
 * Beschreibung:
 * Argumente...: None
 * Rückgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION ReportSettings()
+function ReportSettings()
 
-   LOCAL i, oDlg, oIni, aGrp[2], oRad1, aGet[1]
+   LOCAL i, oDlg, oIni, aGrp[2], oRad1, aGet[ 1 ]
    LOCAL lSave       := .F.
    LOCAL nWidth      := VAL( GetPvProfString( "General", "PaperWidth" , "", cDefIni ) )
    LOCAL nHeight     := VAL( GetPvProfString( "General", "PaperHeight", "", cDefIni ) )
@@ -2397,14 +2416,14 @@ FUNCTION ReportSettings()
    REDEFINE BUTTON PROMPT GL("&Cancel") ID 102 OF oDlg ACTION oDlg:End()
 
    REDEFINE COMBOBOX cFormat ITEMS aFormat ID 421 OF oDlg ;
-      ON CHANGE aGet[1]:Setfocus()
+      ON CHANGE aGet[ 1 ]:Setfocus()
 
    REDEFINE GET nWidth ID 411 OF oDlg PICTURE cPicture SPINNER MIN 0 ;
       WHEN ALLTRIM( cFormat ) = GL("user-defined")
    REDEFINE GET nHeight ID 412 OF oDlg PICTURE cPicture SPINNER MIN 0 ;
       WHEN ALLTRIM( cFormat ) = GL("user-defined")
 
-   REDEFINE GET aGet[1] VAR nTop ID 401 OF oDlg PICTURE cPicture SPINNER MIN 0
+   REDEFINE GET aGet[ 1 ] VAR nTop ID 401 OF oDlg PICTURE cPicture SPINNER MIN 0
    REDEFINE GET nLeft      ID 402 OF oDlg PICTURE cPicture SPINNER MIN 0
    REDEFINE GET nPageBreak ID 403 OF oDlg PICTURE cPicture SPINNER MIN 0
 
@@ -2429,13 +2448,13 @@ FUNCTION ReportSettings()
 
    REDEFINE SAY PROMPT " " + GL("Orientation") + ":" ID 176 OF oDlg
 
-   REDEFINE GROUP aGrp[1] ID 190 OF oDlg
+   REDEFINE GROUP aGrp[ 1 ] ID 190 OF oDlg
    REDEFINE GROUP aGrp[2] ID 191 OF oDlg
 
    ACTIVATE DIALOG oDlg CENTERED ;
-      ON INIT ( aGrp[1]:SetText( GL("Paper Size") ), ;
+      ON INIT ( aGrp[ 1 ]:SetText( GL("Paper Size") ), ;
                 aGrp[2]:SetText( GL("Report") ), ;
-                oRad1:aItems[1]:SetText( GL("Portrait") ), ;
+                oRad1:aItems[ 1 ]:SetText( GL("Portrait") ), ;
                 oRad1:aItems[2]:SetText( GL("Landscape") ) )
 
    IF lSave = .T.
@@ -2458,17 +2477,17 @@ FUNCTION ReportSettings()
 
    ENDIF
 
-RETURN (.T.)
+return .T.
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 *         Name: GetPaperSizes
 *  Description:
 *    Arguments: None
-* Return Value: .T.
+* return Value: .T.
 *       Author: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION GetPaperSizes()
+function GetPaperSizes()
 
    LOCAL aSizes := { "Letter 8 1/2 x 11 inch"        , ;
                      "Letter Small 8 1/2 x 11 inch"  , ;
@@ -2513,17 +2532,17 @@ FUNCTION GetPaperSizes()
                      "German Legal Fanfold 8 1/2 x 13 inch", ;
                      GL("user-defined") }
 
-RETURN ( aSizes )
+return ( aSizes )
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: Options
 * Beschreibung:
 * Argumente...: None
 * Rückgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION Options()
+function Options()
 
    LOCAL i, oDlg, oIni, cLanguage, cOldLanguage, cWert, aCbx[4], aGrp[2], oRad1
    LOCAL lSave         := .F.
@@ -2556,7 +2575,7 @@ FUNCTION Options()
    REDEFINE BUTTON PROMPT GL("&Cancel") ID 102 OF oDlg ACTION oDlg:End()
 
    REDEFINE COMBOBOX cLanguage ITEMS aLanguage ID 201 OF oDlg
-   REDEFINE CHECKBOX aCbx[1] VAR lMaximize ID 202 OF oDlg
+   REDEFINE CHECKBOX aCbx[ 1 ] VAR lMaximize ID 202 OF oDlg
    REDEFINE GET nMruList  ID 203 OF oDlg PICTURE "99" SPINNER MIN 0 VALID nMruList >= 0
    REDEFINE BUTTON PROMPT GL("Clear list") ID 204 OF oDlg ACTION oMru:Clear()
 
@@ -2582,15 +2601,15 @@ FUNCTION Options()
 
    REDEFINE SAY PROMPT " " + GL("List of most recently used files") + ":" ID 179 OF oDlg
 
-   REDEFINE GROUP aGrp[1] ID 190 OF oDlg
+   REDEFINE GROUP aGrp[ 1 ] ID 190 OF oDlg
    REDEFINE GROUP aGrp[2] ID 191 OF oDlg
 
    ACTIVATE DIALOG oDlg CENTERED ;
-      ON INIT ( aCbx[1]:SetText( GL("Maximize window at start") ), ;
+      ON INIT ( aCbx[ 1 ]:SetText( GL("Maximize window at start") ), ;
                 aCbx[2]:SetText( GL("Show grid") ), ;
                 aCbx[3]:SetText( GL("Show always text border") ), ;
                 aCbx[4]:SetText( GL("Show reticule") ), ;
-                aGrp[1]:SetText( GL("General") ), ;
+                aGrp[ 1 ]:SetText( GL("General") ), ;
                 aGrp[2]:SetText( GL("Grid") ) )
 
    IF lSave = .T.
@@ -2621,7 +2640,7 @@ FUNCTION Options()
       ENDINI
 
       FOR i := 1 TO 100
-         IF aWnd[i] <> NIL
+         IF aWnd[i] <> nil
             aWnd[i]:Refresh()
          ENDIF
       NEXT
@@ -2639,17 +2658,17 @@ FUNCTION Options()
 
    ENDIF
 
-RETURN (.T.)
+return .T.
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: ItemList
 * Beschreibung:
 * Argumente...: None
 * Rückgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION ItemList()
+function ItemList()
 
    LOCAL oDlg
    LOCAL oTree
@@ -2668,17 +2687,17 @@ FUNCTION ItemList()
 
    ACTIVATE DIALOG oDlg CENTERED ON INIT ListTrees( oTree )
 
-RETURN NIL
+return nil
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: ListTrees
 * Beschreibung:
 * Argumente...: None
 * Rückgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION ListTrees( oTree )
+function ListTrees( oTree )
 
    LOCAL i, y, oTr1, oTr2, cItemDef, aElemente, nEntry, cTitle
    LOCAL lFirstArea    := .T.
@@ -2723,7 +2742,7 @@ FUNCTION ListTrees( oTree )
 
             FOR y := 1 TO LEN( aElemente )
 
-               oTr2 := oTr1:AddLastChild( aElemente[y,2], aElemente[y,3], aElemente[y,3] )
+               oTr2 := oTr1:AddLastChild( aElemente[y, 2 ], aElemente[y,3], aElemente[y,3] )
                IF nEntry = 1 .AND. y = 1
                   oTr2:lOpened := .T.
                ENDIF
@@ -2744,17 +2763,17 @@ FUNCTION ListTrees( oTree )
    oTree:SetFocus()
    oTree:Expand()
 
-RETURN oTree
+return oTree
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: GetAllItems
 * Beschreibung:
 * Argumente...: None
 * Rückgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION GetAllItems( cAktAreaIni )
+function GetAllItems( cAktAreaIni )
 
    LOCAL i, cItemDef, cTyp, cName, nShow, nTyp, nDelete, nEntry
    LOCAL aWerte      := {}
@@ -2795,17 +2814,17 @@ FUNCTION GetAllItems( cAktAreaIni )
 
    NEXT
 
-RETURN ( aWerte )
+return ( aWerte )
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: ClickListTree
 * Beschreibung:
 * Argumente...: None
 * Rückgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION ClickListTree( oTree )
+function ClickListTree( oTree )
 
    LOCAL cItemDef ,nItem, oLinkArea, nArea, lWert
    LOCAL oLinkItem   := oTree:GetLinkAt( oTree:GetCursel() )
@@ -2827,7 +2846,7 @@ FUNCTION ClickListTree( oTree )
 
    IF cPrompt = GL("Visible")
 
-      cItemDef := ALLTRIM( GetPvProfString( "Items", ALLTRIM(STR(nItem,5)) , "", aAreaIni[nArea] ) )
+      cItemDef := ALLTRIM( GetPvProfString( "Items", ALLTRIM(STR(nItem,5)) , "", aAreaIni[ nArea] ) )
 
       oLinkItem:ToggleOpened()
       oTree:Refresh()
@@ -2848,71 +2867,71 @@ FUNCTION ClickListTree( oTree )
 
       oLinkItem:ParentLink:TreeItem:SetText( ItemProperties( nItem, nArea, .T. ) )
 
-      cItemDef := ALLTRIM( GetPvProfString( "Items", ALLTRIM(STR(nItem,5)) , "", aAreaIni[nArea] ) )
+      cItemDef := ALLTRIM( GetPvProfString( "Items", ALLTRIM(STR(nItem,5)) , "", aAreaIni[ nArea] ) )
 
       IF IsGraphic( UPPER(ALLTRIM( GetField( cItemDef, 1 ) )) )
-         oLinkItem:ParentLink:TreeItem:iBmpOpen  := SetGraphTreeBmp( nItem, aAreaIni[nArea] )
-         oLinkItem:ParentLink:TreeItem:iBmpClose := SetGraphTreeBmp( nItem, aAreaIni[nArea] )
+         oLinkItem:ParentLink:TreeItem:iBmpOpen  := SetGraphTreeBmp( nItem, aAreaIni[ nArea] )
+         oLinkItem:ParentLink:TreeItem:iBmpClose := SetGraphTreeBmp( nItem, aAreaIni[ nArea] )
       ENDIF
 
       oTree:UpdateTV()
 
    ENDIF
 
-RETURN (.T.)
+return .T.
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: SetGraphTreeBmp
 * Beschreibung:
 * Argumente...: None
 * Rückgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION SetGraphTreeBmp( nItem, cAreaIni )
+function SetGraphTreeBmp( nItem, cAreaIni )
 
    LOCAL cItemDef := ALLTRIM( GetPvProfString( "Items", ALLTRIM(STR(nItem,5)) , "", cAreaIni ) )
    LOCAL cTyp     := UPPER(ALLTRIM( GetField( cItemDef, 1 ) ))
    LOCAL nIndex   := GetGraphIndex( cTyp )
 
-RETURN ( nIndex + 9 )
+return ( nIndex + 9 )
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: AreaProperties
 * Beschreibung:
 * Argumente...: None
 * Rückgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION AreaProperties( nArea )
+function AreaProperties( nArea )
 
    LOCAL i, oDlg, oIni, oBtn, oRad1, aCbx[6], aGrp[5], oSay1
    LOCAL aDbase  := { GL("none") }
    LOCAL lSave   := .F.
-   LOCAL nTop1   := VAL( GetPvProfString( "General", "Top1", "0", aAreaIni[nArea] ) )
-   LOCAL nTop2   := VAL( GetPvProfString( "General", "Top2", "0", aAreaIni[nArea] ) )
-   LOCAL lTop    := ( GetPvProfString( "General", "TopVariable", "1", aAreaIni[nArea] ) = "1" )
-   LOCAL nWidth  := VAL( GetPvProfString( "General", "Width", "600", aAreaIni[nArea] ) )
-   LOCAL nHeight := VAL( GetPvProfString( "General", "Height", "300", aAreaIni[nArea] ) )
-   LOCAL nCondition     := VAL( GetPvProfString( "General", "Condition", "1", aAreaIni[nArea] ) )
-   LOCAL lDelSpace      := ( GetPvProfString( "General", "DelEmptySpace", "0", aAreaIni[nArea] ) = "1" )
-   LOCAL lBreakBefore   := ( GetPvProfString( "General", "BreakBefore"  , "0", aAreaIni[nArea] ) = "1" )
-   LOCAL lBreakAfter    := ( GetPvProfString( "General", "BreakAfter"   , "0", aAreaIni[nArea] ) = "1" )
-   LOCAL lPrBeforeBreak := ( GetPvProfString( "General", "PrintBeforeBreak", "0", aAreaIni[nArea] ) = "1" )
-   LOCAL lPrAfterBreak  := ( GetPvProfString( "General", "PrintAfterBreak" , "0", aAreaIni[nArea] ) = "1" )
-   LOCAL cDatabase      := ALLTRIM( GetPvProfString( "General", "ControlDBF", GL("none"), aAreaIni[nArea] ) )
+   LOCAL nTop1   := VAL( GetPvProfString( "General", "Top1", "0", aAreaIni[ nArea] ) )
+   LOCAL nTop2   := VAL( GetPvProfString( "General", "Top2", "0", aAreaIni[ nArea] ) )
+   LOCAL lTop    := ( GetPvProfString( "General", "TopVariable", "1", aAreaIni[ nArea] ) = "1" )
+   LOCAL nWidth  := VAL( GetPvProfString( "General", "Width", "600", aAreaIni[ nArea] ) )
+   LOCAL nHeight := VAL( GetPvProfString( "General", "Height", "300", aAreaIni[ nArea] ) )
+   LOCAL nCondition     := VAL( GetPvProfString( "General", "Condition", "1", aAreaIni[ nArea] ) )
+   LOCAL lDelSpace      := ( GetPvProfString( "General", "DelEmptySpace", "0", aAreaIni[ nArea] ) = "1" )
+   LOCAL lBreakBefore   := ( GetPvProfString( "General", "BreakBefore"  , "0", aAreaIni[ nArea] ) = "1" )
+   LOCAL lBreakAfter    := ( GetPvProfString( "General", "BreakAfter"   , "0", aAreaIni[ nArea] ) = "1" )
+   LOCAL lPrBeforeBreak := ( GetPvProfString( "General", "PrintBeforeBreak", "0", aAreaIni[ nArea] ) = "1" )
+   LOCAL lPrAfterBreak  := ( GetPvProfString( "General", "PrintAfterBreak" , "0", aAreaIni[ nArea] ) = "1" )
+   LOCAL cDatabase      := ALLTRIM( GetPvProfString( "General", "ControlDBF", GL("none"), aAreaIni[ nArea] ) )
    LOCAL nOldWidth      := nWidth
    LOCAL nOldHeight     := nHeight
    LOCAL cPicture       := IIF( nMeasure = 2, "999.99", "99999" )
-   LOCAL cAreaTitle     := aWndTitle[nArea]
-   LOCAL cOldAreaText   := MEMOREAD( aAreaIni[nArea] )
+   LOCAL cAreaTitle     := aWndTitle[ nArea]
+   LOCAL cOldAreaText   := MEMOREAD( aAreaIni[ nArea] )
 
    aTmpSource := {}
 
    FOR i := 1 TO 13
       AADD( aTmpSource, ;
-         ALLTRIM( GetPvProfString( "General", "Formula" + ALLTRIM(STR(i,2)), "", aAreaIni[nArea] ) ) )
+         ALLTRIM( GetPvProfString( "General", "Formula" + ALLTRIM(STR(i,2)), "", aAreaIni[ nArea] ) ) )
    NEXT
 
    AEVAL( oGenVar:aDBFile, {|x| IIF( EMPTY( x[2] ),, AADD( aDbase, ALLTRIM( x[2] ) ) ) } )
@@ -2933,7 +2952,7 @@ FUNCTION AreaProperties( nArea )
 
    REDEFINE COMBOBOX cDatabase ITEMS aDbase ID 511 OF oDlg
 
-   REDEFINE CHECKBOX aCbx[1] VAR lDelSpace      ID 601 OF oDlg
+   REDEFINE CHECKBOX aCbx[ 1 ] VAR lDelSpace      ID 601 OF oDlg
    REDEFINE CHECKBOX aCbx[2] VAR lBreakBefore   ID 602 OF oDlg
    REDEFINE CHECKBOX aCbx[3] VAR lBreakAfter    ID 603 OF oDlg
    REDEFINE CHECKBOX aCbx[5] VAR lPrBeforeBreak ID 604 OF oDlg
@@ -2968,23 +2987,23 @@ FUNCTION AreaProperties( nArea )
    REDEFINE SAY PROMPT GL("Height:")                       ID 176 OF oDlg
    REDEFINE SAY PROMPT GL("Print area for each record of") ID 177 OF oDlg
 
-   REDEFINE GROUP aGrp[1] ID 190 OF oDlg
+   REDEFINE GROUP aGrp[ 1 ] ID 190 OF oDlg
    REDEFINE GROUP aGrp[2] ID 191 OF oDlg
    REDEFINE GROUP aGrp[3] ID 192 OF oDlg
    REDEFINE GROUP aGrp[4] ID 193 OF oDlg
    REDEFINE GROUP aGrp[5] ID 194 OF oDlg
 
    ACTIVATE DIALOG oDlg CENTERED ;
-      ON INIT ( oRad1:aItems[1]:SetText( GL("always") ), ;
+      ON INIT ( oRad1:aItems[ 1 ]:SetText( GL("always") ), ;
                 oRad1:aItems[2]:SetText( GL("never") ), ;
                 oRad1:aItems[3]:SetText( GL("page = 1") ), ;
                 oRad1:aItems[4]:SetText( GL("page > 1") ), ;
-                aGrp[1]:SetText( GL("Title") ), ;
+                aGrp[ 1 ]:SetText( GL("Title") ), ;
                 aGrp[2]:SetText( GL("Position") ), ;
                 aGrp[3]:SetText( GL("Size") ), ;
                 aGrp[4]:SetText( GL("Print Condition") ), ;
                 aGrp[5]:SetText( GL("Options") ), ;
-                aCbx[1]:SetText( GL("Delete empty space after last row") ), ;
+                aCbx[ 1 ]:SetText( GL("Delete empty space after last row") ), ;
                 aCbx[2]:SetText( GL("New page before printing this area") ), ;
                 aCbx[3]:SetText( GL("New page after printing this area") ), ;
                 aCbx[5]:SetText( GL("Print this area before every page break") ), ;
@@ -2993,7 +3012,7 @@ FUNCTION AreaProperties( nArea )
 
    IF lSave = .T.
 
-      INI oIni FILE aAreaIni[nArea]
+      INI oIni FILE aAreaIni[ nArea]
          SET SECTION "General" ENTRY "Title"            TO ALLTRIM( cAreaTitle ) OF oIni
          SET SECTION "General" ENTRY "Top1"             TO ALLTRIM(STR( nTop1  , 5, IIF( nMeasure = 2, 2, 0 ) )) OF oIni
          SET SECTION "General" ENTRY "Top2"             TO ALLTRIM(STR( nTop2  , 5, IIF( nMeasure = 2, 2, 0 ) )) OF oIni
@@ -3014,30 +3033,30 @@ FUNCTION AreaProperties( nArea )
 
       ENDINI
 
-      oGenVar:aAreaSizes[nArea,1] := nWidth
-      oGenVar:aAreaSizes[nArea,2] := nHeight
+      oGenVar:aAreaSizes[ nArea, 1 ] := nWidth
+      oGenVar:aAreaSizes[ nArea, 2 ] := nHeight
 
       AreaChange( nArea, cAreaTitle, nOldWidth, nWidth, nOldHeight, nHeight )
 
       SetSave( .F. )
 
-      IF cOldAreaText <> MEMOREAD( aAreaIni[nArea] )
+      IF cOldAreaText <> MEMOREAD( aAreaIni[ nArea] )
          Add2Undo( "", 0, nArea, cOldAreaText )
       ENDIF
 
    ENDIF
 
-RETURN (.T.)
+return .T.
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 *         Name: SetAreaFormulaBtn
 *  Description:
 *    Arguments: None
-* Return Value: .T.
+* return Value: .T.
 *       Author: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION SetAreaFormulaBtn( nID, nField, oDlg )
+function SetAreaFormulaBtn( nID, nField, oDlg )
 
    LOCAL oBtn
 
@@ -3049,22 +3068,22 @@ FUNCTION SetAreaFormulaBtn( nID, nField, oDlg )
                oBtn:cToolTip := GetSourceToolTip( aTmpSource[ nField ] ), ;
                oBtn:Refresh() )
 
-RETURN ( oBtn )
+return ( oBtn )
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: AreaChange
 * Beschreibung:
 * Argumente...: None
 * Rückgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION AreaChange( nArea, cAreaTitle, nOldWidth, nWidth, nOldHeight, nHeight )
+function AreaChange( nArea, cAreaTitle, nOldWidth, nWidth, nOldHeight, nHeight )
 
    LOCAL i
 
-   aWndTitle[nArea]   := cAreaTitle
-   aWnd[nArea]:cTitle := cAreaTitle
+   aWndTitle[ nArea]   := cAreaTitle
+   aWnd[ nArea]:cTitle := cAreaTitle
    oGenVar:aAreaTitle[ nAktArea ]:Refresh()
 
    aCbxItems[oCbxArea:nAt] := cAreaTitle
@@ -3074,7 +3093,7 @@ FUNCTION AreaChange( nArea, cAreaTitle, nOldWidth, nWidth, nOldHeight, nHeight )
    IF nOldWidth <> nWidth
 
       FOR i := 1 TO 100
-         IF aWnd[i] <> NIL
+         IF aWnd[i] <> nil
             aWnd[i]:Refresh()
          ENDIF
       NEXT
@@ -3083,12 +3102,12 @@ FUNCTION AreaChange( nArea, cAreaTitle, nOldWidth, nWidth, nOldHeight, nHeight )
 
    IF nOldHeight <> nHeight
 
-      aWnd[nArea]:Move( aWnd[nArea]:nTop, aWnd[nArea]:nLeft, ;
+      aWnd[ nArea]:Move( aWnd[ nArea]:nTop, aWnd[ nArea]:nLeft, ;
          IIF( oGenVar:lFixedAreaWidth, 1200, ER_GetPixel( nWidth ) + nRuler + nAreaZugabe2 ), ;
-         IIF( oGenVar:aAreaHide[nArea], nRulerTop, ER_GetPixel( nHeight ) + nAreaZugabe ), .T. )
+         IIF( oGenVar:aAreaHide[ nArea], nRulerTop, ER_GetPixel( nHeight ) + nAreaZugabe ), .T. )
 
       FOR i := nArea+1 TO 100
-         IF aWnd[i] <> NIL
+         IF aWnd[i] <> nil
             aWnd[i]:Move( aWnd[i]:nTop + ER_GetPixel( nHeight - nOldHeight ), ;
                aWnd[i]:nLeft,,, .T. )
          ENDIF
@@ -3098,41 +3117,41 @@ FUNCTION AreaChange( nArea, cAreaTitle, nOldWidth, nWidth, nOldHeight, nHeight )
 
    ENDIF
 
-RETURN (.T.)
+return .T.
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: AreaHide
 * Beschreibung:
 * Argumente...: None
 * Rückgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION AreaHide( nArea )
+function AreaHide( nArea )
 
    LOCAL i, nDifferenz
    LOCAL nHideHeight := GetCmInch( 18 )
-   LOCAL nAreaHeight := VAL( GetPvProfString( "General", "Height", "300", aAreaIni[nArea] ) )
-   LOCAL nWidth      := VAL( GetPvProfString( "General", "Width", "600", aAreaIni[nArea] ) )
+   LOCAL nAreaHeight := VAL( GetPvProfString( "General", "Height", "300", aAreaIni[ nArea] ) )
+   LOCAL nWidth      := VAL( GetPvProfString( "General", "Width", "600", aAreaIni[ nArea] ) )
 
    oGenVar:aAreaHide[nAktArea] := !oGenVar:aAreaHide[nAktArea]
 
    nDifferenz := ( ER_GetPixel( nAreaHeight ) + nAreaZugabe - 18 ) * ;
                  IIF( oGenVar:aAreaHide[nAktArea], -1, 1 )
 
-   aWnd[nArea]:Move( aWnd[nArea]:nTop, aWnd[nArea]:nLeft, ;
+   aWnd[ nArea]:Move( aWnd[ nArea]:nTop, aWnd[ nArea]:nLeft, ;
       IIF( oGenVar:lFixedAreaWidth, 1200, ER_GetPixel( nWidth ) + nRuler + nAreaZugabe2 ), ;
       IIF( oGenVar:aAreaHide[nAktArea], 18, ER_GetPixel( nAreaHeight ) + nAreaZugabe ), .T. )
 
    FOR i := nArea+1 TO 100
-      IF aWnd[i] <> NIL
+      IF aWnd[i] <> nil
          aWnd[i]:Move( aWnd[i]:nTop + nDifferenz, aWnd[i]:nLeft,,, .T. )
       ENDIF
    NEXT
 
    nTotalHeight += nDifferenz
 
-RETURN (.T.)
+return .T.
 
 // dummy for now
 
