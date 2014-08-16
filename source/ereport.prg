@@ -1466,7 +1466,7 @@ function DrawRulerLines( oWnd, nColPos )
       InvertRect( hDC, oWnd:Cargo )
    endif   
    
-   oWnd:Cargo = { 17, nColPos - 19, 37, nColPos - 18 }
+   oWnd:Cargo = { 17, nColPos, 37, nColPos + 1 }
    InvertRect( hDC, oWnd:Cargo )
 
    oWnd:ReleaseDC()
