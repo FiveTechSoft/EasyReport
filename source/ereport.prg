@@ -34,9 +34,9 @@ MEMVAR lPersonal, lStandard, oGenVar, oCurDlg
 * --------------------------------------------------------------------------
 function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 )
 
-   LOCAL i, oBrush, oIni, aTest, nTime1, nTime2, cTest, oIcon, cDateFormat
-   LOCAL cOldDir  := hb_CurDrive() + ":\" + GetCurDir()
-   LOCAL cDefFile := ""
+   local i, oBrush, oIni, aTest, nTime1, nTime2, cTest, oIcon, cDateFormat
+   local cOldDir  := hb_CurDrive() + ":\" + GetCurDir()
+   local cDefFile := ""
 
    lChDir( cFilePath( GetModuleFileName( GetInstance() ) ) )
 
@@ -124,8 +124,8 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
    oGenVar:oAreaBrush:End()
    oGenVar:oBarBrush:End()
 
-   AEVAL( oGenVar:aAppFonts, {|x| x:End() } )
-   AEVAL( aFonts, {|x| IIF( x <> nil, x:End(), ) } )
+   AEval( oGenVar:aAppFonts, {|x| x:End() } )
+   AEval( aFonts, {|x| IIF( x <> nil, x:End(), ) } )
 
    CloseUndo()
 
@@ -143,8 +143,8 @@ return( nil )
 *-----------------------------------------------------------------------------
 function BarMenu()
 
-   LOCAL aBtn[3]
-   LOCAL lPrompt := ( GetSysMetrics( 0 ) > 800 )
+   local aBtn[3]
+   local lPrompt := ( GetSysMetrics( 0 ) > 800 )
 
    DEFINE BUTTONBAR oBar OF oMainWnd SIZE 70, 70 2010
 
@@ -278,8 +278,8 @@ return .T.
 * --------------------------------------------------------------------------
 function PreviewMenu( oBtn )
 
-   LOCAL oMenu
-   LOCAL aRect := GetClientRect( oBtn:hWnd )
+   local oMenu
+   local aRect := GetClientRect( oBtn:hWnd )
 
    MENU oMenu POPUP
 
@@ -598,8 +598,8 @@ return .T.
 
 function SetScrollBar()
 
-   LOCAL oVScroll
-   LOCAL nPageZugabe := 392
+   local oVScroll
+   local nPageZugabe := 392
 
    if !empty( oMainWnd:oWndClient:oVScroll )
       oMainWnd:oWndClient:oVScroll:SetRange( 0, 100 )
@@ -640,10 +640,10 @@ return .T.
 *-----------------------------------------------------------------------------
 function ScrollVertical( lUp, lDown, lPageUp, lPageDown, lPos, nPosZugabe )
 
-   LOCAL i, aFirstWndCoors, nAltWert
-   LOCAL nZugabe     := 14
-   LOCAL nPageZugabe := 392
-   LOCAL aCliRect    := oMainWnd:GetCliRect()
+   local i, aFirstWndCoors, nAltWert
+   local nZugabe     := 14
+   local nPageZugabe := 392
+   local aCliRect    := oMainWnd:GetCliRect()
 
    DEFAULT lUp       := .F.
    DEFAULT lDown     := .F.
@@ -708,10 +708,10 @@ return .T.
 *-----------------------------------------------------------------------------
 function ScrollHorizont( lLeft, lRight, lPageLeft, lPageRight, lPos, nPosZugabe )
 
-   LOCAL i, aFirstWndCoors, nAltWert
-   LOCAL nZugabe     := 14
-   LOCAL nPageZugabe := 602
-   LOCAL aCliRect    := oMainWnd:GetCliRect()
+   local i, aFirstWndCoors, nAltWert
+   local nZugabe     := 14
+   local nPageZugabe := 602
+   local aCliRect    := oMainWnd:GetCliRect()
 
    DEFAULT lLeft      := .F.
    DEFAULT lRight     := .F.
@@ -794,9 +794,9 @@ return .T.
 *-----------------------------------------------------------------------------
 function IniAreasOnBar()
 
-   LOCAL i, oFont1
-   LOCAL cCbxItem   := ""
-   LOCAL nAreaStart := oMainWnd:nRight - 180
+   local i, oFont1
+   local cCbxItem   := ""
+   local nAreaStart := oMainWnd:nRight - 180
 
    aCbxItems := {""}
 
@@ -822,8 +822,8 @@ return .T.
 *-----------------------------------------------------------------------------
 function SetWinNull()
 
-   LOCAL i
-   LOCAL nAltPos := aWnd[nAktArea]:nTop
+   local i
+   local nAltPos := aWnd[nAktArea]:nTop
 
    FOR i := 1 TO 100
       IF aWnd[i] <> nil
@@ -843,8 +843,8 @@ return .T.
 *-----------------------------------------------------------------------------
 function ShowAreasOnBar()
 
-   LOCAL i, oFont1
-   LOCAL cCbxItem  := aWndTitle[ 1 ]
+   local i, oFont1
+   local cCbxItem  := aWndTitle[ 1 ]
 
    aCbxItems := {}
 
@@ -873,8 +873,8 @@ return .T.
 * --------------------------------------------------------------------------
 function BuildMenu()
 
-   LOCAL oMenu
-   LOCAL nMruList := VAL( GetPvProfString( "General", "MruList"  , "4", cGeneralIni ) )
+   local oMenu
+   local nMruList := VAL( GetPvProfString( "General", "MruList"  , "4", cGeneralIni ) )
 
    MENU oMenu 2007
 
@@ -1095,7 +1095,7 @@ return( oMenu )
 *-----------------------------------------------------------------------------
 function PopupMenu( nArea, oItem, nRow, nCol, lItem )
 
-   LOCAL oMenu
+   local oMenu
 
    DEFAULT lItem := .F.
 
@@ -1116,7 +1116,7 @@ function PopupMenu( nArea, oItem, nRow, nCol, lItem )
       ACTION GeneralSettings()
    SEPARATOR
    MENUITEM GL("&Area Properties") + CHR(9) + GL("Ctrl+A")    RESOURCE "B_AREA" ;
-      ACTION ( aWnd[ nArea]:SetFocus(), AreaProperties( nAktArea ) )
+      ACTION ( aWnd[ nArea ]:SetFocus(), AreaProperties( nAktArea ) )
    SEPARATOR
    MENUITEM GL("&Report Settings") ACTION ReportSettings()
    MENUITEM GL("&Options")         ACTION Options()
@@ -1136,7 +1136,7 @@ function PopupMenu( nArea, oItem, nRow, nCol, lItem )
 
    ENDMENU
 
-   ACTIVATE POPUP oMenu OF IIF( lItem = .T., oItem, aWnd[ nArea] ) AT nRow, nCol
+   ACTIVATE POPUP oMenu OF IIF( lItem = .T., oItem, aWnd[ nArea ] ) AT nRow, nCol
 
 return .T.
 
@@ -1150,14 +1150,14 @@ return .T.
 *-----------------------------------------------------------------------------
 function GenerateSource( nArea )
 
-   LOCAL i, oDlg, oGet1, cDir, cAreaDef, cAreaTitle, cItemDef, oRad1
-   LOCAL cFile     := SPACE(120)
-   LOCAL lGenerate := .F.
-   LOCAL nCopyTo   := 1
-   LOCAL nStyle    := 1
-   LOCAL cSource   := CRLF
-   LOCAL cIDs      := ""
-   LOCAL cNames    := ""
+   local i, oDlg, oGet1, cDir, cAreaDef, cAreaTitle, cItemDef, oRad1
+   local cFile     := SPACE(120)
+   local lGenerate := .F.
+   local nCopyTo   := 1
+   local nStyle    := 1
+   local cSource   := CRLF
+   local cIDs      := ""
+   local cNames    := ""
 
    DEFINE DIALOG oDlg NAME "GENERATESOURCE" TITLE GL("Generate Source Code")
 
@@ -1189,7 +1189,7 @@ function GenerateSource( nArea )
       cAreaDef := GetPvProfString( "Areas", ALLTRIM(STR(nArea,5)) , "", cDefIni )
       cAreaDef := VRD_LF2SF( ALLTRIM( cAreaDef ) )
 
-      cAreaTitle := ALLTRIM( GetPvProfString( "General", "Title" , "", aAreaIni[ nArea] ) )
+      cAreaTitle := ALLTRIM( GetPvProfString( "General", "Title" , "", aAreaIni[ nArea ] ) )
 
       IF .NOT. EMPTY( cAreaTitle )
          cSource += SPACE(3) + "//--- Area: " + cAreaTitle + " ---" + CRLF
@@ -1197,7 +1197,7 @@ function GenerateSource( nArea )
 
       FOR i := 1 TO 1000
 
-         cItemDef := ALLTRIM( GetPvProfString( "Items", ALLTRIM(STR(i,5)) , "", aAreaIni[ nArea] ) )
+         cItemDef := ALLTRIM( GetPvProfString( "Items", ALLTRIM(STR(i,5)) , "", aAreaIni[ nArea ] ) )
 
          IF .NOT. EMPTY( cItemDef )
             IF nStyle = 1
@@ -1251,12 +1251,12 @@ return (nil)
 *-----------------------------------------------------------------------------
 function ClientWindows()
 
-   LOCAL i, nWnd, cItemDef, cTitle, nWidth, nHeight, nDemoWidth
-   LOCAL lFirstWnd     := .F.
-   LOCAL nTop          := 0
-   LOCAL nWindowNr     := 0
-   LOCAL aIniEntries   := GetIniSection( "Areas", cDefIni )
-   LOCAL cAreaFilesDir := CheckPath( GetPvProfString( "General", "AreaFilesDir", "", cDefIni ) )
+   local i, nWnd, cItemDef, cTitle, nWidth, nHeight, nDemoWidth
+   local lFirstWnd     := .F.
+   local nTop          := 0
+   local nWindowNr     := 0
+   local aIniEntries   := GetIniSection( "Areas", cDefIni )
+   local cAreaFilesDir := CheckPath( GetPvProfString( "General", "AreaFilesDir", "", cDefIni ) )
 
    //Sichern
    aVRDSave := ARRAY( 102, 2 )
@@ -1352,11 +1352,11 @@ return .T.
 *-----------------------------------------------------------------------------
 function FillWindow( nArea, cAreaIni )
 
-   LOCAL i, cRuler1, cRuler2, aWerte, nEntry, nTmpCol
-   LOCAL nFirstTop, nFirstLeft, nFirstWidth, nFirstHeight, nFirstItem
-   LOCAL aFirst      := { .F., 0, 0, 0, 0, 0 }
-   LOCAL nElemente   := 0
-   LOCAL aIniEntries := GetIniSection( "Items", cAreaIni )
+   local i, cRuler1, cRuler2, aWerte, nEntry, nTmpCol
+   local nFirstTop, nFirstLeft, nFirstWidth, nFirstHeight, nFirstItem
+   local aFirst      := { .F., 0, 0, 0, 0, 0 }
+   local nElemente   := 0
+   local aIniEntries := GetIniSection( "Items", cAreaIni )
 
    //Ruler anzeigen
    IF nMeasure = 1 ; cRuler1 := "RULER1_MM" ; cRuler2 := "RULER2_MM" ; ENDIF
@@ -1364,42 +1364,44 @@ function FillWindow( nArea, cAreaIni )
    IF nMeasure = 3 ; cRuler1 := "RULER1_PI" ; cRuler2 := "RULER2_PI" ; ENDIF
 
    @ 0, 0 SAY " " SIZE 1200, nRulerTop-nRuler PIXEL ;
-      COLORS 0, oGenVar:nBClrAreaTitle OF aWnd[ nArea]
+      COLORS 0, oGenVar:nBClrAreaTitle OF aWnd[ nArea ]
 
    @ 2,  3 BTNBMP RESOURCE "AREAMINMAX" SIZE 12,12 ACTION AreaHide( nAktArea )
    @ 2, 17 BTNBMP RESOURCE "AREAPROP"   SIZE 12,12 ACTION AreaProperties( nAktArea )
 
-   @ 2, 29 SAY oGenVar:aAreaTitle[ nArea] ;
+   @ 2, 29 SAY oGenVar:aAreaTitle[ nArea ] ;
       PROMPT " " + ALLTRIM( GetPvProfString( "General", "Title" , "", cAreaIni ) ) ;
       SIZE 400, nRulerTop-nRuler-2 PIXEL FONT oGenVar:aAppFonts[ 1 ] ;
-      COLORS oGenVar:nF1ClrAreaTitle, oGenVar:nBClrAreaTitle OF aWnd[ nArea]
+      COLORS oGenVar:nF1ClrAreaTitle, oGenVar:nBClrAreaTitle OF aWnd[ nArea ]
 
-   @ nRulerTop-nRuler, 20 BITMAP oRulerBmp2 RESOURCE cRuler1 OF aWnd[ nArea] PIXEL NOBORDER
-   @ nRulerTop-nRuler, 0 BITMAP oRulerBmp2 RESOURCE cRuler2 OF aWnd[ nArea] PIXEL NOBORDER
+   @ nRulerTop-nRuler, 20 BITMAP oRulerBmp2 RESOURCE cRuler1 OF aWnd[ nArea ] PIXEL NOBORDER
+   
+   @ nRulerTop-nRuler, 0 BITMAP oRulerBmp2 RESOURCE cRuler2 OF aWnd[ nArea ] PIXEL NOBORDER
 
-   @ nRulerTop-nRuler, 20 SAY aRuler[ nArea, 1 ] PROMPT "" SIZE  1, 20 PIXEL ;
-      COLORS oGenVar:nClrReticule, oGenVar:nClrReticule OF aWnd[ nArea]
+   // @ nRulerTop-nRuler, 20 SAY aRuler[ nArea, 1 ] PROMPT "" SIZE  1, 20 PIXEL ;
+   //    COLORS oGenVar:nClrReticule, oGenVar:nClrReticule OF aWnd[ nArea ]
+   
    @ 20, 0 SAY aRuler[ nArea, 2 ] PROMPT "" SIZE 20,  1 PIXEL ;
-      COLORS oGenVar:nClrReticule, oGenVar:nClrReticule OF aWnd[ nArea]
+      COLORS oGenVar:nClrReticule, oGenVar:nClrReticule OF aWnd[ nArea ]
+   
+   aWnd[ nArea ]:bPainted  = {| hDC, cPS | ZeichneHintergrund( nArea ) }
 
-   aWnd[ nArea]:bPainted  = {| hDC, cPS | ZeichneHintergrund( nArea ) }
-
-   aWnd[ nArea]:bGotFocus = {|| SetTitleColor( .F. ), ;
-                               nAktArea := nArea, oCbxArea:Set( aWndTitle[ nArea] ), ;
+   aWnd[ nArea ]:bGotFocus = {|| SetTitleColor( .F. ), ;
+                               nAktArea := nArea, oCbxArea:Set( aWndTitle[ nArea ] ), ;
                                SetTitleColor( .T. ) }
 
-   aWnd[ nArea]:bMMoved = {|nRow,nCol,nFlags| ;
+   aWnd[ nArea ]:bMMoved = {|nRow,nCol,nFlags| ;
                            SetReticule( nRow, nCol, nArea ), ;
                            MsgBarInfos( nRow, nCol ), ;
-                           MoveSelection( nRow, nCol, aWnd[ nArea] ) }
+                           MoveSelection( nRow, nCol, aWnd[ nArea ] ) }
 
-   aWnd[ nArea]:bRClicked = {|nRow,nCol,nFlags| PopupMenu( nArea,, nRow, nCol ) }
-   aWnd[ nArea]:bLClicked = {|nRow,nCol,nFlags| DeactivateItem(), ;
+   aWnd[ nArea ]:bRClicked = {|nRow,nCol,nFlags| PopupMenu( nArea,, nRow, nCol ) }
+   aWnd[ nArea ]:bLClicked = {|nRow,nCol,nFlags| DeactivateItem(), ;
                               IIF( GetKeyState( VK_SHIFT ),, UnSelectAll() ), ;
-                              StartSelection( nRow, nCol, aWnd[ nArea] ) }
-   aWnd[ nArea]:bLButtonUp = {|nRow,nCol,nFlags| StopSelection( nRow, nCol, aWnd[ nArea] ) }
+                              StartSelection( nRow, nCol, aWnd[ nArea ] ) }
+   aWnd[ nArea ]:bLButtonUp = {|nRow,nCol,nFlags| StopSelection( nRow, nCol, aWnd[ nArea ] ) }
 
-   aWnd[ nArea]:bKeyDown   = {|nKey| WndKeyDownAction( nKey, nArea, cAreaIni ) }
+   aWnd[ nArea ]:bKeyDown   = {|nKey| WndKeyDownAction( nKey, nArea, cAreaIni ) }
 
    FOR i := 1 TO LEN( aIniEntries )
       nEntry := EntryNr( aIniEntries[i] )
@@ -1431,9 +1433,9 @@ return .T.
 *-----------------------------------------------------------------------------
 function SetReticule( nRow, nCol, nArea )
 
-   LOCAL nRowPos := nRow
-   LOCAL nColPos := nCol
-   LOCAL lShow   := ( oGenVar:lShowReticule = .T. .AND. oGenVar:lSelectItems = .F. )
+   local nRowPos := nRow
+   local nColPos := nCol
+   local lShow   := ( oGenVar:lShowReticule = .T. .AND. oGenVar:lSelectItems = .F. )
 
    IF nRow <= nRulerTop
       nRowPos := nRulerTop
@@ -1450,35 +1452,24 @@ function SetReticule( nRow, nCol, nArea )
    aRuler[ nArea, 2 ]:Move( nRowPos, 0, ;
       IIF( lShow, ER_GetPixel( oGenVar:aAreaSizes[ nArea, 1 ] ) + nRuler, nRuler ), 1, .T. )
 
-   AEVAL( aRuler, { | x, y | If( x[ 1 ] <> nil, ;
-          DrawRulerLines( x[ 1 ], nColPos ), ) } )
-
-   /* 
-   AEVAL( aRuler, {|x,y| IIF( x[ 1 ] <> nil, ;
-      ( x[ 1 ]:Move( nRulerTop-nRuler, nColPos, 1, ;
-          IIF( lShow, ER_GetPixel( oGenVar:aAreaSizes[y, 2 ] ) + nRuler, nRuler ), .T. ) ), ) } )
-   */
-          
-   //AEVAL( aRuler, {|x,y| IIF( x[ 1 ] <> nil, ;
-   //   ( x[ 1 ]:Move( nRulerTop-nRuler, nColPos, 1, ;
-   //                IIF( lShow, ER_GetPixel( oGenVar:aAreaSizes[y, 2 ] ) + nRuler, nRuler ), .T. ), ;
-   //     x[ 1 ]:Refresh(), x[2]:Refresh() ), ) } )
+   AEval( aWnd, { | oWnd | If( oWnd != nil, DrawRulerLines( oWnd, nColPos ),) } )
 
 return .T.
 
-function DrawRulerLines( oRulerBmp, nColPos )
+*-----------------------------------------------------------------------------
 
-   local hDC := oRulerBmp:GetDC()
+function DrawRulerLines( oWnd, nColPos )
 
-   if ! Empty( oRulerBmp:Cargo ) 
-      InvertRect( hDC, oRulerBmp:Cargo )
+   local hDC := oWnd:GetDC()
+
+   if ! Empty( oWnd:Cargo ) 
+      InvertRect( hDC, oWnd:Cargo )
    endif   
    
-   oRulerBmp:Cargo = { 0, nColPos - 1 - oRulerBmp:nLeft,;
-                       oRulerBmp:nHeight(), nColPos - oRulerBmp:nLeft }
-   InvertRect( hDC, oRulerBmp:Cargo )
+   oWnd:Cargo = { 17, nColPos - 19, 37, nColPos - 18 }
+   InvertRect( hDC, oWnd:Cargo )
 
-   oRulerBmp:ReleaseDC()
+   oWnd:ReleaseDC()
 
 return nil
 
@@ -1511,18 +1502,18 @@ return .T.
 *-----------------------------------------------------------------------------
 function ZeichneHintergrund( nArea )
 
-   LOCAL nWidth  := ER_GetPixel( oGenVar:aAreaSizes[ nArea, 1 ] )
-   LOCAL nHeight := ER_GetPixel( oGenVar:aAreaSizes[ nArea, 2 ] )
+   local nWidth  := ER_GetPixel( oGenVar:aAreaSizes[ nArea, 1 ] )
+   local nHeight := ER_GetPixel( oGenVar:aAreaSizes[ nArea, 2 ] )
 
    SetGridSize( ER_GetPixel( oGenVar:nGridWidth ), ER_GetPixel( oGenVar:nGridHeight ) )
 
    //Hintergrund
-   Rectangle( aWnd[ nArea]:hDC, ;
+   Rectangle( aWnd[ nArea ]:hDC, ;
               nRulerTop, nRuler, nRulerTop + nHeight + 1, nRuler + nWidth + 1 )
 
    //Grid zeichnen
    IF oGenVar:lShowGrid = .T.
-      ShowGrid( aWnd[ nArea]:hDC, aWnd[ nArea]:cPS, ;
+      ShowGrid( aWnd[ nArea ]:hDC, aWnd[ nArea ]:cPS, ;
                 ER_GetPixel( oGenVar:nGridWidth ), ER_GetPixel( oGenVar:nGridHeight ), ;
                 nWidth, nHeight, nRulerTop, nRuler )
    ENDIF
@@ -1539,12 +1530,12 @@ return .T.
 *-----------------------------------------------------------------------------
 function WndKeyDownAction( nKey, nArea, cAreaIni )
 
-   LOCAL i, aWerte, nTop, nLeft, nHeight, nWidth
-   LOCAL lMove    := .T.
-   LOCAL nY       := 0
-   LOCAL nX       := 0
-   LOCAL nRight   := 0
-   LOCAL nBottom  := 0
+   local i, aWerte, nTop, nLeft, nHeight, nWidth
+   local lMove    := .T.
+   local nY       := 0
+   local nX       := 0
+   local nRight   := 0
+   local nBottom  := 0
 
    IF LEN( aSelection ) = 0
       return(.F.)
@@ -1625,7 +1616,7 @@ return .T.
 *-----------------------------------------------------------------------------
 function DelSelectItems()
 
-   LOCAL i
+   local i
 
    IF MsgNoYes( GL("Delete the selected items?"), GL("Select an option") ) = .T.
 
@@ -1688,14 +1679,14 @@ return .T.
 *-----------------------------------------------------------------------------
 function ShowFontChoice( nCurrentFont )
 
-   LOCAL i, oDlg, oLbx, oSay1, oGet1
-   LOCAL nFont      := 0
-   LOCAL aGetFonts  := GetFonts()
-   LOCAL aShowFonts := GetFontText( aGetFonts, .F. )
-   LOCAL cFont      := aShowFonts[IIF( nCurrentFont <= 0 .OR. nCurrentFont > LEN( aShowFonts), ;
+   local i, oDlg, oLbx, oSay1, oGet1
+   local nFont      := 0
+   local aGetFonts  := GetFonts()
+   local aShowFonts := GetFontText( aGetFonts, .F. )
+   local cFont      := aShowFonts[IIF( nCurrentFont <= 0 .OR. nCurrentFont > LEN( aShowFonts), ;
                                        1, nCurrentFont )]
-   LOCAL lSave      := .F.
-   LOCAL cFontText  := ""
+   local lSave      := .F.
+   local cFontText  := ""
 
    FOR i := 33 TO 254
       cFontText += CHR( i )
@@ -1741,7 +1732,7 @@ return ( IIF( nFont = 0, nCurrentFont, nFont ) )
 *-----------------------------------------------------------------------------
 function GetCurrentFont( nCurrentFont, aGetFonts, nTyp )
 
-   LOCAL cCurFont := ""
+   local cCurFont := ""
 
    DEFAULT nTyp := 0
 
@@ -1773,11 +1764,11 @@ return cCurFont
 *-----------------------------------------------------------------------------
 function ShowColorChoice( nCurrentClr )
 
-   LOCAL oIni, oDlg, nDefClr
-   LOCAL aColors := GetAllColors()
-   LOCAL aSay    := ARRAY(30)
-   LOCAL aBtn    := ARRAY(30)
-   LOCAL nColor  := 0
+   local oIni, oDlg, nDefClr
+   local aColors := GetAllColors()
+   local aSay    := ARRAY(30)
+   local aBtn    := ARRAY(30)
+   local nColor  := 0
 
    DEFINE DIALOG oDlg NAME "GETCOLOR" TITLE GL("Select Color")
 
@@ -1873,8 +1864,8 @@ return ( nColor )
 *-----------------------------------------------------------------------------
 function DefineFonts()
 
-   LOCAL i, cFontDef
-   LOCAL aGetFonts := GetFonts()
+   local i, cFontDef
+   local aGetFonts := GetFonts()
 
    aFonts := nil
    aFonts := Array( 50 )
@@ -1918,8 +1909,8 @@ return VAL( GetPvProfString( "Colors", ALLTRIM(STR( nNr, 5 )) , "", cDefIni ) )
 *-----------------------------------------------------------------------------
 function GetAllColors()
 
-   LOCAL i
-   LOCAL aColors := {}
+   local i
+   local aColors := {}
 
    FOR i := 1 TO 30
       AADD( aColors, PADR( GetPvProfString( "Colors", ALLTRIM(STR( i, 5 )) , "", cDefIni ), 15 ) )
@@ -1937,13 +1928,13 @@ return ( aColors )
 *-----------------------------------------------------------------------------
 function GeneralSettings()
 
-   LOCAL i, oDlg, oFld, oLbx, oSay1, oGet1, nDefClr, oIni
-   LOCAL aColorGet[30], aColorSay[30]
-   LOCAL aGetFonts  := GetFonts()
-   LOCAL aShowFonts := GetFontText( aGetFonts )
-   LOCAL cFont      := aGetFonts [1, 1 ]
-   LOCAL aColors    := GetAllColors()
-   LOCAL cFontText  := ""
+   local i, oDlg, oFld, oLbx, oSay1, oGet1, nDefClr, oIni
+   local aColorGet[30], aColorSay[30]
+   local aGetFonts  := GetFonts()
+   local aShowFonts := GetFontText( aGetFonts )
+   local cFont      := aGetFonts [1, 1 ]
+   local aColors    := GetAllColors()
+   local cFontText  := ""
 
    FOR i := 33 TO 254
       cFontText += CHR( i )
@@ -2138,7 +2129,7 @@ return ( cColor )
 *-----------------------------------------------------------------------------
 function SetColor( cColor, nDefClr )
 
-   LOCAL nColor
+   local nColor
 
    IF EMPTY( cColor ) = .T.
       nColor := nDefClr
@@ -2158,8 +2149,8 @@ return ( nColor )
 *-----------------------------------------------------------------------------
 function GetFontText( aGetFonts, lShowEmpty )
 
-   LOCAL i, cText
-   LOCAL aShowFonts := {}
+   local i, cText
+   local aShowFonts := {}
 
    DEFAULT lShowEmpty := .T.
 
@@ -2193,7 +2184,7 @@ return ( aShowFonts )
 *-----------------------------------------------------------------------------
 function PreviewRefresh( oSay, oLbx, oGet )
 
-   LOCAL nID := VAL(SUBSTR( oLbx:GetItem(oLbx:GetPos()), 1, 2))
+   local nID := VAL(SUBSTR( oLbx:GetItem(oLbx:GetPos()), 1, 2))
 
    oSay:Default()
    oSay:SetFont( aFonts[nID] )
@@ -2214,23 +2205,23 @@ return .T.
 *-----------------------------------------------------------------------------
 function SelectFont( oSay, oLbx, oGet )
 
-   LOCAL oDlg, cFontDef, oFontGet, oIni, oNewFont, aShowFonts, nPos, aFontNames
-   LOCAL i, y, cItemDef, aIniEntries, nEntry
-   LOCAL lSave       := .F.
-   LOCAL aCbx        := ARRAY(4)
-   LOCAL nID         := VAL(SUBSTR( oLbx:GetItem(oLbx:GetPos()), 1, 2))
-   LOCAL aGetFonts   := GetFonts()
-   LOCAL cFontGet    := aGetFonts[nID, 1 ]
-   LOCAL nWidth      := aGetFonts[nID, 2 ]
-   LOCAL nHeight     := aGetFonts[nID,3] * -1
-   LOCAL lBold       := aGetFonts[nID,4]
-   LOCAL lItalic     := aGetFonts[nID,5]
-   LOCAL lUnderline  := aGetFonts[nID,6]
-   LOCAL lStrikeOut  := aGetFonts[nID,7]
-   LOCAL nEscapement := aGetFonts[nID,8]
-   LOCAL nOrient     := aGetFonts[nID,10]
-   LOCAL nCharSet    := aGetFonts[nID,9]
-   LOCAL hDC         := oMainWnd:GetDC()
+   local oDlg, cFontDef, oFontGet, oIni, oNewFont, aShowFonts, nPos, aFontNames
+   local i, y, cItemDef, aIniEntries, nEntry
+   local lSave       := .F.
+   local aCbx        := ARRAY(4)
+   local nID         := VAL(SUBSTR( oLbx:GetItem(oLbx:GetPos()), 1, 2))
+   local aGetFonts   := GetFonts()
+   local cFontGet    := aGetFonts[nID, 1 ]
+   local nWidth      := aGetFonts[nID, 2 ]
+   local nHeight     := aGetFonts[nID,3] * -1
+   local lBold       := aGetFonts[nID,4]
+   local lItalic     := aGetFonts[nID,5]
+   local lUnderline  := aGetFonts[nID,6]
+   local lStrikeOut  := aGetFonts[nID,7]
+   local nEscapement := aGetFonts[nID,8]
+   local nOrient     := aGetFonts[nID,10]
+   local nCharSet    := aGetFonts[nID,9]
+   local hDC         := oMainWnd:GetDC()
 
    IF EMPTY( aFontNames := GetFontNames( hDC ) )
       MsgStop( GL("Error getting font names."), GL("Stop!") )
@@ -2345,8 +2336,8 @@ return ( aShowFonts )
 *-----------------------------------------------------------------------------
 function GetFonts()
 
-   LOCAL i, cFontDef
-   LOCAL aWerte := ARRAY( 20, 10 )
+   local i, cFontDef
+   local aWerte := ARRAY( 20, 10 )
 
    FOR i := 1 TO 20
 
@@ -2396,20 +2387,20 @@ return ( aWerte )
 *-----------------------------------------------------------------------------
 function ReportSettings()
 
-   LOCAL i, oDlg, oIni, aGrp[2], oRad1, aGet[ 1 ]
-   LOCAL lSave       := .F.
-   LOCAL nWidth      := VAL( GetPvProfString( "General", "PaperWidth" , "", cDefIni ) )
-   LOCAL nHeight     := VAL( GetPvProfString( "General", "PaperHeight", "", cDefIni ) )
-   LOCAL nTop        := VAL( GetPvProfString( "General", "TopMargin" , "20", cDefIni ) )
-   LOCAL nLeft       := VAL( GetPvProfString( "General", "LeftMargin", "20", cDefIni ) )
-   LOCAL nPageBreak  := VAL( GetPvProfString( "General", "PageBreak", "240", cDefIni ) )
-   LOCAL nOrient     := VAL( GetPvProfString( "General", "Orientation", "1", cDefIni ) )
-   LOCAL cTitle      := PADR( GetPvProfString( "General", "Title", "", cDefIni ), 80 )
-   LOCAL cGroup      := PADR( GetPvProfString( "General", "Group", "", cDefIni ), 80 )
-   LOCAL cPicture    := IIF( nMeasure = 2, "999.99", "99999" )
-   LOCAL aFormat     := GetPaperSizes()
-   LOCAL nFormat     := VAL( GetPvProfString( "General", "PaperSize", "9", cDefIni ) )
-   LOCAL cFormat     := aFormat[ IIF( nFormat = 0, 9, nFormat ) ]
+   local i, oDlg, oIni, aGrp[2], oRad1, aGet[ 1 ]
+   local lSave       := .F.
+   local nWidth      := VAL( GetPvProfString( "General", "PaperWidth" , "", cDefIni ) )
+   local nHeight     := VAL( GetPvProfString( "General", "PaperHeight", "", cDefIni ) )
+   local nTop        := VAL( GetPvProfString( "General", "TopMargin" , "20", cDefIni ) )
+   local nLeft       := VAL( GetPvProfString( "General", "LeftMargin", "20", cDefIni ) )
+   local nPageBreak  := VAL( GetPvProfString( "General", "PageBreak", "240", cDefIni ) )
+   local nOrient     := VAL( GetPvProfString( "General", "Orientation", "1", cDefIni ) )
+   local cTitle      := PADR( GetPvProfString( "General", "Title", "", cDefIni ), 80 )
+   local cGroup      := PADR( GetPvProfString( "General", "Group", "", cDefIni ), 80 )
+   local cPicture    := IIF( nMeasure = 2, "999.99", "99999" )
+   local aFormat     := GetPaperSizes()
+   local nFormat     := VAL( GetPvProfString( "General", "PaperSize", "9", cDefIni ) )
+   local cFormat     := aFormat[ IIF( nFormat = 0, 9, nFormat ) ]
 
    DEFINE DIALOG oDlg NAME "REPORTOPTIONS" TITLE GL("Report Settings")
 
@@ -2490,7 +2481,7 @@ return .T.
 *-----------------------------------------------------------------------------
 function GetPaperSizes()
 
-   LOCAL aSizes := { "Letter 8 1/2 x 11 inch"        , ;
+   local aSizes := { "Letter 8 1/2 x 11 inch"        , ;
                      "Letter Small 8 1/2 x 11 inch"  , ;
                      "Tabloid 11 x 17 inch"          , ;
                      "Ledger 17 x 11 inch"           , ;
@@ -2545,20 +2536,20 @@ return ( aSizes )
 *-----------------------------------------------------------------------------
 function Options()
 
-   LOCAL i, oDlg, oIni, cLanguage, cOldLanguage, cWert, aCbx[4], aGrp[2], oRad1
-   LOCAL lSave         := .F.
-   LOCAL lInfo         := .F.
-   LOCAL nLanguage     := VAL( GetPvProfString( "General", "Language"  , "1", cGeneralIni ) )
-   LOCAL nMaximize     := VAL( GetPvProfString( "General", "Maximize"  , "1", cGeneralIni ) )
-   LOCAL lMaximize     := IIF( nMaximize = 1, .T., .F. )
-   LOCAL nMruList      := VAL( GetPvProfString( "General", "MruList"  , "4", cGeneralIni ) )
-   LOCAL aLanguage     := {}
-   LOCAL cPicture      := IIF( nMeasure = 2, "999.99", "99999" )
-   LOCAL nGridWidth    := oGenVar:nGridWidth
-   LOCAL nGridHeight   := oGenVar:nGridHeight
-   LOCAL lShowGrid     := oGenVar:lShowGrid
-   LOCAL lShowReticule := oGenVar:lShowReticule
-   LOCAL lShowBorder   := oGenVar:lShowBorder
+   local i, oDlg, oIni, cLanguage, cOldLanguage, cWert, aCbx[4], aGrp[2], oRad1
+   local lSave         := .F.
+   local lInfo         := .F.
+   local nLanguage     := VAL( GetPvProfString( "General", "Language"  , "1", cGeneralIni ) )
+   local nMaximize     := VAL( GetPvProfString( "General", "Maximize"  , "1", cGeneralIni ) )
+   local lMaximize     := IIF( nMaximize = 1, .T., .F. )
+   local nMruList      := VAL( GetPvProfString( "General", "MruList"  , "4", cGeneralIni ) )
+   local aLanguage     := {}
+   local cPicture      := IIF( nMeasure = 2, "999.99", "99999" )
+   local nGridWidth    := oGenVar:nGridWidth
+   local nGridHeight   := oGenVar:nGridHeight
+   local lShowGrid     := oGenVar:lShowGrid
+   local lShowReticule := oGenVar:lShowReticule
+   local lShowBorder   := oGenVar:lShowBorder
 
    FOR i := 1 TO 99
       cWert := GetPvProfString( "Languages", ALLTRIM(STR(i,2)), "", cGeneralIni )
@@ -2671,8 +2662,8 @@ return .T.
 *-----------------------------------------------------------------------------
 function ItemList()
 
-   LOCAL oDlg
-   LOCAL oTree
+   local oDlg
+   local oTree
 
    DEFINE DIALOG oDlg RESOURCE "Itemlist" TITLE GL("Item List")
 
@@ -2700,12 +2691,12 @@ return nil
 *-----------------------------------------------------------------------------
 function ListTrees( oTree )
 
-   LOCAL i, y, oTr1, oTr2, cItemDef, aElemente, nEntry, cTitle
-   LOCAL lFirstArea    := .T.
-   LOCAL nClose        := 1
-   LOCAL nOpen         := 2
-   LOCAL aIniEntries   := GetIniSection( "Areas", cDefIni )
-   LOCAL cAreaFilesDir := CheckPath( GetPvProfString( "General", "AreaFilesDir", "", cDefIni ) )
+   local i, y, oTr1, oTr2, cItemDef, aElemente, nEntry, cTitle
+   local lFirstArea    := .T.
+   local nClose        := 1
+   local nOpen         := 2
+   local aIniEntries   := GetIniSection( "Areas", cDefIni )
+   local cAreaFilesDir := CheckPath( GetPvProfString( "General", "AreaFilesDir", "", cDefIni ) )
 
    oTr1 := oTree:GetRoot()
 
@@ -2776,9 +2767,9 @@ return oTree
 *-----------------------------------------------------------------------------
 function GetAllItems( cAktAreaIni )
 
-   LOCAL i, cItemDef, cTyp, cName, nShow, nTyp, nDelete, nEntry
-   LOCAL aWerte      := {}
-   LOCAL aIniEntries := GetIniSection( "Items", cAktAreaIni )
+   local i, cItemDef, cTyp, cName, nShow, nTyp, nDelete, nEntry
+   local aWerte      := {}
+   local aIniEntries := GetIniSection( "Items", cAktAreaIni )
 
    FOR i := 1 TO LEN( aIniEntries )
 
@@ -2827,9 +2818,9 @@ return ( aWerte )
 *-----------------------------------------------------------------------------
 function ClickListTree( oTree )
 
-   LOCAL cItemDef ,nItem, oLinkArea, nArea, lWert
-   LOCAL oLinkItem   := oTree:GetLinkAt( oTree:GetCursel() )
-   LOCAL cPrompt     := oLinkItem:TreeItem:cPrompt
+   local cItemDef ,nItem, oLinkArea, nArea, lWert
+   local oLinkItem   := oTree:GetLinkAt( oTree:GetCursel() )
+   local cPrompt     := oLinkItem:TreeItem:cPrompt
 
    IF cPrompt = GL("Visible") .OR. cPrompt = GL("Item Properties")
 
@@ -2847,7 +2838,7 @@ function ClickListTree( oTree )
 
    IF cPrompt = GL("Visible")
 
-      cItemDef := ALLTRIM( GetPvProfString( "Items", ALLTRIM(STR(nItem,5)) , "", aAreaIni[ nArea] ) )
+      cItemDef := ALLTRIM( GetPvProfString( "Items", ALLTRIM(STR(nItem,5)) , "", aAreaIni[ nArea ] ) )
 
       oLinkItem:ToggleOpened()
       oTree:Refresh()
@@ -2868,11 +2859,11 @@ function ClickListTree( oTree )
 
       oLinkItem:ParentLink:TreeItem:SetText( ItemProperties( nItem, nArea, .T. ) )
 
-      cItemDef := ALLTRIM( GetPvProfString( "Items", ALLTRIM(STR(nItem,5)) , "", aAreaIni[ nArea] ) )
+      cItemDef := ALLTRIM( GetPvProfString( "Items", ALLTRIM(STR(nItem,5)) , "", aAreaIni[ nArea ] ) )
 
       IF IsGraphic( UPPER(ALLTRIM( GetField( cItemDef, 1 ) )) )
-         oLinkItem:ParentLink:TreeItem:iBmpOpen  := SetGraphTreeBmp( nItem, aAreaIni[ nArea] )
-         oLinkItem:ParentLink:TreeItem:iBmpClose := SetGraphTreeBmp( nItem, aAreaIni[ nArea] )
+         oLinkItem:ParentLink:TreeItem:iBmpOpen  := SetGraphTreeBmp( nItem, aAreaIni[ nArea ] )
+         oLinkItem:ParentLink:TreeItem:iBmpClose := SetGraphTreeBmp( nItem, aAreaIni[ nArea ] )
       ENDIF
 
       oTree:UpdateTV()
@@ -2891,9 +2882,9 @@ return .T.
 *-----------------------------------------------------------------------------
 function SetGraphTreeBmp( nItem, cAreaIni )
 
-   LOCAL cItemDef := ALLTRIM( GetPvProfString( "Items", ALLTRIM(STR(nItem,5)) , "", cAreaIni ) )
-   LOCAL cTyp     := UPPER(ALLTRIM( GetField( cItemDef, 1 ) ))
-   LOCAL nIndex   := GetGraphIndex( cTyp )
+   local cItemDef := ALLTRIM( GetPvProfString( "Items", ALLTRIM(STR(nItem,5)) , "", cAreaIni ) )
+   local cTyp     := UPPER(ALLTRIM( GetField( cItemDef, 1 ) ))
+   local nIndex   := GetGraphIndex( cTyp )
 
 return ( nIndex + 9 )
 
@@ -2907,35 +2898,35 @@ return ( nIndex + 9 )
 *-----------------------------------------------------------------------------
 function AreaProperties( nArea )
 
-   LOCAL i, oDlg, oIni, oBtn, oRad1, aCbx[6], aGrp[5], oSay1
-   LOCAL aDbase  := { GL("none") }
-   LOCAL lSave   := .F.
-   LOCAL nTop1   := VAL( GetPvProfString( "General", "Top1", "0", aAreaIni[ nArea] ) )
-   LOCAL nTop2   := VAL( GetPvProfString( "General", "Top2", "0", aAreaIni[ nArea] ) )
-   LOCAL lTop    := ( GetPvProfString( "General", "TopVariable", "1", aAreaIni[ nArea] ) = "1" )
-   LOCAL nWidth  := VAL( GetPvProfString( "General", "Width", "600", aAreaIni[ nArea] ) )
-   LOCAL nHeight := VAL( GetPvProfString( "General", "Height", "300", aAreaIni[ nArea] ) )
-   LOCAL nCondition     := VAL( GetPvProfString( "General", "Condition", "1", aAreaIni[ nArea] ) )
-   LOCAL lDelSpace      := ( GetPvProfString( "General", "DelEmptySpace", "0", aAreaIni[ nArea] ) = "1" )
-   LOCAL lBreakBefore   := ( GetPvProfString( "General", "BreakBefore"  , "0", aAreaIni[ nArea] ) = "1" )
-   LOCAL lBreakAfter    := ( GetPvProfString( "General", "BreakAfter"   , "0", aAreaIni[ nArea] ) = "1" )
-   LOCAL lPrBeforeBreak := ( GetPvProfString( "General", "PrintBeforeBreak", "0", aAreaIni[ nArea] ) = "1" )
-   LOCAL lPrAfterBreak  := ( GetPvProfString( "General", "PrintAfterBreak" , "0", aAreaIni[ nArea] ) = "1" )
-   LOCAL cDatabase      := ALLTRIM( GetPvProfString( "General", "ControlDBF", GL("none"), aAreaIni[ nArea] ) )
-   LOCAL nOldWidth      := nWidth
-   LOCAL nOldHeight     := nHeight
-   LOCAL cPicture       := IIF( nMeasure = 2, "999.99", "99999" )
-   LOCAL cAreaTitle     := aWndTitle[ nArea]
-   LOCAL cOldAreaText   := MEMOREAD( aAreaIni[ nArea] )
+   local i, oDlg, oIni, oBtn, oRad1, aCbx[6], aGrp[5], oSay1
+   local aDbase  := { GL("none") }
+   local lSave   := .F.
+   local nTop1   := VAL( GetPvProfString( "General", "Top1", "0", aAreaIni[ nArea ] ) )
+   local nTop2   := VAL( GetPvProfString( "General", "Top2", "0", aAreaIni[ nArea ] ) )
+   local lTop    := ( GetPvProfString( "General", "TopVariable", "1", aAreaIni[ nArea ] ) = "1" )
+   local nWidth  := VAL( GetPvProfString( "General", "Width", "600", aAreaIni[ nArea ] ) )
+   local nHeight := VAL( GetPvProfString( "General", "Height", "300", aAreaIni[ nArea ] ) )
+   local nCondition     := VAL( GetPvProfString( "General", "Condition", "1", aAreaIni[ nArea ] ) )
+   local lDelSpace      := ( GetPvProfString( "General", "DelEmptySpace", "0", aAreaIni[ nArea ] ) = "1" )
+   local lBreakBefore   := ( GetPvProfString( "General", "BreakBefore"  , "0", aAreaIni[ nArea ] ) = "1" )
+   local lBreakAfter    := ( GetPvProfString( "General", "BreakAfter"   , "0", aAreaIni[ nArea ] ) = "1" )
+   local lPrBeforeBreak := ( GetPvProfString( "General", "PrintBeforeBreak", "0", aAreaIni[ nArea ] ) = "1" )
+   local lPrAfterBreak  := ( GetPvProfString( "General", "PrintAfterBreak" , "0", aAreaIni[ nArea ] ) = "1" )
+   local cDatabase      := ALLTRIM( GetPvProfString( "General", "ControlDBF", GL("none"), aAreaIni[ nArea ] ) )
+   local nOldWidth      := nWidth
+   local nOldHeight     := nHeight
+   local cPicture       := IIF( nMeasure = 2, "999.99", "99999" )
+   local cAreaTitle     := aWndTitle[ nArea ]
+   local cOldAreaText   := MEMOREAD( aAreaIni[ nArea ] )
 
    aTmpSource := {}
 
    FOR i := 1 TO 13
       AADD( aTmpSource, ;
-         ALLTRIM( GetPvProfString( "General", "Formula" + ALLTRIM(STR(i,2)), "", aAreaIni[ nArea] ) ) )
+         ALLTRIM( GetPvProfString( "General", "Formula" + ALLTRIM(STR(i,2)), "", aAreaIni[ nArea ] ) ) )
    NEXT
 
-   AEVAL( oGenVar:aDBFile, {|x| IIF( EMPTY( x[2] ),, AADD( aDbase, ALLTRIM( x[2] ) ) ) } )
+   AEval( oGenVar:aDBFile, {|x| IIF( EMPTY( x[2] ),, AADD( aDbase, ALLTRIM( x[2] ) ) ) } )
 
    DEFINE DIALOG oDlg RESOURCE "AREAPROPERTY" TITLE GL("Area Properties")
 
@@ -3013,7 +3004,7 @@ function AreaProperties( nArea )
 
    IF lSave = .T.
 
-      INI oIni FILE aAreaIni[ nArea]
+      INI oIni FILE aAreaIni[ nArea ]
          SET SECTION "General" ENTRY "Title"            TO ALLTRIM( cAreaTitle ) OF oIni
          SET SECTION "General" ENTRY "Top1"             TO ALLTRIM(STR( nTop1  , 5, IIF( nMeasure = 2, 2, 0 ) )) OF oIni
          SET SECTION "General" ENTRY "Top2"             TO ALLTRIM(STR( nTop2  , 5, IIF( nMeasure = 2, 2, 0 ) )) OF oIni
@@ -3041,7 +3032,7 @@ function AreaProperties( nArea )
 
       SetSave( .F. )
 
-      IF cOldAreaText <> MEMOREAD( aAreaIni[ nArea] )
+      IF cOldAreaText <> MEMOREAD( aAreaIni[ nArea ] )
          Add2Undo( "", 0, nArea, cOldAreaText )
       ENDIF
 
@@ -3059,7 +3050,7 @@ return .T.
 *-----------------------------------------------------------------------------
 function SetAreaFormulaBtn( nID, nField, oDlg )
 
-   LOCAL oBtn
+   local oBtn
 
    REDEFINE BTNBMP oBtn ID nID OF oDlg NOBORDER ;
       RESOURCE "B_SOURCE_" + IIF( EMPTY( aTmpSource[ nField ] ), "NO", "YES" ) TRANSPARENT ;
@@ -3081,10 +3072,10 @@ return ( oBtn )
 *-----------------------------------------------------------------------------
 function AreaChange( nArea, cAreaTitle, nOldWidth, nWidth, nOldHeight, nHeight )
 
-   LOCAL i
+   local i
 
-   aWndTitle[ nArea]   := cAreaTitle
-   aWnd[ nArea]:cTitle := cAreaTitle
+   aWndTitle[ nArea ]   := cAreaTitle
+   aWnd[ nArea ]:cTitle := cAreaTitle
    oGenVar:aAreaTitle[ nAktArea ]:Refresh()
 
    aCbxItems[oCbxArea:nAt] := cAreaTitle
@@ -3103,9 +3094,9 @@ function AreaChange( nArea, cAreaTitle, nOldWidth, nWidth, nOldHeight, nHeight )
 
    IF nOldHeight <> nHeight
 
-      aWnd[ nArea]:Move( aWnd[ nArea]:nTop, aWnd[ nArea]:nLeft, ;
+      aWnd[ nArea ]:Move( aWnd[ nArea ]:nTop, aWnd[ nArea ]:nLeft, ;
          IIF( oGenVar:lFixedAreaWidth, 1200, ER_GetPixel( nWidth ) + nRuler + nAreaZugabe2 ), ;
-         IIF( oGenVar:aAreaHide[ nArea], nRulerTop, ER_GetPixel( nHeight ) + nAreaZugabe ), .T. )
+         IIF( oGenVar:aAreaHide[ nArea ], nRulerTop, ER_GetPixel( nHeight ) + nAreaZugabe ), .T. )
 
       FOR i := nArea+1 TO 100
          IF aWnd[i] <> nil
@@ -3130,17 +3121,17 @@ return .T.
 *-----------------------------------------------------------------------------
 function AreaHide( nArea )
 
-   LOCAL i, nDifferenz
-   LOCAL nHideHeight := GetCmInch( 18 )
-   LOCAL nAreaHeight := VAL( GetPvProfString( "General", "Height", "300", aAreaIni[ nArea] ) )
-   LOCAL nWidth      := VAL( GetPvProfString( "General", "Width", "600", aAreaIni[ nArea] ) )
+   local i, nDifferenz
+   local nHideHeight := GetCmInch( 18 )
+   local nAreaHeight := VAL( GetPvProfString( "General", "Height", "300", aAreaIni[ nArea ] ) )
+   local nWidth      := VAL( GetPvProfString( "General", "Width", "600", aAreaIni[ nArea ] ) )
 
    oGenVar:aAreaHide[nAktArea] := !oGenVar:aAreaHide[nAktArea]
 
    nDifferenz := ( ER_GetPixel( nAreaHeight ) + nAreaZugabe - 18 ) * ;
                  IIF( oGenVar:aAreaHide[nAktArea], -1, 1 )
 
-   aWnd[ nArea]:Move( aWnd[ nArea]:nTop, aWnd[ nArea]:nLeft, ;
+   aWnd[ nArea ]:Move( aWnd[ nArea ]:nTop, aWnd[ nArea ]:nLeft, ;
       IIF( oGenVar:lFixedAreaWidth, 1200, ER_GetPixel( nWidth ) + nRuler + nAreaZugabe2 ), ;
       IIF( oGenVar:aAreaHide[nAktArea], 18, ER_GetPixel( nAreaHeight ) + nAreaZugabe ), .T. )
 
