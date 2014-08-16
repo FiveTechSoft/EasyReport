@@ -148,6 +148,12 @@ FUNCTION BarMenu()
 
    DEFINE BUTTONBAR oBar OF oMainWnd SIZE 70, 70 2010
 
+   DEFINE BUTTON RESOURCE "New" ;
+      OF oBar ;
+      PROMPT FWString( "New" ) ;
+      TOOLTIP GL("New report") ;
+      ACTION NewReport()
+
    DEFINE BUTTON RESOURCE "B_OPEN" ;
       OF oBar ;
       PROMPT FWString( "Open" ) ;
@@ -790,7 +796,7 @@ FUNCTION IniAreasOnBar()
 
    LOCAL i, oFont1
    LOCAL cCbxItem   := ""
-   LOCAL nAreaStart := oMainWnd:nRight - 208
+   LOCAL nAreaStart := oMainWnd:nRight - 180
 
    aCbxItems := {""}
 
@@ -798,8 +804,8 @@ FUNCTION IniAreasOnBar()
 
    //@ 9, nAreaStart - 75 SAY GL("Area") + ":" OF oBar PIXEL SIZE 70, 16 FONT oFont1 RIGHT
 
-   @ 25, nAreaStart - 40 COMBOBOX oCbxArea VAR cCbxItem ITEMS aCbxItems OF oBar ;
-      PIXEL SIZE 200, 300 FONT oFont1 ;
+   @ 25, nAreaStart COMBOBOX oCbxArea VAR cCbxItem ITEMS aCbxItems OF oBar ;
+      PIXEL SIZE 150, 300 FONT oFont1 ;
       WHEN .NOT. EMPTY( cDefIni ) ;
 
    oFont1:End()

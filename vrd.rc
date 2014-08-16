@@ -181,6 +181,8 @@ B_LIST2            BITMAP         ".\bitmaps\bitmap34.bmp"
 LANGUAGE 7, SUBLANG_DEFAULT
 B_LIST3            BITMAP         ".\bitmaps\bitmap35.bmp"
 
+LANGUAGE 7, SUBLANG_DEFAULT
+New                BITMAP         ".\bitmaps\new.bmp"
 
 LANGUAGE 7, SUBLANG_DEFAULT
 B_OPEN             BITMAP         ".\bitmaps\open.bmp"
