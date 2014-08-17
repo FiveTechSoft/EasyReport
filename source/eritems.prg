@@ -14,14 +14,9 @@ MEMVAR cInfoWidth, cInfoHeight, nInfoRow, nInfoCol, aItemPosition, aItemPixelPos
 MEMVAR oClpGeneral, cDefIni, cGeneralIni, nMeasure, cMeasure, lDemo, lBeta, oTimer
 MEMVAR oMainWnd, lProfi, nUndoCount, nRedoCount, oCurDlg, oGenVar
 
-*-- FUNCTION -----------------------------------------------------------------
-* Name........: ElementActions
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
-FUNCTION ElementActions( oItems, i, cName, nArea, cAreaIni, cTyp )
+//----------------------------------------------------------------------------//
+
+function ElementActions( oItems, i, cName, nArea, cAreaIni, cTyp )
 
    oItems:bLDblClick := {|| IIF( GetKeyState( VK_SHIFT ), MultiItemProperties(), ;
                                  ( ItemProperties( i, nArea ), oCurDlg:SetFocus() ) ) }
@@ -51,240 +46,217 @@ FUNCTION ElementActions( oItems, i, cName, nArea, cAreaIni, cTyp )
                                                 ItemPopupMenu( oItems, i, nArea, nRow, nCol ) }
 
    oItems:nDlgCode = DLGC_WANTALLKEYS
+   
    oItems:bKeyDown   := {| nKey | KeyDownAction( nKey, i, nArea, cAreaIni ) }
 
-RETURN (.T.)
+   oItems:bLostFocus := {| nRow, nCol, nFlags | ;
+                             ( SelectItem( i, nArea, cAreaIni ), ;
+                               nInfoRow := nRow, nInfoCol := nCol, ;
+                               MsgBarItem( i, nArea, cAreaIni, nRow, nCol ) ) }
 
+return .T.
 
-*-- FUNCTION -----------------------------------------------------------------
-* Name........: KeyDownAction
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
-FUNCTION KeyDownAction( nKey, nItem, nArea, cAreaIni )
+//----------------------------------------------------------------------------//
 
-   LOCAL aWerte   := GetCoors( aItems[nArea,nItem]:hWnd )
-   LOCAL nTop     := aWerte[1]
-   LOCAL nLeft    := aWerte[2]
-   LOCAL nHeight  := aWerte[3] - aWerte[1]
-   LOCAL nWidth   := aWerte[4] - aWerte[2]
-   LOCAL lMove    := .T.
-   LOCAL nY       := 0
-   LOCAL nX       := 0
-   LOCAL nRight   := 0
-   LOCAL nBottom  := 0
+function KeyDownAction( nKey, nItem, nArea, cAreaIni )
 
-   IF LEN( aSelection ) <> 0
+   local aWerte   := GetCoors( aItems[nArea,nItem]:hWnd )
+   local nTop     := aWerte[1]
+   local nLeft    := aWerte[2]
+   local nHeight  := aWerte[3] - aWerte[1]
+   local nWidth   := aWerte[4] - aWerte[2]
+   local lMove    := .T.
+   local nY       := 0
+   local nX       := 0
+   local nRight   := 0
+   local nBottom  := 0
+
+   if LEN( aSelection ) <> 0
       WndKeyDownAction( nKey, nArea, cAreaIni )
-      RETURN (.T.)
-   ENDIF
+      return .T.
+   endif
 
    //Delete item
-   IF nKey == VK_DELETE
+   if nKey == VK_DELETE
       DelItemWithKey( nItem, nArea )
-   ENDIF
+   endif
 
-   //Return to edit properties
-   IF nKey == VK_RETURN
+   //return to edit properties
+   if nKey == VK_RETURN
       ItemProperties( nItem, nArea )
-   ENDIF
+   endif
 
    //Move and resize items
-   IF GetKeyState( VK_SHIFT )
-      DO CASE
-      CASE nKey == VK_LEFT
+   if GetKeyState( VK_SHIFT )
+      do case
+      case nKey == VK_LEFT
          nRight := -1 * nXMove
-      CASE nKey == VK_RIGHT
+      case nKey == VK_RIGHT
          nRight := 1 * nXMove
-      CASE nKey == VK_UP
+      case nKey == VK_UP
          nBottom := -1 * nYMove
-      CASE nKey == VK_DOWN
+      case nKey == VK_DOWN
          nBottom := 1 * nYMove
       OTHERWISE
          lMove := .F.
-      ENDCASE
+      endcase
    ELSE
-      DO CASE
-      CASE nKey == VK_LEFT
+      do case
+      case nKey == VK_LEFT
          nX := -1 * nXMove
-      CASE nKey == VK_RIGHT
+      case nKey == VK_RIGHT
          nX :=  1 * nXMove
-      CASE nKey == VK_UP
+      case nKey == VK_UP
          nY := -1 * nYMove
-      CASE nKey == VK_DOWN
+      case nKey == VK_DOWN
          nY :=  1 * nYMove
       OTHERWISE
          lMove := .F.
-      ENDCASE
-   ENDIF
+      endcase
+   endif
 
-   IF lMove = .T.
+   if lMove = .T.
       aItems[nArea,nItem]:Move( nTop + nY, nLeft + nX, nWidth + nRight, nHeight + nBottom, .T. )
       aItems[nArea,nItem]:ShowDots( .T. )
-   ENDIF
+   endif
 
-RETURN (.T.)
+return .T.
 
+//----------------------------------------------------------------------------//
 
-*-- FUNCTION -----------------------------------------------------------------
-* Name........: DeleteItem
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
-FUNCTION DeleteItem( i, nArea, lFromList, lRemove, lFromUndoRedo )
+function DeleteItem( i, nArea, lFromList, lRemove, lFromUndoRedo )
 
-   LOCAL cItemDef, cOldDef, oIni, cWert
-   LOCAL aFirst    := { .F., 0, 0, 0, 0, 0 }
-   LOCAL nElemente := 0
-   LOCAL cAreaIni  := aAreaIni[nArea]
+   local cItemDef, cOldDef, oIni, cWert
+   local aFirst    := { .F., 0, 0, 0, 0, 0 }
+   local nElemente := 0
+   local cAreaIni  := aAreaIni[nArea]
 
    DEFAULT lFromList := .F.
    DEFAULT lRemove   := .T.
    DEFAULT lFromUndoredo := .F.
 
-   IF i = NIL
+   if i = NIL
       MsgStop( GL("Please select an item first."), GL("Stop!") )
-      RETURN (.F.)
-   ENDIF
+      return (.F.)
+   endif
 
-   IF lFromList = .F.
-      IF MsgYesNo( GL("Remove the current item?"), GL("Select an option") ) = .F.
-         RETURN (.F.)
-      ENDIF
-   ENDIF
+   if lFromList = .F.
+      if MsgYesNo( GL("Remove the current item?"), GL("Select an option") ) = .F.
+         return (.F.)
+      endif
+   endif
 
-   cItemDef := ALLTRIM( GetPvProfString( "Items", ALLTRIM(STR(i,5)) , "", cAreaIni ) )
+   cItemDef := AllTrim( GetPvProfString( "Items", AllTrim(STR(i,5)) , "", cAreaIni ) )
    cOldDef  := cItemDef
 
-   IF lRemove = .T.
+   if lRemove = .T.
       cWert := " 0"
    ELSE
       cWert := " 1"
-   ENDIF
+   endif
 
    cItemDef := SUBSTR( cItemDef, 1, StrAtNum( "|", cItemDef, 3 ) ) + " " + ;
                cWert + ;
                SUBSTR( cItemDef, StrAtNum( "|", cItemDef, 4 ) )
 
    INI oIni FILE cAreaIni
-      SET SECTION "Items" ENTRY ALLTRIM(STR(i,5)) TO cItemDef OF oIni
+      SET SECTION "Items" ENTRY AllTrim(STR(i,5)) TO cItemDef OF oIni
    ENDINI
 
-   IF lRemove = .T.
+   if lRemove = .T.
       aItems[nArea,i]:lDrag := .F.
       aItems[nArea,i]:HideDots()
       aItems[nArea,i]:End()
    ELSE
       ShowItem( i, nArea, cAreaIni, @aFirst, @nElemente )
       aItems[nArea,i]:lDrag := .T.
-   ENDIF
+   endif
 
-   IF lFromUndoRedo = .F.
+   if lFromUndoRedo = .F.
       Add2Undo( cOldDef, i, nArea )
-   ENDIF
+   endif
 
    SetSave( .F. )
 
-RETURN (.T.)
+return .T.
 
+//----------------------------------------------------------------------------//
 
-*-- FUNCTION -----------------------------------------------------------------
-*         Name: DeleteAllItems
-*  Description:
-*    Arguments: None
-* Return Value: .T.
-*       Author: Timm Sodtalbers
-*-----------------------------------------------------------------------------
-FUNCTION DeleteAllItems( nTyp )
+function DeleteAllItems( nTyp )
 
-   LOCAL i, cTyp, cDef, oItem
-   LOCAL nLen := LEN( aItems[nAktArea] )
+   local i, cTyp, cDef, oItem
+   local nLen := LEN( aItems[nAktArea] )
 
-   IF MsgYesNo( GL("Remove items?"), GL("Select an option") ) = .F.
-      RETURN (.F.)
-   ENDIF
+   if MsgYesNo( GL("Remove items?"), GL("Select an option") ) = .F.
+      return (.F.)
+   endif
 
    FOR i := 1 TO nLen
 
-      cDef := ALLTRIM( GetPvProfString( "Items", ALLTRIM(STR(i,5)) , "", aAreaIni[nAktArea] ) )
+      cDef := AllTrim( GetPvProfString( "Items", AllTrim(STR(i,5)) , "", aAreaIni[nAktArea] ) )
 
-      IF .NOT. EMPTY( cDef )
+      if .NOT. EMPTY( cDef )
 
          oItem := VRDItem():New( cDef )
 
-         cTyp := UPPER(ALLTRIM( GetField( cDef, 1 ) ))
+         cTyp := UPPER(AllTrim( GetField( cDef, 1 ) ))
 
-         IF nTyp = 1 .AND. oItem:cType = "TEXT"           .OR. ;
+         if nTyp = 1 .AND. oItem:cType = "TEXT"           .OR. ;
             nTyp = 2 .AND. oItem:cType = "IMAGE"          .OR. ;
             nTyp = 3 .AND. IsGraphic( oItem:cType ) = .T. .OR. ;
             nTyp = 4 .AND. oItem:cType = "BARCODE"
 
-            IF oItem:lVisible = .T.
+            if oItem:lVisible = .T.
                DeleteItem( i, nAktArea, .T., .T. )
-            ENDIF
+            endif
 
-         ENDIF
+         endif
 
-      ENDIF
+      endif
 
    NEXT
 
-RETURN (.T.)
+return .T.
 
+//----------------------------------------------------------------------------//
 
-*-- FUNCTION -----------------------------------------------------------------
-* Name........: DelItemWithKey
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
-FUNCTION DelItemWithKey( nItem, nArea )
+function DelItemWithKey( nItem, nArea )
 
-   LOCAL cItemDef  := ALLTRIM( GetPvProfString( "Items", ALLTRIM(STR( nItem,5)), "", aAreaIni[nArea] ) )
-   LOCAL oItemInfo := VRDItem():New( cItemDef )
+   local cItemDef  := AllTrim( GetPvProfString( "Items", AllTrim(STR( nItem,5)), "", aAreaIni[nArea] ) )
+   local oItemInfo := VRDItem():New( cItemDef )
 
    DeleteItem( nItem, nArea, .T. )
 
-   IF oItemInfo:nItemID < 0
-      DelIniEntry( "Items", ALLTRIM(STR(nItem,5)), aAreaIni[nArea] )
-   ENDIF
+   if oItemInfo:nItemID < 0
+      DelIniEntry( "Items", AllTrim(STR(nItem,5)), aAreaIni[nArea] )
+   endif
 
    nAktItem := 0
 
-RETURN (.T.)
+return .T.
 
+//----------------------------------------------------------------------------//
 
-*-- FUNCTION -----------------------------------------------------------------
-*         Name: ItemPopupMenu
-* Beschreibung:
-*    Argumente: None
-* Rückgabewert: .T.                   Autor: Timm Sodtalbers
-*-----------------------------------------------------------------------------
-FUNCTION ItemPopupMenu( oItem, nItem, nArea, nRow, nCol )
+function ItemPopupMenu( oItem, nItem, nArea, nRow, nCol )
 
-   LOCAL oMenu
-   LOCAL cItemDef  := ALLTRIM( GetPvProfString( "Items", ALLTRIM(STR(nItem,5)), "", aAreaIni[nArea] ) )
-   LOCAL oItemInfo := VRDItem():New( cItemDef )
+   local oMenu
+   local cItemDef  := AllTrim( GetPvProfString( "Items", AllTrim(STR(nItem,5)), "", aAreaIni[nArea] ) )
+   local oItemInfo := VRDItem():New( cItemDef )
 
    MENU oMenu POPUP
 
    MENUITEM GL("&Item Properties") RESOURCE "PROPERTY" ;
       ACTION ItemProperties( nItem, nArea )
 
-   IF oItemInfo:nDelete = 1
+   if oItemInfo:nDelete = 1
       SEPARATOR
       MENUITEM GL("&Visible") CHECKED ACTION DeleteItem( nItem, nArea, .T. )
-   ENDIF
+   endif
 
-   IF oItemInfo:nItemID < 0
+   if oItemInfo:nItemID < 0
       SEPARATOR
       MENUITEM GL("&Remove Item") RESOURCE "DEL" ACTION DelItemWithKey( nItem, nArea )
-   ENDIF
+   endif
 
    SEPARATOR
    MENUITEM GL("Cu&t") + chr(9) + GL("Ctrl+X") ;
@@ -302,85 +274,73 @@ FUNCTION ItemPopupMenu( oItem, nItem, nArea, nRow, nCol )
 
    ACTIVATE POPUP oMenu OF aWnd[nArea] AT nRow, nCol
 
-RETURN (.T.)
+return .T.
 
+//----------------------------------------------------------------------------//
 
-*-- FUNCTION -----------------------------------------------------------------
-* Name........: ItemProperties
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
-FUNCTION ItemProperties( i, nArea, lFromList, lNew )
+function ItemProperties( i, nArea, lFromList, lNew )
 
-   LOCAL cOldDef, cItemDef, cTyp, cName
-   LOCAL cAreaIni := aAreaIni[nArea]
+   local cOldDef, cItemDef, cTyp, cName
+   local cAreaIni := aAreaIni[nArea]
 
    DEFAULT lFromList := .F.
    DEFAULT lNew      := .F.
 
-   IF i = NIL .OR. i = 0
+   if i = NIL .OR. i = 0
       MsgStop( GL("Please select an item first."), GL("Stop!") )
-      RETURN (.F.)
-   ENDIF
+      return (.F.)
+   endif
 
    UnSelectAll()
 
-   IF oCurDlg <> NIL
+   if oCurDlg <> NIL
       oGenVar:lDlgSave := .T.
       oCurDlg:End()
       oCurDlg := NIL
-   ENDIF
+   endif
 
-   cOldDef := ALLTRIM( GetPvProfString( "Items", ALLTRIM(STR(i,5)) , "", cAreaIni ) )
-   cTyp    := UPPER(ALLTRIM( GetField( cOldDef, 1 ) ))
+   cOldDef := AllTrim( GetPvProfString( "Items", AllTrim(STR(i,5)) , "", cAreaIni ) )
+   cTyp    := UPPER(AllTrim( GetField( cOldDef, 1 ) ))
 
-   IF cTyp = "TEXT"
+   if cTyp = "TEXT"
       TextProperties( i, nArea, cAreaIni, lFromList, lNew )
-   ELSEIF cTyp = "IMAGE"
+   ELSEif cTyp = "IMAGE"
       ImageProperties( i, nArea, cAreaIni, lFromList, lNew )
-   ELSEIF IsGraphic( cTyp ) = .T.
+   ELSEif IsGraphic( cTyp ) = .T.
       GraphicProperties( i, nArea, cAreaIni, lFromList, lNew )
-   ELSEIF cTyp = "BARCODE"
+   ELSEif cTyp = "BARCODE"
       BarcodeProperties( i, nArea, cAreaIni, lFromList, lNew )
-   ENDIF
+   endif
 
-   cItemDef := ALLTRIM( GetPvProfString( "Items", ALLTRIM(STR(i,5)) , "", cAreaIni ) )
+   cItemDef := AllTrim( GetPvProfString( "Items", AllTrim(STR(i,5)) , "", cAreaIni ) )
 
-   cName := ALLTRIM( GetField( cItemDef, 2 ) )
+   cName := AllTrim( GetField( cItemDef, 2 ) )
 
-   IF UPPER( cTyp ) = "IMAGE" .AND. EMPTY( cName ) = .T.
-      cName := ALLTRIM(STR(i,5)) + ". " + ALLTRIM( GetField( cItemDef, 11 ) )
+   if UPPER( cTyp ) = "IMAGE" .AND. EMPTY( cName ) = .T.
+      cName := AllTrim(STR(i,5)) + ". " + AllTrim( GetField( cItemDef, 11 ) )
    ELSE
-      cName := ALLTRIM(STR(i,5)) + ". " + cName
-   ENDIF
+      cName := AllTrim(STR(i,5)) + ". " + cName
+   endif
 
    Memory(-1)
    SysRefresh()
 
-RETURN ( cName )
+return ( cName )
 
+//----------------------------------------------------------------------------//
 
-*-- FUNCTION -----------------------------------------------------------------
-* Name........: MultiItemProperties
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
-FUNCTION MultiItemProperties()
+function MultiItemProperties()
 
-   LOCAL oDlg, aCbx[1], aGrp[1]
-   LOCAL cItemDef  := ALLTRIM( GetPvProfString( "Items", ALLTRIM(STR( aSelection[1,2], 5 )), ;
+   local oDlg, aCbx[1], aGrp[1]
+   local cItemDef  := AllTrim( GetPvProfString( "Items", AllTrim(STR( aSelection[1,2], 5 )), ;
                       "", aAreaIni[ aSelection[1,1] ] ) )
-   LOCAL nTop      := VAL( GetField( cItemDef, 7 ) )
-   LOCAL nLeft     := VAL( GetField( cItemDef, 8 ) )
-   LOCAL nWidth    := VAL( GetField( cItemDef, 9 ) )
-   LOCAL nHeight   := VAL( GetField( cItemDef, 10 ) )
-   LOCAL aOldValue := { nTop, nLeft, nWidth, nHeight }
-   LOCAL cPicture  := IIF( nMeasure = 2, "999.99", "99999" )
-   LOCAL lAddValue := .F.
+   local nTop      := VAL( GetField( cItemDef, 7 ) )
+   local nLeft     := VAL( GetField( cItemDef, 8 ) )
+   local nWidth    := VAL( GetField( cItemDef, 9 ) )
+   local nHeight   := VAL( GetField( cItemDef, 10 ) )
+   local aOldValue := { nTop, nLeft, nWidth, nHeight }
+   local cPicture  := IIF( nMeasure = 2, "999.99", "99999" )
+   local lAddValue := .F.
 
    DEFINE DIALOG oDlg RESOURCE "MULTISELECT" TITLE GL("Item Properties")
 
@@ -411,32 +371,26 @@ FUNCTION MultiItemProperties()
 
    //RefreshSelection()
 
-RETURN (.T.)
+return .T.
 
+//----------------------------------------------------------------------------//
 
-*-- FUNCTION -----------------------------------------------------------------
-* Name........: UpdateItems
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
-FUNCTION UpdateItems( nValue, nTyp, lAddValue, aOldValue )
+function UpdateItems( nValue, nTyp, lAddValue, aOldValue )
 
-   LOCAL i, aWerte, nTop, nLeft, nWidth, nHeight
-   LOCAL lStop     := .F.
-   LOCAL nPixValue := ER_GetPixel( nValue )
+   local i, aWerte, nTop, nLeft, nWidth, nHeight
+   local lStop     := .F.
+   local nPixValue := ER_GetPixel( nValue )
 
-   DO CASE
-   CASE nTyp = 1 .AND. nValue = aOldValue[1] ; lStop := .T.
-   CASE nTyp = 2 .AND. nValue = aOldValue[2] ; lStop := .T.
-   CASE nTyp = 3 .AND. nValue = aOldValue[3] ; lStop := .T.
-   CASE nTyp = 4 .AND. nValue = aOldValue[4] ; lStop := .T.
-   ENDCASE
+   do case
+   case nTyp = 1 .AND. nValue = aOldValue[1] ; lStop := .T.
+   case nTyp = 2 .AND. nValue = aOldValue[2] ; lStop := .T.
+   case nTyp = 3 .AND. nValue = aOldValue[3] ; lStop := .T.
+   case nTyp = 4 .AND. nValue = aOldValue[4] ; lStop := .T.
+   endcase
 
-   IF lStop = .T.
-      RETURN( .T. )
-   ENDIF
+   if lStop = .T.
+      return( .T. )
+   endif
 
    UnSelectAll( .F. )
 
@@ -448,12 +402,12 @@ FUNCTION UpdateItems( nValue, nTyp, lAddValue, aOldValue )
       nHeight := aWerte[3] - aWerte[1]
       nWidth  := aWerte[4] - aWerte[2]
 
-      DO CASE
-      CASE nTyp = 1 ; IIF( lAddValue, nTop    += nPixValue, nTop    := nRulerTop + nPixValue )
-      CASE nTyp = 2 ; IIF( lAddValue, nLeft   += nPixValue, nLeft   := nRuler    + nPixValue )
-      CASE nTyp = 3 ; IIF( lAddValue, nWidth  += nPixValue, nWidth  := nPixValue )
-      CASE nTyp = 4 ; IIF( lAddValue, nHeight += nPixValue, nHeight := nPixValue )
-      ENDCASE
+      do case
+      case nTyp = 1 ; IIF( lAddValue, nTop    += nPixValue, nTop    := nRulerTop + nPixValue )
+      case nTyp = 2 ; IIF( lAddValue, nLeft   += nPixValue, nLeft   := nRuler    + nPixValue )
+      case nTyp = 3 ; IIF( lAddValue, nWidth  += nPixValue, nWidth  := nPixValue )
+      case nTyp = 4 ; IIF( lAddValue, nHeight += nPixValue, nHeight := nPixValue )
+      endcase
 
       aOldValue[nTyp] := nValue
 
@@ -465,23 +419,17 @@ FUNCTION UpdateItems( nValue, nTyp, lAddValue, aOldValue )
 
    UnSelectAll( .F. )
 
-RETURN (.T.)
+return .T.
 
+//----------------------------------------------------------------------------//
 
-*-- FUNCTION -----------------------------------------------------------------
-* Name........: TextProperties
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
-FUNCTION TextProperties( i, nArea, cAreaIni, lFromList, lNew )
+function TextProperties( i, nArea, cAreaIni, lFromList, lNew )
 
-   LOCAL oIni, nColor
-   LOCAL aCbx[5], aGrp[3], aGet[5], aSay[4]
-   LOCAL nDefClr, oBtn, oBtn2, oBtn3
-   LOCAL oVar  := GetoVar( i, nArea, cAreaIni, lNew )
-   LOCAL oItem := VRDItem():New( oVar:cItemDef )
+   local oIni, nColor
+   local aCbx[5], aGrp[3], aGet[5], aSay[4]
+   local nDefClr, oBtn, oBtn2, oBtn3
+   local oVar  := GetoVar( i, nArea, cAreaIni, lNew )
+   local oItem := VRDItem():New( oVar:cItemDef )
 
    oVar:AddMember( "aOrient"    ,, { GL("Left"), GL("Center"), GL("Right"), ;
                                      GL("Flush justified"), GL("Line-makeup") } )
@@ -625,54 +573,42 @@ FUNCTION TextProperties( i, nArea, cAreaIni, lFromList, lNew )
 
    oCurDlg:bMoved := {|| SetItemDlg() }
 
-RETURN ( .T. )
+return ( .T. )
 
+//----------------------------------------------------------------------------//
 
-*-- FUNCTION -----------------------------------------------------------------
-*         Name: SetItemDefault
-*  Description:
-*    Arguments: None
-* Return Value: .T.
-*       Author: Timm Sodtalbers
-*-----------------------------------------------------------------------------
-FUNCTION SetItemDefault( oItem )
+function SetItemDefault( oItem )
 
    WritePProString( "General", "Default" + IIF( oItem:lGraphic, "GRAPHIC", oItem:cType ), ;
                     oItem:Set( .F., nMeasure ), cDefIni )
 
-RETURN (.T.)
+return .T.
 
+//----------------------------------------------------------------------------//
 
-*-- FUNCTION -----------------------------------------------------------------
-*         Name: SetFormulaBtn
-*  Description:
-*    Arguments: None
-* Return Value: .T.
-*       Author: Timm Sodtalbers
-*-----------------------------------------------------------------------------
-FUNCTION SetFormulaBtn( nID, oItem )
+function SetFormulaBtn( nID, oItem )
 
-   LOCAL oBtn
-   LOCAL cSource := ""
+   local oBtn
+   local cSource := ""
 
-   DO CASE
-   CASE nID =  9  ; cSource := oItem:cSource
-   CASE nID = 10  ; cSource := oItem:cSTop
-   CASE nID = 11  ; cSource := oItem:cSLeft
-   CASE nID = 12  ; cSource := oItem:cSWidth
-   CASE nID = 13  ; cSource := oItem:cSHeight
-   CASE nID = 14  ; cSource := oItem:cSAlignment
-   CASE nID = 15  ; cSource := oItem:cSVisible
-   CASE nID = 16  ; cSource := oItem:cSMultiline
-   CASE nID = 17  ; cSource := oItem:cSTextClr
-   CASE nID = 18  ; cSource := oItem:cSBackClr
-   CASE nID = 19  ; cSource := oItem:cSFont
-   CASE nID = 20  ; cSource := oItem:cSPrBorder
-   CASE nID = 21  ; cSource := oItem:cSTransparent
-   CASE nID = 22  ; cSource := oItem:cSPenSize
-   CASE nID = 23  ; cSource := oItem:cSPenStyle
-   CASE nID = 24  ; cSource := oItem:cSVariHeight
-   ENDCASE
+   do case
+   case nID =  9  ; cSource := oItem:cSource
+   case nID = 10  ; cSource := oItem:cSTop
+   case nID = 11  ; cSource := oItem:cSLeft
+   case nID = 12  ; cSource := oItem:cSWidth
+   case nID = 13  ; cSource := oItem:cSHeight
+   case nID = 14  ; cSource := oItem:cSAlignment
+   case nID = 15  ; cSource := oItem:cSVisible
+   case nID = 16  ; cSource := oItem:cSMultiline
+   case nID = 17  ; cSource := oItem:cSTextClr
+   case nID = 18  ; cSource := oItem:cSBackClr
+   case nID = 19  ; cSource := oItem:cSFont
+   case nID = 20  ; cSource := oItem:cSPrBorder
+   case nID = 21  ; cSource := oItem:cSTransparent
+   case nID = 22  ; cSource := oItem:cSPenSize
+   case nID = 23  ; cSource := oItem:cSPenStyle
+   case nID = 24  ; cSource := oItem:cSVariHeight
+   endcase
 
    REDEFINE BTNBMP oBtn ID nID OF oCurDlg NOBORDER ;
       RESOURCE "B_SOURCE_" + IIF( EMPTY( cSource ), "NO", "YES" ) TRANSPARENT ;
@@ -682,21 +618,15 @@ FUNCTION SetFormulaBtn( nID, oItem )
                oBtn:LoadBitmaps( "B_SOURCE_" + IIF( EMPTY( cSource ), "NO", "YES" ) ), ;
                oBtn:cToolTip := GetSourceToolTip( cSource ) )
 
-RETURN ( oBtn )
+return ( oBtn )
 
+//----------------------------------------------------------------------------//
 
-*-- FUNCTION -----------------------------------------------------------------
-* Name........: EditSourceCode
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
-FUNCTION EditSourceCode( nID, cSourceCode, oItem )
+function EditSourceCode( nID, cSourceCode, oItem )
 
-   LOCAL oDlg, oGet1
-   LOCAL cOldSource := cSourceCode
-   LOCAL lSave      := .F.
+   local oDlg, oGet1
+   local cOldSource := cSourceCode
+   local lSave      := .F.
 
    DEFINE DIALOG oDlg NAME "SOURCECODE" TITLE GL("Formula")
 
@@ -712,105 +642,81 @@ FUNCTION EditSourceCode( nID, cSourceCode, oItem )
 
    ACTIVATE DIALOG oDlg CENTER
 
-   IF lSave = .T. .AND. nID <> 0
-      DO CASE
-      CASE nID =  9  ; oItem:cSource       := cSourceCode
-      CASE nID = 10  ; oItem:cSTop         := cSourceCode
-      CASE nID = 11  ; oItem:cSLeft        := cSourceCode
-      CASE nID = 12  ; oItem:cSWidth       := cSourceCode
-      CASE nID = 13  ; oItem:cSHeight      := cSourceCode
-      CASE nID = 14  ; oItem:cSAlignment   := cSourceCode
-      CASE nID = 15  ; oItem:cSVisible     := cSourceCode
-      CASE nID = 16  ; oItem:cSMultiline   := cSourceCode
-      CASE nID = 17  ; oItem:cSTextClr     := cSourceCode
-      CASE nID = 18  ; oItem:cSBackClr     := cSourceCode
-      CASE nID = 19  ; oItem:cSFont        := cSourceCode
-      CASE nID = 20  ; oItem:cSPrBorder    := cSourceCode
-      CASE nID = 21  ; oItem:cSTransparent := cSourceCode
-      CASE nID = 22  ; oItem:cSPenSize     := cSourceCode
-      CASE nID = 23  ; oItem:cSPenStyle    := cSourceCode
-      ENDCASE
-   ENDIF
+   if lSave = .T. .AND. nID <> 0
+      do case
+      case nID =  9  ; oItem:cSource       := cSourceCode
+      case nID = 10  ; oItem:cSTop         := cSourceCode
+      case nID = 11  ; oItem:cSLeft        := cSourceCode
+      case nID = 12  ; oItem:cSWidth       := cSourceCode
+      case nID = 13  ; oItem:cSHeight      := cSourceCode
+      case nID = 14  ; oItem:cSAlignment   := cSourceCode
+      case nID = 15  ; oItem:cSVisible     := cSourceCode
+      case nID = 16  ; oItem:cSMultiline   := cSourceCode
+      case nID = 17  ; oItem:cSTextClr     := cSourceCode
+      case nID = 18  ; oItem:cSBackClr     := cSourceCode
+      case nID = 19  ; oItem:cSFont        := cSourceCode
+      case nID = 20  ; oItem:cSPrBorder    := cSourceCode
+      case nID = 21  ; oItem:cSTransparent := cSourceCode
+      case nID = 22  ; oItem:cSPenSize     := cSourceCode
+      case nID = 23  ; oItem:cSPenStyle    := cSourceCode
+      endcase
+   endif
 
-RETURN IIF( lSave, cSourceCode, cOldSource )
+return IIF( lSave, cSourceCode, cOldSource )
 
+//----------------------------------------------------------------------------//
 
-*-- FUNCTION -----------------------------------------------------------------
-*         Name: GetItemDlgPos
-*  Description:
-*    Arguments: None
-* Return Value: .T.
-*       Author: Timm Sodtalbers
-*-----------------------------------------------------------------------------
-FUNCTION GetItemDlgPos()
+function GetItemDlgPos()
 
-   IF oGenVar:nDlgTop  > 0 .AND. oGenVar:nDlgTop  <= GetSysMetrics( 1 ) - 80 .AND. ;
+   if oGenVar:nDlgTop  > 0 .AND. oGenVar:nDlgTop  <= GetSysMetrics( 1 ) - 80 .AND. ;
       oGenVar:nDlgLeft > 0 .AND. oGenVar:nDlgLeft <= GetSysMetrics( 0 ) - 80
       oCurDlg:Move( oGenVar:nDlgTop, oGenVar:nDlgLeft,,, .T. )
    ELSE
       WritePProString( "ItemDialog", "Top" , "0", cGeneralIni )
       WritePProString( "ItemDialog", "Left", "0", cGeneralIni )
-   ENDIF
+   endif
 
-RETURN (.T.)
+return .T.
 
+//----------------------------------------------------------------------------//
 
-*-- FUNCTION -----------------------------------------------------------------
-*         Name: SetItemDlg
-*  Description:
-*    Arguments: None
-* Return Value: .T.
-*       Author: Timm Sodtalbers
-*-----------------------------------------------------------------------------
-FUNCTION SetItemDlg()
+function SetItemDlg()
 
-   LOCAL oRect := oCurDlg:GetRect()
+   local oRect := oCurDlg:GetRect()
 
    oGenVar:nDlgTop  := oRect:nTop
    oGenVar:nDlgLeft := oRect:nLeft
 
-   WritePProString( "ItemDialog", "Top" , ALLTRIM(STR( oGenVar:nDlgTop , 10 )), cGeneralIni )
-   WritePProString( "ItemDialog", "Left", ALLTRIM(STR( oGenVar:nDlgLeft, 10 )), cGeneralIni )
+   WritePProString( "ItemDialog", "Top" , AllTrim(STR( oGenVar:nDlgTop , 10 )), cGeneralIni )
+   WritePProString( "ItemDialog", "Left", AllTrim(STR( oGenVar:nDlgLeft, 10 )), cGeneralIni )
 
-RETURN (.T.)
+return .T.
 
+//----------------------------------------------------------------------------//
 
-*-- FUNCTION -----------------------------------------------------------------
-*         Name: GetoVar
-*  Description:
-*    Arguments: None
-* Return Value: .T.
-*       Author: Timm Sodtalbers
-*-----------------------------------------------------------------------------
-FUNCTION GetoVar( i, nArea, cAreaIni, lNew )
+function GetoVar( i, nArea, cAreaIni, lNew )
 
-   LOCAL oVar := TExStruct():New()
+   local oVar := TExStruct():New()
 
-   oVar:AddMember( "cItemDef"   ,, ALLTRIM( GetPvProfString( "Items", ALLTRIM(STR(i,5)) , "", cAreaIni ) ) )
+   oVar:AddMember( "cItemDef"   ,, AllTrim( GetPvProfString( "Items", AllTrim(STR(i,5)) , "", cAreaIni ) ) )
    oVar:AddMember( "i"          ,, i                                                                       )
    oVar:AddMember( "nArea"      ,, nArea                                                                   )
    oVar:AddMember( "cAreaIni"   ,, cAreaIni                                                                )
    oVar:AddMember( "cOldDef"    ,, oVar:cItemDef                                                           )
    oVar:AddMember( "lNew"       ,, lNew                                                                    )
    oVar:AddMember( "lRemoveItem",, .F.                                                                     )
-   oVar:AddMember( "cShowExpr"  ,, ALLTRIM( GetPvProfString( "General", "Expressions", "0", cDefIni ) )    )
+   oVar:AddMember( "cShowExpr"  ,, AllTrim( GetPvProfString( "General", "Expressions", "0", cDefIni ) )    )
    oVar:AddMember( "nGesWidth"  ,, VAL( GetPvProfString( "General", "Width", "600", cAreaIni ) )           )
    oVar:AddMember( "nGesHeight" ,, VAL( GetPvProfString( "General", "Height", "300", cAreaIni ) )          )
    oVar:AddMember( "cPicture"   ,, IIF( nMeasure = 2, "999.99", "99999" )                                  )
 
-RETURN ( oVar )
+return ( oVar )
 
+//----------------------------------------------------------------------------//
 
-*-- FUNCTION -----------------------------------------------------------------
-*         Name: SaveTextItem
-*  Description:
-*    Arguments: None
-* Return Value: .T.
-*       Author: Timm Sodtalbers
-*-----------------------------------------------------------------------------
-FUNCTION SaveTextItem( oVar, oItem )
+function SaveTextItem( oVar, oItem )
 
-   LOCAL lRight, lCenter, nColor, oFont, oIni
+   local lRight, lCenter, nColor, oFont, oIni
 
    oItem:nOrient := ASCAN( oVar:aOrient, oVar:cOrient )
    oItem:nBorder := IIF( oItem:lBorder , 1, 0 )
@@ -820,14 +726,14 @@ FUNCTION SaveTextItem( oVar, oItem )
    oVar:cItemDef := oItem:Set( .F., nMeasure )
 
    INI oIni FILE oVar:cAreaIni
-      SET SECTION "Items" ENTRY ALLTRIM(STR(oVar:i,5)) TO oVar:cItemDef OF oIni
+      SET SECTION "Items" ENTRY AllTrim(STR(oVar:i,5)) TO oVar:cItemDef OF oIni
    ENDINI
 
    IIF( oItem:nFont = 0, oFont := oAppFont, oFont := aFonts[oItem:nFont] )
    IIF( oItem:nOrient = 2, lCenter := .T., lCenter := .F. )
    IIF( oItem:nOrient = 3, lRight  := .T., lRight  := .F. )
 
-   IF oItem:lVisible = .T.
+   if oItem:lVisible = .T.
 
       aItems[oVar:nArea,oVar:i]:End()
       aItems[oVar:nArea,oVar:i] := ;
@@ -842,84 +748,72 @@ FUNCTION SaveTextItem( oVar, oItem )
       ElementActions( aItems[oVar:nArea,oVar:i], oVar:i, oItem:cText, oVar:nArea, oVar:cAreaIni )
       aItems[oVar:nArea,oVar:i]:SetFocus()
 
-   ENDIF
+   endif
 
    // Diese Funktion darf nicht aufgerufen werden, weil beim Sprung von einem
    // Textelement zu einem Bildelement ein Fehler generiert wird.
    // Der Funktionsinhalt muß direkt angehängt werden.
    //SaveItemGeneral( oVar, oItem )
 
-   IF oItem:lVisible = .F. .AND. aItems[oVar:nArea,oVar:i] <> NIL
+   if oItem:lVisible = .F. .AND. aItems[oVar:nArea,oVar:i] <> NIL
       aItems[oVar:nArea,oVar:i]:lDrag := .F.
       aItems[oVar:nArea,oVar:i]:HideDots()
       aItems[oVar:nArea,oVar:i]:End()
-   ENDIF
+   endif
 
-   IF oVar:lRemoveItem = .T.
-      DelIniEntry( "Items", ALLTRIM(STR(oVar:i,5)), oVar:cAreaIni )
-   ENDIF
+   if oVar:lRemoveItem = .T.
+      DelIniEntry( "Items", AllTrim(STR(oVar:i,5)), oVar:cAreaIni )
+   endif
 
    SetSave( .F. )
 
-   IF oVar:lNew = .T.
+   if oVar:lNew = .T.
       Add2Undo( "", oVar:i, oVar:nArea )
-   ELSEIF oVar:cOldDef <> oVar:cItemDef
+   ELSEif oVar:cOldDef <> oVar:cItemDef
       Add2Undo( oVar:cOldDef, oVar:i, oVar:nArea )
-   ENDIF
+   endif
 
    oCurDlg:SetFocus()
 
-RETURN ( .T. )
+return ( .T. )
 
+//----------------------------------------------------------------------------//
 
-*-- FUNCTION -----------------------------------------------------------------
-*         Name: SaveItemGeneral
-*  Description:
-*    Arguments: None
-* Return Value: .T.
-*       Author: Timm Sodtalbers
-*-----------------------------------------------------------------------------
-FUNCTION SaveItemGeneral( oVar, oItem )
+function SaveItemGeneral( oVar, oItem )
 
    // Immer auch SaveTextItem aktualisieren.
    // Der Funktionsinhalt muß dort direkt angehängt werden.
 
-   IF oItem:lVisible = .F. .AND. aItems[oVar:nArea,oVar:i] <> NIL
+   if oItem:lVisible = .F. .AND. aItems[oVar:nArea,oVar:i] <> NIL
       aItems[oVar:nArea,oVar:i]:lDrag := .F.
       aItems[oVar:nArea,oVar:i]:HideDots()
       aItems[oVar:nArea,oVar:i]:End()
-   ENDIF
+   endif
 
-   IF oVar:lRemoveItem = .T.
-      DelIniEntry( "Items", ALLTRIM(STR(oVar:i,5)), oVar:cAreaIni )
-   ENDIF
+   if oVar:lRemoveItem = .T.
+      DelIniEntry( "Items", AllTrim(STR(oVar:i,5)), oVar:cAreaIni )
+   endif
 
    SetSave( .F. )
 
-   IF oVar:lNew = .T.
+   if oVar:lNew = .T.
       Add2Undo( "", oVar:i, oVar:nArea )
-   ELSEIF oVar:cOldDef <> oVar:cItemDef
+   ELSEif oVar:cOldDef <> oVar:cItemDef
       Add2Undo( oVar:cOldDef, oVar:i, oVar:nArea )
-   ENDIF
+   endif
 
    oCurDlg:SetFocus()
 
-RETURN (.T.)
+return .T.
 
+//----------------------------------------------------------------------------//
 
-*-- FUNCTION -----------------------------------------------------------------
-* Name........: ImageProperties
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
-FUNCTION ImageProperties( i, nArea, cAreaIni, lFromList, lNew )
+function ImageProperties( i, nArea, cAreaIni, lFromList, lNew )
 
-   LOCAL oIni, aBtn[3], oCbx1, oCbx2, aGet[3], aSay[1], aGrp[2], aSizeSay[2]
-   LOCAL oVar  := GetoVar( i, nArea, cAreaIni, lNew )
-   LOCAL oItem := VRDItem():New( oVar:cItemDef )
-   LOCAL aSize := GetImageSize( oItem:cFile )
+   local oIni, aBtn[3], oCbx1, oCbx2, aGet[3], aSay[1], aGrp[2], aSizeSay[2]
+   local oVar  := GetoVar( i, nArea, cAreaIni, lNew )
+   local oItem := VRDItem():New( oVar:cItemDef )
+   local aSize := GetImageSize( oItem:cFile )
 
    oGenVar:lItemDlg := .T.
 
@@ -1013,47 +907,35 @@ FUNCTION ImageProperties( i, nArea, cAreaIni, lFromList, lNew )
 
    oCurDlg:bMoved := {|| SetItemDlg() }
 
-RETURN ( .T. )
+return ( .T. )
 
+//----------------------------------------------------------------------------//
 
-*-- FUNCTION -----------------------------------------------------------------
-*         Name: GetImageSize
-*  Description:
-*    Arguments: None
-* Return Value: .T.
-*       Author: Timm Sodtalbers
-*-----------------------------------------------------------------------------
-FUNCTION GetImageSize( cFile )
+function GetImageSize( cFile )
 
-   LOCAL oImg
-   LOCAL aSizes := { "--", "--" }
+   local oImg
+   local aSizes := { "--", "--" }
 
-   IF FILE( cFile ) .OR. AT( "RES:", UPPER( cFile ) ) <> 0
+   if FILE( cFile ) .OR. AT( "RES:", UPPER( cFile ) ) <> 0
 
       oImg := TImage():New( 0, 0, 0, 0,,,, oMainWnd )
       oImg:Progress(.F.)
       oImg:LoadImage( IIF( AT( "RES:", UPPER( cFile ) ) <> 0, ;
-                           SUBSTR( ALLTRIM( cFile ), 5 ), NIL ), ;
+                           SUBSTR( AllTrim( cFile ), 5 ), NIL ), ;
                       VRD_LF2SF( cFile ) )
-      aSizes := { ALLTRIM(STR( GetCmInch( oImg:nWidth()  ), 5, IIF( nMeasure = 2, 2, 0 ) )), ;
-                  ALLTRIM(STR( GetCmInch( oImg:nHeight() ), 5, IIF( nMeasure = 2, 2, 0 ) )) }
+      aSizes := { AllTrim(STR( GetCmInch( oImg:nWidth()  ), 5, IIF( nMeasure = 2, 2, 0 ) )), ;
+                  AllTrim(STR( GetCmInch( oImg:nHeight() ), 5, IIF( nMeasure = 2, 2, 0 ) )) }
       oImg:End()
 
-   ENDIF
+   endif
 
-RETURN ( aSizes )
+return ( aSizes )
 
+//----------------------------------------------------------------------------//
 
-*-- FUNCTION -----------------------------------------------------------------
-*         Name: SaveImgItem
-*  Description:
-*    Arguments: None
-* Return Value: .T.
-*       Author: Timm Sodtalbers
-*-----------------------------------------------------------------------------
-FUNCTION SaveImgItem( oVar, oItem )
+function SaveImgItem( oVar, oItem )
 
-   LOCAL oIni
+   local oIni
 
    oItem:nBorder := IIF( oItem:lBorder , 1, 0 )
    oItem:nShow   := IIF( oItem:lVisible, 1, 0 )
@@ -1061,10 +943,10 @@ FUNCTION SaveImgItem( oVar, oItem )
    oVar:cItemDef := oItem:Set( .F., nMeasure )
 
    INI oIni FILE oVar:cAreaIni
-      SET SECTION "Items" ENTRY ALLTRIM(STR(oVar:i,5)) TO oVar:cItemDef OF oIni
+      SET SECTION "Items" ENTRY AllTrim(STR(oVar:i,5)) TO oVar:cItemDef OF oIni
    ENDINI
 
-   IF oItem:nShow = 1
+   if oItem:nShow = 1
 
       aItems[oVar:nArea,oVar:i]:End()
       aItems[oVar:nArea,oVar:i] := TImage():New( nRulerTop + ER_GetPixel( oItem:nTop ), ;
@@ -1077,26 +959,20 @@ FUNCTION SaveImgItem( oVar, oItem )
       ElementActions( aItems[oVar:nArea,oVar:i], oVar:i, oItem:cText, oVar:nArea, oVar:cAreaIni )
       aItems[oVar:nArea,oVar:i]:SetFocus()
 
-   ENDIF
+   endif
 
    SaveItemGeneral( oVar, oItem )
 
-RETURN (.T.)
+return .T.
 
+//----------------------------------------------------------------------------//
 
-*-- FUNCTION -----------------------------------------------------------------
-* Name........: GraphicProperties
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
-FUNCTION GraphicProperties( i, nArea, cAreaIni, lFromList, lNew )
+function GraphicProperties( i, nArea, cAreaIni, lFromList, lNew )
 
-   LOCAL oIni, oBtn, oCmb1, aCbx[2], nColor, nDefClr
-   LOCAL aGet[4], aSay[3], aGrp[3]
-   LOCAL oVar  := GetoVar( i, nArea, cAreaIni, lNew )
-   LOCAL oItem := VRDItem():New( oVar:cItemDef )
+   local oIni, oBtn, oCmb1, aCbx[2], nColor, nDefClr
+   local aGet[4], aSay[3], aGrp[3]
+   local oVar  := GetoVar( i, nArea, cAreaIni, lNew )
+   local oItem := VRDItem():New( oVar:cItemDef )
 
    oVar:AddMember( "aColors" ,, GetAllColors()  )
    oVar:AddMember( "aGraphic",, { GL("Line up"), GL("Line down"), ;
@@ -1240,19 +1116,13 @@ FUNCTION GraphicProperties( i, nArea, cAreaIni, lFromList, lNew )
 
    oCurDlg:bMoved := {|| SetItemDlg() }
 
-RETURN ( .T. )
+return ( .T. )
 
+//----------------------------------------------------------------------------//
 
-*-- FUNCTION -----------------------------------------------------------------
-*         Name: SaveGraItem
-*  Description:
-*    Arguments: None
-* Return Value: .T.
-*       Author: Timm Sodtalbers
-*-----------------------------------------------------------------------------
-FUNCTION SaveGraItem( oVar, oItem )
+function SaveGraItem( oVar, oItem )
 
-   LOCAL oIni
+   local oIni
 
    oItem:cType  := GetGraphName( ASCAN( oVar:aGraphic, oVar:cGraphic ) )
    oItem:cText  := oVar:cGraphic
@@ -1262,10 +1132,10 @@ FUNCTION SaveGraItem( oVar, oItem )
    oVar:cItemDef := oItem:Set( .F., nMeasure )
 
    INI oIni FILE oVar:cAreaIni
-      SET SECTION "Items" ENTRY ALLTRIM(STR(oVar:i,5)) TO oVar:cItemDef OF oIni
+      SET SECTION "Items" ENTRY AllTrim(STR(oVar:i,5)) TO oVar:cItemDef OF oIni
    ENDINI
 
-   IF oItem:nShow = 1
+   if oItem:nShow = 1
 
       aItems[oVar:nArea,oVar:i]:End()
 
@@ -1275,7 +1145,7 @@ FUNCTION SaveGraItem( oVar, oItem )
       aItems[oVar:nArea,oVar:i]:lTransparent := .T.
 
       aItems[oVar:nArea,oVar:i]:bPainted = {| hDC, cPS | ;
-         DrawGraphic( hDC, ALLTRIM(UPPER( oItem:cType )), ;
+         DrawGraphic( hDC, AllTrim(UPPER( oItem:cType )), ;
                       ER_GetPixel( oItem:nWidth ), ER_GetPixel( oItem:nHeight ), ;
                       GetColor( oItem:nColor ), GetColor( oItem:nColFill ), ;
                       oItem:nStyle, oItem:nPenWidth, ;
@@ -1285,26 +1155,20 @@ FUNCTION SaveGraItem( oVar, oItem )
       ElementActions( aItems[oVar:nArea,oVar:i], oVar:i, "", oVar:nArea, oVar:cAreaIni )
       aItems[oVar:nArea,oVar:i]:SetFocus()
 
-   ENDIF
+   endif
 
    SaveItemGeneral( oVar, oItem )
 
-RETURN (.T.)
+return .T.
 
+//----------------------------------------------------------------------------//
 
-*-- FUNCTION -----------------------------------------------------------------
-* Name........: BarcodeProperties
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
-FUNCTION BarcodeProperties( i, nArea, cAreaIni, lFromList, lNew )
+function BarcodeProperties( i, nArea, cAreaIni, lFromList, lNew )
 
-   LOCAL oFont, oIni, lRight, lCenter, nColor
-   LOCAL nDefClr, aBtn[3], aGet[6], aSay[4], aGrp[3], aCbx[2]
-   LOCAL oVar  := GetoVar( i, nArea, cAreaIni, lNew )
-   LOCAL oItem := VRDItem():New( oVar:cItemDef )
+   local oFont, oIni, lRight, lCenter, nColor
+   local nDefClr, aBtn[3], aGet[6], aSay[4], aGrp[3], aCbx[2]
+   local oVar  := GetoVar( i, nArea, cAreaIni, lNew )
+   local oItem := VRDItem():New( oVar:cItemDef )
 
    oVar:AddMember( "aBarcode"    ,, GetBarcodes()                                         )
    oVar:AddMember( "cBarcode"    ,, oVar:aBarcode[oItem:nBCodeType]                       )
@@ -1442,19 +1306,13 @@ FUNCTION BarcodeProperties( i, nArea, cAreaIni, lFromList, lNew )
 
    oCurDlg:bMoved := {|| SetItemDlg() }
 
-RETURN ( .T. )
+return ( .T. )
 
+//----------------------------------------------------------------------------//
 
-*-- FUNCTION -----------------------------------------------------------------
-*         Name: SaveBarItem
-*  Description:
-*    Arguments: None
-* Return Value: .T.
-*       Author: Timm Sodtalbers
-*-----------------------------------------------------------------------------
-FUNCTION SaveBarItem( oVar, oItem )
+function SaveBarItem( oVar, oItem )
 
-   LOCAL lRight, lCenter, nColor, oIni
+   local lRight, lCenter, nColor, oIni
 
    oItem:nBCodeType := ASCAN( oVar:aBarcode, oVar:cBarcode )
    oItem:nOrient    := ASCAN( oVar:aOrient, oVar:cOrient )
@@ -1462,13 +1320,13 @@ FUNCTION SaveBarItem( oVar, oItem )
    oVar:cItemDef := oItem:Set( .F., nMeasure )
 
    INI oIni FILE oVar:cAreaIni
-      SET SECTION "Items" ENTRY ALLTRIM(STR(oVar:i,5)) TO oVar:cItemDef OF oIni
+      SET SECTION "Items" ENTRY AllTrim(STR(oVar:i,5)) TO oVar:cItemDef OF oIni
    ENDINI
 
    IIF( oItem:nOrient = 2, lCenter := .T., lCenter := .F. )
    IIF( oItem:nOrient = 3, lRight  := .T., lRight  := .F. )
 
-   IF oItem:nShow = 1
+   if oItem:nShow = 1
 
       aItems[oVar:nArea,oVar:i]:End()
 
@@ -1478,7 +1336,7 @@ FUNCTION SaveBarItem( oVar, oItem )
          aItems[oVar:nArea,oVar:i]:lTransparent := .T.
 
          aItems[oVar:nArea,oVar:i]:bPainted = {| hDC, cPS | ;
-            DrawBarcode( hDC, ALLTRIM( oItem:cText ), 0, 0, ;
+            DrawBarcode( hDC, AllTrim( oItem:cText ), 0, 0, ;
                          ER_GetPixel( oItem:nWidth ), ER_GetPixel( oItem:nHeight ), ;
                          oItem:nBCodeType, GetColor( oItem:nColText ), GetColor( oItem:nColPane ), ;
                          oItem:nOrient, oItem:lTrans, ER_GetPixel( oItem:nPinWidth ) ) }
@@ -1487,35 +1345,29 @@ FUNCTION SaveBarItem( oVar, oItem )
       ElementActions( aItems[oVar:nArea,oVar:i], oVar:i, "", oVar:nArea, oVar:cAreaIni )
       aItems[oVar:nArea,oVar:i]:SetFocus()
 
-   ENDIF
+   endif
 
    SaveItemGeneral( oVar, oItem )
 
-RETURN (.T.)
+return .T.
 
+//----------------------------------------------------------------------------//
 
-*-- FUNCTION -----------------------------------------------------------------
-* Name........: SetItemSize
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
-FUNCTION SetItemSize( i, nArea, cAreaIni )
+function SetItemSize( i, nArea, cAreaIni )
 
-   LOCAL oIni, nColor, nColFill, nStyle, nPenWidth, nRndWidth, nRndHeight, oItem
-   LOCAL cItemDef   := ALLTRIM( GetPvProfString( "Items", ALLTRIM(STR(i,5)) , "", cAreaIni ) )
-   LOCAL cOldDef    := cItemDef
-   LOCAL aWerte     := GetCoors( aItems[nArea,i]:hWnd )
-   LOCAL nTop       := GetCmInch( aWerte[1] - nRulerTop )
-   LOCAL nLeft      := GetCmInch( aWerte[2] - nRuler )
-   LOCAL nHeight    := GetCmInch( aWerte[3] - aWerte[1] )
-   LOCAL nWidth     := GetCmInch( aWerte[4] - aWerte[2] )
-   LOCAL nGesWidth  := VAL( GetPvProfString( "General", "Width", "600", cAreaIni ) )
-   LOCAL nGesHeight := VAL( GetPvProfString( "General", "Height", "300", cAreaIni ) )
-   LOCAL cTyp       := UPPER(ALLTRIM( GetField( cItemDef, 1 ) ))
+   local oIni, nColor, nColFill, nStyle, nPenWidth, nRndWidth, nRndHeight, oItem
+   local cItemDef   := AllTrim( GetPvProfString( "Items", AllTrim(STR(i,5)) , "", cAreaIni ) )
+   local cOldDef    := cItemDef
+   local aWerte     := GetCoors( aItems[nArea,i]:hWnd )
+   local nTop       := GetCmInch( aWerte[1] - nRulerTop )
+   local nLeft      := GetCmInch( aWerte[2] - nRuler )
+   local nHeight    := GetCmInch( aWerte[3] - aWerte[1] )
+   local nWidth     := GetCmInch( aWerte[4] - aWerte[2] )
+   local nGesWidth  := VAL( GetPvProfString( "General", "Width", "600", cAreaIni ) )
+   local nGesHeight := VAL( GetPvProfString( "General", "Height", "300", cAreaIni ) )
+   local cTyp       := UPPER(AllTrim( GetField( cItemDef, 1 ) ))
 
-   IF nTop + nHeight <= nGesHeight .AND. nLeft + nWidth <= nGesWidth .AND. ;
+   if nTop + nHeight <= nGesHeight .AND. nLeft + nWidth <= nGesWidth .AND. ;
          nTop >= 0 .AND. nLeft >= 0
 
       nTop    := GetDivisible( ROUND( nTop   , IIF( nMeasure = 2, 2, 0 ) ), GetCmInch( nYMove ) )
@@ -1524,13 +1376,13 @@ FUNCTION SetItemSize( i, nArea, cAreaIni )
       nHeight := GetDivisible( ROUND( nHeight, IIF( nMeasure = 2, 2, 0 ) ), GetCmInch( nYMove ) )
 
       cItemDef := SUBSTR( cItemDef, 1, StrAtNum( "|", cItemDef, 6 ) ) + ;
-         ALLTRIM(STR( nTop, 5, IIF( nMeasure = 2, 2, 0 ) )) + "|" + ;
-         ALLTRIM(STR( nLeft, 5, IIF( nMeasure = 2, 2, 0 ) )) + "|" + ;
-         ALLTRIM(STR( nWidth, 5, IIF( nMeasure = 2, 2, 0 ) )) + "|" + ;
-         ALLTRIM(STR( nHeight, 5, IIF( nMeasure = 2, 2, 0 ) )) + ;
+         AllTrim(STR( nTop, 5, IIF( nMeasure = 2, 2, 0 ) )) + "|" + ;
+         AllTrim(STR( nLeft, 5, IIF( nMeasure = 2, 2, 0 ) )) + "|" + ;
+         AllTrim(STR( nWidth, 5, IIF( nMeasure = 2, 2, 0 ) )) + "|" + ;
+         AllTrim(STR( nHeight, 5, IIF( nMeasure = 2, 2, 0 ) )) + ;
          SUBSTR( cItemDef, StrAtNum( "|", cItemDef, 10 ) )
 
-      IF IsGraphic( cTyp ) = .T.
+      if IsGraphic( cTyp ) = .T.
 
          nColor     := VAL( GetField( cItemDef, 11 ) )
          nColFill   := VAL( GetField( cItemDef, 12 ) )
@@ -1545,7 +1397,7 @@ FUNCTION SetItemSize( i, nArea, cAreaIni )
             GetColor( nColor ), GetColor( nColFill ), ;
             nStyle, nPenWidth, ER_GetPixel( nRndWidth ), ER_GetPixel( nRndHeight ) ) }
 
-      ELSEIF UPPER( cTyp ) = "BARCODE"
+      ELSEif UPPER( cTyp ) = "BARCODE"
 
          oItem := VRDItem():New( cItemDef )
 
@@ -1557,25 +1409,25 @@ FUNCTION SetItemSize( i, nArea, cAreaIni )
             oItem:nOrient, IIF( oItem:nTrans = 1, .T., .F. ), ;
             ER_GetPixel( oItem:nPinWidth ) ) }
 
-      ENDIF
+      endif
 
       INI oIni FILE cAreaIni
-         SET SECTION "Items" ENTRY ALLTRIM(STR(i,5)) TO cItemDef OF oIni
+         SET SECTION "Items" ENTRY AllTrim(STR(i,5)) TO cItemDef OF oIni
       ENDINI
 
-      IF VAL( GetField( cItemDef, 7  ) ) <> VAL( GetField( cOldDef, 7  ) ) .OR. ;
+      if VAL( GetField( cItemDef, 7  ) ) <> VAL( GetField( cOldDef, 7  ) ) .OR. ;
          VAL( GetField( cItemDef, 8  ) ) <> VAL( GetField( cOldDef, 8  ) ) .OR. ;
          VAL( GetField( cItemDef, 9  ) ) <> VAL( GetField( cOldDef, 9  ) ) .OR. ;
          VAL( GetField( cItemDef, 10 ) ) <> VAL( GetField( cOldDef, 10 ) )
 
-         IF lFillWindow = .F.
+         if lFillWindow = .F.
             Add2Undo( cOldDef, i, nArea )
             SetSave( .F. )
-         ENDIF
+         endif
 
-      ENDIF
+      endif
 
-   ENDIF
+   endif
 
    lFillWindow := .T.
    aItems[nArea,i]:Move( nRulerTop + ER_GetPixel( VAL( GetField( cItemDef, 7 ) ) ), ;
@@ -1593,31 +1445,25 @@ FUNCTION SetItemSize( i, nArea, cAreaIni )
 
    aItems[nArea,i]:Refresh()
 
-RETURN (.T.)
+return .T.
 
+//----------------------------------------------------------------------------//
 
-*-- FUNCTION -----------------------------------------------------------------
-* Name........: MsgBarItem
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
-FUNCTION MsgBarItem( nItem, nArea, cAreaIni, nRow, nCol, lResize )
+function MsgBarItem( nItem, nArea, cAreaIni, nRow, nCol, lResize )
 
-   LOCAL nTop, nLeft
-   LOCAL cItemDef := ALLTRIM( GetPvProfString( "Items", ALLTRIM(STR(nItem,5)) , "", cAreaIni ) )
-   LOCAL cItemID  := ALLTRIM(  GetField( cItemDef, 3 ) )
+   local nTop, nLeft
+   local cItemDef := AllTrim( GetPvProfString( "Items", AllTrim(STR(nItem,5)) , "", cAreaIni ) )
+   local cItemID  := AllTrim(  GetField( cItemDef, 3 ) )
 
    DEFAULT lResize := .F.
 
-   IF lResize = .T. .AND. LEN( aItemPosition ) <> 0
+   if lResize = .T. .AND. LEN( aItemPosition ) <> 0
 
       oMsgInfo:SetText( GL("ID") + ": " + cItemID + "  " + ;
-                        GL("Top:")    + " " + ALLTRIM( aItemPosition[1] ) + "  " + ;
-                        GL("Left:")   + " " + ALLTRIM( aItemPosition[2] ) + "  " + ;
-                        GL("Width:")  + " " + ALLTRIM( aItemPosition[3] ) + "  " + ;
-                        GL("Height:") + " " + ALLTRIM( aItemPosition[4] ) )
+                        GL("Top:")    + " " + AllTrim( aItemPosition[1] ) + "  " + ;
+                        GL("Left:")   + " " + AllTrim( aItemPosition[2] ) + "  " + ;
+                        GL("Width:")  + " " + AllTrim( aItemPosition[3] ) + "  " + ;
+                        GL("Height:") + " " + AllTrim( aItemPosition[4] ) )
 
       SetReticule( aItemPixelPos[2] + nRulerTop, aItemPixelPos[1] + nRuler, nArea )
 
@@ -1633,110 +1479,86 @@ FUNCTION MsgBarItem( nItem, nArea, cAreaIni, nRow, nCol, lResize )
 
       /* FiveTech
       oMsgInfo:SetText( GL("ID") + ": " + cItemID + "  " + ;
-                        GL("Top:")    + " " + ALLTRIM(STR( GetCmInch( nTop ), 5, IIF( nMeasure = 2, 2, 0 ) )) + "  " + ;
-                        GL("Left:")   + " " + ALLTRIM(STR( GetCmInch( nLeft), 5, IIF( nMeasure = 2, 2, 0 ) )) + "  " + ;
-                        GL("Width:")  + " " + ALLTRIM( cInfoWidth ) + "  " + ;
-                        GL("Height:") + " " + ALLTRIM( cInfoHeight ) )
+                        GL("Top:")    + " " + AllTrim(STR( GetCmInch( nTop ), 5, IIF( nMeasure = 2, 2, 0 ) )) + "  " + ;
+                        GL("Left:")   + " " + AllTrim(STR( GetCmInch( nLeft), 5, IIF( nMeasure = 2, 2, 0 ) )) + "  " + ;
+                        GL("Width:")  + " " + AllTrim( cInfoWidth ) + "  " + ;
+                        GL("Height:") + " " + AllTrim( cInfoHeight ) )
       */                  
 
-   ENDIF
+   endif
 
-RETURN (.T.)
+return .T.
 
+//----------------------------------------------------------------------------//
 
-*-- FUNCTION -----------------------------------------------------------------
-* Name........: GetGraphName
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
-FUNCTION GetGraphName( nIndex )
+function GetGraphName( nIndex )
 
-   LOCAL cName := ""
+   local cName := ""
 
-   DO CASE
-   CASE nIndex = 1  ; cName := "LineUp"
-   CASE nIndex = 2  ; cName := "LineDown"
-   CASE nIndex = 3  ; cName := "LineHorizontal"
-   CASE nIndex = 4  ; cName := "LineVertical"
-   CASE nIndex = 5  ; cName := "Rectangle"
-   CASE nIndex = 6  ; cName := "Ellipse"
-   ENDCASE
+   do case
+   case nIndex = 1  ; cName := "LineUp"
+   case nIndex = 2  ; cName := "LineDown"
+   case nIndex = 3  ; cName := "LineHorizontal"
+   case nIndex = 4  ; cName := "LineVertical"
+   case nIndex = 5  ; cName := "Rectangle"
+   case nIndex = 6  ; cName := "Ellipse"
+   endcase
 
-RETURN ( cName )
+return ( cName )
 
+//----------------------------------------------------------------------------//
 
-*-- FUNCTION -----------------------------------------------------------------
-* Name........: GetGraphIndex
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
-FUNCTION GetGraphIndex( cTyp )
+function GetGraphIndex( cTyp )
 
-   LOCAL nIndex := 0
+   local nIndex := 0
 
-   DO CASE
-   CASE UPPER( cTyp ) == "LINEUP"          ; nIndex := 1
-   CASE UPPER( cTyp ) == "LINEDOWN"        ; nIndex := 2
-   CASE UPPER( cTyp ) == "LINEHORIZONTAL"  ; nIndex := 3
-   CASE UPPER( cTyp ) == "LINEVERTICAL"    ; nIndex := 4
-   CASE UPPER( cTyp ) == "RECTANGLE"       ; nIndex := 5
-   CASE UPPER( cTyp ) == "ELLIPSE"         ; nIndex := 6
-   ENDCASE
+   do case
+   case UPPER( cTyp ) == "LINEUP"          ; nIndex := 1
+   case UPPER( cTyp ) == "LINEDOWN"        ; nIndex := 2
+   case UPPER( cTyp ) == "LINEHORIZONTAL"  ; nIndex := 3
+   case UPPER( cTyp ) == "LINEVERTICAL"    ; nIndex := 4
+   case UPPER( cTyp ) == "RECTANGLE"       ; nIndex := 5
+   case UPPER( cTyp ) == "ELLIPSE"         ; nIndex := 6
+   endcase
 
-RETURN ( nIndex )
+return ( nIndex )
 
+//----------------------------------------------------------------------------//
 
-*-- FUNCTION -----------------------------------------------------------------
-* Name........: GetImage
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
-FUNCTION GetImage( cOldFile )
+function GetImage( cOldFile )
 
-   LOCAL cFile := GetFile( GL("Images") + "|*.BMP;*.DIB;*.JIF;*.JPG;*.PCX;*.RLE;*.TGA|" + ;
+   local cFile := GetFile( GL("Images") + "|*.BMP;*.DIB;*.JIF;*.JPG;*.PCX;*.RLE;*.TGA|" + ;
                            "Bitmap (*.bmp)| *.bmp|" + ;
                            "DIB (*.dib)| *.dib|"  + ;
                            "PCX (*.pcx)| *.pcx|"  + ;
                            "JPEG (*.jpg)| *.jpg|"  + ;
                            "TARGA (*.tga)| *.tga|"  + ;
                            "RLE (*.rle)| *.rle|"  + ;
-                           "JIF (*.jif)| *.jif|"  + ;
+                           "Jif (*.jif)| *.jif|"  + ;
                            GL("All Files") + "(*.*)| *.*", ;
                            GL("Open Image"), 1 )
 
-RETURN IIF( EMPTY( cFile ), cOldFile, cFile )
+return IIF( EMPTY( cFile ), cOldFile, cFile )
 
+//----------------------------------------------------------------------------//
 
-*-- FUNCTION -----------------------------------------------------------------
-* Name........: ItemCopy
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
-FUNCTION ItemCopy( lCut )
+function ItemCopy( lCut )
 
-   LOCAL i, oItemInfo
-   LOCAL cAreaIni := aAreaIni[nAktArea]
+   local i, oItemInfo
+   local cAreaIni := aAreaIni[nAktArea]
 
    DEFAULT lCut := .F.
 
-   IF nAktItem = 0 .AND. LEN( aSelection ) = 0
+   if nAktItem = 0 .AND. LEN( aSelection ) = 0
       MsgStop( GL("Please select an item first."), GL("Stop!") )
-      RETURN (.F.)
-   ENDIF
+      return (.F.)
+   endif
 
    aSelectCopy  := {}
    nCopyEntryNr := 0
    nCopyAreaNr  := 0
 
-   IF LEN( aSelection ) <> 0
+   if LEN( aSelection ) <> 0
 
       //Multiselection
       aSelectCopy := aSelection
@@ -1744,170 +1566,158 @@ FUNCTION ItemCopy( lCut )
 
       FOR i := 1 TO LEN( aSelection )
 
-         cItemCopy := ALLTRIM( GetPvProfString( "Items", ;
-                      ALLTRIM(STR( aSelection[i,2], 5 )) , "", aAreaIni[ aSelection[i,1] ] ) )
+         cItemCopy := AllTrim( GetPvProfString( "Items", ;
+                      AllTrim(STR( aSelection[i,2], 5 )) , "", aAreaIni[ aSelection[i,1] ] ) )
          AADD( aItemCopy, cItemCopy )
 
          oItemInfo := VRDItem():New( cItemCopy )
 
-         IF lCut = .T.
+         if lCut = .T.
             DeleteItem( aSelection[i,2], aSelection[i,1], .T. )
-            IF oItemInfo:nItemID < 0
-               DelIniEntry( "Items", ALLTRIM(STR(aSelection[i,2],5)), ;
+            if oItemInfo:nItemID < 0
+               DelIniEntry( "Items", AllTrim(STR(aSelection[i,2],5)), ;
                             aAreaIni[ aSelection[i,1] ] )
-            ENDIF
-         ENDIF
+            endif
+         endif
 
       NEXT
 
    ELSE
 
-      cItemCopy    := ALLTRIM( GetPvProfString( "Items", ALLTRIM(STR(nAktItem,5)), ;
+      cItemCopy    := AllTrim( GetPvProfString( "Items", AllTrim(STR(nAktItem,5)), ;
                       "", cAreaIni ) )
       nCopyEntryNr := nAktItem
       nCopyAreaNr  := nAktArea
 
       oItemInfo := VRDItem():New( cItemCopy )
 
-      IF lCut = .T.
+      if lCut = .T.
          DeleteItem( nAktItem, nAktArea, .T. )
-         IF oItemInfo:nItemID < 0
-            DelIniEntry( "Items", ALLTRIM(STR(nAktItem,5)), aAreaIni[nAktArea] )
-         ENDIF
-      ENDIF
+         if oItemInfo:nItemID < 0
+            DelIniEntry( "Items", AllTrim(STR(nAktItem,5)), aAreaIni[nAktArea] )
+         endif
+      endif
 
-   ENDIF
+   endif
 
-RETURN ( .T. )
+return ( .T. )
 
+//----------------------------------------------------------------------------//
 
-*-- FUNCTION -----------------------------------------------------------------
-* Name........: ItemPaste
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
-FUNCTION ItemPaste( lCut )
+function ItemPaste( lCut )
 
-   LOCAL i
+   local i
 
    UnSelectAll()
 
-   IF LEN( aSelectCopy ) <> 0
+   if LEN( aSelectCopy ) <> 0
       FOR i := 1 TO LEN( aSelectCopy )
          NewItem( "COPY", nAktArea, aSelectCopy[i,1], aSelectCopy[i,2], aItemCopy[i] )
       NEXT
    ELSE
       NewItem( "COPY", nAktArea )
-   ENDIF
+   endif
 
-RETURN ( .T. )
+return ( .T. )
 
+//----------------------------------------------------------------------------//
 
-*-- FUNCTION -----------------------------------------------------------------
-* Name........: NewItem
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
-FUNCTION NewItem( cTyp, nArea, nTmpCopyArea, nTmpCopyEntry, cTmpItemCopy )
+function NewItem( cTyp, nArea, nTmpCopyArea, nTmpCopyEntry, cTmpItemCopy )
 
-   LOCAL i, nFree, cItemDef, oIni, aBarcodes, oItemInfo, cDefault
-   LOCAL nItemTop   := 0
-   LOCAL nItemLeft  := 0
-   LOCAL nPlusTop   := 0
-   LOCAL nPlusLeft  := 0
-   LOCAL aFirst     := { .F., 0, 0, 0, 0, 0 }
-   LOCAL nElemente  := 0
-   LOCAL cAreaIni   := aAreaIni[nArea]
-   LOCAL nGesWidth  := VAL( GetPvProfString( "General", "Width", "600", cAreaIni ) )
-   LOCAL nGesHeight := VAL( GetPvProfString( "General", "Height", "300", cAreaIni ) )
-   LOCAL cTop       := IIF( nMeasure = 2, "0.10", "2" )
-   LOCAL cLeft      := cTop
+   local i, nFree, cItemDef, oIni, aBarcodes, oItemInfo, cDefault
+   local nItemTop   := 0
+   local nItemLeft  := 0
+   local nPlusTop   := 0
+   local nPlusLeft  := 0
+   local aFirst     := { .F., 0, 0, 0, 0, 0 }
+   local nElemente  := 0
+   local cAreaIni   := aAreaIni[nArea]
+   local nGesWidth  := VAL( GetPvProfString( "General", "Width", "600", cAreaIni ) )
+   local nGesHeight := VAL( GetPvProfString( "General", "Height", "300", cAreaIni ) )
+   local cTop       := IIF( nMeasure = 2, "0.10", "2" )
+   local cLeft      := cTop
 
    FOR i := 400 TO 1000
-      IF aItems[ nArea, i ] = NIL
+      if aItems[ nArea, i ] = NIL
          nFree := i
          EXIT
-      ENDIF
+      endif
    NEXT
 
-   IF cTyp = "COPY"
+   if cTyp = "COPY"
 
       DEFAULT nTmpCopyEntry := nCopyEntryNr
       DEFAULT nTmpCopyArea  := nCopyAreaNr
       DEFAULT cTmpItemCopy  := cItemCopy
 
-      IF nTmpCopyEntry < 400
+      if nTmpCopyEntry < 400
          FOR i := 1 TO 399
-         IF aItems[ nArea, i ] = NIL
+         if aItems[ nArea, i ] = NIL
             nFree := i
             EXIT
-         ENDIF
+         endif
          NEXT
-      ENDIF
+      endif
 
       oItemInfo := VRDItem():New( cTmpItemCopy )
 
-      IF oItemInfo:nTop + oItemInfo:nHeight >= nGesHeight
+      if oItemInfo:nTop + oItemInfo:nHeight >= nGesHeight
          nItemTop  := GetCmInch( 10 )
-      ENDIF
-      IF oItemInfo:nLeft + oItemInfo:nWidth >= nGesWidth
+      endif
+      if oItemInfo:nLeft + oItemInfo:nWidth >= nGesWidth
          nItemLeft := GetCmInch( 10 )
-      ENDIF
+      endif
 
-      IF nTmpCopyArea = nArea
+      if nTmpCopyArea = nArea
          nPlusTop  := IIF( nMeasure = 2, 0.06, 2 )
          nPlusLeft := IIF( nMeasure = 2, 0.06, 2 )
-      ENDIF
+      endif
 
       cItemDef := SUBSTR( cTmpItemCopy, 1, StrAtNum( "|", cTmpItemCopy, 6 ) ) + ;
-         ALLTRIM(STR( IIF( nItemTop = 0, oItemInfo:nTop, nItemTop ) + nPlusTop, 5, IIF( nMeasure = 2, 2, 0 ) )) + "|" + ;
-         ALLTRIM(STR( IIF( nItemLeft = 0, oItemInfo:nLeft, nItemLeft ) + nPlusLeft, 5, IIF( nMeasure = 2, 2, 0 ) )) + ;
+         AllTrim(STR( IIF( nItemTop = 0, oItemInfo:nTop, nItemTop ) + nPlusTop, 5, IIF( nMeasure = 2, 2, 0 ) )) + "|" + ;
+         AllTrim(STR( IIF( nItemLeft = 0, oItemInfo:nLeft, nItemLeft ) + nPlusLeft, 5, IIF( nMeasure = 2, 2, 0 ) )) + ;
          SUBSTR( cTmpItemCopy, StrAtNum( "|", cTmpItemCopy, 8 ) )
 
-   ELSEIF cTyp = "TEXT"
+   ELSEif cTyp = "TEXT"
       cItemDef := "Text||-1|1|1|1|" + cTop + "|" + cLeft + "|" + ;
                   IIF( nMeasure = 2, "1.00", "30" ) + "|" + ;
                   IIF( nMeasure = 2, "0.50",  "5" ) + "|" + ;
                   "1|1|2|0|0|0|"
-   ELSEIF cTyp = "IMAGE"
+   ELSEif cTyp = "IMAGE"
       cItemDef := "Image||-1|1|1|1|" + cTop + "|" + cLeft + "|" + ;
                   IIF( nMeasure = 2, "0.60", "20" ) + "|" + ;
                   IIF( nMeasure = 2, "0.60", "20" ) + "|" + ;
                   "|0"
-   ELSEIF cTyp = "GRAPHIC"
+   ELSEif cTyp = "GRAPHIC"
       cItemDef := "Rectangle|" + ;
                   GL("Rectangle") + ;
                   "|-1|1|1|1|" + cTop + "|" + cLeft + "|" + ;
                   IIF( nMeasure = 2, "0.60", "20" ) + "|" + ;
                   IIF( nMeasure = 2, "0.30", "10" ) + "|" + ;
                   "1|2|1|1|0|0"
-   ELSEIF cTyp = "BARCODE"
+   ELSEif cTyp = "BARCODE"
       cItemDef := "Barcode|" + ;
                   "12345678" + ;
                   "|-1|1|1|1|" + cTop + "|" + cLeft + "|" + ;
                   IIF( nMeasure = 2, "1.70", "60" ) + "|" + ;
                   IIF( nMeasure = 2, "0.30", "10" ) + "|" + ;
                   "1|1|2|1|1|0.3|"
-   ENDIF
+   endif
 
-   IF cTyp <> "COPY"
+   if cTyp <> "COPY"
 
       cDefault := GetPvProfString( "General", "Default" + cTyp, "", cDefIni )
 
-      IF .NOT. EMPTY( cDefault )
+      if .NOT. EMPTY( cDefault )
          cItemDef := SUBSTR( cDefault, 1, StrAtNum( "|", cDefault, 2 ) ) + ;
                      SUBSTR( cItemDef, StrAtNum( "|", cItemDef, 2 ) + 1, StrAtNum( "|", cItemDef, 8 ) - StrAtNum( "|", cItemDef, 2 ) ) + ;
                      SUBSTR( cDefault, StrAtNum( "|", cDefault, 8 ) + 1 )
-      ENDIF
+      endif
 
-   ENDIF
+   endif
 
    INI oIni FILE cAreaIni
-      SET SECTION "Items" ENTRY ALLTRIM(STR(nFree,5)) TO cItemDef OF oIni
+      SET SECTION "Items" ENTRY AllTrim(STR(nFree,5)) TO cItemDef OF oIni
    ENDINI
 
    ShowItem( nFree, nArea, cAreaIni, @aFirst, @nElemente )
@@ -1930,55 +1740,49 @@ FUNCTION NewItem( cTyp, nArea, nTmpCopyArea, nTmpCopyEntry, cTmpItemCopy )
 
    SetSave( .F. )
 
-   IF cTyp <> "COPY"
+   if cTyp <> "COPY"
       ItemProperties( i, nArea,, .T. )
    ELSE
       Add2Undo( "", nFree, nArea )
-   ENDIF
+   endif
 
-RETURN (.T.)
+return .T.
 
+//----------------------------------------------------------------------------//
 
-*-- FUNCTION -----------------------------------------------------------------
-* Name........: ShowItem
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
-FUNCTION ShowItem( i, nArea, cAreaIni, aFirst, nElemente, aIniEntries, nIndex )
+function ShowItem( i, nArea, cAreaIni, aFirst, nElemente, aIniEntries, nIndex )
 
-   LOCAL cTyp, cName, nTop, nLeft, nWidth, nHeight, nFont, oFont, hDC, nTrans, lTrans
-   LOCAL nColText, nColPane, nOrient, cFile, nBorder, nColor, nColFill, nStyle, nPenWidth
-   LOCAL nRndWidth, nRndHeight, nBarcode, nPinWidth, cItemDef
-   LOCAL lRight  := .F.
-   LOCAL lCenter := .F.
+   local cTyp, cName, nTop, nLeft, nWidth, nHeight, nFont, oFont, hDC, nTrans, lTrans
+   local nColText, nColPane, nOrient, cFile, nBorder, nColor, nColFill, nStyle, nPenWidth
+   local nRndWidth, nRndHeight, nBarcode, nPinWidth, cItemDef
+   local lRight  := .F.
+   local lCenter := .F.
 
-   IF aIniEntries = NIL
-      cItemDef := ALLTRIM( GetPvProfString( "Items", ALLTRIM(STR(i,5)) , "", cAreaIni ) )
+   if aIniEntries = NIL
+      cItemDef := AllTrim( GetPvProfString( "Items", AllTrim(STR(i,5)) , "", cAreaIni ) )
    ELSE
       cItemDef := GetIniEntry( aIniEntries,, "",, nIndex )
-   ENDIF
+   endif
 
-   IF .NOT. EMPTY( cItemDef ) .AND. VAL( GetField( cItemDef, 4 ) ) <> 0
+   if .NOT. EMPTY( cItemDef ) .AND. VAL( GetField( cItemDef, 4 ) ) <> 0
 
-      cTyp      := UPPER(ALLTRIM( GetField( cItemDef, 1 ) ))
+      cTyp      := UPPER(AllTrim( GetField( cItemDef, 1 ) ))
       cName     := GetField( cItemDef, 2 )
       nTop      := nRulerTop + ER_GetPixel( VAL( GetField( cItemDef, 7 ) ) )
       nLeft     := nRuler    + ER_GetPixel( VAL( GetField( cItemDef, 8 ) ) )
       nWidth    := ER_GetPixel( VAL( GetField( cItemDef, 9 ) ) )
       nHeight   := ER_GetPixel( VAL( GetField( cItemDef, 10 ) ) )
 
-      IF aFirst[1] = .F.
+      if aFirst[1] = .F.
          aFirst[2] := nTop
          aFirst[3] := nLeft
          aFirst[4] := nWidth
          aFirst[5] := nHeight
          aFirst[6] := i
          aFirst[1] := .T.
-      ENDIF
+      endif
 
-      IF cTyp = "TEXT"
+      if cTyp = "TEXT"
 
          nFont    := VAL( GetField( cItemDef, 11 ) )
          nColText := VAL( GetField( cItemDef, 12 ) )
@@ -2014,9 +1818,9 @@ FUNCTION ShowItem( i, nArea, cAreaIni, aFirst, nElemente, aIniEntries, nIndex )
             <.design.>, <.update.>, <.lShaded.>, <.lBox.>, <.lRaised.> )
          */
 
-      ELSEIF cTyp = "IMAGE"
+      ELSEif cTyp = "IMAGE"
 
-         cFile   := ALLTRIM( GetField( cItemDef, 11 ) )
+         cFile   := AllTrim( GetField( cItemDef, 11 ) )
          nBorder := VAL( GetField( cItemDef, 12 ) )
 
          aItems[nArea,i] := TImage():New( nTop, nLeft, nWidth, nHeight,,, ;
@@ -2033,7 +1837,7 @@ FUNCTION ShowItem( i, nArea, cAreaIni, aFirst, nElemente, aIniEntries, nIndex )
             <{uWhen}>, <.pixel.>, <{uValid}>, <.lDesign.> )
          */
 
-      ELSEIF IsGraphic( cTyp ) = .T.
+      ELSEif IsGraphic( cTyp ) = .T.
 
          nColor     := VAL( GetField( cItemDef, 11 ) )
          nColFill   := VAL( GetField( cItemDef, 12 ) )
@@ -2050,7 +1854,7 @@ FUNCTION ShowItem( i, nArea, cAreaIni, aFirst, nElemente, aIniEntries, nIndex )
             DrawGraphic( hDC, cTyp, nWidth, nHeight, GetColor( nColor ), GetColor( nColFill ), ;
                          nStyle, nPenWidth, nRndWidth, nRndHeight ) }
 
-      ELSEIF cTyp = "BARCODE" .AND. lProfi = .T.
+      ELSEif cTyp = "BARCODE" .AND. lProfi = .T.
 
          nBarcode    := VAL( GetField( cItemDef, 11 ) )
          nColText    := VAL( GetField( cItemDef, 12 ) )
@@ -2067,126 +1871,104 @@ FUNCTION ShowItem( i, nArea, cAreaIni, aFirst, nElemente, aIniEntries, nIndex )
             DrawBarcode( hDC, cName, 0, 0, nWidth, nHeight, nBarCode, GetColor( nColText ), ;
                          GetColor( nColPane ), nOrient, lTrans, nPinWidth ) }
 
-      ENDIF
+      endif
 
-      IF cTyp = "BARCODE" .AND. lProfi = .F.
+      if cTyp = "BARCODE" .AND. lProfi = .F.
          //Dummy
       ELSE
          aItems[nArea,i]:lDrag := .T.
          ElementActions( aItems[nArea,i], i, cName, nArea, cAreaIni, cTyp )
-      ENDIF
+      endif
 
       ++nElemente
 
-   ENDIF
+   endif
 
-RETURN (.T.)
+return .T.
 
+//----------------------------------------------------------------------------//
 
-*-- FUNCTION -----------------------------------------------------------------
-* Name........: DeactivateItem
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
-FUNCTION DeactivateItem()
+function DeactivateItem()
 
-   IF nAktItem <> 0
+   if nAktItem <> 0
       aItems[nSelArea,nAktItem]:HideDots()
       naktItem := 0
-   ENDIF
+   endif
 
-RETURN (.T.)
+return .T.
 
+//----------------------------------------------------------------------------//
 
-*-- FUNCTION -----------------------------------------------------------------
-* Name........: DrawGraphic
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
-FUNCTION DrawGraphic( hDC, cType, nWidth, nHeight, nColor, nColFill, nStyle, nPenWidth, nRndWidth, nRndHeight )
+function DrawGraphic( hDC, cType, nWidth, nHeight, nColor, nColFill, nStyle, nPenWidth, nRndWidth, nRndHeight )
 
-   LOCAL nPlus      := IIF( nPenWidth < 1, 0, nPenWidth - 1 )
-   LOCAL nBottom    := nHeight - nPlus
-   LOCAL nRight     := nWidth  - nPlus
-   LOCAL hPen       := CreatePen( nStyle - 1, nPenWidth, nColor )
-   LOCAL hOldPen    := SelectObject( hDC, hPen )
-   LOCAL hBrush     := CreateSolidBrush( nColFill )
-   LOCAL hOldBrush  := SelectObject( hDC, hBrush )
+   local nPlus      := IIF( nPenWidth < 1, 0, nPenWidth - 1 )
+   local nBottom    := nHeight - nPlus
+   local nRight     := nWidth  - nPlus
+   local hPen       := CreatePen( nStyle - 1, nPenWidth, nColor )
+   local hOldPen    := SelectObject( hDC, hPen )
+   local hBrush     := CreateSolidBrush( nColFill )
+   local hOldBrush  := SelectObject( hDC, hBrush )
 
-   DO CASE
-   CASE cType == "LINEUP"
-      MOVETO( hDC, nPlus, nBottom )
-      LINETO( hDC, nRight, nPlus )
-   CASE cType == "LINEDOWN"
-      MOVETO( hDC, nPlus, nPlus )
-      LINETO( hDC, nRight, nBottom )
-   CASE cType == "LINEHORIZONTAL"
-      MOVETO( hDC, nPlus , IIF( nPenWidth > 1, nBottom/2, 0 ) )
-      LINETO( hDC, nRight, IIF( nPenWidth > 1, nBottom/2, 0 ) )
-   CASE cType == "LINEVERTICAL"
-      MOVETO( hDC, IIF( nPenWidth > 1, nRight/2, 0 ), nPlus )
-      LINETO( hDC, IIF( nPenWidth > 1, nRight/2, 0 ), nBottom )
-   CASE cType == "RECTANGLE"
+   do case
+   case cType == "LINEUP"
+      MoveTo( hDC, nPlus, nBottom )
+      LineTo( hDC, nRight, nPlus )
+   case cType == "LINEDOWN"
+      MoveTo( hDC, nPlus, nPlus )
+      LineTo( hDC, nRight, nBottom )
+   case cType == "LINEHORIZONTAL"
+      MoveTo( hDC, nPlus , IIF( nPenWidth > 1, nBottom/2, 0 ) )
+      LineTo( hDC, nRight, IIF( nPenWidth > 1, nBottom/2, 0 ) )
+   case cType == "LINEVERTICAL"
+      MoveTo( hDC, IIF( nPenWidth > 1, nRight/2, 0 ), nPlus )
+      LineTo( hDC, IIF( nPenWidth > 1, nRight/2, 0 ), nBottom )
+   case cType == "RECTANGLE"
       RoundRect( hDC, nPlus, nPlus, nRight, nBottom, nRndWidth*2, nRndHeight*2 )
-   CASE cType == "ELLIPSE"
+   case cType == "ELLIPSE"
       Ellipse( hDC, nPlus, nPlus, nRight, nBottom )
-   ENDCASE
+   endcase
 
    SelectObject( hDC, hOldPen )
    DeleteObject( hPen )
    SelectObject( hDC, hOldBrush )
    DeleteObject( hBrush )
 
-RETURN (.T.)
+return .T.
 
+//----------------------------------------------------------------------------//
 
-*-- FUNCTION -----------------------------------------------------------------
-* Name........: DrawBarcode
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
-FUNCTION DrawBarcode( hDC, cText, nTop, nLeft, nWidth, nHeight, nBCodeType, ;
+function DrawBarcode( hDC, cText, nTop, nLeft, nWidth, nHeight, nBCodeType, ;
                       nColText, nColPane, nOrient, lTransparent, nPinWidth )
 
-   LOCAL oBC
-   LOCAL lHorizontal := IIF( nOrient = 1, .T., .F. )
+   local oBC
+   local lHorizontal := IIF( nOrient = 1, .T., .F. )
 
    //Bei Ausdrucken wird ein Dummy-Wert gezeigt
-   IF ALLTRIM(SUBSTR( cText, 1, 1 )) = "["
+   if AllTrim(SUBSTR( cText, 1, 1 )) = "["
       cText := "12345678"
-   ENDIF
+   endif
 
    oBC := VRDBarcode():New( hDC, cText, nTop, nLeft, nWidth, nHeight, nBCodeType, ;
                             nColText, nColPane, lHorizontal, lTransparent, nPinWidth )
    oBC:ShowBarcode()
 
-RETURN (.T.)
+return .T.
 
+//----------------------------------------------------------------------------//
 
-*-- FUNCTION -----------------------------------------------------------------
-* Name........: IsGraphic
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
-FUNCTION IsGraphic( cTyp )
+function IsGraphic( cTyp )
 
-   LOCAL lReturn := .F.
+   local lreturn := .F.
 
-   IF cTyp == "LINEUP" .OR. ;
+   if cTyp == "LINEUP" .OR. ;
       cTyp == "LINEDOWN" .OR. ;
       cTyp == "LINEHORIZONTAL" .OR. ;
       cTyp == "LINEVERTICAL" .OR. ;
       cTyp == "RECTANGLE" .OR. ;
       cTyp == "ELLIPSE"
-      lReturn := .T.
-   ENDIF
+      lreturn := .T.
+   endif
 
-RETURN ( lReturn )
+return ( lreturn )
+
+//----------------------------------------------------------------------------//
