@@ -25,13 +25,8 @@ MEMVAR oClpGeneral, cDefIni, cDefIniPath, cGeneralIni, nMeasure, cMeasure, lDemo
 MEMVAR oMainWnd, lProfi, nUndoCount, nRedoCount, nDlgTextCol, nDlgBackCol
 MEMVAR lPersonal, lStandard, oGenVar, oCurDlg
 
-* - function ---------------------------------------------------------------
-*  function....: Start()
-*  Beschreibung:
-*  Argumente...: None
-*  Rückgabewert:
-*  Author......: Timm Sodtalbers
-* --------------------------------------------------------------------------
+//----------------------------------------------------------------------------//
+
 function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 )
 
    local i, oBrush, oIni, aTest, nTime1, nTime2, cTest, oIcon, cDateFormat
@@ -78,9 +73,6 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
 
    SET DATE FORMAT IIF( EMPTY( cDateFormat ), "dd.mm.yyyy", cDateFormat )
 
-   //File-Handles erhöhen
-   // SetHandleCount(100)    FiveTech
-
    //Open Undo database
    OpenUndo()
 
@@ -92,7 +84,6 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
 
    DEFINE BRUSH oBrush RESOURCE "background"
 
-   // SetBalloon( .T. )
    SetDlgGradient( { { 1, RGB( 199, 216, 237 ), RGB( 237, 242, 248 ) } } )
    
    DEFINE WINDOW oMainWnd FROM 0, 0 TO 50, 200 VSCROLL ;
@@ -101,7 +92,6 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
       ICON oIcon ;
       MENU BuildMenu()
       
-   //Clipboard
    DEFINE CLIPBOARD oClpGeneral OF oMainWnd
 
    SET MESSAGE OF oMainWnd TO oGenVar:cRegistInfo CENTERED 2010
@@ -109,6 +99,8 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
    DEFINE MSGITEM oMsgInfo OF oMainWnd:oMsgBar SIZE 280
 
    oMainWnd:oMsgBar:KeybOn()
+   oMainWnd:oWndClient:bMouseWheel = { | nKey, nDelta, nXPos, nYPos | ;
+                                  ER_MouseWheel( nKey, nDelta, nXPos, nYPos ) }
 
    BarMenu()
 
@@ -131,16 +123,10 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
 
    lChDir( cOldDir )
 
-return( nil )
+return nil
 
+//----------------------------------------------------------------------------//
 
-*-- function -----------------------------------------------------------------
-*         Name: BarMenu
-*  Description:
-*    Arguments: None
-* return Value: .T.
-*       Author: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function BarMenu()
 
    local aBtn[3]
@@ -268,14 +254,37 @@ function BarMenu()
 
 return .T.
 
+//----------------------------------------------------------------------------//
 
-* - function ---------------------------------------------------------------
-*  function....: PreviewMenu
-*  Beschreibung:
-*  Argumente...: None
-*  Rückgabewert: ( nil )
-*  Author......: Timm Sodtalbers
-* --------------------------------------------------------------------------
+#define MK_MBUTTON          0x0010
+
+function ER_MouseWheel( nKey, nDelta, nXPos, nYPos )
+   
+   local aPoint := { nYPos, nXPos }
+   
+   ScreenToClient( oMainWnd:oWndClient:hWnd, aPoint )
+
+   if IsOverWnd( oMainWnd:oWndClient:hWnd, aPoint[ 1 ], aPoint[ 2 ] )
+      if lAnd( nKey, MK_MBUTTON )
+         if nDelta > 0
+            ScrollVertical( ,,.T. )        //WheelScroll()
+         else
+            ScrollVertical( ,,,.T.,, )
+         endif
+      else
+         if nDelta > 0
+            ScrollVertical( .T.,,,, .T., -( WheelScroll() ) )
+         else
+            ScrollVertical( , .T.,,, .T., WheelScroll() )
+         endif
+      endif
+      oMainWnd:oWndClient:oVScroll:Refresh()
+   endif
+
+return .T.
+
+//----------------------------------------------------------------------------//
+
 function PreviewMenu( oBtn )
 
    local oMenu
@@ -297,14 +306,8 @@ function PreviewMenu( oBtn )
 
 return( oMenu )
 
+//----------------------------------------------------------------------------//
 
-*-- function -----------------------------------------------------------------
-* Name........: StartMessage
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function StartMessage()
 
    IF lBeta = .T.
@@ -322,14 +325,8 @@ function StartMessage()
 
 return .T.
 
+//----------------------------------------------------------------------------//
 
-*-- function -----------------------------------------------------------------
-* Name........: DeclarePublics
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function DeclarePublics( cDefFile )
 
    PUBLIC oMainWnd, oClpGeneral, oTimer
@@ -528,14 +525,8 @@ function DeclarePublics( cDefFile )
 
 return .T.
 
+//----------------------------------------------------------------------------//
 
-*-- function -----------------------------------------------------------------
-*         Name: SetGeneralSettings
-*  Description:
-*    Arguments: None
-* return Value: .T.
-*       Author: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function SetGeneralSettings()
 
    nMeasure := VAL( GetPvProfString( "General", "Measure", "1", cDefIni ) )
@@ -556,14 +547,8 @@ function SetGeneralSettings()
 
 return .T.
 
+//----------------------------------------------------------------------------//
 
-*-- function -----------------------------------------------------------------
-* Name........: IniMainWindow
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function IniMainWindow()
 
    IF .NOT. EMPTY( cDefIni )
@@ -587,21 +572,14 @@ function IniMainWindow()
 
 return .T.
 
-
-*-- function -----------------------------------------------------------------
-* Name........: SetScrollBar
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
+//----------------------------------------------------------------------------//
 
 function SetScrollBar()
 
    local oVScroll
    local nPageZugabe := 392
 
-   if !empty( oMainWnd:oWndClient:oVScroll )
+   if ! Empty( oMainWnd:oWndClient:oVScroll )
       oMainWnd:oWndClient:oVScroll:SetRange( 0, 100 )
       //oMainWnd:oWndClient:oVScroll:SetRange( 0, nTotalHeight )
 
@@ -631,13 +609,8 @@ function SetScrollBar()
 
 return .T.
 
-*-- function -----------------------------------------------------------------
-* Name........: ScrollVertical
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
+//----------------------------------------------------------------------------//
+
 function ScrollVertical( lUp, lDown, lPageUp, lPageDown, lPos, nPosZugabe )
 
    local i, aFirstWndCoors, nAltWert
@@ -698,14 +671,8 @@ function ScrollVertical( lUp, lDown, lPageUp, lPageDown, lPos, nPosZugabe )
 
 return .T.
 
+//----------------------------------------------------------------------------//
 
-*-- function -----------------------------------------------------------------
-* Name........: ScrollHorizont
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function ScrollHorizont( lLeft, lRight, lPageLeft, lPageRight, lPos, nPosZugabe )
 
    local i, aFirstWndCoors, nAltWert
@@ -767,14 +734,8 @@ function ScrollHorizont( lLeft, lRight, lPageLeft, lPageRight, lPos, nPosZugabe 
 
 return .T.
 
+//----------------------------------------------------------------------------//
 
-*-- function -----------------------------------------------------------------
-* Name........: SetMainWnd
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function SetMainWnd()
 
    IF VAL( GetPvProfString( "General", "Maximize", "1", cGeneralIni ) ) = 1
@@ -784,14 +745,8 @@ function SetMainWnd()
 
 return .T.
 
+//----------------------------------------------------------------------------//
 
-*-- function -----------------------------------------------------------------
-* Name........: IniAreasOnBar
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function IniAreasOnBar()
 
    local i, oFont1
@@ -812,14 +767,8 @@ function IniAreasOnBar()
 
 return .T.
 
+//----------------------------------------------------------------------------//
 
-*-- function -----------------------------------------------------------------
-* Name........: SetWinNull
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function SetWinNull()
 
    local i
@@ -833,14 +782,8 @@ function SetWinNull()
 
 return .T.
 
+//----------------------------------------------------------------------------//
 
-*-- function -----------------------------------------------------------------
-* Name........: ShowAreasOnBar
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function ShowAreasOnBar()
 
    local i, oFont1
@@ -863,14 +806,8 @@ function ShowAreasOnBar()
 
 return .T.
 
+//----------------------------------------------------------------------------//
 
-* - function ---------------------------------------------------------------
-*  function....: BuildMenu
-*  Beschreibung: Shell-Menu anzeigen
-*  Argumente...: None
-*  Rückgabewert: ( nil )
-*  Author......: Timm Sodtalbers
-* --------------------------------------------------------------------------
 function BuildMenu()
 
    local oMenu
@@ -1086,13 +1023,8 @@ function BuildMenu()
 
 return( oMenu )
 
+//----------------------------------------------------------------------------//
 
-*-- function -----------------------------------------------------------------
-*         Name: PopupMenu
-* Beschreibung:
-*    Argumente: None
-* Rückgabewert: .T.                   Autor: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function PopupMenu( nArea, oItem, nRow, nCol, lItem )
 
    local oMenu
@@ -1140,14 +1072,8 @@ function PopupMenu( nArea, oItem, nRow, nCol, lItem )
 
 return .T.
 
+//----------------------------------------------------------------------------//
 
-*-- function -----------------------------------------------------------------
-* Name........: GenerateSource
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function GenerateSource( nArea )
 
    local i, oDlg, oGet1, cDir, cAreaDef, cAreaTitle, cItemDef, oRad1
@@ -1241,14 +1167,8 @@ function GenerateSource( nArea )
 
 return (nil)
 
+//----------------------------------------------------------------------------//
 
-*-- function -----------------------------------------------------------------
-* Name........: ClientWindow
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function ClientWindows()
 
    local i, nWnd, cItemDef, cTitle, nWidth, nHeight, nDemoWidth
@@ -1342,14 +1262,8 @@ function ClientWindows()
 
 return .T.
 
+//----------------------------------------------------------------------------//
 
-*-- function -----------------------------------------------------------------
-* Name........: FillWindow
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function FillWindow( nArea, cAreaIni )
 
    local i, cRuler1, cRuler2, aWerte, nEntry, nTmpCol
@@ -1423,14 +1337,8 @@ function FillWindow( nArea, cAreaIni )
 
 return .T.
 
+//----------------------------------------------------------------------------//
 
-*-- function -----------------------------------------------------------------
-*         Name: SetReticule
-*  Description:
-*    Arguments: None
-* return Value: .T.
-*       Author: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function SetReticule( nRow, nCol, nArea )
 
    local nRowPos := nRow
@@ -1456,7 +1364,7 @@ function SetReticule( nRow, nCol, nArea )
 
 return .T.
 
-*-----------------------------------------------------------------------------
+//----------------------------------------------------------------------------//
 
 function DrawRulerLines( oWnd, nColPos )
 
@@ -1473,13 +1381,8 @@ function DrawRulerLines( oWnd, nColPos )
 
 return nil
 
-*-- function -----------------------------------------------------------------
-*         Name: SetTitleColor
-*  Description:
-*    Arguments: None
-* return Value: .T.
-*       Author: Timm Sodtalbers
-*-----------------------------------------------------------------------------
+//----------------------------------------------------------------------------//
+
 function SetTitleColor( lOff )
 
    IF lOff = .T.
@@ -1492,14 +1395,8 @@ function SetTitleColor( lOff )
 
 return .T.
 
+//----------------------------------------------------------------------------//
 
-*-- function -----------------------------------------------------------------
-* Name........: ZeichneHintergrund
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function ZeichneHintergrund( nArea )
 
    local nWidth  := ER_GetPixel( oGenVar:aAreaSizes[ nArea, 1 ] )
@@ -1520,14 +1417,8 @@ function ZeichneHintergrund( nArea )
 
 return .T.
 
+//----------------------------------------------------------------------------//
 
-*-- function -----------------------------------------------------------------
-* Name........: WndKeyDownAction
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function WndKeyDownAction( nKey, nArea, cAreaIni )
 
    local i, aWerte, nTop, nLeft, nHeight, nWidth
@@ -1606,14 +1497,8 @@ function WndKeyDownAction( nKey, nArea, cAreaIni )
 
 return .T.
 
+//----------------------------------------------------------------------------//
 
-*-- function -----------------------------------------------------------------
-* Name........: DelSelectItems
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function DelSelectItems()
 
    local i
@@ -1635,14 +1520,8 @@ function DelSelectItems()
 
 return .T.
 
+//----------------------------------------------------------------------------//
 
-*-- function -----------------------------------------------------------------
-* Name........: MsgBarInfos
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function MsgBarInfos( nRow, nCol )
 
    DEFAULT nRow := 0
@@ -1653,14 +1532,8 @@ function MsgBarInfos( nRow, nCol )
 
 return .T.
 
+//----------------------------------------------------------------------------//
 
-*-- function -----------------------------------------------------------------
-* Name........: CheckStyle
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function CheckStyle( nPenSize, cStyle )
 
    IF nPenSize > 1
@@ -1669,14 +1542,8 @@ function CheckStyle( nPenSize, cStyle )
 
 return .T.
 
+//----------------------------------------------------------------------------//
 
-*-- function -----------------------------------------------------------------
-* Name........: ShowFontChoice
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function ShowFontChoice( nCurrentFont )
 
    local i, oDlg, oLbx, oSay1, oGet1
@@ -1722,14 +1589,8 @@ function ShowFontChoice( nCurrentFont )
 
 return ( IIF( nFont = 0, nCurrentFont, nFont ) )
 
+//----------------------------------------------------------------------------//
 
-*-- function -----------------------------------------------------------------
-* Name........: GetCurrentFont
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function GetCurrentFont( nCurrentFont, aGetFonts, nTyp )
 
    local cCurFont := ""
@@ -1754,14 +1615,8 @@ function GetCurrentFont( nCurrentFont, aGetFonts, nTyp )
 
 return cCurFont
 
+//----------------------------------------------------------------------------//
 
-*-- function -----------------------------------------------------------------
-* Name........: ShowColorChoice
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function ShowColorChoice( nCurrentClr )
 
    local oIni, oDlg, nDefClr
@@ -1852,16 +1707,10 @@ function ShowColorChoice( nCurrentClr )
    MEMORY(-1)
    SYSREFRESH()
 
-return ( nColor )
+return nColor
 
+//----------------------------------------------------------------------------//
 
-*-- function -----------------------------------------------------------------
-* Name........: DefineFonts
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function DefineFonts()
 
    local i, cFontDef
@@ -1887,26 +1736,14 @@ function DefineFonts()
 
 return .T.
 
+//----------------------------------------------------------------------------//
 
-*-- function -----------------------------------------------------------------
-* Name........: GetColor
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function GetColor( nNr )
 
 return VAL( GetPvProfString( "Colors", ALLTRIM(STR( nNr, 5 )) , "", cDefIni ) )
 
+//----------------------------------------------------------------------------//
 
-*-- function -----------------------------------------------------------------
-* Name........: GetAllColors
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function GetAllColors()
 
    local i
@@ -1918,14 +1755,8 @@ function GetAllColors()
 
 return ( aColors )
 
+//----------------------------------------------------------------------------//
 
-*-- function -----------------------------------------------------------------
-* Name........: GeneralSettings
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function GeneralSettings()
 
    local i, oDlg, oFld, oLbx, oSay1, oGet1, nDefClr, oIni
@@ -2089,14 +1920,8 @@ function GeneralSettings()
 
 return .T.
 
+//----------------------------------------------------------------------------//
 
-*-- function -----------------------------------------------------------------
-* Name........: Set2Color
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function Set2Color( oColorSay, cColor, nDefClr )
 
    oColorSay:SetColor( SetColor( cColor, nDefClr ), SetColor( cColor, nDefClr ) )
@@ -2104,14 +1929,8 @@ function Set2Color( oColorSay, cColor, nDefClr )
 
 return .T.
 
+//----------------------------------------------------------------------------//
 
-*-- function -----------------------------------------------------------------
-* Name........: Set3Color
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function Set3Color( oColorSay, cColor, nDefClr )
 
    cColor := PADR(ALLTRIM(STR( ChooseColor( VAL(cColor) ), 20 )), 40 )
@@ -2119,14 +1938,8 @@ function Set3Color( oColorSay, cColor, nDefClr )
 
 return ( cColor )
 
+//----------------------------------------------------------------------------//
 
-*-- function -----------------------------------------------------------------
-* Name........: SetColor
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function SetColor( cColor, nDefClr )
 
    local nColor
@@ -2139,14 +1952,8 @@ function SetColor( cColor, nDefClr )
 
 return ( nColor )
 
+//----------------------------------------------------------------------------//
 
-*-- function -----------------------------------------------------------------
-* Name........: GetFontText
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function GetFontText( aGetFonts, lShowEmpty )
 
    local i, cText
@@ -2174,14 +1981,8 @@ function GetFontText( aGetFonts, lShowEmpty )
 
 return ( aShowFonts )
 
+//----------------------------------------------------------------------------//
 
-*-- function -----------------------------------------------------------------
-* Name........: PreviewRefresh()
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function PreviewRefresh( oSay, oLbx, oGet )
 
    local nID := VAL(SUBSTR( oLbx:GetItem(oLbx:GetPos()), 1, 2))
@@ -2195,14 +1996,8 @@ function PreviewRefresh( oSay, oLbx, oGet )
 
 return .T.
 
+//----------------------------------------------------------------------------//
 
-*-- function -----------------------------------------------------------------
-* Name........: SelectFont
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function SelectFont( oSay, oLbx, oGet )
 
    local oDlg, cFontDef, oFontGet, oIni, oNewFont, aShowFonts, nPos, aFontNames
@@ -2326,14 +2121,8 @@ function SelectFont( oSay, oLbx, oGet )
 
 return ( aShowFonts )
 
+//----------------------------------------------------------------------------//
 
-*-- function -----------------------------------------------------------------
-* Name........: GetFonts
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function GetFonts()
 
    local i, cFontDef
@@ -2375,16 +2164,10 @@ function GetFonts()
 
    NEXT
 
-return ( aWerte )
+return aWerte
 
+//----------------------------------------------------------------------------//
 
-*-- function -----------------------------------------------------------------
-* Name........: ReportSettings
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function ReportSettings()
 
    local i, oDlg, oIni, aGrp[2], oRad1, aGet[ 1 ]
@@ -2471,14 +2254,8 @@ function ReportSettings()
 
 return .T.
 
+//----------------------------------------------------------------------------//
 
-*-- function -----------------------------------------------------------------
-*         Name: GetPaperSizes
-*  Description:
-*    Arguments: None
-* return Value: .T.
-*       Author: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function GetPaperSizes()
 
    local aSizes := { "Letter 8 1/2 x 11 inch"        , ;
@@ -2526,14 +2303,8 @@ function GetPaperSizes()
 
 return ( aSizes )
 
+//----------------------------------------------------------------------------//
 
-*-- function -----------------------------------------------------------------
-* Name........: Options
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function Options()
 
    local i, oDlg, oIni, cLanguage, cOldLanguage, cWert, aCbx[4], aGrp[2], oRad1
@@ -2652,14 +2423,8 @@ function Options()
 
 return .T.
 
+//----------------------------------------------------------------------------//
 
-*-- function -----------------------------------------------------------------
-* Name........: ItemList
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function ItemList()
 
    local oDlg
@@ -2681,14 +2446,8 @@ function ItemList()
 
 return nil
 
+//----------------------------------------------------------------------------//
 
-*-- function -----------------------------------------------------------------
-* Name........: ListTrees
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function ListTrees( oTree )
 
    local i, y, oTr1, oTr2, cItemDef, aElemente, nEntry, cTitle
@@ -2757,14 +2516,8 @@ function ListTrees( oTree )
 
 return oTree
 
+//----------------------------------------------------------------------------//
 
-*-- function -----------------------------------------------------------------
-* Name........: GetAllItems
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function GetAllItems( cAktAreaIni )
 
    local i, cItemDef, cTyp, cName, nShow, nTyp, nDelete, nEntry
@@ -2806,16 +2559,10 @@ function GetAllItems( cAktAreaIni )
 
    NEXT
 
-return ( aWerte )
+return aWerte
 
+//----------------------------------------------------------------------------//
 
-*-- function -----------------------------------------------------------------
-* Name........: ClickListTree
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function ClickListTree( oTree )
 
    local cItemDef ,nItem, oLinkArea, nArea, lWert
@@ -2872,14 +2619,8 @@ function ClickListTree( oTree )
 
 return .T.
 
+//----------------------------------------------------------------------------//
 
-*-- function -----------------------------------------------------------------
-* Name........: SetGraphTreeBmp
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function SetGraphTreeBmp( nItem, cAreaIni )
 
    local cItemDef := ALLTRIM( GetPvProfString( "Items", ALLTRIM(STR(nItem,5)) , "", cAreaIni ) )
@@ -2888,14 +2629,8 @@ function SetGraphTreeBmp( nItem, cAreaIni )
 
 return ( nIndex + 9 )
 
+//----------------------------------------------------------------------------//
 
-*-- function -----------------------------------------------------------------
-* Name........: AreaProperties
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function AreaProperties( nArea )
 
    local i, oDlg, oIni, oBtn, oRad1, aCbx[6], aGrp[5], oSay1
@@ -3040,14 +2775,8 @@ function AreaProperties( nArea )
 
 return .T.
 
+//----------------------------------------------------------------------------//
 
-*-- function -----------------------------------------------------------------
-*         Name: SetAreaFormulaBtn
-*  Description:
-*    Arguments: None
-* return Value: .T.
-*       Author: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function SetAreaFormulaBtn( nID, nField, oDlg )
 
    local oBtn
@@ -3060,16 +2789,10 @@ function SetAreaFormulaBtn( nID, nField, oDlg )
                oBtn:cToolTip := GetSourceToolTip( aTmpSource[ nField ] ), ;
                oBtn:Refresh() )
 
-return ( oBtn )
+return oBtn
 
+//----------------------------------------------------------------------------//
 
-*-- function -----------------------------------------------------------------
-* Name........: AreaChange
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function AreaChange( nArea, cAreaTitle, nOldWidth, nWidth, nOldHeight, nHeight )
 
    local i
@@ -3111,14 +2834,8 @@ function AreaChange( nArea, cAreaTitle, nOldWidth, nWidth, nOldHeight, nHeight )
 
 return .T.
 
+//----------------------------------------------------------------------------//
 
-*-- function -----------------------------------------------------------------
-* Name........: AreaHide
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function AreaHide( nArea )
 
    local i, nDifferenz
@@ -3145,7 +2862,7 @@ function AreaHide( nArea )
 
 return .T.
 
-// dummy for now
+//----------------------------------------------------------------------------//
 
 function EasyPreview()
 
@@ -3153,8 +2870,12 @@ function EasyPreview()
    
 return nil   
 
+//----------------------------------------------------------------------------//
+
 function TScript()
 
    MsgInfo( "TScript not linked yet" )
    
 return nil   
+
+//----------------------------------------------------------------------------//
