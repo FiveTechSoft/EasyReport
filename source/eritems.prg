@@ -16,43 +16,53 @@ MEMVAR oMainWnd, lProfi, nUndoCount, nRedoCount, oCurDlg, oGenVar
 
 //----------------------------------------------------------------------------//
 
-function ElementActions( oItems, i, cName, nArea, cAreaIni, cTyp )
+function ElementActions( oItem, i, cName, nArea, cAreaIni, cTyp )
 
-   oItems:bLDblClick := {|| IIF( GetKeyState( VK_SHIFT ), MultiItemProperties(), ;
-                                 ( ItemProperties( i, nArea ), oCurDlg:SetFocus() ) ) }
+   oItem:bLDblClick = { || If( GetKeyState( VK_SHIFT ), MultiItemProperties(), ;
+                             ( ItemProperties( i, nArea ), oCurDlg:SetFocus() ) ) }
 
    //oItems:bGotFocus  := {|| SelectItem( i, nArea, cAreaIni ), MsgBarInfos( i, cAreaIni ) }
-   oItems:bLClicked  := {| nRow, nCol, nFlags | ;
-      IIF( oGenVar:lItemDlg, ( IIF( GetKeyState( VK_SHIFT ), MultiItemProperties(), ;
-                               ( ItemProperties( i, nArea ), oCurDlg:SetFocus() ) ) ), ;
-                             ( SelectItem( i, nArea, cAreaIni ), ;
-                               nInfoRow := nRow, nInfoCol := nCol, ;
-                               MsgBarItem( i, nArea, cAreaIni, nRow, nCol ) ) ) }
-      //AEVAL( oItems:aDots, {|x| x:Show(), BringWindowToTop( x:hWnd ), x:Refresh() } ) }
 
-   //oItems:bMoved     := {|| IIF( GetKeyState( VK_SHIFT ), .T., SetItemSize( i, nArea, cAreaIni ) ), ;
+   oItem:bLClicked = { | nRow, nCol, nFlags | ;
+      If( oGenVar:lItemDlg, ( If( GetKeyState( VK_SHIFT ), MultiItemProperties(), ;
+                            ( ItemProperties( i, nArea ), oCurDlg:SetFocus() ) ) ), ;
+                            ( SelectItem( i, nArea, cAreaIni ), ;
+                              nInfoRow := nRow, nInfoCol := nCol, ;
+                              MsgBarItem( i, nArea, cAreaIni, nRow, nCol ) ) ) }
+
+   // AEVAL( oItems:aDots, {|x| x:Show(), BringWindowToTop( x:hWnd ), x:Refresh() } ) }
+
+   // oItems:bMoved     := {|| IIF( GetKeyState( VK_SHIFT ), .T., SetItemSize( i, nArea, cAreaIni ) ), ;
    //                         MsgBarItem( i, nArea, cAreaIni,,, .T. ) }
 
-   //oItems:bResized   := {|| IIF( GetKeyState( VK_SHIFT ), .T., SetItemSize( i, nArea, cAreaIni ) ), ;
+   // oItems:bResized   := {|| IIF( GetKeyState( VK_SHIFT ), .T., SetItemSize( i, nArea, cAreaIni ) ), ;
    //                         MsgBarItem( i, nArea, cAreaIni,,, .T. ) }
 
-   oItems:bMoved     := {|| SetItemSize( i, nArea, cAreaIni ), MsgBarItem( i, nArea, cAreaIni,,, .T. ) }
+   oItem:bMoved   = { || SetItemSize( i, nArea, cAreaIni ),;
+                         MsgBarItem( i, nArea, cAreaIni,,, .T. ) }
 
-   oItems:bResized   := {|| SetItemSize( i, nArea, cAreaIni ), MsgBarItem( i, nArea, cAreaIni,,, .T. ) }
+   oItem:bResized = { || SetItemSize( i, nArea, cAreaIni ),;
+                         MsgBarItem( i, nArea, cAreaIni,,, .T. ) }
 
-   oItems:bMMoved    := {| nRow, nCol, nFlags | MsgBarItem( i, nArea, cAreaIni, nRow, nCol ) }
+   oItem:bMMoved  = { | nRow, nCol, nFlags, aPoint | ;
+                        aPoint := { nRow, nCol },;
+                        aPoint := ClientToScreen( oItem:hWnd, aPoint ),;
+                        aPoint := ScreenToClient( aWnd[ nArea ]:hWnd, aPoint ),;
+                        nRow := aPoint[ 1 ], nCol := aPoint[ 2 ],;
+                        SetReticule( nRow, nCol, nArea ),;
+                        MsgBarItem( i, nArea, cAreaIni, nRow, nCol ) }
 
-   oItems:bRClicked  := {| nRow, nCol, nFlags | oItems:SetFocus(), ;
-                                                ItemPopupMenu( oItems, i, nArea, nRow, nCol ) }
+   oItem:bRClicked = { | nRow, nCol, nFlags | oItem:SetFocus(),;
+                         ItemPopupMenu( oItem, i, nArea, nRow, nCol ) }
 
-   oItems:nDlgCode = DLGC_WANTALLKEYS
+   oItem:nDlgCode = DLGC_WANTALLKEYS
    
-   oItems:bKeyDown   := {| nKey | KeyDownAction( nKey, i, nArea, cAreaIni ) }
+   oItem:bKeyDown   = { | nKey | KeyDownAction( nKey, i, nArea, cAreaIni ) }
 
-   oItems:bLostFocus := {| nRow, nCol, nFlags | ;
-                             ( SelectItem( i, nArea, cAreaIni ), ;
-                               nInfoRow := nRow, nInfoCol := nCol, ;
-                               MsgBarItem( i, nArea, cAreaIni, nRow, nCol ) ) }
+   oItem:bLostFocus = { | nRow, nCol, nFlags | ;
+                        ( SelectItem( i, nArea, cAreaIni ), ;
+                          nInfoRow := nRow, nInfoCol := nCol, ;
+                          MsgBarItem( i, nArea, cAreaIni, nRow, nCol ) ) }
 
 return .T.
 
