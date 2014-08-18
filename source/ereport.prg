@@ -1288,15 +1288,17 @@ function FillWindow( nArea, cAreaIni )
       SIZE 400, nRulerTop-nRuler-2 PIXEL FONT oGenVar:aAppFonts[ 1 ] ;
       COLORS oGenVar:nF1ClrAreaTitle, oGenVar:nBClrAreaTitle OF aWnd[ nArea ]
 
-   @ nRulerTop-nRuler, 20 BITMAP oRulerBmp2 RESOURCE cRuler1 OF aWnd[ nArea ] PIXEL NOBORDER
+   @ nRulerTop - nRuler, 20 BITMAP oRulerBmp2 RESOURCE cRuler1 ;
+      OF aWnd[ nArea ] PIXEL NOBORDER
    
-   @ nRulerTop-nRuler, 0 BITMAP oRulerBmp2 RESOURCE cRuler2 OF aWnd[ nArea ] PIXEL NOBORDER
+   @ nRulerTop - nRuler, 0 BITMAP oRulerBmp2 RESOURCE cRuler2 ;
+      OF aWnd[ nArea ] PIXEL NOBORDER
 
    // @ nRulerTop-nRuler, 20 SAY aRuler[ nArea, 1 ] PROMPT "" SIZE  1, 20 PIXEL ;
    //    COLORS oGenVar:nClrReticule, oGenVar:nClrReticule OF aWnd[ nArea ]
    
-   @ 20, 0 SAY aRuler[ nArea, 2 ] PROMPT "" SIZE 20,  1 PIXEL ;
-      COLORS oGenVar:nClrReticule, oGenVar:nClrReticule OF aWnd[ nArea ]
+   // @ 20, 0 SAY aRuler[ nArea, 2 ] PROMPT "" SIZE 20,  1 PIXEL ;
+   //    COLORS oGenVar:nClrReticule, oGenVar:nClrReticule OF aWnd[ nArea ]
    
    aWnd[ nArea ]:bPainted  = {| hDC, cPS | ZeichneHintergrund( nArea ) }
 
@@ -1357,25 +1359,54 @@ function SetReticule( nRow, nCol, nArea )
       nColPos := ER_GetPixel( oGenVar:aAreaSizes[ nArea, 1 ] ) + nRuler
    endif
 
-   aRuler[ nArea, 2 ]:Move( nRowPos, 0, ;
-      IIF( lShow, ER_GetPixel( oGenVar:aAreaSizes[ nArea, 1 ] ) + nRuler, nRuler ), 1, .T. )
+   // aRuler[ nArea, 2 ]:Move( nRowPos, 0, ;
+   //    IIF( lShow, ER_GetPixel( oGenVar:aAreaSizes[ nArea, 1 ] ) + nRuler, nRuler ), 1, .T. )
 
-   AEval( aWnd, { | oWnd | If( oWnd != nil, DrawRulerLines( oWnd, nColPos ),) } )
+   // if lShow 
+      DrawRulerHorzLine( aWnd[ nArea ], nRowPos )
+
+      AEval( aWnd, { | oWnd | If( oWnd != nil, DrawRulerVertLine( oWnd, nColPos ),) } )
+   // endif   
 
 return .T.
 
 //----------------------------------------------------------------------------//
 
-function DrawRulerLines( oWnd, nColPos )
+function DrawRulerHorzLine( oWnd, nRowPos )
 
    local hDC := oWnd:GetDC()
 
-   if ! Empty( oWnd:Cargo ) 
-      InvertRect( hDC, oWnd:Cargo )
+   if Empty( oWnd:Cargo )
+      oWnd:Cargo = Array( 2 )
+   endif      
+
+   if ! Empty( oWnd:Cargo[ 1 ] )   // Horizontal line position
+      InvertRect( hDC, oWnd:Cargo[ 1 ] )
    endif   
    
-   oWnd:Cargo = { 17, nColPos, 37, nColPos + 1 }
-   InvertRect( hDC, oWnd:Cargo )
+   oWnd:Cargo[ 1 ] = { nRowPos, 0, nRowPos + 1, 20 }
+   InvertRect( hDC, oWnd:Cargo[ 1 ] )
+
+   oWnd:ReleaseDC()
+
+return nil
+
+//----------------------------------------------------------------------------//
+
+function DrawRulerVertLine( oWnd, nColPos )
+
+   local hDC := oWnd:GetDC()
+
+   if Empty( oWnd:Cargo )
+      oWnd:Cargo = Array( 2 )
+   endif      
+
+   if ! Empty( oWnd:Cargo[ 2 ] )  // vertical line position
+      InvertRect( hDC, oWnd:Cargo[ 2 ] )
+   endif   
+   
+   oWnd:Cargo[ 2 ] = { 17, nColPos, 37, nColPos + 1 }
+   InvertRect( hDC, oWnd:Cargo[ 2 ] )
 
    oWnd:ReleaseDC()
 

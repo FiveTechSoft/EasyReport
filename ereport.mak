@@ -77,7 +77,7 @@ ereport.exe  : $(OBJS) $(COBJS) ereport.res
    echo $(BCDIR)\lib\psdk\msimg32.lib + >> b32.bc
    echo $(BCDIR)\lib\psdk\rasapi32.lib, >> b32.bc
 
-   IF EXIST ereport.res echo ereport.res >> b32.bc
+   echo ereport.res >> b32.bc
    $(BCDIR)\bin\ilink32 -Gn -aa -Tpe -s @b32.bc
    del b32.bc
 
