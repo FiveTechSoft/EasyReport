@@ -1475,8 +1475,6 @@ function MsgBarItem( nItem, nArea, cAreaIni, nRow, nCol, lResize )
                         GL("Width:")  + " " + AllTrim( aItemPosition[3] ) + "  " + ;
                         GL("Height:") + " " + AllTrim( aItemPosition[4] ) )
 
-      // SetReticule( aItemPixelPos[2] + nRulerTop, aItemPixelPos[1] + nRuler, nArea )
-
    ELSE
       nInfoRow := 0; nInfoCol := 0 // nRulerTop := 0; nRuler := 0 // FiveTech
       
@@ -1484,8 +1482,6 @@ function MsgBarItem( nItem, nArea, cAreaIni, nRow, nCol, lResize )
                   ( nLoWord( aItems[nArea,nItem]:nPoint ) - nInfoRow ) - nRulerTop
       nLeft := aItems[nArea,nItem]:nLeft + ;
                   ( nHiWord( aItems[nArea,nItem]:nPoint ) - nInfoCol ) - nRuler
-
-      // SetReticule( nTop + nRulerTop, nLeft + nRuler, nArea )
 
       /* FiveTech
       oMsgInfo:SetText( GL("ID") + ": " + cItemID + "  " + ;

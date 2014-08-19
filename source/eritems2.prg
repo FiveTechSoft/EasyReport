@@ -209,7 +209,6 @@ FUNCTION StartSelection( nRow, nCol, oAktWnd )
    oAktWnd:Capture()
 
    oGenVar:lSelectItems := .T.
-   //SetReticule( nRow, nCol, nAktArea, .T. )
 
    RectDotted( oAktWnd:hWnd, nBoxTop, nBoxLeft, nBoxBottom, nBoxRight )
 
@@ -276,7 +275,6 @@ FUNCTION StopSelection( nRow, nCol, oAktWnd )
    ENDIF
 
    oGenVar:lSelectItems := .F.
-   //SetReticule( nRow, nCol, nAktArea, .F. )
 
 RETURN (.T.)
 
