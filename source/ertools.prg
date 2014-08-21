@@ -148,21 +148,17 @@ FUNCTION IniColor( cColor, nDefColor )
 
 RETURN ( nColor )
 
+//-----------------------------------------------------------------------------//
 
-*-- FUNCTION -----------------------------------------------------------------
-* Name........: GetDBField
-* Beschreibung:
-* Argumente...: None
-* R�ckgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 FUNCTION GetDBField( oGet, lInsert )
-
+   LOCAL cPath := GetCurDir()+"\Datas\"    
    LOCAL oDlg, oLbx1, oLbx2, i, cDbase, cField, oBtn, aTemp, cGeneral, cUser
    LOCAL nShowExpr  := VAL( GetPvProfString( "General", "Expressions", "0", cDefIni ) )
    LOCAL nShowDBase := VAL( GetPvProfString( "General", "EditDatabases", "1", cDefIni ) )
-   LOCAL cGenExpr   := ALLTRIM( cDefaultPath + GetPvProfString( "General", "GeneralExpressions", "", cDefIni ) )
-   LOCAL cUserExpr  := ALLTRIM( cDefaultPath + GetPvProfString( "General", "UserExpressions", "", cDefIni ) )
+   LOCAL cGenExpr   := ALLTRIM( cPath + GetPvProfString( "General", "GeneralExpressions", "", cDefIni ) )  // change CDefaultPath 
+   LOCAL cUserExpr  := ALLTRIM( cPath + GetPvProfString( "General", "UserExpressions", "", cDefIni ) )      // change CDefaultPath 
+  // LOCAL cGenExpr   := ALLTRIM( cDefaultPath + GetPvProfString( "General", "GeneralExpressions", "", cDefIni ) )
+  // LOCAL cUserExpr  := ALLTRIM( cDefaultPath + GetPvProfString( "General", "UserExpressions", "", cDefIni ) )
    LOCAL nLen       := LEN( oGenVar:aDBFile )
    LOCAL aDbase     := {}
    LOCAL lOK        := .T.
@@ -239,14 +235,8 @@ FUNCTION GetDBField( oGet, lInsert )
 
 RETURN (.T.)
 
+//-----------------------------------------------------------------------------//
 
-*-- FUNCTION -----------------------------------------------------------------
-*         Name: GetExprFields
-*  Description:
-*    Arguments: None
-* Return Value: .T.
-*       Author: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 FUNCTION GetExprFields( cDatabase )
 
    LOCAL nSelect := SELECT()
