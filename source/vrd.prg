@@ -62,6 +62,7 @@ CLASS VRD
    DATA cRDD            // name of the replacable database driver
    DATA cReportName, cDefaultPath, cAreaFilesDir, cInfoSay, cInfoSay2, cPrinter
    DATA cDefIniPath
+   DATA cDataPath
 
    DATA nTopMargin      // Top paper margin
    DATA nLeftMargin     // Left paper margin
@@ -206,6 +207,7 @@ METHOD New( cReportName, lPreview, cPrinter, oWnd, lModal, lPrintIDs, lNoPrint, 
    ::lAreaStartUsed   := .F.
    ::lBreak           := .F.
    ::cDefaultPath     := ::CheckPath( GetPvProfString( "General", "DefaultPath", "", ".\VRD.INI" ) )
+   ::cDataPath        :=  GetCurDir()+"\Datas\"
    ::lDialogCancel    := .F.
    ::nCopies          := nCopies
    ::Cargo            := ""
@@ -1790,8 +1792,11 @@ RETURN aWerte[ IIF( lHeight = .T. , 1, 2 ) ]
 METHOD SetExpression( cName, cExpression, cInfo ) CLASS VRD
 
    LOCAL nAltSel
-   LOCAL cGenExpr := ::cDefaultPath + ;
+   LOCAL cGenExpr := ::cDataPath + ;
                      GetPvProfString( "General", "GeneralExpressions", "", ::cDefIni )
+                     
+  //  LOCAL cGenExpr := ::cDefaultPath + ;
+  //                   GetPvProfString( "General", "GeneralExpressions", "", ::cDefIni )                  
 
    DEFAULT cName       := ""
    DEFAULT cExpression := ""
@@ -1831,9 +1836,13 @@ METHOD GetExpression( cName ) CLASS VRD
    LOCAL nAltSel, cExprDBF
    LOCAL lDatabase   := .F.
    LOCAL cExpression := "substr(' ', 1)"
-   LOCAL cGenExpr    := ::cDefaultPath + GetPvProfString( "General", "GeneralExpressions", "", ::cDefIni )
-   LOCAL cUserExpr   := ::cDefaultPath + GetPvProfString( "General", "UserExpressions"   , "", ::cDefIni )
-   LOCAL cDataExpr   := ::cDefaultPath + GetPvProfString( "General", "DataExpressions"   , "", ::cDefIni )
+   LOCAL cGenExpr    := ::cDataPath + GetPvProfString( "General", "GeneralExpressions", "", ::cDefIni )
+   LOCAL cUserExpr   := ::cDataPath + GetPvProfString( "General", "UserExpressions"   , "", ::cDefIni )
+   LOCAL cDataExpr   := ::cDataPath + GetPvProfString( "General", "DataExpressions"   , "", ::cDefIni )
+   
+  // LOCAL cGenExpr    := ::cDefaultPath + GetPvProfString( "General", "GeneralExpressions", "", ::cDefIni )
+  // LOCAL cUserExpr   := ::cDefaultPath + GetPvProfString( "General", "UserExpressions"   , "", ::cDefIni )
+  // LOCAL cDataExpr   := ::cDefaultPath + GetPvProfString( "General", "DataExpressions"   , "", ::cDefIni )
 
    DEFAULT cName := ""
 
@@ -1905,7 +1914,8 @@ RETURN ( cExpression )
 METHOD DelExpression( cName ) CLASS VRD
 
    LOCAL nAltSel
-   LOCAL cGenExpr := ::cDefaultPath + GetPvProfString( "General", "GeneralExpressions", "", ::cDefIni )
+   LOCAL cGenExpr := ::cDataPath + GetPvProfString( "General", "GeneralExpressions", "", ::cDefIni )
+ //  LOCAL cGenExpr := ::cDefaultPath + GetPvProfString( "General", "GeneralExpressions", "", ::cDefIni )
 
    DEFAULT cName := ""
 

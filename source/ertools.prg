@@ -8,6 +8,7 @@ MEMVAR nAktArea
 MEMVAR aVRDSave
 MEMVAR oClpGeneral, cDefIni, cGeneralIni, nMeasure, lDemo, lBeta, oTimer
 MEMVAR oMainWnd, lProfi, nUndoCount, nRedoCount, lPersonal, lStandard, oGenVar
+MEMVAR oER
 
 Function GetFreeSystemResources()
 Return 0
@@ -126,12 +127,11 @@ RETURN ( nColor )
 //-----------------------------------------------------------------------------//
 
 FUNCTION GetDBField( oGet, lInsert )
-   LOCAL cPath := GetCurDir()+"\Datas\"    
    LOCAL oDlg, oLbx1, oLbx2, i, cDbase, cField, oBtn, aTemp, cGeneral, cUser
    LOCAL nShowExpr  := VAL( GetPvProfString( "General", "Expressions", "0", cDefIni ) )
    LOCAL nShowDBase := VAL( GetPvProfString( "General", "EditDatabases", "1", cDefIni ) )
-   LOCAL cGenExpr   := ALLTRIM( cPath + GetPvProfString( "General", "GeneralExpressions", "", cDefIni ) )  // change CDefaultPath 
-   LOCAL cUserExpr  := ALLTRIM( cPath + GetPvProfString( "General", "UserExpressions", "", cDefIni ) )      // change CDefaultPath 
+   LOCAL cGenExpr   := ALLTRIM( oEr:cDataPath + GetPvProfString( "General", "GeneralExpressions", "", cDefIni ) )  // change CDefaultPath 
+   LOCAL cUserExpr  := ALLTRIM( oEr:cDataPath + GetPvProfString( "General", "UserExpressions", "", cDefIni ) )      // change CDefaultPath 
   // LOCAL cGenExpr   := ALLTRIM( cDefaultPath + GetPvProfString( "General", "GeneralExpressions", "", cDefIni ) )
   // LOCAL cUserExpr  := ALLTRIM( cDefaultPath + GetPvProfString( "General", "UserExpressions", "", cDefIni ) )
    LOCAL nLen       := LEN( oGenVar:aDBFile )
@@ -235,9 +235,8 @@ RETURN ( aTemp )
 
 FUNCTION CreateDbfsExpressions()
 
-  LOCAL cPath := GetCurDir()+"\Datas\"
-  LOCAL cGenExpr   := ALLTRIM( cPath + GetPvProfString( "General", "GeneralExpressions", "", cDefIni ) )
-  LOCAL cUserExpr  := ALLTRIM( cPath + GetPvProfString( "General", "UserExpressions", "", cDefIni ) )
+  LOCAL cGenExpr   := ALLTRIM( oEr:cDataPath + GetPvProfString( "General", "GeneralExpressions", "", cDefIni ) )
+  LOCAL cUserExpr  := ALLTRIM( oEr:cDataPath + GetPvProfString( "General", "UserExpressions", "", cDefIni ) )
 
  LOCAL aGeneral := {;
                     { "NAME"      , "C",    60,    0 },;
@@ -250,8 +249,8 @@ FUNCTION CreateDbfsExpressions()
                  { "EXPRESSION", "C",   200,    0 },;
                  { "INFO"      , "C",   200,    0 } }
 
-  IF ! lIsDir( cPath )
-     lMkDir( cPath )
+  IF ! lIsDir( oEr:cDataPath )
+     lMkDir( oEr:cDataPath )
   ENDIF
   IF !File( cGenExpr  )
      DBCreate( cGenExpr, aGeneral )
@@ -270,6 +269,8 @@ FUNCTION OpenDatabases()
    LOCAL i, x, cEntry, cDbase, aFields, cFilter, cFieldNames, cFieldPos
    LOCAL nSelect     := SELECT()
    LOCAL cSeparator  := GetPvProfString( "Databases", "Separator" , ";", cDefIni )
+
+   CreateDbfsExpressions()
 
    oGenVar:aDBFile := {}
 
@@ -825,8 +826,10 @@ FUNCTION Expressions( lTake, cAltText )
    LOCAL oBtn1, aBtn[3], aGet[5], cName
    LOCAL nAltSel    := SELECT()
    LOCAL nShowExpr  := VAL( GetPvProfString( "General", "Expressions", "0", cDefIni ) )
-   LOCAL cGenExpr   := ALLTRIM( cDefaultPath + GetPvProfString( "General", "GeneralExpressions", "", cDefIni ) )
-   LOCAL cUserExpr  := ALLTRIM( cDefaultPath + GetPvProfString( "General", "UserExpressions", "", cDefIni ) )
+   LOCAL cGenExpr   := ALLTRIM( oEr:cDataPath + GetPvProfString( "General", "GeneralExpressions", "General.dbf", cDefIni ) )
+   LOCAL cUserExpr  := ALLTRIM( oEr:cDataPath + GetPvProfString( "General", "UserExpressions", "User.dbf", cDefIni ) )
+ //  LOCAL cGenExpr   := ALLTRIM( cDefaultPath + GetPvProfString( "General", "GeneralExpressions", "", cDefIni ) )
+ //  LOCAL cUserExpr  := ALLTRIM( cDefaultPath + GetPvProfString( "General", "UserExpressions", "", cDefIni ) )
    LOCAL aUndo      := {}
    LOCAL cErrorFile := ""
    //LOCAL aRDD      := { "DBFNTX", "COMIX", "DBFCDX" }
