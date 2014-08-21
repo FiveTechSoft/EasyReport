@@ -1,4 +1,3 @@
-
 #INCLUDE "FiveWin.ch"
 #INCLUDE "VRD.ch"
 #INCLUDE "Mail.ch"
@@ -154,7 +153,7 @@ RETURN ( nColor )
 * Name........: GetDBField
 * Beschreibung:
 * Argumente...: None
-* Rückgabewert: .T.
+* Rï¿½ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
 FUNCTION GetDBField( oGet, lInsert )
@@ -295,7 +294,7 @@ FUNCTION OpenDatabases()
 
       IF FILE( cDbase ) = .T.
 
-         IF cFileExt( cDBase ) = "DBF"
+         IF Upper( cFileExt( cDBase ) ) = "DBF"
 
             DBUSEAREA( .T.,, cDbase, "DBTEMP", .T. )
             DBGOTOP()
@@ -360,7 +359,7 @@ RETURN (.T.)
 * Name........: Databases
 * Beschreibung:
 * Argumente...: None
-* Rückgabewert: .T.
+* Rï¿½ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
 FUNCTION Databases( lTake )
@@ -439,7 +438,7 @@ RETURN ( NIL )
 * Name........: GetDBase
 * Beschreibung:
 * Argumente...: None
-* Rückgabewert: .T.
+* Rï¿½ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
 FUNCTION GetDBase( cOldFile, oGet1, oGet2 )
@@ -466,7 +465,7 @@ RETURN NIL
 * Name........: DelDBase
 * Beschreibung:
 * Argumente...: None
-* Rückgabewert: .T.
+* Rï¿½ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
 FUNCTION DelDBase( oGet1, oGet2 )
@@ -483,7 +482,7 @@ RETURN NIL
 * Name........: VRD_MsgRun
 * Beschreibung:
 * Argumente...: None
-* Rückgabewert: .T.
+* Rï¿½ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
 FUNCTION VRD_MsgRun( cCaption, cTitle, bAction )
@@ -520,7 +519,7 @@ RETURN NIL
 * Name........: CreateNewFile
 * Beschreibung:
 * Argumente...: None
-* Rückgabewert: .T.
+* Rï¿½ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
 FUNCTION CreateNewFile( cFile )
@@ -551,7 +550,7 @@ RETURN (.T.)
 * Name........: GetSysFont
 * Beschreibung:
 * Argumente...: None
-* Rückgabewert: .T.
+* Rï¿½ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
 FUNCTION GetSysFont()
@@ -570,7 +569,7 @@ RETURN "Ms Sans Serif"                           // Resto (Win NT, 95, 98)
 * Name........: GetDivisible
 * Beschreibung:
 * Argumente...: None
-* Rückgabewert: .T.
+* Rï¿½ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
 FUNCTION GetDivisible( nNr, nDivisor, lPrevious )
@@ -594,7 +593,7 @@ RETURN ( nNr )
 * Name........: IsDivisible
 * Beschreibung:
 * Argumente...: None
-* Rückgabewert: .T.
+* Rï¿½ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
 FUNCTION IsDivisible( nNr, nDivisor )
@@ -611,9 +610,9 @@ RETURN ( lReturn )
 *-- FUNCTION -----------------------------------------------------------------
 * Name........: ADelete( <aArray>, <nIndex> )
 
-* Beschreibung: ADelete() löscht das Array-Element an der Stelle <nIndex> und
+* Beschreibung: ADelete() lï¿½scht das Array-Element an der Stelle <nIndex> und
 *               verkleinert das Array um eins.
-* Rückgabewert: Das geänderte Array
+* Rï¿½ckgabewert: Das geï¿½nderte Array
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
 FUNCTION ADelete( aArray, nIndex )
@@ -635,8 +634,8 @@ RETURN ( aNewArray )
 * Beschreibung: n-tes Auftreten einer Zeichenfolge in Strings ermitteln
 *               StrAtNum() sucht das <nCount>-te Auftreten von <cSearch>
 *               in <cString>. War die Suche erfolgreich, wird die Position
-*               innerhalb <cString> zurückgegeben, andernfalls 0.
-* Rückgabewert: die Position des <nCount>-ten Auftretens von <cSearch>.
+*               innerhalb <cString> zurï¿½ckgegeben, andernfalls 0.
+* Rï¿½ckgabewert: die Position des <nCount>-ten Auftretens von <cSearch>.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
 FUNCTION StrAtNum( cSearch, cString, nNr )
@@ -650,7 +649,7 @@ RETURN AT( cSearch, cString )
 * Name........: GoBottom
 * Beschreibung:
 * Argumente...: None
-* Rückgabewert: .T.
+* Rï¿½ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
 FUNCTION GoBottom()
@@ -664,7 +663,7 @@ RETURN ! Eof()
 * Name........: GetFile
 * Beschreibung:
 * Argumente...: None
-* Rückgabewert: .T.
+* Rï¿½ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
 FUNCTION GetFile( cFileMask, cTitle, nDefaultMask, cInitDir, lSave, nFlags )
@@ -684,7 +683,7 @@ RETURN cGetFile32( cFileMask, cTitle, nDefaultMask, cInitDir, lSave, nFlags )
 * Name........: IsIntersectRect
 * Beschreibung:
 * Argumente...: None
-* Rückgabewert: .T.
+* Rï¿½ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
 FUNCTION IsIntersectRect( aRect1, aBoxRect )
@@ -718,7 +717,7 @@ RETURN ( lReturn )
 * Name........: IsPointInRect
 * Beschreibung:
 * Argumente...: None
-* Rückgabewert: .T.
+* Rï¿½ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
 FUNCTION IsPointInRect( aPoint, aRect )
@@ -737,7 +736,7 @@ RETURN ( lReturn )
 * Name........: GetSourceToolTip
 * Beschreibung:
 * Argumente...: None
-* Rückgabewert: .T.
+* Rï¿½ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
 FUNCTION GetSourceToolTip( cSourceCode )
@@ -765,7 +764,7 @@ RETURN ( cText )
 * Name........: AddToRecentDocs
 * Beschreibung:
 * Argumente...: None
-* Rückgabewert: .T.
+* Rï¿½ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
 FUNCTION AddToRecentDocs( cFullPathFile )
@@ -794,7 +793,7 @@ RETURN uResult
 * Name........: GetBarCodes
 * Beschreibung:
 * Argumente...: None
-* Rückgabewert: .T.
+* Rï¿½ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
 FUNCTION GetBarCodes()
@@ -825,7 +824,7 @@ RETURN ( aBarcodes )
 * Name........: MainCaption
 * Beschreibung:
 * Argumente...: None
-* Rückgabewert: .T.
+* Rï¿½ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
 FUNCTION MainCaption()
@@ -856,7 +855,7 @@ RETURN ( cReturn )
 * Name........: Expressions
 * Beschreibung:
 * Argumente...: None
-* Rückgabewert: .T.
+* Rï¿½ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
 FUNCTION Expressions( lTake, cAltText )
@@ -1014,7 +1013,7 @@ RETURN ( cReturn )
 * Name........: CheckExpression
 * Beschreibung:
 * Argumente...: None
-* Rückgabewert: .T.
+* Rï¿½ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
 FUNCTION CheckExpression( cText )
@@ -1040,7 +1039,7 @@ RETURN (.T.)
 * Name........: DBPack
 * Beschreibung:
 * Argumente...: None
-* Rückgabewert: .T.
+* Rï¿½ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
 FUNCTION DBPack()
@@ -1054,7 +1053,7 @@ RETURN (.T.)
 * Name........: DBReplace
 * Beschreibung:
 * Argumente...: None
-* Rückgabewert: .T.
+* Rï¿½ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
 FUNCTION DBReplace( cReplFeld, xAusdruck )
@@ -1068,7 +1067,7 @@ RETURN (.T.)
 * Name........: CopyToExpress
 * Beschreibung:
 * Argumente...: None
-* Rückgabewert: .T.
+* Rï¿½ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
 FUNCTION CopyToExpress( cText, oGet, aUndo )
@@ -1086,7 +1085,7 @@ RETURN (.T.)
 * Name........: UndoExpression
 * Beschreibung:
 * Argumente...: None
-* Rückgabewert: .T.
+* Rï¿½ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
 FUNCTION UnDoExpression( oGet, aUndo )
@@ -1108,7 +1107,7 @@ RETURN ( aUndo )
 * Name........: VRDLogo
 * Beschreibung:
 * Argumente...: None
-* Rückgabewert: .T.
+* Rï¿½ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
 FUNCTION VRDLogo()
@@ -1151,7 +1150,7 @@ RETURN NIL
 * Name........: EndMsgLogo
 * Beschreibung:
 * Argumente...: None
-* Rückgabewert: .T.
+* Rï¿½ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
 FUNCTION EndMsgLogo( oDlg, aFonts )
@@ -1164,7 +1163,7 @@ FUNCTION EndMsgLogo( oDlg, aFonts )
    SysRefresh()
    MEMORY(-1)
 
-   //Demo mode: App läuft nur 3 Minuten
+   //Demo mode: App lï¿½uft nur 3 Minuten
    IF lDemo = .T.
       DEFINE TIMER oTimer INTERVAL 1000 OF oMainWnd ;
          ACTION ( TimerRunOut( ++nInterval ) )
@@ -1178,7 +1177,7 @@ RETURN (.T.)
 * Name........: TimerRunOut
 * Beschreibung:
 * Argumente...: None
-* Rückgabewert: .T.
+* Rï¿½ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
 FUNCTION TimerRunOut( nInterval )
@@ -1196,7 +1195,7 @@ RETURN (.T.)
 * Name........: CheckTimer
 * Beschreibung:
 * Argumente...: None
-* Rückgabewert: .T.
+* Rï¿½ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
 FUNCTION CheckTimer( nInterval, oSay )
@@ -1218,7 +1217,7 @@ RETURN ( lReturn )
 * Name........: VRDAbout
 * Beschreibung:
 * Argumente...: None
-* Rückgabewert: .T.
+* Rï¿½ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
 FUNCTION VRDAbout()
@@ -1263,7 +1262,7 @@ RETURN NIL
 * Name........: VRDBeta
 * Beschreibung:
 * Argumente...: None
-* Rückgabewert: .T.
+* Rï¿½ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
 FUNCTION BetaVersion()
@@ -1295,7 +1294,7 @@ RETURN NIL
 * Name........: QuietRegCheck
 * Beschreibung:
 * Argumente...: None
-* Rückgabewert: .T.
+* Rï¿½ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
 FUNCTION QuietRegCheck()
@@ -1311,7 +1310,7 @@ RETURN CheckRegist( cSerial, cRegist )
 * Name........: VRDMsgPersonal
 * Beschreibung:
 * Argumente...: None
-* Rückgabewert: .T.
+* Rï¿½ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
 FUNCTION VRDMsgPersonal()
@@ -1401,7 +1400,7 @@ RETURN ( lOK )
 * Name........: CheckRegist
 * Beschreibung:
 * Argumente...: None
-* Rückgabewert: .T.
+* Rï¿½ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
 FUNCTION CheckRegist( cSerial, cRegist )
@@ -1420,7 +1419,7 @@ RETURN ( lOK )
 * Name........: GetRegistKey
 * Beschreibung:
 * Argumente...: None
-* Rückgabewert: .T.
+* Rï¿½ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
 FUNCTION GetRegistKey( cSerial )
@@ -1442,7 +1441,7 @@ RETURN ( cReg )
 * Name........: SendRegInfos
 * Beschreibung:
 * Argumente...: None
-* Rückgabewert: .T.
+* Rï¿½ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
 FUNCTION SendRegInfos( cSerial, cCompany, cUser, cVersion )
@@ -1465,7 +1464,7 @@ RETURN (.T.)
 * Name........: GetSerialHD
 * Beschreibung:
 * Argumente...: None
-* Rückgabewert: .T.
+* Rï¿½ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
 FUNCTION GetSerialHD( cDrive )
@@ -1500,7 +1499,7 @@ DLL32 Function GetVolInfo( sDrive          AS STRING, ;
 * Name........: GetRegistInfos
 * Beschreibung:
 * Argumente...: None
-* Rückgabewert: .T.
+* Rï¿½ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
 FUNCTION GetRegistInfos()
@@ -1542,7 +1541,7 @@ RETURN ( cRegText )
 * Name........: GetLicLanguage
 * Beschreibung:
 * Argumente...: None
-* Rückgabewert: .T.
+* Rï¿½ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
 FUNCTION GetLicLanguage()
@@ -1552,7 +1551,7 @@ FUNCTION GetLicLanguage()
 
    IF lBeta = .F.
       IF nLanguage = 2
-         cText := "Lizensiert für: "
+         cText := "Lizensiert fï¿½r: "
       ELSEIF nLanguage = 3
          cText := "In licenza a: "
       ELSEIF nLanguage = 4
@@ -1569,7 +1568,7 @@ RETURN ( cText )
 * Name........: EditLanguage
 * Beschreibung:
 * Argumente...: None
-* Rückgabewert: .T.
+* Rï¿½ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
 FUNCTION EditLanguage()
@@ -1634,7 +1633,7 @@ RETURN (.T.)
 * Name........: GetLanguage
 * Beschreibung:
 * Argumente...: None
-* Rückgabewert: .T.
+* Rï¿½ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
 FUNCTION GetLanguage()
@@ -1678,7 +1677,7 @@ RETURN (.T.)
 * Name........: ER_GetPixel
 * Beschreibung:
 * Argumente...: None
-* Rückgabewert: .T.
+* Rï¿½ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
 FUNCTION ER_GetPixel( nValue )
@@ -1702,7 +1701,7 @@ RETURN ( nValue )
 * Name........: GetCmInch
 * Beschreibung:
 * Argumente...: None
-* Rückgabewert: .T.
+* Rï¿½ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
 FUNCTION GetCmInch( nValue )
@@ -1734,7 +1733,7 @@ RETURN StrToken( cString, nNr, cSepChar )
 * Name........: StrCount
 * Beschreibung:
 * Argumente...: None
-* Rückgabewert: .T.
+* Rï¿½ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
 FUNCTION StrCount( cText, cString )
@@ -1755,7 +1754,7 @@ RETURN ( nCount )
 *  Function....: GetResDLL()
 *  Beschreibung:
 *  Argumente...: None
-*  Rückgabewert:
+*  Rï¿½ckgabewert:
 *  Author......: Timm Sodtalbers
 * --------------------------------------------------------------------------
 FUNCTION GetResDLL()
@@ -1782,7 +1781,7 @@ RETURN ( cDLLName )
 * Name........: OpenLanguage
 * Beschreibung:
 * Argumente...: None
-* Rückgabewert: .T.
+* Rï¿½ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
 FUNCTION OpenLanguage()
@@ -1809,7 +1808,7 @@ RETURN (.T.)
 * Name........: GL
 * Beschreibung: Get Language
 * Argumente...: None
-* Rückgabewert: .T.
+* Rï¿½ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
 FUNCTION GL( cOriginal )
@@ -1846,7 +1845,7 @@ RETURN ( STRTRAN(ALLTRIM( cText ), "_", " " ) )
 * Name........: PrintReport
 * Beschreibung:
 * Argumente...: None
-* Rückgabewert: .T.
+* Rï¿½ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
 FUNCTION PrintReport( lPreview, lDeveloper, lPrintDlg )
@@ -1907,7 +1906,7 @@ RETURN (.T.)
 * Name........: PrintReport
 * Beschreibung:
 * Argumente...: None
-* Rückgabewert: .T.
+* Rï¿½ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
 FUNCTION AltPrintReport( lPreview, cPrinter )
@@ -1949,7 +1948,7 @@ RETURN (.T.)
 * Name........: IsSecondPage
 * Beschreibung:
 * Argumente...: None
-* Rückgabewert: .T.
+* Rï¿½ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
 FUNCTION IsSecondPage( oVRD )
@@ -1973,7 +1972,7 @@ RETURN ( lReturn )
 * Name........: OpenUndo()
 * Beschreibung:
 * Argumente...: None
-* Rückgabewert: .T.
+* Rï¿½ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
 FUNCTION OpenUndo()
@@ -2010,7 +2009,7 @@ RETURN (.T.)
 * Name........: CloseUndo()
 * Beschreibung:
 * Argumente...: None
-* Rückgabewert: .T.
+* Rï¿½ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
 FUNCTION CloseUndo()
@@ -2027,7 +2026,7 @@ RETURN (.T.)
 * Name........: Add2Undo()
 * Beschreibung:
 * Argumente...: None
-* Rückgabewert: .T.
+* Rï¿½ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
 FUNCTION Add2Undo( cEntryText, nEntryNr, nAreaNr, cAreaText )
@@ -2059,7 +2058,7 @@ RETURN (.T.)
 * Name........: Undo
 * Beschreibung:
 * Argumente...: None
-* Rückgabewert: .T.
+* Rï¿½ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
 FUNCTION Undo()
@@ -2150,7 +2149,7 @@ RETURN (.T.)
 * Name........: Redo
 * Beschreibung:
 * Argumente...: None
-* Rückgabewert: .T.
+* Rï¿½ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
 FUNCTION Redo()
@@ -2240,7 +2239,7 @@ RETURN (.T.)
 * Name........: RefreshUndo()
 * Beschreibung:
 * Argumente...: None
-* Rückgabewert: .T.
+* Rï¿½ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
 FUNCTION RefreshUndo()
@@ -2254,7 +2253,7 @@ RETURN (.T.)
 * Name........: RefreshRedo()
 * Beschreibung:
 * Argumente...: None
-* Rückgabewert: .T.
+* Rï¿½ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
 FUNCTION RefreshRedo()
@@ -2268,7 +2267,7 @@ RETURN (.T.)
 * Name........: ClearUndoRedo
 * Beschreibung:
 * Argumente...: None
-* Rückgabewert: .T.
+* Rï¿½ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
 FUNCTION ClearUndoRedo()
@@ -2297,7 +2296,7 @@ RETURN (.T.)
 *  Function....: UndoRedoMenu
 *  Beschreibung: Shell-Menu anzeigen
 *  Argumente...: None
-*  Rückgabewert: ( NIL )
+*  Rï¿½ckgabewert: ( NIL )
 *  Author......: Timm Sodtalbers
 * --------------------------------------------------------------------------
 FUNCTION UndoRedoMenu( nTyp, oBtn )
@@ -2354,7 +2353,7 @@ RETURN( oMenu )
 * Name........: MultiUndoRedo
 * Beschreibung:
 * Argumente...: None
-* Rückgabewert: .T.
+* Rï¿½ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
 FUNCTION MultiUndoRedo( nTyp, nCount )
