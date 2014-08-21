@@ -266,14 +266,37 @@ FUNCTION GetExprFields( cDatabase )
 
 RETURN ( aTemp )
 
+//-----------------------------------------------------------------------------//
 
-*-- FUNCTION -----------------------------------------------------------------
-*         Name: OpenDatabases
-*  Description:
-*    Arguments: None
-* Return Value: .T.
-*       Author: Timm Sodtalbers
-*-----------------------------------------------------------------------------
+FUNCTION CreateDbfsExpressions()
+
+   LOCAL cPath := GetCurDir()+"\Datas\"
+
+ LOCAL aGeneral := {;
+                    { "NAME"      , "C",    60,    0 },;
+                    { "EXPRESSION", "C",   200,    0 },;
+                    { "INFO"      , "C",   200,    0 } }
+
+
+ LOCAL aUser := {;
+                 { "NAME"      , "C",   100,    0 },;
+                 { "EXPRESSION", "C",   200,    0 },;
+                 { "INFO"      , "C",   200,    0 } }
+
+  IF ! lIsDir( cPath )
+     lMkDir( cPath )
+  ENDIF
+  IF !File( cPath+"General.dbf"  )
+     DBCreate(cPath+"General.dbf",aGeneral )
+  endif
+  IF  !File( cPath+"User.dbf"  )
+     DBCreate(cPath+ "User.dbf",aUser )
+  ENDIF
+
+RETURN nil
+
+//-----------------------------------------------------------------------------//
+
 FUNCTION OpenDatabases()
 
    LOCAL i, x, cEntry, cDbase, aFields, cFilter, cFieldNames, cFieldPos
@@ -334,14 +357,8 @@ FUNCTION OpenDatabases()
 
 RETURN (.T.)
 
+//-----------------------------------------------------------------------------//
 
-*-- FUNCTION -----------------------------------------------------------------
-*         Name: SaveDatabases
-*  Description:
-*    Arguments: None
-* Return Value: .T.
-*       Author: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 FUNCTION SaveDatabases()
 
    AEVAL( oGenVar:aDBFile, {|x,y| ;
@@ -354,14 +371,8 @@ FUNCTION SaveDatabases()
 
 RETURN (.T.)
 
+//-----------------------------------------------------------------------------//
 
-*-- FUNCTION -----------------------------------------------------------------
-* Name........: Databases
-* Beschreibung:
-* Argumente...: None
-* R�ckgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 FUNCTION Databases( lTake )
 
    LOCAL oDlg, aDBGet1[12], aDBGet2[12]
