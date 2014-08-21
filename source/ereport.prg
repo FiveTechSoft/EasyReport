@@ -2932,24 +2932,18 @@ CLASS TEasyReport
 
    METHOD New() CONSTRUCTOR
 
-  ::cGeneralIni := ".\vrd.ini"
-   ::cDataPath := GetCurDir()+"\Datas\"
-
 ENDCLASS
 
 //----------------------------------------------------------------------------//
 
 METHOD New() CLASS TEasyReport
 
-   ::cGeneralIni := ".\vrd.ini"
+   ::cGeneralIni = ".\vrd.ini"
+   ::cDataPath   = GetCurDir() + "\Datas\"
 
-RETURN Self
+return Self
 
 //------------------------------------------------------------------------------
-
-
-
-//----------------------------------------------------------------------------//
 
 #define TME_LEAVE 2
 #define WM_MOUSELEAVE 675

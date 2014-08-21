@@ -2173,7 +2173,7 @@ METHOD OpenDatabases() CLASS VRD
 
       IF FILE( VRD_LF2SF( cDBName ) )
          AADD( ::aDBAlias     , cDBAlias )
-         AADD( ::aDBType      , cFileExt( cDatabase ) )
+         AADD( ::aDBType      , Upper( cFileExt( cDatabase ) ) )
          AADD( ::aDBPrevRecord, NIL )
          AADD( ::aDBFilter    , cDBFilter )
          AADD( ::aDBFieldNames, cFieldNames )
