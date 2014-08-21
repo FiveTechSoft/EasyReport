@@ -76,9 +76,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
 
    SET DATE FORMAT IIF( EMPTY( cDateFormat ), "dd.mm.yyyy", cDateFormat )
 
-   CreateDbfsExpressions()
-
-   //Open Undo database
+     //Open Undo database
    OpenUndo()
 
    SET HELPFILE to "VRD.HLP"
@@ -2930,8 +2928,12 @@ CLASS TEasyReport
 
    DATA oMainWnd
    DATA cGeneralIni
+   DATA cDataPath
 
    METHOD New() CONSTRUCTOR
+
+  ::cGeneralIni := ".\vrd.ini"
+   ::cDataPath := GetCurDir()+"\Datas\"
 
 ENDCLASS
 
