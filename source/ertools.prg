@@ -2,15 +2,11 @@
 #INCLUDE "VRD.ch"
 #INCLUDE "Mail.ch"
 
-MEMVAR aItems, aFonts, oAppFont, aAreaIni, aWnd, aWndTitle, oBar, oMru
-MEMVAR oCbxArea, aCbxItems, nAktuellItem, aRuler, cLongDefIni, cDefaultPath
-MEMVAR nAktItem, nAktArea, nSelArea, cAktIni, aSelection, nTotalHeight, nTotalWidth
-MEMVAR nHinCol1, nHinCol2, nHinCol3, oMsgInfo
-MEMVAR aVRDSave, lVRDSave, lFillWindow, nDeveloper, oRulerBmp1, oRulerBmp2
-MEMVAR lBoxDraw, nBoxTop, nBoxLeft, nBoxBottom, nBoxRight
-MEMVAR cItemCopy, nCopyEntryNr, nCopyAreaNr, aSelectCopy, aItemCopy, nXMove, nYMove
-MEMVAR cInfoWidth, cInfoHeight, nInfoRow, nInfoCol, aItemPosition, aItemPixelPos
-MEMVAR oClpGeneral, cDefIni, cGeneralIni, nMeasure, cMeasure, lDemo, lBeta, oTimer
+MEMVAR aItems, aFonts, aAreaIni, aWnd, oBar
+MEMVAR cDefaultPath
+MEMVAR nAktArea
+MEMVAR aVRDSave
+MEMVAR oClpGeneral, cDefIni, cGeneralIni, nMeasure, lDemo, lBeta, oTimer
 MEMVAR oMainWnd, lProfi, nUndoCount, nRedoCount, lPersonal, lStandard, oGenVar
 
 Function GetFreeSystemResources()
