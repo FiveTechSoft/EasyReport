@@ -57,7 +57,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
    EP_LinkedToApp()
    EP_SetPath( ".\" )
 
-   //Einfüge-Modus einschalten
+   //Einfï¿½ge-Modus einschalten
    ReadInsert( .T. )
 
    //Publics deklarieren
@@ -72,6 +72,8 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
    cDateFormat := LOWER(ALLTRIM( GetPvProfString( "General", "DateFormat", "", cGeneralIni )))
 
    SET DATE FORMAT IIF( EMPTY( cDateFormat ), "dd.mm.yyyy", cDateFormat )
+
+   CreateDbfsExpressions()
 
    //Open Undo database
    OpenUndo()
@@ -347,10 +349,10 @@ function DeclarePublics( cDefFile )
    PUBLIC oCbxArea := nil
    PUBLIC oCurDlg  := nil
 
-   //Gesamthöhe und Breite
+   //Gesamthï¿½he und Breite
    PUBLIC nTotalHeight, nTotalWidth
 
-   //gerade gewählte(s) Element, Bereich, ini-Datei, multiple Selection
+   //gerade gewï¿½hlte(s) Element, Bereich, ini-Datei, multiple Selection
    PUBLIC nAktItem := 0
    PUBLIC nAktArea := 1
    PUBLIC nSelArea := 0
@@ -393,7 +395,7 @@ function DeclarePublics( cDefFile )
    PUBLIC nXMove := 0
    PUBLIC nYMove := 0
 
-   //Msgbar mit Elementgröße aktualisieren wenn ein Element bewegt wird
+   //Msgbar mit Elementgrï¿½ï¿½e aktualisieren wenn ein Element bewegt wird
    PUBLIC cInfoWidth, cInfoHeight, nInfoRow, nInfoCol
    PUBLIC aItemPosition := {}
    PUBLIC aItemPixelPos := {}
@@ -429,7 +431,7 @@ function DeclarePublics( cDefFile )
    oGenVar:AddMember( "aLanguages",, {} )
    oGenVar:AddMember( "nLanguage" ,, Val( GetPvProfString( "General", "Language", "1", cGeneralIni ) ) )
 
-   //Sprachdatei füllen
+   //Sprachdatei fï¿½llen
    OpenLanguage()
 
    nHinCol1 := IniColor( GetPvProfString( "General", "BackgroundColor", "0", cGeneralIni ) )
@@ -558,7 +560,7 @@ function IniMainWindow()
       DefineFonts()
       //Areas initieren
       IniAreasOnBar()
-      //Designwindows öffnen
+      //Designwindows ï¿½ffnen
       ClientWindows()
       //Areas anzeigen
       ShowAreasOnBar()
