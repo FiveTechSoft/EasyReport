@@ -16,11 +16,8 @@ MEMVAR oMainWnd, lProfi, nUndoCount, nRedoCount, lPersonal, lStandard, oGenVar
 Function GetFreeSystemResources()
 Return 0
 
-*-- FUNCTION -----------------------------------------------------------------
-*         Name: CheckPath
-*  Description:
-*       Author: Timm Sodtalbers
-*-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------//
+
 FUNCTION CheckPath( cPath )
 
    cPath := ALLTRIM( cPath )
@@ -31,14 +28,8 @@ FUNCTION CheckPath( cPath )
 
 RETURN ( cPath )
 
+//-----------------------------------------------------------------------------//
 
-*-- FUNCTION -----------------------------------------------------------------
-*         Name: InsertArea
-*  Description:
-*    Arguments: None
-* Return Value: .T.
-*       Author: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 FUNCTION InsertArea( lBefore, cTitle )
 
    LOCAL i, oGet, oDlg, cTmpFile
@@ -101,14 +92,8 @@ FUNCTION InsertArea( lBefore, cTitle )
 
 RETURN (.T.)
 
+//-----------------------------------------------------------------------------//
 
-*-- FUNCTION -----------------------------------------------------------------
-*         Name: DeleteArea
-*  Description:
-*    Arguments: None
-* Return Value: .T.
-*       Author: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 FUNCTION DeleteArea()
 
    IF MsgNoYes( GL("Do you really want to delete this area?"), GL("Select an option") ) = .T.
@@ -122,14 +107,8 @@ FUNCTION DeleteArea()
 
 RETURN (.T.)
 
+//-----------------------------------------------------------------------------//
 
-*-- FUNCTION -----------------------------------------------------------------
-*         Name: IniGetColor
-*  Description:
-*    Arguments: None
-* Return Value: .T.
-*       Author: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 FUNCTION IniColor( cColor, nDefColor )
 
    LOCAL nColor
@@ -260,7 +239,9 @@ RETURN ( aTemp )
 
 FUNCTION CreateDbfsExpressions()
 
-   LOCAL cPath := GetCurDir()+"\Datas\"
+  LOCAL cPath := GetCurDir()+"\Datas\"
+  LOCAL cGenExpr   := ALLTRIM( cPath + GetPvProfString( "General", "GeneralExpressions", "", cDefIni ) )
+  LOCAL cUserExpr  := ALLTRIM( cPath + GetPvProfString( "General", "UserExpressions", "", cDefIni ) )
 
  LOCAL aGeneral := {;
                     { "NAME"      , "C",    60,    0 },;
@@ -276,11 +257,12 @@ FUNCTION CreateDbfsExpressions()
   IF ! lIsDir( cPath )
      lMkDir( cPath )
   ENDIF
-  IF !File( cPath+"General.dbf"  )
-     DBCreate(cPath+"General.dbf",aGeneral )
+  IF !File( cGenExpr  )
+     DBCreate( cGenExpr, aGeneral )
   endif
-  IF  !File( cPath+"User.dbf"  )
-     DBCreate(cPath+ "User.dbf",aUser )
+  IF  !File( cUserExpr  )
+     DBCreate( cUserExpr, aUser )
+
   ENDIF
 
 RETURN nil
@@ -434,14 +416,8 @@ FUNCTION Databases( lTake )
 
 RETURN ( NIL )
 
+//-----------------------------------------------------------------------------//
 
-*-- FUNCTION -----------------------------------------------------------------
-* Name........: GetDBase
-* Beschreibung:
-* Argumente...: None
-* R�ckgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 FUNCTION GetDBase( cOldFile, oGet1, oGet2 )
 
    LOCAL cFile := GetFile( GL("Databases") + " (DBF,TXT,XML)" + "|*.DBF;*.TXT;*.XML|" + ;
@@ -461,14 +437,8 @@ FUNCTION GetDBase( cOldFile, oGet1, oGet2 )
 
 RETURN NIL
 
+//-----------------------------------------------------------------------------//
 
-*-- FUNCTION -----------------------------------------------------------------
-* Name........: DelDBase
-* Beschreibung:
-* Argumente...: None
-* R�ckgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 FUNCTION DelDBase( oGet1, oGet2 )
 
    oGet1:VarPut( SPACE( 200 ) )
@@ -478,14 +448,8 @@ FUNCTION DelDBase( oGet1, oGet2 )
 
 RETURN NIL
 
+//-----------------------------------------------------------------------------//
 
-*-- FUNCTION -----------------------------------------------------------------
-* Name........: VRD_MsgRun
-* Beschreibung:
-* Argumente...: None
-* R�ckgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 FUNCTION VRD_MsgRun( cCaption, cTitle, bAction )
 
    LOCAL oDlg, nWidth, oFont
