@@ -2509,6 +2509,7 @@ STATIC Function Carga(oTree)
    local cAreaFilesDir := CheckPath( GetPvProfString( "General", "AreaFilesDir", "", cDefIni ) )
    LOCAL oTr1
    LOCAL aTr:= {}
+   local i, y, oTr2, cItemDef, aElemente, nEntry, cTitle
 
    for i := 1 to LEN( aIniEntries )
       nEntry := EntryNr( aIniEntries[ i ] )
@@ -3043,10 +3044,10 @@ METHOD New() CLASS TEasyReport
  //                                   { 0.60, nRGB( 109, 109, 109 ), nRGB( 116, 116, 116 ) } } ) }
 
 
-   ::aColorDlg :=  { { 1, RGB( 199, 216, 237 ), RGB( 237, 242, 248 ) } } )
+   ::aColorDlg :=  { { 1, RGB( 199, 216, 237 ), RGB( 237, 242, 248 ) } } 
 
  //   ::aColorDlg :=  { { 0.60,  nRGB( 221, 227, 233) ,  nRGB( 221, 227, 233 ) }, ;
-                         { 0.40,nRGB( 221, 227, 233), nRGB( 221, 227, 233) } }
+ //                        { 0.40,nRGB( 221, 227, 233), nRGB( 221, 227, 233) } }
 
 
 return Self
