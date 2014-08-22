@@ -1,4 +1,3 @@
-#include "Folder.ch"
 #include "FiveWin.ch"
 #include "Treeview.ch"
 
@@ -88,10 +87,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
 
    DEFINE BRUSH oBrush RESOURCE "background"
 
-   // SetDlgGradient( oER:aColorDlg  )
-   
-  //  SetDlgGradient(  { { 0.60,  nRGB( 221, 227, 233) ,  nRGB( 221, 227, 233 ) }, ;
-  //                       { 0.40,nRGB( 221, 227, 233), nRGB( 221, 227, 233) } } )
+   SetDlgGradient( oER:aClrDialogs )
       
    DEFINE WINDOW oMainWnd FROM 0, 0 to 50, 200 VSCROLL ;
       TITLE MainCaption() ;
@@ -141,7 +137,7 @@ function BarMenu()
    
    DEFINE BUTTONBAR oBar OF oMainWnd SIZE 70, 70 2010
    
-   oBar:bClrGrad :=  oER:bClrBar
+   // oBar:bClrGrad :=  oER:bClrBar
 
    DEFINE BUTTON RESOURCE "New" ;
       OF oBar ;
@@ -3034,7 +3030,7 @@ CLASS TEasyReport
    DATA oMainWnd
    DATA cGeneralIni
    DATA cDataPath
-   DATA bClrBar,aColorDlg
+   DATA bClrBar, aClrDialogs
 
    METHOD New() CONSTRUCTOR
 
@@ -3047,24 +3043,24 @@ METHOD New() CLASS TEasyReport
    ::cGeneralIni = ".\vrd.ini"
    ::cDataPath   = GetCurDir() + "\Datas\"
    
-     ::bClrBar =  { | lInvert | If( ! lInvert,;
-                                    { { 1, RGB( 255, 255, 255 ), RGB( 229, 233, 238 ) } },;
-                                    { { 2/5, RGB( 255, 253, 222 ), RGB( 255, 231, 147 ) },;
-                                      { 3/5, RGB( 255, 215,  86 ), RGB( 255, 231, 153 ) } } ) }
+   ::bClrBar =  { | lInvert | If( ! lInvert,;
+                                  { { 1, RGB( 255, 255, 255 ), RGB( 229, 233, 238 ) } },;
+                                  { { 2/5, RGB( 255, 253, 222 ), RGB( 255, 231, 147 ) },;
+                                    { 3/5, RGB( 255, 215,  86 ), RGB( 255, 231, 153 ) } } ) }
 
+   //  ::bClrBar := { | lInvert | If( ! lInvert,;
+   //                                 { { 0.50, nRGB( 254, 254, 254 ), nRGB( 225, 225, 225 ) },;
+   //                                   { 0.50, nRGB( 225, 225, 225 ), nRGB( 185, 185, 185 ) } },;
+   //                                 { { 0.40, nRGB( 68, 68, 68 ), nRGB( 109, 109, 109 ) }, ;
+   //                                   { 0.60, nRGB( 109, 109, 109 ), nRGB( 116, 116, 116 ) } } ) }
 
- //  ::bClrBar := { | lInvert | If( ! lInvert,;
- //                                 { { 0.50, nRGB( 254, 254, 254 ), nRGB( 225, 225, 225 ) },;
- //                                   { 0.50, nRGB( 225, 225, 225 ), nRGB( 185, 185, 185 ) } },;
- //                                 { { 0.40, nRGB( 68, 68, 68 ), nRGB( 109, 109, 109 ) }, ;
- //                                   { 0.60, nRGB( 109, 109, 109 ), nRGB( 116, 116, 116 ) } } ) }
+   ::aClrDialogs = { { 0.60,  nRGB( 221, 227, 233) ,  nRGB( 221, 227, 233 ) }, ;
+                     { 0.40,nRGB( 221, 227, 233), nRGB( 221, 227, 233) } }  
 
+  //  ::aColorDlg :=  { { 1, RGB( 199, 216, 237 ), RGB( 237, 242, 248 ) } } 
 
-   ::aColorDlg :=  { { 1, RGB( 199, 216, 237 ), RGB( 237, 242, 248 ) } } 
-
- //   ::aColorDlg :=  { { 0.60,  nRGB( 221, 227, 233) ,  nRGB( 221, 227, 233 ) }, ;
- //                        { 0.40,nRGB( 221, 227, 233), nRGB( 221, 227, 233) } }
-
+  //   ::aColorDlg :=  { { 0.60,  nRGB( 221, 227, 233) ,  nRGB( 221, 227, 233 ) }, ;
+  //                        { 0.40,nRGB( 221, 227, 233), nRGB( 221, 227, 233) } }
 
 return Self
 
