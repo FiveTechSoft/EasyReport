@@ -178,6 +178,8 @@ LANGUAGE 7, SUBLANG_DEFAULT
 B_LIST2            BITMAP         ".\bitmaps\bitmap34.bmp"
 
 
+CHECKON BITMAP ".\bitmaps\checkon.bmp"
+
 LANGUAGE 7, SUBLANG_DEFAULT
 B_LIST3            BITMAP         ".\bitmaps\bitmap35.bmp"
 

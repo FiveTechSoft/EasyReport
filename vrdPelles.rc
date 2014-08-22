@@ -251,7 +251,11 @@ LOGO BITMAP "bitmaps\\bitmap106.bmp"
 
 PRINT BITMAP "bitmaps\\print.bmp"
 
+print16   BITMAP "bitmaps\\print16.bmp"
+
 RECTANGLE BITMAP "bitmaps\\bitmap107.bmp"
+
+CHECKON BITMAP "bitmaps\\checkon.bmp"
 
 RULER1_IN BITMAP "bitmaps\\bitmap108.bmp"
 

@@ -87,7 +87,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
 
    DEFINE BRUSH oBrush RESOURCE "background"
 
-   SetDlgGradient( oER:aClrDialogs )
+  // SetDlgGradient( oER:aClrDialogs )
       
    DEFINE WINDOW oMainWnd FROM 0, 0 to 50, 200 VSCROLL ;
       TITLE MainCaption() ;
@@ -2484,36 +2484,65 @@ return .T.
 
    DEFINE DIALOG oDlg RESOURCE "Itemlist" TITLE GL("Item List")
 
-     oImageList = TImageList():New()
-
-   oBmp1 = TBitmap():Define( "FoldOpen",, oDlg )
-   oBmp2 = TBitmap():Define("FoldClose",, oDlg )
-
-   oTree := TTreeView():ReDefine( 201, oDlg,,, .T. ,"ll" )
-
+   oTree := TTreeView():ReDefine( 201, oDlg, 0, , .F. ,"" )
    oTree:bLDblClick := { | nRow, nCol, nKeyFlags | ClickListTree( oTree ) }
 
    REDEFINE BUTTON PROMPT GL("&OK") ID 101 OF oDlg ACTION oDlg:End()
 
-   ACTIVATE DIALOG oDlg CENTERED ON INIT carga(oTree)  //ListTrees( oTree )
+   ACTIVATE DIALOG oDlg CENTERED ON INIT carga( oTree, oDlg )  //ListTrees( oTree )
 
 return nil
 
-STATIC Function Carga(oTree)
+STATIC Function Carga( oTree, oDlg )
    local lFirstArea    := .T.
    local aIniEntries   := GetIniSection( "Areas", cDefIni )
    local cAreaFilesDir := CheckPath( GetPvProfString( "General", "AreaFilesDir", "", cDefIni ) )
    LOCAL oTr1
    LOCAL aTr:= {}
    local i, y, oTr2, cItemDef, aElemente, nEntry, cTitle
+   LOCAL oImageList, oBmp1
+   LOCAL ele
+
+      oImageList = TImageList():New()
+
+      oBmp1 = TBitmap():Define( "FoldOpen",, oDlg )
+      oImageList:Add( oBmp1,setMasked( oBmp1:hBitmap, oTree:nClrPane ) ) // 0
+
+      oBmp1 = TBitmap():Define("FoldClose",, oDlg )
+      oImageList:Add( oBmp1,setMasked( oBmp1:hBitmap, oTree:nClrPane )  ) //1
+
+      oBmp1 = TBitmap():Define( "B_itemList",, oDlg )
+      oImageList:Add( oBmp1,setMasked( oBmp1:hBitmap, oTree:nClrPane )  ) //2
+
+      oBmp1 = TBitmap():Define( "Checkon",, oDlg )
+      oImageList:Add( oBmp1,setMasked( oBmp1:hBitmap, oTree:nClrPane )  ) //3
+
+
+      oBmp1 = TBitmap():Define("Unchecked" ,, oDlg )
+      oImageList:Add( oBmp1,setMasked( oBmp1:hBitmap, oTree:nClrPane )  ) //4
+
+       oBmp1 = TBitmap():Define("b_edit" ,, oDlg )
+      oImageList:Add( oBmp1,setMasked( oBmp1:hBitmap, oTree:nClrPane )  ) //5
+
+      oBmp1 = TBitmap():Define( "Typ_Text",, oDlg )
+      oImageList:Add( oBmp1,setMasked( oBmp1:hBitmap, oTree:nClrPane )  ) //6
+
+
+         oBmp1 = TBitmap():Define(  "Typ_Barcode",, oDlg )
+         oImageList:Add( oBmp1, setMasked( oBmp1:hBitmap, oTree:nClrPane ) ) // 7
+
+            oBmp1 = TBitmap():Define( "Typ_Image",, oDlg )
+         oImageList:Add( oBmp1,setMasked( oBmp1:hBitmap, oTree:nClrPane )  ) //8
+
+
+        oTree:SetImageList( oImageList )
 
    for i := 1 to LEN( aIniEntries )
       nEntry := EntryNr( aIniEntries[ i ] )
       if nEntry != 0
             cTitle := aWndTitle[nEntry]
-            oTr1 := oTree:Add( AllTrim(STR(nEntry,5)) + ". " + cTitle )
-            AAdd(aTr,oTr1)
-
+            oTr1 := oTree:Add( AllTrim(STR(nEntry,5)) + ". " + cTitle,0 )
+          
             if Empty( cAreaFilesDir )
                 cAreaFilesDir := cDefaultPath
            endif
@@ -2527,15 +2556,17 @@ STATIC Function Carga(oTree)
             cItemDef := IIF( AT( "\", cItemDef ) = 0, ".\", "" ) + cItemDef
 
             aElemente := GetAllItems( cItemDef )
-            oTr1:Add( GL("Area Properties") )
+            oTr1:Add( GL("Area Properties"),2 )
 
             for y := 1 to LEN( aElemente )
 
                oTr2 := oTr1:Add( aElemente[y, 2 ], aElemente[y,3], aElemente[y,3] )
                if aElemente[y,6] <> 0
-                  oTr2:Add( GL("Visible"), aElemente[y,5], aElemente[y,4] )
+                  ele:= oTr2:Add( GL("Visible"), aElemente[y,5], aElemente[y,4] )
+                  ele:Set( , IF( !GetItemVisible( ele ) , 4  , 3   )    )
+                    
                endif
-               oTr2:Add( GL("Item Properties") )
+               oTr2:Add( GL("Item Properties"),5 )
 
             next
 
@@ -2548,6 +2579,24 @@ STATIC Function Carga(oTree)
    oTree:Expand()
 
 Return NIL
+
+//------------------------------------------------------------------------------
+
+STATIC function GetItemVisible( oItem )
+
+LOCAL  oLinkArea := oItem:GetParent()
+LOCAL  nItem     := Val( oLinkArea:cPrompt )
+LOCAL  nArea     := Val( oLinkArea:GetParent():cPrompt )
+LOCAL  cItemDef := AllTrim( GetPvProfString( "Items", AllTrim(STR(nItem,5)) , "", aAreaIni[ nArea ] ) )
+LOCAL  lWert
+
+      if Val( GetField( cItemDef, 4 ) ) = 0
+         lWert := .F.
+      else
+         lWert := .T.
+      endif
+
+RETURN lWert
 
 //----------------------------------------------------------------------------//
 /*
@@ -2690,18 +2739,44 @@ return aWerte
 //----------------------------------------------------------------------------//
 
 function ClickListTree( oTree )
-   LOCAL nArea
-   local cPrompt    := oTree:GetSelText()
-   LOCAL oItem := oTree:GetSelected()
+   LOCAL nArea , nItem, oLinkArea, cItemDef,  lWert
+   local cPrompt := oTree:GetSelText()
+   LOCAL oItem   := oTree:GetSelected()
+
+   if cPrompt = GL("Visible") .OR. cPrompt = GL("Item Properties")
+
+      oLinkArea := oItem:GetParent()
+      nItem     := Val( oLinkArea:cPrompt )
+      nArea     := Val( oLinkArea:GetParent():cPrompt )
+
+   endif
+
    if cPrompt = GL("Area Properties")
-      
+
       nArea     := Val( oItem:GetParent():cPrompt )
       AreaProperties( nArea )
-    endif
 
+   endif
 
+   if cPrompt = GL("Visible")
+
+    //   nItem     := Val( oLinkArea:cPrompt )
+    //   nArea     := Val( oLinkArea:GetParent():cPrompt )
+
+      cItemDef := AllTrim( GetPvProfString( "Items", AllTrim(STR(nItem,5)) , "", aAreaIni[ nArea ] ) )
+
+      if Val( GetField( cItemDef, 4 ) ) = 0
+         lWert := .F.
+      else
+         lWert := .T.
+      endif
+      oItem:Set( , IF( lWert , 4  , 3   )    )
+   //  oItem:SetCheck( !lWert )
+     DeleteItem( nItem, nArea, .T., lWert )
+
+   endif
+   
 return .T.
-
 
 //----------------------------------------------------------------------------//
 
