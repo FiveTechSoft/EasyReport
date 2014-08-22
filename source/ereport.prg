@@ -1,7 +1,6 @@
-#INCLUDE "Folder.ch"
-#INCLUDE "FiveWin.ch"
-#INCLUDE "Treeview.ch"
-//#INCLUDE "TSButton.ch"
+#include "Folder.ch"
+#include "FiveWin.ch"
+#include "Treeview.ch"
 
 //Areazugabe
 STATIC nAreaZugabe  := 42
@@ -25,6 +24,8 @@ MEMVAR oClpGeneral, cDefIni, cDefIniPath, cGeneralIni, nMeasure, cMeasure, lDemo
 MEMVAR oMainWnd, lProfi, nUndoCount, nRedoCount, nDlgTextCol, nDlgBackCol
 MEMVAR lPersonal, lStandard, oGenVar, oCurDlg
 MEMVAR oER
+
+static oBtnAreas, oMenuAreas
 
 //----------------------------------------------------------------------------//
 
@@ -198,12 +199,16 @@ function BarMenu()
    endif
 
    if Val( GetPvProfString( "General", "EditAreaProperties", "1", cDefIni ) ) = 1
-      DEFINE BUTTON RESOURCE "B_AREA32" ;
+      MENU oMenuAreas POPUP
+      ENDMENU
+   
+      DEFINE BUTTON oBtnAreas RESOURCE "B_AREA32" ;
          OF oBar ;
          PROMPT FWSTring( "Areas" ) ; 
          TOOLTIP GL("Area Properties") ;
          ACTION AreaProperties( nAktArea ) ;
-         WHEN .NOT. EMPTY( cDefIni )
+         WHEN .NOT. EMPTY( cDefIni ) ;
+         MENU oMenuAreas
    endif
 
    DEFINE BUTTON RESOURCE "B_EDIT32" ;
@@ -560,7 +565,7 @@ function IniMainWindow()
       //Fonts definieren
       DefineFonts()
       //Areas initieren
-      IniAreasOnBar()
+      // IniAreasOnBar()
       //Designwindows �ffnen
       ClientWindows()
       //Areas anzeigen
@@ -754,28 +759,6 @@ return .T.
 
 //----------------------------------------------------------------------------//
 
-function IniAreasOnBar()
-
-   local i, oFont1
-   local cCbxItem   := ""
-   local nAreaStart := oMainWnd:nRight - 180
-
-   aCbxItems := {""}
-
-   DEFINE FONT oFont1 NAME "Ms Sans Serif" SIZE 0,-10
-
-   //@ 9, nAreaStart - 75 SAY GL("Area") + ":" OF oBar PIXEL SIZE 70, 16 FONT oFont1 RIGHT
-
-   @ 25, nAreaStart COMBOBOX oCbxArea VAR cCbxItem ITEMS aCbxItems OF oBar ;
-      PIXEL SIZE 150, 300 FONT oFont1 ;
-      WHEN .NOT. EMPTY( cDefIni ) ;
-
-   oFont1:End()
-
-return .T.
-
-//----------------------------------------------------------------------------//
-
 function SetWinNull()
 
    local i
@@ -793,23 +776,39 @@ return .T.
 
 function ShowAreasOnBar()
 
-   local i, oFont1
-   local cCbxItem  := aWndTitle[ 1 ]
+   local n
+   // local cCbxItem  := aWndTitle[ 1 ]
 
-   aCbxItems := {}
+   // aCbxItems := {}
 
-   for i := 1 to LEN( aWndTitle )
-      if .NOT. EMPTY( aWndTitle[i] )
-         AADD( aCbxItems, aWndTitle[i] )
-      endif
-   next
+   // for n := 1 to LEN( aWndTitle )
+   //    if .NOT. EMPTY( aWndTitle[ n ] )
+   //      AADD( aCbxItems, aWndTitle[ n ] )
+   //    endif
+   // next
+   
+   if oMenuAreas != nil
+      oMenuAreas:End()
+   endif
+   
+   MENU oMenuAreas POPUP
+      for n = 1 to Len( aWndTitle )
+         if ! Empty( aWndTitle[ n ] )
+            MENUITEM aWndTitle[ n ] ;
+               ACTION aWnd[ AScan( aWndTitle, oMenuItem:cPrompt ) ]:SetFocus(),;
+                      SetWinNull()
+         endif
+      next
+   ENDMENU
+   
+   oBtnAreas:oPopup = oMenuAreas            
 
    //Fokus auf das erste Fenster legen
-   aWnd[ ASCAN( aWnd, {|x| x <> nil } ) ]:SetFocus()
+   aWnd[ AScan( aWnd, { |x| x != nil } ) ]:SetFocus()
 
-   oCbxArea:SetItems( aCbxItems )
-   oCbxArea:Select( 1 )
-   oCbxArea:bChange = {|| aWnd[ASCAN( aWndTitle, oCbxArea:cTitle )]:SetFocus(), SetWinNull() }
+   // oCbxArea:SetItems( aCbxItems )
+   // oCbxArea:Select( 1 )
+   // oCbxArea:bChange = {|| aWnd[ASCAN( aWndTitle, oCbxArea:cTitle )]:SetFocus(), SetWinNull() }
 
 return .T.
 
@@ -1322,7 +1321,7 @@ function FillWindow( nArea, cAreaIni )
    aWnd[ nArea ]:bPainted  = {| hDC, cPS | ZeichneHintergrund( nArea ) }
 
    aWnd[ nArea ]:bGotFocus = {|| SetTitleColor( .F. ), ;
-                               nAktArea := nArea, oCbxArea:Set( aWndTitle[ nArea ] ), ;
+                               nAktArea := nArea,; /* oCbxArea:Set( aWndTitle[ nArea ] ), ; */
                                SetTitleColor( .T. ) }
 
    aWnd[ nArea ]:bMMoved = {|nRow,nCol,nFlags| ;
