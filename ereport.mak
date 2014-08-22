@@ -22,7 +22,6 @@ PRG =        \
 .\ertools.prg  \
 #.\fileedit.prg \
 .\treelink.prg \
-.\treeview.prg \
 .\tvitem.prg   \
 .\vrd.prg      \
 .\vrdbcode.prg \

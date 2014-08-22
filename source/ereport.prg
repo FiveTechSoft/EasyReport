@@ -1,7 +1,6 @@
-#INCLUDE "Folder.ch"
-#INCLUDE "FiveWin.ch"
-#INCLUDE "Treeview.ch"
-//#INCLUDE "TSButton.ch"
+#include "Folder.ch"
+#include "FiveWin.ch"
+#include "Treeview.ch"
 
 //Areazugabe
 STATIC nAreaZugabe  := 42
@@ -24,6 +23,9 @@ MEMVAR cInfoWidth, cInfoHeight, nInfoRow, nInfoCol, aItemPosition, aItemPixelPos
 MEMVAR oClpGeneral, cDefIni, cDefIniPath, cGeneralIni, nMeasure, cMeasure, lDemo, lBeta, oTimer
 MEMVAR oMainWnd, lProfi, nUndoCount, nRedoCount, nDlgTextCol, nDlgBackCol
 MEMVAR lPersonal, lStandard, oGenVar, oCurDlg
+MEMVAR oER
+
+static oBtnAreas, oMenuAreas
 
 //----------------------------------------------------------------------------//
 
@@ -51,7 +53,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
    if P14 <> nil ; cDefFile += P14 + " " ; endif
    if P15 <> nil ; cDefFile += P15 + " " ; endif
 
-   cDefFile := STRTRAN( ALLTRIM( cDefFile ), '"' )
+   cDefFile := STRTRAN( AllTrim( cDefFile ), '"' )
 
    EP_TidyUp()
    EP_LinkedToApp()
@@ -71,9 +73,9 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
    SET MULTIPLE OFF
    SET DATE FORMAT to "dd.mm.yyyy"
 
-   cDateFormat := LOWER(ALLTRIM( GetPvProfString( "General", "DateFormat", "", cGeneralIni )))
+   cDateFormat := LOWER(AllTrim( GetPvProfString( "General", "DateFormat", "", cGeneralIni )))
 
-   SET DATE FORMAT IIF( EMPTY( cDateFormat ), "dd.mm.yyyy", cDateFormat )
+   SET DATE FORMAT IIF( Empty( cDateFormat ), "dd.mm.yyyy", cDateFormat )
 
      //Open Undo database
    OpenUndo()
@@ -87,6 +89,9 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
    DEFINE BRUSH oBrush RESOURCE "background"
 
    SetDlgGradient( { { 1, RGB( 199, 216, 237 ), RGB( 237, 242, 248 ) } } )
+   
+  //  SetDlgGradient(  { { 0.60,  nRGB( 221, 227, 233) ,  nRGB( 221, 227, 233 ) }, ;
+  //                       { 0.40,nRGB( 221, 227, 233), nRGB( 221, 227, 233) } } )
    
    DEFINE WINDOW oMainWnd FROM 0, 0 to 50, 200 VSCROLL ;
       TITLE MainCaption() ;
@@ -108,7 +113,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
 
    ACTIVATE WINDOW oMainWnd ;
       ON INIT ( SetMainWnd(), IniMainWindow(), ;
-                IIF( EMPTY( cDefIni ), OpenFile(), SetScrollBar() ), ;
+                IIF( Empty( cDefIni ), OpenFile(), SetScrollBar() ), ;
                 StartMessage(), SetSave( .T. ), ClearUndoRedo() ) ;
       VALID AskSaveFiles()
 
@@ -133,8 +138,10 @@ function BarMenu()
 
    local aBtn[3]
    local lPrompt := ( GetSysMetrics( 0 ) > 800 )
-
+   
    DEFINE BUTTONBAR oBar OF oMainWnd SIZE 70, 70 2010
+   
+   oBar:bClrGrad :=  oER:bClrBar
 
    DEFINE BUTTON RESOURCE "New" ;
       OF oBar ;
@@ -153,7 +160,7 @@ function BarMenu()
       PROMPT FWString( "Save" ) ;
       TOOLTIP GL("Save") ;
       ACTION SaveFile() ;
-      WHEN .NOT. EMPTY( cDefIni ) .and. lVRDSave = .F.
+      WHEN .NOT. Empty( cDefIni ) .and. lVRDSave = .F.
 
    if nDeveloper = 1 .OR. oGenVar:lStandalone = .T.
       DEFINE BUTTON aBtn[ 1 ] RESOURCE "B_PREVIEW" ;
@@ -161,15 +168,22 @@ function BarMenu()
          PROMPT FWString( "Preview" ) ;
          TOOLTIP GL("Preview") ;
          ACTION PrintReport( .T., !oGenVar:lStandalone ) ;
-         WHEN .NOT. EMPTY( cDefIni )
+         WHEN .NOT. Empty( cDefIni )
    endif
 
+   DEFINE BUTTON RESOURCE "print" ;
+      OF oBar ;
+      PROMPT FWString( "Print" ) ;
+      TOOLTIP GL( "Print" ) ;
+      ACTION PrintReport() ;
+      WHEN .NOT. Empty( cDefIni )
+      
    DEFINE BUTTON aBtn[2] RESOURCE "B_UNDO" ;
       OF oBar GROUP ;
       PROMPT FWString( "Undo" ) ;
       TOOLTIP STRTRAN( GL("&Undo"), "&" ) ;
       ACTION Undo() ;
-      WHEN .NOT. EMPTY( cDefIni ) .and. nUndoCount > 0 
+      WHEN .NOT. Empty( cDefIni ) .and. nUndoCount > 0 
       // MENU UndoRedoMenu( 1, aBtn[2] ) ;
 
    DEFINE BUTTON aBtn[3] RESOURCE "B_REDO" ;
@@ -177,7 +191,7 @@ function BarMenu()
       PROMPT FWString( "Redo" ) ;
       TOOLTIP STRTRAN( GL("&Redo"), "&" ) ;
       ACTION Redo() ;
-      WHEN .NOT. EMPTY( cDefIni ) .and. nRedoCount > 0
+      WHEN .NOT. Empty( cDefIni ) .and. nRedoCount > 0
       // MENU UndoRedoMenu( 2, aBtn[2] ) ;
 
    DEFINE BUTTON RESOURCE "B_ITEMLIST32" ;
@@ -185,24 +199,28 @@ function BarMenu()
       PROMPT FWSTring( "Items" ) ;
       TOOLTIP GL("Area and Item List") ;
       ACTION Itemlist() ;
-      WHEN .NOT. EMPTY( cDefIni )
+      WHEN .NOT. Empty( cDefIni )
 
    if Val( GetPvProfString( "General", "EditSetting", "1", cDefIni ) ) = 1
       DEFINE BUTTON RESOURCE "B_FONTCOLOR32" ;
          OF oBar ;
          PROMPT FWString( "Fonts" ) ;
          TOOLTIP GL("Fonts and Colors") ;
-         ACTION GeneralSettings() ;
-         WHEN .NOT. EMPTY( cDefIni )
+         ACTION FontsAndColors() ;
+         WHEN .NOT. Empty( cDefIni )
    endif
 
    if Val( GetPvProfString( "General", "EditAreaProperties", "1", cDefIni ) ) = 1
-      DEFINE BUTTON RESOURCE "B_AREA32" ;
+      MENU oMenuAreas POPUP
+      ENDMENU
+   
+      DEFINE BUTTON oBtnAreas RESOURCE "B_AREA32" ;
          OF oBar ;
          PROMPT FWSTring( "Areas" ) ; 
          TOOLTIP GL("Area Properties") ;
          ACTION AreaProperties( nAktArea ) ;
-         WHEN .NOT. EMPTY( cDefIni )
+         WHEN .NOT. Empty( cDefIni ) ;
+         MENU oMenuAreas
    endif
 
    DEFINE BUTTON RESOURCE "B_EDIT32" ;
@@ -210,7 +228,7 @@ function BarMenu()
       PROMPT FWString( "Properties" ) ;
       TOOLTIP GL("Item Properties") ;
       ACTION IIF( LEN( aSelection ) <> 0, MultiItemProperties(), ItemProperties( nAktItem, nAktArea ) ) ;
-      WHEN .NOT. EMPTY( cDefIni )
+      WHEN .NOT. Empty( cDefIni )
 
    if Val( GetPvProfString( "General", "InsertMode", "1", cDefIni ) ) = 1
       DEFINE BUTTON RESOURCE "B_TEXT32" ;
@@ -218,28 +236,28 @@ function BarMenu()
          PROMPT FWString( "&Text" ) ;
          TOOLTIP STRTRAN( GL("Insert &Text"), "&" ) ;
          ACTION NewItem( "TEXT", nAktArea ) ;
-         WHEN .NOT. EMPTY( cDefIni )
+         WHEN .NOT. Empty( cDefIni )
 
       DEFINE BUTTON RESOURCE "B_IMAGE32" ;
          OF oBar ;
          PROMPT FWString( "Image" ) ;
          TOOLTIP STRTRAN( GL("&Image"), "&" ) ;
          ACTION NewItem( "IMAGE", nAktArea ) ;
-         WHEN .NOT. EMPTY( cDefIni )
+         WHEN .NOT. Empty( cDefIni )
 
       DEFINE BUTTON RESOURCE "B_GRAPHIC32" ;
          OF oBar ;
          PROMPT FWString( "Graphic" ) ;
          TOOLTIP STRTRAN( GL("Insert &Graphic"), "&" ) ;
          ACTION NewItem( "GRAPHIC", nAktArea ) ;
-         WHEN .NOT. EMPTY( cDefIni )
+         WHEN .NOT. Empty( cDefIni )
 
       DEFINE BUTTON RESOURCE "B_BARCODE32" ;
          OF oBar ;
          PROMPT FWString( "Barcode" ) ;
          TOOLTIP STRTRAN( GL("Insert &Barcode"), "&" ) ;
          ACTION NewItem( "BARCODE", nAktArea ) ;
-         WHEN .NOT. EMPTY( cDefIni )
+         WHEN .NOT. Empty( cDefIni )
    endif
 
    // if Val( GetPvProfString( "General", "ShowExitButton", "0", cGeneralIni ) ) = 1
@@ -296,10 +314,10 @@ function PreviewMenu( oBtn )
       MENUITEM GL("Pre&view") + chr(9) + GL("Ctrl+P") ;
          ACCELERATOR ACC_CONTROL, ASC( GL("P") ) ;
          ACTION PrintReport( .T. ) ;
-         WHEN .NOT. EMPTY( cDefIni )
+         WHEN .NOT. Empty( cDefIni )
       MENUITEM GL("&Developer Preview") ;
          ACTION PrintReport( .T., .T. ) ;
-         WHEN .NOT. EMPTY( cDefIni )
+         WHEN .NOT. Empty( cDefIni )
 
    ENDMENU
 
@@ -313,7 +331,7 @@ function StartMessage()
 
    if lBeta = .T.
       BetaVersion()
-   ELSE
+   else
       if lDemo = .T.
          VRDLogo()
       elseif lPersonal = .T. .OR. lStandard = .T.
@@ -419,7 +437,7 @@ function DeclarePublics( cDefFile )
    cLongDefIni  := cDefFile
    cDefaultPath := CheckPath( GetPvProfString( "General", "DefaultPath", "", cGeneralIni ) )
 
-   if AT( "\", cDefIni ) = 0 .and. .NOT. EMPTY( cDefIni )
+   if AT( "\", cDefIni ) = 0 .and. .NOT. Empty( cDefIni )
       cDefIni := ".\" + cDefIni
    endif
 
@@ -460,36 +478,36 @@ function DeclarePublics( cDefFile )
    oGenVar:AddMember( "nGridWidth" ,, 1   )
    oGenVar:AddMember( "nGridHeight",, 1   )
 
-   if .NOT. EMPTY( cDefIni )
+   if .NOT. Empty( cDefIni )
       SetGeneralSettings()
    endif
 
    oGenVar:AddMember( "nClrArea"       ,, IniColor( GetPvProfString( "General", "AreaBackColor", "240, 247, 255", cGeneralIni ) ) )
 
-   oGenVar:AddMember( "cBrush"   ,, ALLTRIM( GetPvProfString( "General", "BackgroundBrush", "", cGeneralIni ) ) )
-   oGenVar:AddMember( "cBarBrush",, ALLTRIM( GetPvProfString( "General", "ButtonbarBrush" , "", cGeneralIni ) ) )
+   oGenVar:AddMember( "cBrush"   ,, AllTrim( GetPvProfString( "General", "BackgroundBrush", "", cGeneralIni ) ) )
+   oGenVar:AddMember( "cBarBrush",, AllTrim( GetPvProfString( "General", "ButtonbarBrush" , "", cGeneralIni ) ) )
    oGenVar:AddMember( "cBrushArea"     ,, GetPvProfString( "General", "AreaBackBrush"     , "", cGeneralIni ) )
 
    oGenVar:AddMember( "oBarBrush",, nil )
 
-   if EMPTY( oGenVar:cBarBrush )
+   if Empty( oGenVar:cBarBrush )
       DEFINE BRUSH oGenVar:oBarBrush COLOR GetSysColor( 15 )  // COLOR_BTNFACE
-   ELSE
+   else
       if AT( ".BMP", oGenVar:cBrush ) <> 0
          DEFINE BRUSH oGenVar:oBarBrush FILE oGenVar:cBarBrush
-      ELSE
+      else
          DEFINE BRUSH oGenVar:oBarBrush RESOURCE oGenVar:cBarBrush
       endif
    endif
 
    oGenVar:AddMember( "oAreaBrush",, nil )
 
-   if EMPTY( oGenVar:cBrushArea )
+   if Empty( oGenVar:cBrushArea )
       DEFINE BRUSH oGenVar:oAreaBrush COLOR oGenVar:nClrArea
-   ELSE
+   else
      if AT( ".BMP", oGenVar:cBrushArea ) <> 0
         DEFINE BRUSH oGenVar:oAreaBrush FILE oGenVar:cBrushArea
-     ELSE
+     else
         DEFINE BRUSH oGenVar:oAreaBrush RESOURCE oGenVar:cBrushArea
      endif
    endif
@@ -552,14 +570,14 @@ return .T.
 
 function IniMainWindow()
 
-   if .NOT. EMPTY( cDefIni )
+   if .NOT. Empty( cDefIni )
 
       oGenVar:lFirstFile := .F.
 
       //Fonts definieren
       DefineFonts()
       //Areas initieren
-      IniAreasOnBar()
+      // IniAreasOnBar()
       //Designwindows �ffnen
       ClientWindows()
       //Areas anzeigen
@@ -627,8 +645,8 @@ function ScrollVertical( lUp, lDown, lPageUp, lPageDown, lPos, nPosZugabe )
    UnSelectAll()
 
    for i := 1 to 100
-      if aWnd[i] <> nil
-         aFirstWndCoors := GetCoors( aWnd[i]:hWnd )
+      if aWnd[ i ] <> nil
+         aFirstWndCoors := GetCoors( aWnd[ i ]:hWnd )
          EXIT
       endif
    next
@@ -660,15 +678,15 @@ function ScrollVertical( lUp, lDown, lPageUp, lPageDown, lPos, nPosZugabe )
    endif
 
    for i := 1 to 100
-      if aWnd[i] <> nil
+      if aWnd[ i ] <> nil
          if lUp = .T. .OR. lPos = .T.
-            aWnd[i]:Move( aWnd[i]:nTop + nZugabe, aWnd[i]:nLeft, 0, 0, .T. )
+            aWnd[ i ]:Move( aWnd[ i ]:nTop + nZugabe, aWnd[ i ]:nLeft, 0, 0, .T. )
          elseif lDown = .T.
-            aWnd[i]:Move( aWnd[i]:nTop - nZugabe, aWnd[i]:nLeft, 0, 0, .T. )
+            aWnd[ i ]:Move( aWnd[ i ]:nTop - nZugabe, aWnd[ i ]:nLeft, 0, 0, .T. )
          elseif lPageUp = .T.
-            aWnd[i]:Move( aWnd[i]:nTop + nPageZugabe, aWnd[i]:nLeft, 0, 0, .T. )
+            aWnd[ i ]:Move( aWnd[ i ]:nTop + nPageZugabe, aWnd[ i ]:nLeft, 0, 0, .T. )
          elseif lPageDown = .T.
-            aWnd[i]:Move( aWnd[i]:nTop - nPageZugabe, aWnd[i]:nLeft, 0, 0, .T. )
+            aWnd[ i ]:Move( aWnd[ i ]:nTop - nPageZugabe, aWnd[ i ]:nLeft, 0, 0, .T. )
          endif
       endif
    next
@@ -695,8 +713,8 @@ function ScrollHorizont( lLeft, lRight, lPageLeft, lPageRight, lPos, nPosZugabe 
    UnSelectAll()
 
    for i := 1 to 100
-      if aWnd[i] <> nil
-         aFirstWndCoors := GetCoors( aWnd[i]:hWnd )
+      if aWnd[ i ] <> nil
+         aFirstWndCoors := GetCoors( aWnd[ i ]:hWnd )
          EXIT
       endif
    next
@@ -725,15 +743,15 @@ function ScrollHorizont( lLeft, lRight, lPageLeft, lPageRight, lPos, nPosZugabe 
 
 
    for i := 1 to 100
-      if aWnd[i] <> nil
+      if aWnd[ i ] <> nil
          if lLeft = .T. .OR. lPos = .T.
-            aWnd[i]:Move( aWnd[i]:nTop, aWnd[i]:nLeft + nZugabe , 0, 0, .T. )
+            aWnd[ i ]:Move( aWnd[ i ]:nTop, aWnd[ i ]:nLeft + nZugabe , 0, 0, .T. )
          elseif lRight = .T.
-            aWnd[i]:Move( aWnd[i]:nTop, aWnd[i]:nLeft - nZugabe , 0, 0, .T. )
+            aWnd[ i ]:Move( aWnd[ i ]:nTop, aWnd[ i ]:nLeft - nZugabe , 0, 0, .T. )
          elseif lPageLeft = .T.
-            aWnd[i]:Move( aWnd[i]:nTop, aWnd[i]:nLeft + nPageZugabe, 0, 0, .T. )
+            aWnd[ i ]:Move( aWnd[ i ]:nTop, aWnd[ i ]:nLeft + nPageZugabe, 0, 0, .T. )
          elseif lPageRight = .T.
-            aWnd[i]:Move( aWnd[i]:nTop, aWnd[i]:nLeft - nPageZugabe, 0, 0, .T. )
+            aWnd[ i ]:Move( aWnd[ i ]:nTop, aWnd[ i ]:nLeft - nPageZugabe, 0, 0, .T. )
          endif
       endif
    next
@@ -753,36 +771,14 @@ return .T.
 
 //----------------------------------------------------------------------------//
 
-function IniAreasOnBar()
-
-   local i, oFont1
-   local cCbxItem   := ""
-   local nAreaStart := oMainWnd:nRight - 180
-
-   aCbxItems := {""}
-
-   DEFINE FONT oFont1 NAME "Ms Sans Serif" SIZE 0,-10
-
-   //@ 9, nAreaStart - 75 SAY GL("Area") + ":" OF oBar PIXEL SIZE 70, 16 FONT oFont1 RIGHT
-
-   @ 25, nAreaStart COMBOBOX oCbxArea VAR cCbxItem ITEMS aCbxItems OF oBar ;
-      PIXEL SIZE 150, 300 FONT oFont1 ;
-      WHEN .NOT. EMPTY( cDefIni ) ;
-
-   oFont1:End()
-
-return .T.
-
-//----------------------------------------------------------------------------//
-
 function SetWinNull()
 
    local i
    local nAltPos := aWnd[nAktArea]:nTop
 
    for i := 1 to 100
-      if aWnd[i] <> nil
-         aWnd[i]:Move( aWnd[i]:nTop - nAltPos, aWnd[i]:nLeft, 0, 0, .T. )
+      if aWnd[ i ] <> nil
+         aWnd[ i ]:Move( aWnd[ i ]:nTop - nAltPos, aWnd[ i ]:nLeft, 0, 0, .T. )
       endif
    next
 
@@ -792,23 +788,39 @@ return .T.
 
 function ShowAreasOnBar()
 
-   local i, oFont1
-   local cCbxItem  := aWndTitle[ 1 ]
+   local n
+   // local cCbxItem  := aWndTitle[ 1 ]
 
-   aCbxItems := {}
+   // aCbxItems := {}
 
-   for i := 1 to LEN( aWndTitle )
-      if .NOT. EMPTY( aWndTitle[i] )
-         AADD( aCbxItems, aWndTitle[i] )
-      endif
-   next
+   // for n := 1 to LEN( aWndTitle )
+   //    if .NOT. Empty( aWndTitle[ n ] )
+   //      AADD( aCbxItems, aWndTitle[ n ] )
+   //    endif
+   // next
+   
+   if oMenuAreas != nil
+      oMenuAreas:End()
+   endif
+   
+   MENU oMenuAreas POPUP
+      for n = 1 to Len( aWndTitle )
+         if ! Empty( aWndTitle[ n ] )
+            MENUITEM aWndTitle[ n ] ;
+               ACTION aWnd[ AScan( aWndTitle, oMenuItem:cPrompt ) ]:SetFocus(),;
+                      SetWinNull()
+         endif
+      next
+   ENDMENU
+   
+   oBtnAreas:oPopup = oMenuAreas            
 
    //Fokus auf das erste Fenster legen
-   aWnd[ ASCAN( aWnd, {|x| x <> nil } ) ]:SetFocus()
+   aWnd[ AScan( aWnd, { |x| x != nil } ) ]:SetFocus()
 
-   oCbxArea:SetItems( aCbxItems )
-   oCbxArea:Select( 1 )
-   oCbxArea:bChange = {|| aWnd[ASCAN( aWndTitle, oCbxArea:cTitle )]:SetFocus(), SetWinNull() }
+   // oCbxArea:SetItems( aCbxItems )
+   // oCbxArea:Select( 1 )
+   // oCbxArea:bChange = {|| aWnd[ASCAN( aWndTitle, oCbxArea:cTitle )]:SetFocus(), SetWinNull() }
 
 return .T.
 
@@ -834,31 +846,31 @@ function BuildMenu()
    MENUITEM GL("&Save") + chr(9) + GL("Ctrl+S") RESOURCE "B_SAVE_16" ;
       ACCELERATOR ACC_CONTROL, ASC( GL("S") ) ;
       ACTION SaveFile() ;
-      WHEN .NOT. EMPTY( cDefIni ) .and. lVRDSave = .F.
+      WHEN .NOT. Empty( cDefIni ) .and. lVRDSave = .F.
    MENUITEM GL("Save &as") ;
       ACTION SaveAsFile() ;
-      WHEN .NOT. EMPTY( cDefIni )
+      WHEN .NOT. Empty( cDefIni )
    SEPARATOR
    MENUITEM GL("&File Informations") ;
       ACTION FileInfos() ;
-      WHEN .NOT. EMPTY( cDefIni )
+      WHEN .NOT. Empty( cDefIni )
 
    SEPARATOR
    if Val( GetPvProfString( "General", "Standalone", "0", cDefIni ) ) = 1
       MENUITEM GL("Pre&view") + chr(9) + GL("Ctrl+P") RESOURCE "B_PREVIEW" ;
          ACCELERATOR ACC_CONTROL, ASC( GL("P") ) ;
          ACTION PrintReport( .T. ) ;
-         WHEN .NOT. EMPTY( cDefIni )
+         WHEN .NOT. Empty( cDefIni )
    endif
    if nDeveloper = 1
       MENUITEM GL("&Developer Preview") ;
          ACTION PrintReport( .T., .T. ) ;
-         WHEN .NOT. EMPTY( cDefIni )
+         WHEN .NOT. Empty( cDefIni )
    endif
 
    MENUITEM GL("&Print") /*RESOURCE "PRINTER"*/ ;
          ACTION PrintReport() ;
-         WHEN .NOT. EMPTY( cDefIni )
+         WHEN .NOT. Empty( cDefIni )
 
    MRU oMru FILENAME cGeneralIni ;
             SECTION  "MRU" ;
@@ -874,25 +886,25 @@ function BuildMenu()
    MENUITEM GL("&Undo") + chr(9) + GL("Ctrl+Z") RESOURCE "B_UNDO_16" ;
       ACTION Undo() ;
       ACCELERATOR ACC_CONTROL, ASC( GL("Z") ) ;
-      WHEN .NOT. EMPTY( cDefIni ) .and. nUndoCount > 0
+      WHEN .NOT. Empty( cDefIni ) .and. nUndoCount > 0
    MENUITEM GL("&Redo") + chr(9) + GL("Ctrl+Y") RESOURCE "B_REDO_16" ;
       ACTION Redo() ;
       ACCELERATOR ACC_CONTROL, ASC( GL("Y") ) ;
-      WHEN .NOT. EMPTY( cDefIni ) .and. nRedoCount > 0
+      WHEN .NOT. Empty( cDefIni ) .and. nRedoCount > 0
    SEPARATOR
 
    MENUITEM GL("Cu&t") + chr(9) + GL("Ctrl+X") ;
       ACTION ( ItemCopy( .T. ), nAktItem := 0 ) ;
       ACCELERATOR ACC_CONTROL, ASC( GL("X") ) ;
-      WHEN .NOT. EMPTY( cDefIni )
+      WHEN .NOT. Empty( cDefIni )
    MENUITEM GL("&Copy") + chr(9) + GL("Ctrl+C") ;
       ACTION ItemCopy( .F. ) ;
       ACCELERATOR ACC_CONTROL, ASC( GL("C") ) ;
-      WHEN .NOT. EMPTY( cDefIni )
+      WHEN .NOT. Empty( cDefIni )
    MENUITEM GL("&Paste") + chr(9) + GL("Ctrl+V") ;
       ACTION ItemPaste()  ;
       ACCELERATOR ACC_CONTROL, ASC( GL("V") ) ;
-      WHEN .NOT. EMPTY( cDefIni ) .and. .NOT. EMPTY( cItemCopy )
+      WHEN .NOT. Empty( cDefIni ) .and. .NOT. Empty( cItemCopy )
    SEPARATOR
 
    if Val( GetPvProfString( "General", "InsertAreas", "1", cDefIni ) ) <> 1
@@ -900,21 +912,21 @@ function BuildMenu()
          MENUITEM GL("&Area Properties") + chr(9) + GL("Ctrl+A") RESOURCE "B_AREA" ;
             ACTION AreaProperties( nAktArea ) ;
             ACCELERATOR ACC_CONTROL, ASC( GL("A") ) ;
-            WHEN .NOT. EMPTY( cDefIni )
+            WHEN .NOT. Empty( cDefIni )
          SEPARATOR
       endif
    endif
 
    MENUITEM GL("Select all Items") ;
-      ACTION SelectAllItems() WHEN .NOT. EMPTY( cDefIni )
+      ACTION SelectAllItems() WHEN .NOT. Empty( cDefIni )
    MENUITEM GL("Select all Items in current Area") ;
-      ACTION SelectAllItems( .T. ) WHEN .NOT. EMPTY( cDefIni )
+      ACTION SelectAllItems( .T. ) WHEN .NOT. Empty( cDefIni )
    MENUITEM GL("Invert Selection") ;
-      ACTION InvertSelection() WHEN .NOT. EMPTY( cDefIni )
+      ACTION InvertSelection() WHEN .NOT. Empty( cDefIni )
    MENUITEM GL("Invert Selection in current Area") ;
-      ACTION InvertSelection( .T. ) WHEN .NOT. EMPTY( cDefIni )
+      ACTION InvertSelection( .T. ) WHEN .NOT. Empty( cDefIni )
    SEPARATOR
-   MENUITEM GL("Delete in current Area") WHEN .NOT. EMPTY( cDefIni )
+   MENUITEM GL("Delete in current Area") WHEN .NOT. Empty( cDefIni )
       MENU
       MENUITEM GL("&Text")    ACTION DeleteAllItems( 1 )
       MENUITEM GL("I&mage")   ACTION DeleteAllItems( 2 )
@@ -930,24 +942,24 @@ function BuildMenu()
       MENUITEM GL("Insert &Text") + chr(9) + GL("Ctrl+T") RESOURCE "B_TEXT" ;
          ACCELERATOR ACC_CONTROL, ASC( GL("T") ) ;
          ACTION NewItem( "TEXT", nAktArea ) ;
-         WHEN .NOT. EMPTY( cDefIni )
+         WHEN .NOT. Empty( cDefIni )
       MENUITEM GL("Insert &Image") + chr(9) + GL("Ctrl+M") RESOURCE "B_IMAGE" ;
          ACCELERATOR ACC_CONTROL, ASC( GL("M") ) ;
          ACTION NewItem( "IMAGE", nAktArea ) ;
-         WHEN .NOT. EMPTY( cDefIni )
+         WHEN .NOT. Empty( cDefIni )
       MENUITEM GL("Insert &Graphic") + chr(9) + GL("Ctrl+G") RESOURCE "B_GRAPHIC" ;
          ACCELERATOR ACC_CONTROL, ASC( GL("G") ) ;
          ACTION NewItem( "GRAPHIC", nAktArea ) ;
-         WHEN .NOT. EMPTY( cDefIni )
+         WHEN .NOT. Empty( cDefIni )
       MENUITEM GL("Insert &Barcode") + chr(9) + GL("Ctrl+B") RESOURCE "B_BARCODE" ;
          ACCELERATOR ACC_CONTROL, ASC( ("B") ) ;
          ACTION NewItem( "BARCODE", nAktArea ) ;
-         WHEN .NOT. EMPTY( cDefIni )
+         WHEN .NOT. Empty( cDefIni )
       SEPARATOR
       MENUITEM GL("&Item Properties") + chr(9) + GL("Ctrl+I") RESOURCE "B_EDIT" ;
          ACTION IIF( LEN( aSelection ) <> 0, MultiItemProperties(), ItemProperties( nAktItem, nAktArea ) ) ;
          ACCELERATOR ACC_CONTROL, ASC( GL("I") ) ;
-         WHEN .NOT. EMPTY( cDefIni )
+         WHEN .NOT. Empty( cDefIni )
       ENDMENU
 
       if Val( GetPvProfString( "General", "InsertAreas", "1", cDefIni ) ) = 1
@@ -962,7 +974,7 @@ function BuildMenu()
          MENUITEM GL("&Area Properties") + chr(9) + GL("Ctrl+A") RESOURCE "B_AREA" ;
             ACTION AreaProperties( nAktArea ) ;
             ACCELERATOR ACC_CONTROL, ASC( GL("A") ) ;
-            WHEN .NOT. EMPTY( cDefIni )
+            WHEN .NOT. Empty( cDefIni )
       endif
       ENDMENU
       endif
@@ -974,27 +986,27 @@ function BuildMenu()
    MENUITEM GL("Area and Item &List") + chr(9) + GL("Ctrl+L") RESOURCE "B_ITEMLIST" ;
       ACTION Itemlist() ;
       ACCELERATOR ACC_CONTROL, ASC( GL("L") ) ;
-      WHEN .NOT. EMPTY( cDefIni )
+      WHEN .NOT. Empty( cDefIni )
    if Val( GetPvProfString( "General", "EditProperties", "1", cDefIni ) ) = 1
       MENUITEM GL("&Fonts and Colors") + chr(9) + GL("Ctrl+F") RESOURCE "B_FONTCOLOR" ;
-         ACTION GeneralSettings() ;
+         ACTION FontsAndColors() ;
          ACCELERATOR ACC_CONTROL, ASC( GL("F") ) ;
-         WHEN .NOT. EMPTY( cDefIni )
+         WHEN .NOT. Empty( cDefIni )
    endif
    SEPARATOR
    if Val( GetPvProfString( "General", "Expressions", "0", cDefIni ) ) > 0
       MENUITEM GL("&Expressions") ;
          ACTION Expressions() ;
-         WHEN .NOT. EMPTY( cDefIni )
+         WHEN .NOT. Empty( cDefIni )
    endif
    if Val( GetPvProfString( "General", "EditDatabases", "1", cDefIni ) ) > 0
       MENUITEM GL("&Databases") ;
          ACTION Databases() ;
-         WHEN .NOT. EMPTY( cDefIni )
+         WHEN .NOT. Empty( cDefIni )
    endif
    MENUITEM GL("&Report Settings") ;
       ACTION ReportSettings() ;
-      WHEN .NOT. EMPTY( cDefIni )
+      WHEN .NOT. Empty( cDefIni )
    SEPARATOR
    if Val( GetPvProfString( "General", "EditLanguage", "0", cDefIni ) ) = 1
       MENUITEM GL("Edit &Language") ;
@@ -1002,7 +1014,7 @@ function BuildMenu()
    endif
    MENUITEM GL("&Options") ;
       ACTION Options() ;
-      WHEN .NOT. EMPTY( cDefIni )
+      WHEN .NOT. Empty( cDefIni )
    ENDMENU
 
    if Val( GetPvProfString( "General", "Help", "1", cGeneralIni ) ) = 1
@@ -1012,7 +1024,7 @@ function BuildMenu()
          ACTION WinHelp( "VRD.HLP" ) ;
          ACCELERATOR ACC_NORMAL, VK_F1
       SEPARATOR
-   ELSE
+   else
       MENUITEM GL("&Info")
       MENU
    endif
@@ -1045,13 +1057,13 @@ function PopupMenu( nArea, oItem, nRow, nCol, lItem )
    endif
    if LEN( aSelection ) <> 0
    MENUITEM GL("&Delete selected Items") + CHR(9) + GL("Del") ;
-      ACTION DelSelectItems()
+      ACTION DelselectItems()
    SEPARATOR
    endif
    MENUITEM GL("Area and Item &List") + CHR(9) + GL("Ctrl+L") RESOURCE "B_ITEMLIST" ;
       ACTION Itemlist()
    MENUITEM GL("&Fonts and Colors") + CHR(9) + GL("Ctrl+F")   RESOURCE "B_FONTCOLOR" ;
-      ACTION GeneralSettings()
+      ACTION FontsAndColors()
    SEPARATOR
    MENUITEM GL("&Area Properties") + CHR(9) + GL("Ctrl+A")    RESOURCE "B_AREA" ;
       ACTION ( aWnd[ nArea ]:SetFocus(), AreaProperties( nAktArea ) )
@@ -1070,7 +1082,7 @@ function PopupMenu( nArea, oItem, nRow, nCol, lItem )
    SEPARATOR
    MENUITEM GL("&Paste") + chr(9) + GL("Ctrl+V") ;
       ACTION ItemPaste() ;
-      WHEN .NOT. EMPTY( cItemCopy )
+      WHEN .NOT. Empty( cItemCopy )
 
    ENDMENU
 
@@ -1108,7 +1120,7 @@ function GenerateSource( nArea )
    REDEFINE BTNBMP ID 151 OF oDlg RESOURCE "OPEN" TRANSPARENT UPDATE ;
       TOOLTIP GL("Directory") ;
       ACTION ( cDir := cGetDir32( GL("Select a directory") ), ;
-               IIF( AT( "\", cFile ) = 0 .and. .NOT. EMPTY( cDir ), ;
+               IIF( AT( "\", cFile ) = 0 .and. .NOT. Empty( cDir ), ;
                   cFile := cDir + "\" + cFile, ), ;
                oGet1:Refresh() )
 
@@ -1118,42 +1130,42 @@ function GenerateSource( nArea )
 
    if lGenerate = .T.
 
-      cAreaDef := GetPvProfString( "Areas", ALLTRIM(STR(nArea,5)) , "", cDefIni )
-      cAreaDef := VRD_LF2SF( ALLTRIM( cAreaDef ) )
+      cAreaDef := GetPvProfString( "Areas", AllTrim(STR(nArea,5)) , "", cDefIni )
+      cAreaDef := VRD_LF2SF( AllTrim( cAreaDef ) )
 
-      cAreaTitle := ALLTRIM( GetPvProfString( "General", "Title" , "", aAreaIni[ nArea ] ) )
+      cAreaTitle := AllTrim( GetPvProfString( "General", "Title" , "", aAreaIni[ nArea ] ) )
 
-      if .NOT. EMPTY( cAreaTitle )
+      if .NOT. Empty( cAreaTitle )
          cSource += SPACE(3) + "//--- Area: " + cAreaTitle + " ---" + CRLF
       endif
 
       for i := 1 to 1000
 
-         cItemDef := ALLTRIM( GetPvProfString( "Items", ALLTRIM(STR(i,5)) , "", aAreaIni[ nArea ] ) )
+         cItemDef := AllTrim( GetPvProfString( "Items", AllTrim(STR(i,5)) , "", aAreaIni[ nArea ] ) )
 
-         if .NOT. EMPTY( cItemDef )
+         if .NOT. Empty( cItemDef )
             if nStyle = 1
                cSource += SPACE(3) + "oVRD:PrintItem( " + ;
-                          ALLTRIM(STR( nArea,3 )) + ;
-                          ", " + ALLTRIM(GetField( cItemDef, 3 )) + ;
-                          ', "' + ALLTRIM(GetField( cItemDef, 2 )) + ;
+                          AllTrim(STR( nArea,3 )) + ;
+                          ", " + AllTrim(GetField( cItemDef, 3 )) + ;
+                          ', "' + AllTrim(GetField( cItemDef, 2 )) + ;
                           '" )' + CRLF
-            ELSE
-               cIDs   += IIF( EMPTY( cIDs ), "", ", ") + ALLTRIM(GetField( cItemDef, 3 ))
-               cNames += IIF( EMPTY( cNames ), '"', ', "') + ALLTRIM(GetField( cItemDef, 2 )) + '"'
+            else
+               cIDs   += IIF( Empty( cIDs ), "", ", ") + AllTrim(GetField( cItemDef, 3 ))
+               cNames += IIF( Empty( cNames ), '"', ', "') + AllTrim(GetField( cItemDef, 2 )) + '"'
             endif
          endif
 
       next
 
       if nStyle = 2
-         cSource += SPACE(3) + "oVRD:PrintItemList( " + ALLTRIM(STR( nArea,3 )) + ;
+         cSource += SPACE(3) + "oVRD:PrintItemList( " + AllTrim(STR( nArea,3 )) + ;
                     ", { " + cIDs + " }" + ", ;" + CRLF + ;
                     SPACE(6) + "{ " + cNames + " } )" + CRLF
       endif
 
       cSource += CRLF + SPACE(3) + ;
-                 "oVRD:PrintRest( " + ALLTRIM(STR( nArea, 3 )) + " )" + CRLF
+                 "oVRD:PrintRest( " + AllTrim(STR( nArea, 3 )) + " )" + CRLF
 
       if nCopyTo = 1
 
@@ -1161,7 +1173,7 @@ function GenerateSource( nArea )
          SetClipboardData( 1, cSource )
          CloseClipboard()
 
-      ELSE
+      else
 
          CreateNewFile( cFile )
 
@@ -1194,24 +1206,24 @@ function ClientWindows()
 
    for i := 1 to LEN( aIniEntries )
 
-      nWnd := EntryNr( aIniEntries[i] )
+      nWnd := EntryNr( aIniEntries[ i ] )
       cItemDef := GetIniEntry( aIniEntries,, "",, i )
 
-      if nWnd <> 0 .and. .NOT. EMPTY( cItemDef )
+      if nWnd <> 0 .and. .NOT. Empty( cItemDef )
 
          if lFirstWnd = .F.
             nAktArea := nWnd
             lFirstWnd := .T.
          endif
 
-         if EMPTY( cAreaFilesDir )
+         if Empty( cAreaFilesDir )
             cAreaFilesDir := cDefaultPath
          endif
-         if EMPTY( cAreaFilesDir )
+         if Empty( cAreaFilesDir )
             cAreaFilesDir := cDefIniPath
          endif
 
-         cItemDef := VRD_LF2SF( ALLTRIM( cAreaFilesDir + cItemDef ) )
+         cItemDef := VRD_LF2SF( AllTrim( cAreaFilesDir + cItemDef ) )
 
          aVRDSave[nWnd, 1 ] := cItemDef
          aVRDSave[nWnd, 2 ] := MEMOREAD( cItemDef )
@@ -1219,7 +1231,7 @@ function ClientWindows()
          nWindowNr += 1
          aAreaIni[nWnd] := IIF( AT( "\", cItemDef ) = 0, ".\", "" ) + cItemDef
 
-         cTitle  := ALLTRIM( GetPvProfString( "General", "Title" , "", aAreaIni[nWnd] ) )
+         cTitle  := AllTrim( GetPvProfString( "General", "Title" , "", aAreaIni[nWnd] ) )
 
          oGenVar:aAreaSizes[nWnd] := ;
             { Val( GetPvProfString( "General", "Width", "600", aAreaIni[nWnd] ) ), ;
@@ -1231,7 +1243,7 @@ function ClientWindows()
          nDemoWidth := nWidth
          if oGenVar:lFixedAreaWidth = .T.
             nWidth := 1200
-         ELSE
+         else
             nWidth += nRuler + nAreaZugabe2
          endif
 
@@ -1302,7 +1314,7 @@ function FillWindow( nArea, cAreaIni )
    @ 2, 17 BTNBMP RESOURCE "AREAPROP"   SIZE 12,12 ACTION AreaProperties( nAktArea )
 
    @ 2, 29 SAY oGenVar:aAreaTitle[ nArea ] ;
-      PROMPT " " + ALLTRIM( GetPvProfString( "General", "Title" , "", cAreaIni ) ) ;
+      PROMPT " " + AllTrim( GetPvProfString( "General", "Title" , "", cAreaIni ) ) ;
       SIZE 400, nRulerTop-nRuler-2 PIXEL FONT oGenVar:aAppFonts[ 1 ] ;
       COLORS oGenVar:nF1ClrAreaTitle, oGenVar:nBClrAreaTitle OF aWnd[ nArea ]
 
@@ -1321,7 +1333,7 @@ function FillWindow( nArea, cAreaIni )
    aWnd[ nArea ]:bPainted  = {| hDC, cPS | ZeichneHintergrund( nArea ) }
 
    aWnd[ nArea ]:bGotFocus = {|| SetTitleColor( .F. ), ;
-                               nAktArea := nArea, oCbxArea:Set( aWndTitle[ nArea ] ), ;
+                               nAktArea := nArea,; /* oCbxArea:Set( aWndTitle[ nArea ] ), ; */
                                SetTitleColor( .T. ) }
 
    aWnd[ nArea ]:bMMoved = {|nRow,nCol,nFlags| ;
@@ -1338,7 +1350,7 @@ function FillWindow( nArea, cAreaIni )
    aWnd[ nArea ]:bKeyDown   = {|nKey| WndKeyDownAction( nKey, nArea, cAreaIni ) }
 
    for i := 1 to LEN( aIniEntries )
-      nEntry := EntryNr( aIniEntries[i] )
+      nEntry := EntryNr( aIniEntries[ i ] )
       if nEntry <> 0
          ShowItem( nEntry, nArea, cAreaIni, @aFirst, @nElemente, aIniEntries, i )
       endif
@@ -1426,7 +1438,7 @@ function SetTitleColor( lOff )
 
    if lOff = .T.
       oGenVar:aAreaTitle[nAktArea]:SetColor( oGenVar:nF2ClrAreaTitle, oGenVar:nBClrAreaTitle )
-   ELSE
+   else
       oGenVar:aAreaTitle[nAktArea]:SetColor( oGenVar:nF1ClrAreaTitle, oGenVar:nBClrAreaTitle )
    endif
 
@@ -1473,7 +1485,7 @@ function WndKeyDownAction( nKey, nArea, cAreaIni )
 
    //Delete item
    if nKey == VK_DELETE
-      DelSelectItems()
+      DelselectItems()
    endif
 
    //return to edit properties
@@ -1495,7 +1507,7 @@ function WndKeyDownAction( nKey, nArea, cAreaIni )
       OTHERWISE
          lMove := .F.
       ENDCASE
-   ELSE
+   else
       DO CASE
       CASE nKey == VK_LEFT
          nX := -1 * nXMove
@@ -1538,7 +1550,7 @@ return .T.
 
 //----------------------------------------------------------------------------//
 
-function DelSelectItems()
+function DelselectItems()
 
    local i
 
@@ -1566,8 +1578,8 @@ function MsgBarInfos( nRow, nCol )
    DEFAULT nRow := 0
    DEFAULT nCol := 0
 
-   oMsgInfo:SetText( GL("Row:")    + " " + ALLTRIM(STR( GetCmInch( nRow - nRulerTop ), 5, IIF( nMeasure = 2, 2, 0 ) ) ) + "    " + ;
-                     GL("Column:") + " " + ALLTRIM(STR( GetCmInch( nCol - nRuler ), 5, IIF( nMeasure = 2, 2, 0 ) ) ) )
+   oMsgInfo:SetText( GL("Row:")    + " " + AllTrim(STR( GetCmInch( nRow - nRulerTop ), 5, IIF( nMeasure = 2, 2, 0 ) ) ) + "    " + ;
+                     GL("Column:") + " " + AllTrim(STR( GetCmInch( nCol - nRuler ), 5, IIF( nMeasure = 2, 2, 0 ) ) ) )
 
 return .T.
 
@@ -1623,7 +1635,7 @@ function ShowFontChoice( nCurrentFont )
    ACTIVATE DIALOG oDlg CENTERED ON INIT PreviewRefresh( oSay1, oLbx, oGet1 )
 
    if lSave = .T.
-      nFont := Val(SUBSTR( ALLTRIM(cFont), 1, 2 ))
+      nFont := Val(SUBSTR( AllTrim(cFont), 1, 2 ))
    endif
 
 return ( IIF( nFont = 0, nCurrentFont, nFont ) )
@@ -1637,18 +1649,18 @@ function GetCurrentFont( nCurrentFont, aGetFonts, nTyp )
    DEFAULT nTyp := 0
 
    if nTyp = 0
-      cCurFont := GL("Current:") + " " + ALLTRIM(STR( nCurrentFont, 3)) + ". "
+      cCurFont := GL("Current:") + " " + AllTrim(STR( nCurrentFont, 3)) + ". "
    endif
 
    if aGetFonts[nCurrentFont, 1 ] <> nil
       cCurFont += aGetFonts[nCurrentFont, 1 ] + ;
-         " " + ALLTRIM(STR( aGetFonts[nCurrentFont,3], 5 )) + ;
+         " " + AllTrim(STR( aGetFonts[nCurrentFont,3], 5 )) + ;
          IIF( aGetFonts[nCurrentFont,4], " " + GL("bold"), "") + ;
          IIF( aGetFonts[nCurrentFont,5], " " + GL("italic"), "") + ;
          IIF( aGetFonts[nCurrentFont,6], " " + GL("underline"), "") + ;
          IIF( aGetFonts[nCurrentFont,7], " " + GL("strickout"), "") + ;
-         IIF( aGetFonts[nCurrentFont,8] <> 0, " " + GL("Rotation:") + " " + ALLTRIM(STR( aGetFonts[nCurrentFont,8], 6)), "")
-   ELSE
+         IIF( aGetFonts[nCurrentFont,8] <> 0, " " + GL("Rotation:") + " " + AllTrim(STR( aGetFonts[nCurrentFont,8], 6)), "")
+   else
       cCurFont := ""
    endif
 
@@ -1672,7 +1684,7 @@ function ShowColorChoice( nCurrentClr )
 
    REDEFINE SAY PROMPT GL("Current:") ID 170 OF oDlg
 
-   REDEFINE SAY PROMPT ALLTRIM(STR( nCurrentClr )) + "." ID 401 OF oDlg
+   REDEFINE SAY PROMPT AllTrim(STR( nCurrentClr )) + "." ID 401 OF oDlg
    REDEFINE SAY PROMPT "" ID 402 OF oDlg COLORS SetColor( aColors[nCurrentClr], nDefClr ), SetColor( aColors[nCurrentClr], nDefClr )
 
    REDEFINE SAY aSay[1 ] PROMPT "" ID 301 OF oDlg COLORS SetColor( aColors[1 ], nDefClr ), SetColor( aColors[1 ], nDefClr )
@@ -1744,7 +1756,7 @@ function ShowColorChoice( nCurrentClr )
    aSay    := nil
    aBtn    := nil
    MEMORY(-1)
-   SYSREFRESH()
+   SysRefresh()
 
 return nColor
 
@@ -1759,7 +1771,7 @@ function DefineFonts()
    aFonts := Array( 50 )
 
    for i := 1 to 20
-      aFonts[i] := TFont():New( aGetFonts[i, 1], ;   // cFaceName
+      aFonts[ i ] := TFont():New( aGetFonts[i, 1], ;   // cFaceName
                                 aGetFonts[i, 2], ;   // nWidth
                                 aGetFonts[i, 3], ;   // nHeight
                                 , ;                  // lFromUser
@@ -1779,7 +1791,7 @@ return .T.
 
 function GetColor( nNr )
 
-return Val( GetPvProfString( "Colors", ALLTRIM(STR( nNr, 5 )) , "", cDefIni ) )
+return Val( GetPvProfString( "Colors", AllTrim(STR( nNr, 5 )) , "", cDefIni ) )
 
 //----------------------------------------------------------------------------//
 
@@ -1789,14 +1801,14 @@ function GetAllColors()
    local aColors := {}
 
    for i := 1 to 30
-      AADD( aColors, PADR( GetPvProfString( "Colors", ALLTRIM(STR( i, 5 )) , "", cDefIni ), 15 ) )
+      AADD( aColors, PADR( GetPvProfString( "Colors", AllTrim(STR( i, 5 )) , "", cDefIni ), 15 ) )
    next
 
 return ( aColors )
 
 //----------------------------------------------------------------------------//
 
-function GeneralSettings()
+function FontsAndColors()
 
    local i, oDlg, oFld, oLbx, oSay1, oGet1, nDefClr, oIni
    local aColorGet[30], aColorSay[30]
@@ -1811,12 +1823,12 @@ function GeneralSettings()
    next
 
    //System auffrischen
-   SYSREFRESH()
+   SysRefresh()
    MEMORY(-1)
 
-   DEFINE DIALOG oDlg NAME "GENERALSETTINGS" TITLE GL("Fonts, Colors and Databases")
+   DEFINE DIALOG oDlg NAME "FontsAndColors" TITLE GL( "Fonts and Colors" )
 
-   REDEFINE BUTTON PROMPT GL("&OK") ID 101 OF oDlg ACTION oDlg:End()
+   REDEFINE BUTTON PROMPT GL( "&OK" ) ID 101 OF oDlg ACTION oDlg:End()
 
    nDefClr := oDlg:nClrPane
 
@@ -1826,7 +1838,7 @@ function GeneralSettings()
       DIALOGS "GENERALSET_1", "GENERALSET_2"
 
    i := 1
-   REDEFINE LISTBOX oLbx VAR cFont ITEMS aShowFonts ID 201 OF oFld:aDialogs[i] ;
+   REDEFINE LISTBOX oLbx VAR cFont ITEMS aShowFonts ID 201 OF oFld:aDialogs[ i ] ;
       ON CHANGE PreviewRefresh( oSay1, oLbx, oGet1 ) ;
       ON DBLCLICK ( aShowFonts := SelectFont( oSay1, oLbx, oGet1 ) )
 
@@ -1834,123 +1846,126 @@ function GeneralSettings()
    oLbx:bKeyDown = { | nKey, nFlags | IIF( nKey == VK_RETURN, ;
                                            aShowFonts := SelectFont( oSay1, oLbx ), ) }
 
-   REDEFINE SAY PROMPT GL("Font")    ID 170 OF oFld:aDialogs[i]
-   REDEFINE SAY PROMPT GL("Preview") ID 171 OF oFld:aDialogs[i]
-   REDEFINE SAY PROMPT GL("Doubleclick to edit the font properties") ID 172 OF oFld:aDialogs[i]
+   REDEFINE SAY PROMPT GL("Font")    ID 170 OF oFld:aDialogs[ i ]
+   REDEFINE SAY PROMPT GL("Preview") ID 171 OF oFld:aDialogs[ i ]
+   REDEFINE SAY PROMPT GL("Doubleclick to edit the font properties") ID 172 OF oFld:aDialogs[ i ]
 
    REDEFINE SAY oSay1 PROMPT CRLF + CRLF + GL("Test 123") ;
-      ID 301 OF oFld:aDialogs[i] UPDATE FONT aFonts[ 1 ]
+      ID 301 OF oFld:aDialogs[ i ] UPDATE FONT aFonts[ 1 ]
 
-   REDEFINE GET oGet1 VAR cFontText ID 311 OF oFld:aDialogs[i] UPDATE FONT aFonts[ 1 ] MEMO
+   REDEFINE GET oGet1 VAR cFontText ID 311 OF oFld:aDialogs[ i ] UPDATE FONT aFonts[ 1 ] MEMO
 
    i := 2
-   REDEFINE SAY PROMPT GL("Nr.")   ID 170 OF oFld:aDialogs[i]
-   REDEFINE SAY PROMPT GL("Color") ID 171 OF oFld:aDialogs[i]
-   REDEFINE SAY PROMPT GL("Nr.")   ID 172 OF oFld:aDialogs[i]
-   REDEFINE SAY PROMPT GL("Color") ID 173 OF oFld:aDialogs[i]
-   REDEFINE SAY PROMPT GL("Nr.")   ID 174 OF oFld:aDialogs[i]
-   REDEFINE SAY PROMPT GL("Color") ID 175 OF oFld:aDialogs[i]
+   REDEFINE SAY PROMPT GL("Nr.")   ID 170 OF oFld:aDialogs[ i ]
+   REDEFINE SAY PROMPT GL("Color") ID 171 OF oFld:aDialogs[ i ]
+   REDEFINE SAY PROMPT GL("Nr.")   ID 172 OF oFld:aDialogs[ i ]
+   REDEFINE SAY PROMPT GL("Color") ID 173 OF oFld:aDialogs[ i ]
+   REDEFINE SAY PROMPT GL("Nr.")   ID 174 OF oFld:aDialogs[ i ]
+   REDEFINE SAY PROMPT GL("Color") ID 175 OF oFld:aDialogs[ i ]
 
-   REDEFINE SAY aColorSay[1 ] PROMPT "" ID 401 OF oFld:aDialogs[i] COLORS SetColor( aColors[1 ], nDefClr ), SetColor( aColors[1 ], nDefClr )
-   REDEFINE SAY aColorSay[2 ] PROMPT "" ID 402 OF oFld:aDialogs[i] COLORS SetColor( aColors[2 ], nDefClr ), SetColor( aColors[2 ], nDefClr )
-   REDEFINE SAY aColorSay[3 ] PROMPT "" ID 403 OF oFld:aDialogs[i] COLORS SetColor( aColors[3 ], nDefClr ), SetColor( aColors[3 ], nDefClr )
-   REDEFINE SAY aColorSay[4 ] PROMPT "" ID 404 OF oFld:aDialogs[i] COLORS SetColor( aColors[4 ], nDefClr ), SetColor( aColors[4 ], nDefClr )
-   REDEFINE SAY aColorSay[5 ] PROMPT "" ID 405 OF oFld:aDialogs[i] COLORS SetColor( aColors[5 ], nDefClr ), SetColor( aColors[5 ], nDefClr )
-   REDEFINE SAY aColorSay[6 ] PROMPT "" ID 406 OF oFld:aDialogs[i] COLORS SetColor( aColors[6 ], nDefClr ), SetColor( aColors[6 ], nDefClr )
-   REDEFINE SAY aColorSay[7 ] PROMPT "" ID 407 OF oFld:aDialogs[i] COLORS SetColor( aColors[7 ], nDefClr ), SetColor( aColors[7 ], nDefClr )
-   REDEFINE SAY aColorSay[8 ] PROMPT "" ID 408 OF oFld:aDialogs[i] COLORS SetColor( aColors[8 ], nDefClr ), SetColor( aColors[8 ], nDefClr )
-   REDEFINE SAY aColorSay[9 ] PROMPT "" ID 409 OF oFld:aDialogs[i] COLORS SetColor( aColors[9 ], nDefClr ), SetColor( aColors[9 ], nDefClr )
-   REDEFINE SAY aColorSay[10] PROMPT "" ID 410 OF oFld:aDialogs[i] COLORS SetColor( aColors[10], nDefClr ), SetColor( aColors[10], nDefClr )
-   REDEFINE SAY aColorSay[11] PROMPT "" ID 411 OF oFld:aDialogs[i] COLORS SetColor( aColors[11], nDefClr ), SetColor( aColors[11], nDefClr )
-   REDEFINE SAY aColorSay[12] PROMPT "" ID 412 OF oFld:aDialogs[i] COLORS SetColor( aColors[12], nDefClr ), SetColor( aColors[12], nDefClr )
-   REDEFINE SAY aColorSay[13] PROMPT "" ID 413 OF oFld:aDialogs[i] COLORS SetColor( aColors[13], nDefClr ), SetColor( aColors[13], nDefClr )
-   REDEFINE SAY aColorSay[14] PROMPT "" ID 414 OF oFld:aDialogs[i] COLORS SetColor( aColors[14], nDefClr ), SetColor( aColors[14], nDefClr )
-   REDEFINE SAY aColorSay[15] PROMPT "" ID 415 OF oFld:aDialogs[i] COLORS SetColor( aColors[15], nDefClr ), SetColor( aColors[15], nDefClr )
-   REDEFINE SAY aColorSay[16] PROMPT "" ID 416 OF oFld:aDialogs[i] COLORS SetColor( aColors[16], nDefClr ), SetColor( aColors[16], nDefClr )
-   REDEFINE SAY aColorSay[17] PROMPT "" ID 417 OF oFld:aDialogs[i] COLORS SetColor( aColors[17], nDefClr ), SetColor( aColors[17], nDefClr )
-   REDEFINE SAY aColorSay[18] PROMPT "" ID 418 OF oFld:aDialogs[i] COLORS SetColor( aColors[18], nDefClr ), SetColor( aColors[18], nDefClr )
-   REDEFINE SAY aColorSay[19] PROMPT "" ID 419 OF oFld:aDialogs[i] COLORS SetColor( aColors[19], nDefClr ), SetColor( aColors[19], nDefClr )
-   REDEFINE SAY aColorSay[20] PROMPT "" ID 420 OF oFld:aDialogs[i] COLORS SetColor( aColors[20], nDefClr ), SetColor( aColors[20], nDefClr )
-   REDEFINE SAY aColorSay[21] PROMPT "" ID 421 OF oFld:aDialogs[i] COLORS SetColor( aColors[21], nDefClr ), SetColor( aColors[21], nDefClr )
-   REDEFINE SAY aColorSay[22] PROMPT "" ID 422 OF oFld:aDialogs[i] COLORS SetColor( aColors[22], nDefClr ), SetColor( aColors[22], nDefClr )
-   REDEFINE SAY aColorSay[23] PROMPT "" ID 423 OF oFld:aDialogs[i] COLORS SetColor( aColors[23], nDefClr ), SetColor( aColors[23], nDefClr )
-   REDEFINE SAY aColorSay[24] PROMPT "" ID 424 OF oFld:aDialogs[i] COLORS SetColor( aColors[24], nDefClr ), SetColor( aColors[24], nDefClr )
-   REDEFINE SAY aColorSay[25] PROMPT "" ID 425 OF oFld:aDialogs[i] COLORS SetColor( aColors[25], nDefClr ), SetColor( aColors[25], nDefClr )
-   REDEFINE SAY aColorSay[26] PROMPT "" ID 426 OF oFld:aDialogs[i] COLORS SetColor( aColors[26], nDefClr ), SetColor( aColors[26], nDefClr )
-   REDEFINE SAY aColorSay[27] PROMPT "" ID 427 OF oFld:aDialogs[i] COLORS SetColor( aColors[27], nDefClr ), SetColor( aColors[27], nDefClr )
-   REDEFINE SAY aColorSay[28] PROMPT "" ID 428 OF oFld:aDialogs[i] COLORS SetColor( aColors[28], nDefClr ), SetColor( aColors[28], nDefClr )
-   REDEFINE SAY aColorSay[29] PROMPT "" ID 429 OF oFld:aDialogs[i] COLORS SetColor( aColors[29], nDefClr ), SetColor( aColors[29], nDefClr )
-   REDEFINE SAY aColorSay[30] PROMPT "" ID 430 OF oFld:aDialogs[i] COLORS SetColor( aColors[30], nDefClr ), SetColor( aColors[30], nDefClr )
+   REDEFINE BTNBMP aColorSay[1 ]   ID 401 OF oFld:aDialogs[ i ] NOBORDER
+   REDEFINE BTNBMP aColorSay[2 ]   ID 402 OF oFld:aDialogs[ i ] NOBORDER 
+   REDEFINE BTNBMP aColorSay[3 ]   ID 403 OF oFld:aDialogs[ i ] NOBORDER 
+   REDEFINE BTNBMP aColorSay[4 ]   ID 404 OF oFld:aDialogs[ i ] NOBORDER 
+   REDEFINE BTNBMP aColorSay[5 ]   ID 405 OF oFld:aDialogs[ i ] NOBORDER 
+   REDEFINE BTNBMP aColorSay[6 ]   ID 406 OF oFld:aDialogs[ i ] NOBORDER 
+   REDEFINE BTNBMP aColorSay[7 ]   ID 407 OF oFld:aDialogs[ i ] NOBORDER 
+   REDEFINE BTNBMP aColorSay[8 ]   ID 408 OF oFld:aDialogs[ i ] NOBORDER 
+   REDEFINE BTNBMP aColorSay[9 ]   ID 409 OF oFld:aDialogs[ i ] NOBORDER 
+   REDEFINE BTNBMP aColorSay[10]   ID 410 OF oFld:aDialogs[ i ] NOBORDER 
+   REDEFINE BTNBMP aColorSay[11]   ID 411 OF oFld:aDialogs[ i ] NOBORDER 
+   REDEFINE BTNBMP aColorSay[12]   ID 412 OF oFld:aDialogs[ i ] NOBORDER 
+   REDEFINE BTNBMP aColorSay[13]   ID 413 OF oFld:aDialogs[ i ] NOBORDER 
+   REDEFINE BTNBMP aColorSay[14]   ID 414 OF oFld:aDialogs[ i ] NOBORDER 
+   REDEFINE BTNBMP aColorSay[15]   ID 415 OF oFld:aDialogs[ i ] NOBORDER 
+   REDEFINE BTNBMP aColorSay[16]   ID 416 OF oFld:aDialogs[ i ] NOBORDER 
+   REDEFINE BTNBMP aColorSay[17]   ID 417 OF oFld:aDialogs[ i ] NOBORDER 
+   REDEFINE BTNBMP aColorSay[18]   ID 418 OF oFld:aDialogs[ i ] NOBORDER 
+   REDEFINE BTNBMP aColorSay[19]   ID 419 OF oFld:aDialogs[ i ] NOBORDER 
+   REDEFINE BTNBMP aColorSay[20]   ID 420 OF oFld:aDialogs[ i ] NOBORDER 
+   REDEFINE BTNBMP aColorSay[21]   ID 421 OF oFld:aDialogs[ i ] NOBORDER 
+   REDEFINE BTNBMP aColorSay[22]   ID 422 OF oFld:aDialogs[ i ] NOBORDER 
+   REDEFINE BTNBMP aColorSay[23]   ID 423 OF oFld:aDialogs[ i ] NOBORDER 
+   REDEFINE BTNBMP aColorSay[24]   ID 424 OF oFld:aDialogs[ i ] NOBORDER 
+   REDEFINE BTNBMP aColorSay[25]   ID 425 OF oFld:aDialogs[ i ] NOBORDER 
+   REDEFINE BTNBMP aColorSay[26]   ID 426 OF oFld:aDialogs[ i ] NOBORDER 
+   REDEFINE BTNBMP aColorSay[27]   ID 427 OF oFld:aDialogs[ i ] NOBORDER 
+   REDEFINE BTNBMP aColorSay[28]   ID 428 OF oFld:aDialogs[ i ] NOBORDER 
+   REDEFINE BTNBMP aColorSay[29]   ID 429 OF oFld:aDialogs[ i ] NOBORDER 
+   REDEFINE BTNBMP aColorSay[30]   ID 430 OF oFld:aDialogs[ i ] NOBORDER 
 
-   REDEFINE GET aColorGet[1 ] VAR aColors[1 ] ID 201 OF oFld:aDialogs[i] VALID Set2Color( aColorSay[1 ], aColors[1 ], nDefClr )
-   REDEFINE GET aColorGet[2 ] VAR aColors[2 ] ID 202 OF oFld:aDialogs[i] VALID Set2Color( aColorSay[2 ], aColors[2 ], nDefClr )
-   REDEFINE GET aColorGet[3 ] VAR aColors[3 ] ID 203 OF oFld:aDialogs[i] VALID Set2Color( aColorSay[3 ], aColors[3 ], nDefClr )
-   REDEFINE GET aColorGet[4 ] VAR aColors[4 ] ID 204 OF oFld:aDialogs[i] VALID Set2Color( aColorSay[4 ], aColors[4 ], nDefClr )
-   REDEFINE GET aColorGet[5 ] VAR aColors[5 ] ID 205 OF oFld:aDialogs[i] VALID Set2Color( aColorSay[5 ], aColors[5 ], nDefClr )
-   REDEFINE GET aColorGet[6 ] VAR aColors[6 ] ID 206 OF oFld:aDialogs[i] VALID Set2Color( aColorSay[6 ], aColors[6 ], nDefClr )
-   REDEFINE GET aColorGet[7 ] VAR aColors[7 ] ID 207 OF oFld:aDialogs[i] VALID Set2Color( aColorSay[7 ], aColors[7 ], nDefClr )
-   REDEFINE GET aColorGet[8 ] VAR aColors[8 ] ID 208 OF oFld:aDialogs[i] VALID Set2Color( aColorSay[8 ], aColors[8 ], nDefClr )
-   REDEFINE GET aColorGet[9 ] VAR aColors[9 ] ID 209 OF oFld:aDialogs[i] VALID Set2Color( aColorSay[9 ], aColors[9 ], nDefClr )
-   REDEFINE GET aColorGet[10] VAR aColors[10] ID 210 OF oFld:aDialogs[i] VALID Set2Color( aColorSay[10], aColors[10], nDefClr )
-   REDEFINE GET aColorGet[11] VAR aColors[11] ID 211 OF oFld:aDialogs[i] VALID Set2Color( aColorSay[11], aColors[11], nDefClr )
-   REDEFINE GET aColorGet[12] VAR aColors[12] ID 212 OF oFld:aDialogs[i] VALID Set2Color( aColorSay[12], aColors[12], nDefClr )
-   REDEFINE GET aColorGet[13] VAR aColors[13] ID 213 OF oFld:aDialogs[i] VALID Set2Color( aColorSay[13], aColors[13], nDefClr )
-   REDEFINE GET aColorGet[14] VAR aColors[14] ID 214 OF oFld:aDialogs[i] VALID Set2Color( aColorSay[14], aColors[14], nDefClr )
-   REDEFINE GET aColorGet[15] VAR aColors[15] ID 215 OF oFld:aDialogs[i] VALID Set2Color( aColorSay[15], aColors[15], nDefClr )
-   REDEFINE GET aColorGet[16] VAR aColors[16] ID 216 OF oFld:aDialogs[i] VALID Set2Color( aColorSay[16], aColors[16], nDefClr )
-   REDEFINE GET aColorGet[17] VAR aColors[17] ID 217 OF oFld:aDialogs[i] VALID Set2Color( aColorSay[17], aColors[17], nDefClr )
-   REDEFINE GET aColorGet[18] VAR aColors[18] ID 218 OF oFld:aDialogs[i] VALID Set2Color( aColorSay[18], aColors[18], nDefClr )
-   REDEFINE GET aColorGet[19] VAR aColors[19] ID 219 OF oFld:aDialogs[i] VALID Set2Color( aColorSay[19], aColors[19], nDefClr )
-   REDEFINE GET aColorGet[20] VAR aColors[20] ID 220 OF oFld:aDialogs[i] VALID Set2Color( aColorSay[20], aColors[20], nDefClr )
-   REDEFINE GET aColorGet[21] VAR aColors[21] ID 221 OF oFld:aDialogs[i] VALID Set2Color( aColorSay[21], aColors[21], nDefClr )
-   REDEFINE GET aColorGet[22] VAR aColors[22] ID 222 OF oFld:aDialogs[i] VALID Set2Color( aColorSay[22], aColors[22], nDefClr )
-   REDEFINE GET aColorGet[23] VAR aColors[23] ID 223 OF oFld:aDialogs[i] VALID Set2Color( aColorSay[23], aColors[23], nDefClr )
-   REDEFINE GET aColorGet[24] VAR aColors[24] ID 224 OF oFld:aDialogs[i] VALID Set2Color( aColorSay[24], aColors[24], nDefClr )
-   REDEFINE GET aColorGet[25] VAR aColors[25] ID 225 OF oFld:aDialogs[i] VALID Set2Color( aColorSay[25], aColors[25], nDefClr )
-   REDEFINE GET aColorGet[26] VAR aColors[26] ID 226 OF oFld:aDialogs[i] VALID Set2Color( aColorSay[26], aColors[26], nDefClr )
-   REDEFINE GET aColorGet[27] VAR aColors[27] ID 227 OF oFld:aDialogs[i] VALID Set2Color( aColorSay[27], aColors[27], nDefClr )
-   REDEFINE GET aColorGet[28] VAR aColors[28] ID 228 OF oFld:aDialogs[i] VALID Set2Color( aColorSay[28], aColors[28], nDefClr )
-   REDEFINE GET aColorGet[29] VAR aColors[29] ID 229 OF oFld:aDialogs[i] VALID Set2Color( aColorSay[29], aColors[29], nDefClr )
-   REDEFINE GET aColorGet[30] VAR aColors[30] ID 230 OF oFld:aDialogs[i] VALID Set2Color( aColorSay[30], aColors[30], nDefClr )
+   AEval( aColorSay, { | o, n | o:SetColor( 0,;
+      If( Empty( aColors[ n ] ), CLR_WHITE, Val( aColors[ n ] ) ) ) } )
 
-   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 301 OF oFld:aDialogs[i] ACTION ( aColors[1 ] := Set3Color( aColorSay[1 ], aColors[1 ], nDefClr ), aColorGet[1 ]:Refresh() )
-   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 302 OF oFld:aDialogs[i] ACTION ( aColors[2 ] := Set3Color( aColorSay[2 ], aColors[2 ], nDefClr ), aColorGet[2 ]:Refresh() )
-   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 303 OF oFld:aDialogs[i] ACTION ( aColors[3 ] := Set3Color( aColorSay[3 ], aColors[3 ], nDefClr ), aColorGet[3 ]:Refresh() )
-   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 304 OF oFld:aDialogs[i] ACTION ( aColors[4 ] := Set3Color( aColorSay[4 ], aColors[4 ], nDefClr ), aColorGet[4 ]:Refresh() )
-   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 305 OF oFld:aDialogs[i] ACTION ( aColors[5 ] := Set3Color( aColorSay[5 ], aColors[5 ], nDefClr ), aColorGet[5 ]:Refresh() )
-   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 306 OF oFld:aDialogs[i] ACTION ( aColors[6 ] := Set3Color( aColorSay[6 ], aColors[6 ], nDefClr ), aColorGet[6 ]:Refresh() )
-   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 307 OF oFld:aDialogs[i] ACTION ( aColors[7 ] := Set3Color( aColorSay[7 ], aColors[7 ], nDefClr ), aColorGet[7 ]:Refresh() )
-   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 308 OF oFld:aDialogs[i] ACTION ( aColors[8 ] := Set3Color( aColorSay[8 ], aColors[8 ], nDefClr ), aColorGet[8 ]:Refresh() )
-   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 309 OF oFld:aDialogs[i] ACTION ( aColors[9 ] := Set3Color( aColorSay[9 ], aColors[9 ], nDefClr ), aColorGet[9 ]:Refresh() )
-   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 310 OF oFld:aDialogs[i] ACTION ( aColors[10] := Set3Color( aColorSay[10], aColors[10], nDefClr ), aColorGet[10]:Refresh() )
-   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 311 OF oFld:aDialogs[i] ACTION ( aColors[11] := Set3Color( aColorSay[11], aColors[11], nDefClr ), aColorGet[11]:Refresh() )
-   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 312 OF oFld:aDialogs[i] ACTION ( aColors[12] := Set3Color( aColorSay[12], aColors[12], nDefClr ), aColorGet[12]:Refresh() )
-   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 313 OF oFld:aDialogs[i] ACTION ( aColors[13] := Set3Color( aColorSay[13], aColors[13], nDefClr ), aColorGet[13]:Refresh() )
-   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 314 OF oFld:aDialogs[i] ACTION ( aColors[14] := Set3Color( aColorSay[14], aColors[14], nDefClr ), aColorGet[14]:Refresh() )
-   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 315 OF oFld:aDialogs[i] ACTION ( aColors[15] := Set3Color( aColorSay[15], aColors[15], nDefClr ), aColorGet[15]:Refresh() )
-   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 316 OF oFld:aDialogs[i] ACTION ( aColors[16] := Set3Color( aColorSay[16], aColors[16], nDefClr ), aColorGet[16]:Refresh() )
-   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 317 OF oFld:aDialogs[i] ACTION ( aColors[17] := Set3Color( aColorSay[17], aColors[17], nDefClr ), aColorGet[17]:Refresh() )
-   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 318 OF oFld:aDialogs[i] ACTION ( aColors[18] := Set3Color( aColorSay[18], aColors[18], nDefClr ), aColorGet[18]:Refresh() )
-   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 319 OF oFld:aDialogs[i] ACTION ( aColors[19] := Set3Color( aColorSay[19], aColors[19], nDefClr ), aColorGet[19]:Refresh() )
-   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 320 OF oFld:aDialogs[i] ACTION ( aColors[20] := Set3Color( aColorSay[20], aColors[20], nDefClr ), aColorGet[20]:Refresh() )
-   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 321 OF oFld:aDialogs[i] ACTION ( aColors[21] := Set3Color( aColorSay[21], aColors[21], nDefClr ), aColorGet[21]:Refresh() )
-   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 322 OF oFld:aDialogs[i] ACTION ( aColors[22] := Set3Color( aColorSay[22], aColors[22], nDefClr ), aColorGet[22]:Refresh() )
-   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 323 OF oFld:aDialogs[i] ACTION ( aColors[23] := Set3Color( aColorSay[23], aColors[23], nDefClr ), aColorGet[23]:Refresh() )
-   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 324 OF oFld:aDialogs[i] ACTION ( aColors[24] := Set3Color( aColorSay[24], aColors[24], nDefClr ), aColorGet[24]:Refresh() )
-   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 325 OF oFld:aDialogs[i] ACTION ( aColors[25] := Set3Color( aColorSay[25], aColors[25], nDefClr ), aColorGet[25]:Refresh() )
-   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 326 OF oFld:aDialogs[i] ACTION ( aColors[26] := Set3Color( aColorSay[26], aColors[26], nDefClr ), aColorGet[26]:Refresh() )
-   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 327 OF oFld:aDialogs[i] ACTION ( aColors[27] := Set3Color( aColorSay[27], aColors[27], nDefClr ), aColorGet[27]:Refresh() )
-   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 328 OF oFld:aDialogs[i] ACTION ( aColors[28] := Set3Color( aColorSay[28], aColors[28], nDefClr ), aColorGet[28]:Refresh() )
-   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 329 OF oFld:aDialogs[i] ACTION ( aColors[29] := Set3Color( aColorSay[29], aColors[29], nDefClr ), aColorGet[29]:Refresh() )
-   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 330 OF oFld:aDialogs[i] ACTION ( aColors[30] := Set3Color( aColorSay[30], aColors[30], nDefClr ), aColorGet[30]:Refresh() )
+   REDEFINE GET aColorGet[1 ] VAR aColors[1 ] ID 201 OF oFld:aDialogs[ i ] VALID Set2Color( aColorSay[1 ], aColors[1 ], nDefClr )
+   REDEFINE GET aColorGet[2 ] VAR aColors[2 ] ID 202 OF oFld:aDialogs[ i ] VALID Set2Color( aColorSay[2 ], aColors[2 ], nDefClr )
+   REDEFINE GET aColorGet[3 ] VAR aColors[3 ] ID 203 OF oFld:aDialogs[ i ] VALID Set2Color( aColorSay[3 ], aColors[3 ], nDefClr )
+   REDEFINE GET aColorGet[4 ] VAR aColors[4 ] ID 204 OF oFld:aDialogs[ i ] VALID Set2Color( aColorSay[4 ], aColors[4 ], nDefClr )
+   REDEFINE GET aColorGet[5 ] VAR aColors[5 ] ID 205 OF oFld:aDialogs[ i ] VALID Set2Color( aColorSay[5 ], aColors[5 ], nDefClr )
+   REDEFINE GET aColorGet[6 ] VAR aColors[6 ] ID 206 OF oFld:aDialogs[ i ] VALID Set2Color( aColorSay[6 ], aColors[6 ], nDefClr )
+   REDEFINE GET aColorGet[7 ] VAR aColors[7 ] ID 207 OF oFld:aDialogs[ i ] VALID Set2Color( aColorSay[7 ], aColors[7 ], nDefClr )
+   REDEFINE GET aColorGet[8 ] VAR aColors[8 ] ID 208 OF oFld:aDialogs[ i ] VALID Set2Color( aColorSay[8 ], aColors[8 ], nDefClr )
+   REDEFINE GET aColorGet[9 ] VAR aColors[9 ] ID 209 OF oFld:aDialogs[ i ] VALID Set2Color( aColorSay[9 ], aColors[9 ], nDefClr )
+   REDEFINE GET aColorGet[10] VAR aColors[10] ID 210 OF oFld:aDialogs[ i ] VALID Set2Color( aColorSay[10], aColors[10], nDefClr )
+   REDEFINE GET aColorGet[11] VAR aColors[11] ID 211 OF oFld:aDialogs[ i ] VALID Set2Color( aColorSay[11], aColors[11], nDefClr )
+   REDEFINE GET aColorGet[12] VAR aColors[12] ID 212 OF oFld:aDialogs[ i ] VALID Set2Color( aColorSay[12], aColors[12], nDefClr )
+   REDEFINE GET aColorGet[13] VAR aColors[13] ID 213 OF oFld:aDialogs[ i ] VALID Set2Color( aColorSay[13], aColors[13], nDefClr )
+   REDEFINE GET aColorGet[14] VAR aColors[14] ID 214 OF oFld:aDialogs[ i ] VALID Set2Color( aColorSay[14], aColors[14], nDefClr )
+   REDEFINE GET aColorGet[15] VAR aColors[15] ID 215 OF oFld:aDialogs[ i ] VALID Set2Color( aColorSay[15], aColors[15], nDefClr )
+   REDEFINE GET aColorGet[16] VAR aColors[16] ID 216 OF oFld:aDialogs[ i ] VALID Set2Color( aColorSay[16], aColors[16], nDefClr )
+   REDEFINE GET aColorGet[17] VAR aColors[17] ID 217 OF oFld:aDialogs[ i ] VALID Set2Color( aColorSay[17], aColors[17], nDefClr )
+   REDEFINE GET aColorGet[18] VAR aColors[18] ID 218 OF oFld:aDialogs[ i ] VALID Set2Color( aColorSay[18], aColors[18], nDefClr )
+   REDEFINE GET aColorGet[19] VAR aColors[19] ID 219 OF oFld:aDialogs[ i ] VALID Set2Color( aColorSay[19], aColors[19], nDefClr )
+   REDEFINE GET aColorGet[20] VAR aColors[20] ID 220 OF oFld:aDialogs[ i ] VALID Set2Color( aColorSay[20], aColors[20], nDefClr )
+   REDEFINE GET aColorGet[21] VAR aColors[21] ID 221 OF oFld:aDialogs[ i ] VALID Set2Color( aColorSay[21], aColors[21], nDefClr )
+   REDEFINE GET aColorGet[22] VAR aColors[22] ID 222 OF oFld:aDialogs[ i ] VALID Set2Color( aColorSay[22], aColors[22], nDefClr )
+   REDEFINE GET aColorGet[23] VAR aColors[23] ID 223 OF oFld:aDialogs[ i ] VALID Set2Color( aColorSay[23], aColors[23], nDefClr )
+   REDEFINE GET aColorGet[24] VAR aColors[24] ID 224 OF oFld:aDialogs[ i ] VALID Set2Color( aColorSay[24], aColors[24], nDefClr )
+   REDEFINE GET aColorGet[25] VAR aColors[25] ID 225 OF oFld:aDialogs[ i ] VALID Set2Color( aColorSay[25], aColors[25], nDefClr )
+   REDEFINE GET aColorGet[26] VAR aColors[26] ID 226 OF oFld:aDialogs[ i ] VALID Set2Color( aColorSay[26], aColors[26], nDefClr )
+   REDEFINE GET aColorGet[27] VAR aColors[27] ID 227 OF oFld:aDialogs[ i ] VALID Set2Color( aColorSay[27], aColors[27], nDefClr )
+   REDEFINE GET aColorGet[28] VAR aColors[28] ID 228 OF oFld:aDialogs[ i ] VALID Set2Color( aColorSay[28], aColors[28], nDefClr )
+   REDEFINE GET aColorGet[29] VAR aColors[29] ID 229 OF oFld:aDialogs[ i ] VALID Set2Color( aColorSay[29], aColors[29], nDefClr )
+   REDEFINE GET aColorGet[30] VAR aColors[30] ID 230 OF oFld:aDialogs[ i ] VALID Set2Color( aColorSay[30], aColors[30], nDefClr )
+
+   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 301 OF oFld:aDialogs[ i ] ACTION ( aColors[1 ] := Set3Color( aColorSay[1 ], aColors[1 ], nDefClr ), aColorGet[1 ]:Refresh() )
+   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 302 OF oFld:aDialogs[ i ] ACTION ( aColors[2 ] := Set3Color( aColorSay[2 ], aColors[2 ], nDefClr ), aColorGet[2 ]:Refresh() )
+   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 303 OF oFld:aDialogs[ i ] ACTION ( aColors[3 ] := Set3Color( aColorSay[3 ], aColors[3 ], nDefClr ), aColorGet[3 ]:Refresh() )
+   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 304 OF oFld:aDialogs[ i ] ACTION ( aColors[4 ] := Set3Color( aColorSay[4 ], aColors[4 ], nDefClr ), aColorGet[4 ]:Refresh() )
+   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 305 OF oFld:aDialogs[ i ] ACTION ( aColors[5 ] := Set3Color( aColorSay[5 ], aColors[5 ], nDefClr ), aColorGet[5 ]:Refresh() )
+   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 306 OF oFld:aDialogs[ i ] ACTION ( aColors[6 ] := Set3Color( aColorSay[6 ], aColors[6 ], nDefClr ), aColorGet[6 ]:Refresh() )
+   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 307 OF oFld:aDialogs[ i ] ACTION ( aColors[7 ] := Set3Color( aColorSay[7 ], aColors[7 ], nDefClr ), aColorGet[7 ]:Refresh() )
+   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 308 OF oFld:aDialogs[ i ] ACTION ( aColors[8 ] := Set3Color( aColorSay[8 ], aColors[8 ], nDefClr ), aColorGet[8 ]:Refresh() )
+   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 309 OF oFld:aDialogs[ i ] ACTION ( aColors[9 ] := Set3Color( aColorSay[9 ], aColors[9 ], nDefClr ), aColorGet[9 ]:Refresh() )
+   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 310 OF oFld:aDialogs[ i ] ACTION ( aColors[10] := Set3Color( aColorSay[10], aColors[10], nDefClr ), aColorGet[10]:Refresh() )
+   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 311 OF oFld:aDialogs[ i ] ACTION ( aColors[11] := Set3Color( aColorSay[11], aColors[11], nDefClr ), aColorGet[11]:Refresh() )
+   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 312 OF oFld:aDialogs[ i ] ACTION ( aColors[12] := Set3Color( aColorSay[12], aColors[12], nDefClr ), aColorGet[12]:Refresh() )
+   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 313 OF oFld:aDialogs[ i ] ACTION ( aColors[13] := Set3Color( aColorSay[13], aColors[13], nDefClr ), aColorGet[13]:Refresh() )
+   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 314 OF oFld:aDialogs[ i ] ACTION ( aColors[14] := Set3Color( aColorSay[14], aColors[14], nDefClr ), aColorGet[14]:Refresh() )
+   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 315 OF oFld:aDialogs[ i ] ACTION ( aColors[15] := Set3Color( aColorSay[15], aColors[15], nDefClr ), aColorGet[15]:Refresh() )
+   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 316 OF oFld:aDialogs[ i ] ACTION ( aColors[16] := Set3Color( aColorSay[16], aColors[16], nDefClr ), aColorGet[16]:Refresh() )
+   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 317 OF oFld:aDialogs[ i ] ACTION ( aColors[17] := Set3Color( aColorSay[17], aColors[17], nDefClr ), aColorGet[17]:Refresh() )
+   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 318 OF oFld:aDialogs[ i ] ACTION ( aColors[18] := Set3Color( aColorSay[18], aColors[18], nDefClr ), aColorGet[18]:Refresh() )
+   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 319 OF oFld:aDialogs[ i ] ACTION ( aColors[19] := Set3Color( aColorSay[19], aColors[19], nDefClr ), aColorGet[19]:Refresh() )
+   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 320 OF oFld:aDialogs[ i ] ACTION ( aColors[20] := Set3Color( aColorSay[20], aColors[20], nDefClr ), aColorGet[20]:Refresh() )
+   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 321 OF oFld:aDialogs[ i ] ACTION ( aColors[21] := Set3Color( aColorSay[21], aColors[21], nDefClr ), aColorGet[21]:Refresh() )
+   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 322 OF oFld:aDialogs[ i ] ACTION ( aColors[22] := Set3Color( aColorSay[22], aColors[22], nDefClr ), aColorGet[22]:Refresh() )
+   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 323 OF oFld:aDialogs[ i ] ACTION ( aColors[23] := Set3Color( aColorSay[23], aColors[23], nDefClr ), aColorGet[23]:Refresh() )
+   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 324 OF oFld:aDialogs[ i ] ACTION ( aColors[24] := Set3Color( aColorSay[24], aColors[24], nDefClr ), aColorGet[24]:Refresh() )
+   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 325 OF oFld:aDialogs[ i ] ACTION ( aColors[25] := Set3Color( aColorSay[25], aColors[25], nDefClr ), aColorGet[25]:Refresh() )
+   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 326 OF oFld:aDialogs[ i ] ACTION ( aColors[26] := Set3Color( aColorSay[26], aColors[26], nDefClr ), aColorGet[26]:Refresh() )
+   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 327 OF oFld:aDialogs[ i ] ACTION ( aColors[27] := Set3Color( aColorSay[27], aColors[27], nDefClr ), aColorGet[27]:Refresh() )
+   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 328 OF oFld:aDialogs[ i ] ACTION ( aColors[28] := Set3Color( aColorSay[28], aColors[28], nDefClr ), aColorGet[28]:Refresh() )
+   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 329 OF oFld:aDialogs[ i ] ACTION ( aColors[29] := Set3Color( aColorSay[29], aColors[29], nDefClr ), aColorGet[29]:Refresh() )
+   REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 330 OF oFld:aDialogs[ i ] ACTION ( aColors[30] := Set3Color( aColorSay[30], aColors[30], nDefClr ), aColorGet[30]:Refresh() )
 
    ACTIVATE DIALOG oDlg CENTERED
 
    //Colors speichern
    INI oIni FILE cDefIni
    for i := 1 to 30
-      if .NOT. EMPTY( aColors[i] )
-         SET SECTION "Colors" ENTRY ALLTRIM(STR(i,5)) to aColors[i] OF oIni
+      if .NOT. Empty( aColors[ i ] )
+         SET SECTION "Colors" ENTRY AllTrim(STR(i,5)) to aColors[ i ] OF oIni
       endif
    next
    ENDINI
@@ -1972,7 +1987,7 @@ return .T.
 
 function Set3Color( oColorSay, cColor, nDefClr )
 
-   cColor := PADR(ALLTRIM(STR( ChooseColor( Val(cColor) ), 20 )), 40 )
+   cColor := PADR( AllTrim( STR( ChooseColor( Val( cColor ) ), 20 ) ), 40 )
    Set2Color( oColorSay, cColor, nDefClr )
 
 return ( cColor )
@@ -1983,9 +1998,9 @@ function SetColor( cColor, nDefClr )
 
    local nColor
 
-   if EMPTY( cColor ) = .T.
+   if Empty( cColor ) = .T.
       nColor := nDefClr
-   ELSE
+   else
       nColor := Val( cColor )
    endif
 
@@ -2001,19 +2016,19 @@ function GetFontText( aGetFonts, lShowEmpty )
    DEFAULT lShowEmpty := .T.
 
    for i := 1 to 20
-      if .NOT. EMPTY(aGetFonts[i, 1 ])
-         cText :=  ALLTRIM(STR( i, 3)) + ". " + ;
+      if .NOT. Empty(aGetFonts[i, 1 ])
+         cText :=  AllTrim(STR( i, 3)) + ". " + ;
                    aGetFonts[i, 1 ] + ;
-                   " " + ALLTRIM(STR( aGetFonts[i,3], 5 )) + ;
+                   " " + AllTrim(STR( aGetFonts[i,3], 5 )) + ;
                    IIF( aGetFonts[i,4], " " + GL("bold"), "") + ;
                    IIF( aGetFonts[i,5], " " + GL("italic"), "") + ;
                    IIF( aGetFonts[i,6], " " + GL("underline"), "") + ;
                    IIF( aGetFonts[i,7], " " + GL("strickout"), "") + ;
-                   IIF( aGetFonts[i,8] <> 0, " " + GL("Rotation:") + " " + ALLTRIM(STR( aGetFonts[i,8], 6)), "")
+                   IIF( aGetFonts[i,8] <> 0, " " + GL("Rotation:") + " " + AllTrim(STR( aGetFonts[i,8], 6)), "")
          AADD( aShowFonts, cText )
-      ELSE
+      else
          if lShowEmpty = .T.
-            AADD( aShowFonts, ALLTRIM(STR( i, 3)) + ". " )
+            AADD( aShowFonts, AllTrim(STR( i, 3)) + ". " )
          endif
       endif
    next
@@ -2057,10 +2072,10 @@ function SelectFont( oSay, oLbx, oGet )
    local nCharSet    := aGetFonts[nID,9]
    local hDC         := oMainWnd:GetDC()
 
-   if EMPTY( aFontNames := GetFontNames( hDC ) )
+   if Empty( aFontNames := GetFontNames( hDC ) )
       MsgStop( GL("Error getting font names."), GL("Stop!") )
       return( GetFontText( GetFonts() ) )
-   ELSE
+   else
       ASORT( aFontNames,,, { |x, y| UPPER( x ) < UPPER( y ) } )
    endif
 
@@ -2096,26 +2111,26 @@ function SelectFont( oSay, oLbx, oGet )
 
    if lSave = .T.
 
-      cFontDef := ALLTRIM( cFontGet )               + "| " + ;
-                  ALLTRIM( STR( nWidth, 5 ) )       + "| " + ;
-                  ALLTRIM( STR( -1 * nHeight, 5 ) ) + "| " + ;
+      cFontDef := AllTrim( cFontGet )               + "| " + ;
+                  AllTrim( STR( nWidth, 5 ) )       + "| " + ;
+                  AllTrim( STR( -1 * nHeight, 5 ) ) + "| " + ;
                   IIF( lBold, "1", "0" )            + "| " + ;
                   IIF( lItalic, "1", "0" )          + "| " + ;
                   IIF( lUnderline, "1", "0" )       + "| " + ;
                   IIF( lStrikeOut, "1", "0" )       + "| " + ;
-                  ALLTRIM( STR( nEscapement, 10 ) ) + "| " + ;
-                  ALLTRIM( STR( nCharSet, 10 ) )    + "| " + ;
-                  ALLTRIM( STR( nOrient, 10 ) )
+                  AllTrim( STR( nEscapement, 10 ) ) + "| " + ;
+                  AllTrim( STR( nCharSet, 10 ) )    + "| " + ;
+                  AllTrim( STR( nOrient, 10 ) )
 
-      if EMPTY( cFontGet )
+      if Empty( cFontGet )
          cFontDef := ""
       endif
 
       INI oIni FILE cDefIni
-         SET SECTION "Fonts" ENTRY ALLTRIM(STR(nID,5)) to cFontDef OF oIni
+         SET SECTION "Fonts" ENTRY AllTrim(STR(nID,5)) to cFontDef OF oIni
       ENDINI
 
-      aFonts[nID] := TFont():New( ALLTRIM( cFontGet ), nWidth, -1 * nHeight,, lBold, ;
+      aFonts[nID] := TFont():New( AllTrim( cFontGet ), nWidth, -1 * nHeight,, lBold, ;
                                   nEscapement, nOrient,, lItalic, lUnderline, lStrikeOut, ;
                                   nCharSet )
 
@@ -2128,9 +2143,9 @@ function SelectFont( oSay, oLbx, oGet )
       //Alle Elemente aktualisieren
       for i := 1 to 100
 
-         if aWnd[i] <> nil
+         if aWnd[ i ] <> nil
 
-            aIniEntries := GetIniSection( "Items", aAreaIni[i] )
+            aIniEntries := GetIniSection( "Items", aAreaIni[ i ] )
 
             for y := 1 to LEN( aIniEntries )
 
@@ -2138,9 +2153,9 @@ function SelectFont( oSay, oLbx, oGet )
 
                if nEntry <> 0 .and. aItems[i,nEntry] <> nil
 
-                  cItemDef := GetIniEntry( aIniEntries, ALLTRIM(STR(nEntry,5)) , "" )
+                  cItemDef := GetIniEntry( aIniEntries, AllTrim(STR(nEntry,5)) , "" )
 
-                  if UPPER(ALLTRIM( GetField( cItemDef, 1 ) )) = "TEXT" .and. ;
+                  if UPPER(AllTrim( GetField( cItemDef, 1 ) )) = "TEXT" .and. ;
                         Val( GetField( cItemDef, 11 ) ) = nID
 
                      aItems[i,nEntry]:SetFont( aFonts[nID] )
@@ -2169,12 +2184,12 @@ function GetFonts()
 
    for i := 1 to 20
 
-      cFontDef := ALLTRIM( GetPvProfString( "Fonts", ALLTRIM(STR(i,3)) , "", cDefIni ) )
+      cFontDef := AllTrim( GetPvProfString( "Fonts", AllTrim(STR(i,3)) , "", cDefIni ) )
 
-      if .NOT. EMPTY( cFontDef )
+      if .NOT. Empty( cFontDef )
 
 
-         aWerte[i, 1] := ALLTRIM( GetField( cFontDef, 1 ) )                   // Name
+         aWerte[i, 1] := AllTrim( GetField( cFontDef, 1 ) )                   // Name
          aWerte[i, 2] := Val( GetField( cFontDef, 2 ) )                       // Width
          aWerte[i, 3] := Val( GetField( cFontDef, 3 ) )                       // Height
          aWerte[i, 4] := IIF( Val( GetField( cFontDef, 4 ) ) = 1, .T., .F. )  // Bold
@@ -2185,7 +2200,7 @@ function GetFonts()
          aWerte[i, 9] := Val( GetField( cFontDef, 9 ) )                       // Character Set
          aWerte[i,10] := Val( GetField( cFontDef, 10 ) )                      // Orientation
 
-      ELSE
+      else
 
          //Leerer Font
          aWerte[i, 1] := ""
@@ -2233,9 +2248,9 @@ function ReportSettings()
       ON CHANGE aGet[ 1 ]:Setfocus()
 
    REDEFINE GET nWidth ID 411 OF oDlg PICTURE cPicture SPINNER MIN 0 ;
-      WHEN ALLTRIM( cFormat ) = GL("user-defined")
+      WHEN AllTrim( cFormat ) = GL("user-defined")
    REDEFINE GET nHeight ID 412 OF oDlg PICTURE cPicture SPINNER MIN 0 ;
-      WHEN ALLTRIM( cFormat ) = GL("user-defined")
+      WHEN AllTrim( cFormat ) = GL("user-defined")
 
    REDEFINE GET aGet[ 1 ] VAR nTop ID 401 OF oDlg PICTURE cPicture SPINNER MIN 0
    REDEFINE GET nLeft      ID 402 OF oDlg PICTURE cPicture SPINNER MIN 0
@@ -2274,15 +2289,15 @@ function ReportSettings()
    if lSave = .T.
 
       INI oIni FILE cDefIni
-         SET SECTION "General" ENTRY "PaperSize"    to ALLTRIM(STR( ASCAN( aFormat, ALLTRIM( cFormat ) ), 3 )) OF oIni
-         SET SECTION "General" ENTRY "PaperWidth"   to ALLTRIM(STR( nWidth , 5, IIF( nMeasure = 2, 2, 0 ) )) OF oIni
-         SET SECTION "General" ENTRY "PaperHeight"  to ALLTRIM(STR( nHeight, 5, IIF( nMeasure = 2, 2, 0 ) )) OF oIni
-         SET SECTION "General" ENTRY "TopMargin"    to ALLTRIM(STR( nTop   , 5, IIF( nMeasure = 2, 2, 0 ) )) OF oIni
-         SET SECTION "General" ENTRY "LeftMargin"   to ALLTRIM(STR( nLeft  , 5, IIF( nMeasure = 2, 2, 0 ) )) OF oIni
-         SET SECTION "General" ENTRY "PageBreak"    to ALLTRIM(STR( nPageBreak, 5, IIF( nMeasure = 2, 2, 0 ) )) OF oIni
-         SET SECTION "General" ENTRY "Orientation"  to ALLTRIM(STR( nOrient, 1 )) OF oIni
-         SET SECTION "General" ENTRY "Title"        to ALLTRIM( cTitle ) OF oIni
-         SET SECTION "General" ENTRY "Group"        to ALLTRIM( cGroup ) OF oIni
+         SET SECTION "General" ENTRY "PaperSize"    to AllTrim(STR( ASCAN( aFormat, AllTrim( cFormat ) ), 3 )) OF oIni
+         SET SECTION "General" ENTRY "PaperWidth"   to AllTrim(STR( nWidth , 5, IIF( nMeasure = 2, 2, 0 ) )) OF oIni
+         SET SECTION "General" ENTRY "PaperHeight"  to AllTrim(STR( nHeight, 5, IIF( nMeasure = 2, 2, 0 ) )) OF oIni
+         SET SECTION "General" ENTRY "TopMargin"    to AllTrim(STR( nTop   , 5, IIF( nMeasure = 2, 2, 0 ) )) OF oIni
+         SET SECTION "General" ENTRY "LeftMargin"   to AllTrim(STR( nLeft  , 5, IIF( nMeasure = 2, 2, 0 ) )) OF oIni
+         SET SECTION "General" ENTRY "PageBreak"    to AllTrim(STR( nPageBreak, 5, IIF( nMeasure = 2, 2, 0 ) )) OF oIni
+         SET SECTION "General" ENTRY "Orientation"  to AllTrim(STR( nOrient, 1 )) OF oIni
+         SET SECTION "General" ENTRY "Title"        to AllTrim( cTitle ) OF oIni
+         SET SECTION "General" ENTRY "Group"        to AllTrim( cGroup ) OF oIni
       ENDINI
 
       oMainWnd:cTitle := MainCaption()
@@ -2362,8 +2377,8 @@ function Options()
    local lShowBorder   := oGenVar:lShowBorder
 
    for i := 1 to 99
-      cWert := GetPvProfString( "Languages", ALLTRIM(STR(i,2)), "", cGeneralIni )
-      if .NOT. EMPTY( cWert )
+      cWert := GetPvProfString( "Languages", AllTrim(STR(i,2)), "", cGeneralIni )
+      if .NOT. Empty( cWert )
          AADD( aLanguage, cWert )
       endif
    next
@@ -2425,27 +2440,27 @@ function Options()
       oGenVar:lShowBorder   := lShowBorder
 
       INI oIni FILE cDefIni
-         SET SECTION "General" ENTRY "GridWidth"  to ALLTRIM(STR( nGridWidth , 5, IIF( nMeasure = 2, 2, 0 ) )) OF oIni
-         SET SECTION "General" ENTRY "GridHeight" to ALLTRIM(STR( nGridHeight, 5, IIF( nMeasure = 2, 2, 0 ) )) OF oIni
+         SET SECTION "General" ENTRY "GridWidth"  to AllTrim(STR( nGridWidth , 5, IIF( nMeasure = 2, 2, 0 ) )) OF oIni
+         SET SECTION "General" ENTRY "GridHeight" to AllTrim(STR( nGridHeight, 5, IIF( nMeasure = 2, 2, 0 ) )) OF oIni
          SET SECTION "General" ENTRY "ShowGrid"   to IIF( lShowGrid, "1", "0") OF oIni
       ENDINI
 
       INI oIni FILE cGeneralIni
-         SET SECTION "General" ENTRY "MruList"        to ALLTRIM(STR( nMruList ))       OF oIni
+         SET SECTION "General" ENTRY "MruList"        to AllTrim(STR( nMruList ))       OF oIni
          SET SECTION "General" ENTRY "Maximize"       to IIF( lMaximize    , "1", "0")  OF oIni
          SET SECTION "General" ENTRY "ShowTextBorder" to IIF( lShowBorder  , "1", "0" ) OF oIni
          SET SECTION "General" ENTRY "ShowReticule"   to IIF( lShowReticule, "1", "0" ) OF oIni
 
          if cLanguage <> cOldLanguage
             SET SECTION "General" ENTRY "Language" to ;
-               ALLTRIM(STR(ASCAN( aLanguage, cLanguage ), 2)) OF oIni
+               AllTrim(STR(ASCAN( aLanguage, cLanguage ), 2)) OF oIni
          endif
 
       ENDINI
 
       for i := 1 to 100
-         if aWnd[i] <> nil
-            aWnd[i]:Refresh()
+         if aWnd[ i ] <> nil
+            aWnd[ i ]:Refresh()
          endif
       next
 
@@ -2464,8 +2479,82 @@ function Options()
 
 return .T.
 
-//----------------------------------------------------------------------------//
 
+ function ItemList()
+
+   local oDlg
+   local oTree
+   LOCAL oImageList, oBmp1, oBmp2
+
+   DEFINE DIALOG oDlg RESOURCE "Itemlist" TITLE GL("Item List")
+
+     oImageList = TImageList():New()
+
+   oBmp1 = TBitmap():Define( "FoldOpen",, oDlg )
+   oBmp2 = TBitmap():Define("FoldClose",, oDlg )
+
+   oTree := TTreeView():ReDefine( 201, oDlg,,, .T. ,"ll" )
+
+   oTree:bLDblClick := { | nRow, nCol, nKeyFlags | msginfo(1) }
+
+   REDEFINE BUTTON PROMPT GL("&OK") ID 101 OF oDlg ACTION oDlg:End()
+
+   ACTIVATE DIALOG oDlg CENTERED ON INIT carga(oTree)  //ListTrees( oTree )
+
+return nil
+
+STATIC Function Carga(oTree)
+   local lFirstArea    := .T.
+   local aIniEntries   := GetIniSection( "Areas", cDefIni )
+   local cAreaFilesDir := CheckPath( GetPvProfString( "General", "AreaFilesDir", "", cDefIni ) )
+   LOCAL oTr1
+   LOCAL aTr:= {}
+   local i, y, oTr2, cItemDef, aElemente, nEntry, cTitle
+
+   for i := 1 to LEN( aIniEntries )
+      nEntry := EntryNr( aIniEntries[ i ] )
+      if nEntry != 0
+            cTitle := aWndTitle[nEntry]
+            oTr1 := oTree:Add( AllTrim(STR(nEntry,5)) + ". " + cTitle )
+            AAdd(aTr,oTr1)
+
+            if Empty( cAreaFilesDir )
+                cAreaFilesDir := cDefaultPath
+           endif
+           if Empty( cAreaFilesDir )
+               cAreaFilesDir := cDefIniPath
+           endif
+           cItemDef := VRD_LF2SF( cAreaFilesDir + ;
+            AllTrim( GetIniEntry( aIniEntries, AllTrim(STR(nEntry,5)) , "" ) ) )
+            if .NOT. Empty( cItemDef )
+
+            cItemDef := IIF( AT( "\", cItemDef ) = 0, ".\", "" ) + cItemDef
+
+            aElemente := GetAllItems( cItemDef )
+            oTr1:Add( GL("Area Properties") )
+
+            for y := 1 to LEN( aElemente )
+
+               oTr2 := oTr1:Add( aElemente[y, 2 ], aElemente[y,3], aElemente[y,3] )
+               if aElemente[y,6] <> 0
+                  oTr2:Add( GL("Visible"), aElemente[y,5], aElemente[y,4] )
+               endif
+               oTr2:Add( GL("Item Properties") )
+
+            next
+
+         endif
+
+
+      endif
+  NEXT
+
+   oTree:Expand()
+
+Return NIL
+
+//----------------------------------------------------------------------------//
+/*
 function ItemList()
 
    local oDlg
@@ -2486,7 +2575,7 @@ function ItemList()
    ACTIVATE DIALOG oDlg CENTERED ON INIT ListTrees( oTree )
 
 return nil
-
+*/
 //----------------------------------------------------------------------------//
 
 function ListTrees( oTree )
@@ -2502,30 +2591,30 @@ function ListTrees( oTree )
 
    for i := 1 to LEN( aIniEntries )
 
-      nEntry := EntryNr( aIniEntries[i] )
+      nEntry := EntryNr( aIniEntries[ i ] )
 
-      if nEntry <> 0 //.and. .NOT. EMPTY( aWndTitle[nEntry] )
+      if nEntry <> 0 //.and. .NOT. Empty( aWndTitle[nEntry] )
 
          cTitle := aWndTitle[nEntry]
 
          if lFirstArea = .T.
-            oTr1 := oTr1:AddLastChild( ALLTRIM(STR(nEntry,5)) + ". " + cTitle, nClose, nOpen )
+            oTr1 := oTr1:AddLastChild( AllTrim(STR(nEntry,5)) + ". " + cTitle, nClose, nOpen )
             lFirstArea := .F.
-         ELSE
-            oTr1 := oTr1:AddAfter( ALLTRIM(STR(nEntry,5)) + ". " + cTitle, nClose, nOpen )
+         else
+            oTr1 := oTr1:AddAfter( AllTrim(STR(nEntry,5)) + ". " + cTitle, nClose, nOpen )
          endif
 
-         if EMPTY( cAreaFilesDir )
+         if Empty( cAreaFilesDir )
             cAreaFilesDir := cDefaultPath
          endif
-         if EMPTY( cAreaFilesDir )
+         if Empty( cAreaFilesDir )
             cAreaFilesDir := cDefIniPath
          endif
 
          cItemDef := VRD_LF2SF( cAreaFilesDir + ;
-            ALLTRIM( GetIniEntry( aIniEntries, ALLTRIM(STR(nEntry,5)) , "" ) ) )
+            AllTrim( GetIniEntry( aIniEntries, AllTrim(STR(nEntry,5)) , "" ) ) )
 
-         if .NOT. EMPTY( cItemDef )
+         if .NOT. Empty( cItemDef )
 
             cItemDef := IIF( AT( "\", cItemDef ) = 0, ".\", "" ) + cItemDef
 
@@ -2567,20 +2656,20 @@ function GetAllItems( cAktAreaIni )
 
    for i := 1 to LEN( aIniEntries )
 
-      nEntry := EntryNr( aIniEntries[i] )
-      cItemDef := GetIniEntry( aIniEntries, ALLTRIM(STR(nEntry,5)) , "" )
+      nEntry := EntryNr( aIniEntries[ i ] )
+      cItemDef := GetIniEntry( aIniEntries, AllTrim(STR(nEntry,5)) , "" )
 
-      if .NOT. EMPTY( cItemDef )
+      if .NOT. Empty( cItemDef )
 
-         cTyp    := UPPER(ALLTRIM( GetField( cItemDef, 1 ) ))
-         cName   := ALLTRIM( GetField( cItemDef, 2 ) )
+         cTyp    := UPPER(AllTrim( GetField( cItemDef, 1 ) ))
+         cName   := AllTrim( GetField( cItemDef, 2 ) )
          nShow   := Val( GetField( cItemDef, 4 ) )
          nDelete := Val( GetField( cItemDef, 5 ) )
 
-         if UPPER( cTyp ) = "IMAGE" .and. EMPTY( cName ) = .T.
-            cName := ALLTRIM(STR(nEntry,5)) + ". " + ALLTRIM( GetField( cItemDef, 11 ) )
-         ELSE
-            cName := ALLTRIM(STR(nEntry,5)) + ". " + cName
+         if UPPER( cTyp ) = "IMAGE" .and. Empty( cName ) = .T.
+            cName := AllTrim(STR(nEntry,5)) + ". " + AllTrim( GetField( cItemDef, 11 ) )
+         else
+            cName := AllTrim(STR(nEntry,5)) + ". " + cName
          endif
 
          if UPPER( cTyp ) = "TEXT"
@@ -2626,14 +2715,14 @@ function ClickListTree( oTree )
 
    if cPrompt = GL("Visible")
 
-      cItemDef := ALLTRIM( GetPvProfString( "Items", ALLTRIM(STR(nItem,5)) , "", aAreaIni[ nArea ] ) )
+      cItemDef := AllTrim( GetPvProfString( "Items", AllTrim(STR(nItem,5)) , "", aAreaIni[ nArea ] ) )
 
       oLinkItem:ToggleOpened()
       oTree:Refresh()
 
       if Val( GetField( cItemDef, 4 ) ) = 0
          lWert := .F.
-      ELSE
+      else
          lWert := .T.
       endif
 
@@ -2647,9 +2736,9 @@ function ClickListTree( oTree )
 
       oLinkItem:ParentLink:TreeItem:SetText( ItemProperties( nItem, nArea, .T. ) )
 
-      cItemDef := ALLTRIM( GetPvProfString( "Items", ALLTRIM(STR(nItem,5)) , "", aAreaIni[ nArea ] ) )
+      cItemDef := AllTrim( GetPvProfString( "Items", AllTrim(STR(nItem,5)) , "", aAreaIni[ nArea ] ) )
 
-      if IsGraphic( UPPER(ALLTRIM( GetField( cItemDef, 1 ) )) )
+      if IsGraphic( UPPER(AllTrim( GetField( cItemDef, 1 ) )) )
          oLinkItem:ParentLink:TreeItem:iBmpOpen  := SetGraphTreeBmp( nItem, aAreaIni[ nArea ] )
          oLinkItem:ParentLink:TreeItem:iBmpClose := SetGraphTreeBmp( nItem, aAreaIni[ nArea ] )
       endif
@@ -2664,8 +2753,8 @@ return .T.
 
 function SetGraphTreeBmp( nItem, cAreaIni )
 
-   local cItemDef := ALLTRIM( GetPvProfString( "Items", ALLTRIM(STR(nItem,5)) , "", cAreaIni ) )
-   local cTyp     := UPPER(ALLTRIM( GetField( cItemDef, 1 ) ))
+   local cItemDef := AllTrim( GetPvProfString( "Items", AllTrim(STR(nItem,5)) , "", cAreaIni ) )
+   local cTyp     := UPPER(AllTrim( GetField( cItemDef, 1 ) ))
    local nIndex   := GetGraphIndex( cTyp )
 
 return ( nIndex + 9 )
@@ -2688,7 +2777,7 @@ function AreaProperties( nArea )
    local lBreakAfter    := ( GetPvProfString( "General", "BreakAfter"   , "0", aAreaIni[ nArea ] ) = "1" )
    local lPrBeforeBreak := ( GetPvProfString( "General", "PrintBeforeBreak", "0", aAreaIni[ nArea ] ) = "1" )
    local lPrAfterBreak  := ( GetPvProfString( "General", "PrintAfterBreak" , "0", aAreaIni[ nArea ] ) = "1" )
-   local cDatabase      := ALLTRIM( GetPvProfString( "General", "ControlDBF", GL("none"), aAreaIni[ nArea ] ) )
+   local cDatabase      := AllTrim( GetPvProfString( "General", "ControlDBF", GL("none"), aAreaIni[ nArea ] ) )
    local nOldWidth      := nWidth
    local nOldHeight     := nHeight
    local cPicture       := IIF( nMeasure = 2, "999.99", "99999" )
@@ -2699,10 +2788,10 @@ function AreaProperties( nArea )
 
    for i := 1 to 13
       AADD( aTmpSource, ;
-         ALLTRIM( GetPvProfString( "General", "Formula" + ALLTRIM(STR(i,2)), "", aAreaIni[ nArea ] ) ) )
+         AllTrim( GetPvProfString( "General", "Formula" + AllTrim(STR(i,2)), "", aAreaIni[ nArea ] ) ) )
    next
 
-   AEval( oGenVar:aDBFile, {|x| IIF( EMPTY( x[2] ),, AADD( aDbase, ALLTRIM( x[2] ) ) ) } )
+   AEval( oGenVar:aDBFile, {|x| IIF( Empty( x[2] ),, AADD( aDbase, AllTrim( x[2] ) ) ) } )
 
    DEFINE DIALOG oDlg RESOURCE "AREAPROPERTY" TITLE GL("Area Properties")
 
@@ -2771,7 +2860,7 @@ function AreaProperties( nArea )
                 aGrp[3]:SetText( GL("Size") ), ;
                 aGrp[4]:SetText( GL("Print Condition") ), ;
                 aGrp[5]:SetText( GL("Options") ), ;
-                aCbx[ 1 ]:SetText( GL("Delete empty space after last row") ), ;
+                aCbx[ 1 ]:SetText( GL("Delete Empty space after last row") ), ;
                 aCbx[2]:SetText( GL("New page before printing this area") ), ;
                 aCbx[3]:SetText( GL("New page after printing this area") ), ;
                 aCbx[5]:SetText( GL("Print this area before every page break") ), ;
@@ -2781,22 +2870,22 @@ function AreaProperties( nArea )
    if lSave = .T.
 
       INI oIni FILE aAreaIni[ nArea ]
-         SET SECTION "General" ENTRY "Title"            to ALLTRIM( cAreaTitle ) OF oIni
-         SET SECTION "General" ENTRY "Top1"             to ALLTRIM(STR( nTop1  , 5, IIF( nMeasure = 2, 2, 0 ) )) OF oIni
-         SET SECTION "General" ENTRY "Top2"             to ALLTRIM(STR( nTop2  , 5, IIF( nMeasure = 2, 2, 0 ) )) OF oIni
+         SET SECTION "General" ENTRY "Title"            to AllTrim( cAreaTitle ) OF oIni
+         SET SECTION "General" ENTRY "Top1"             to AllTrim(STR( nTop1  , 5, IIF( nMeasure = 2, 2, 0 ) )) OF oIni
+         SET SECTION "General" ENTRY "Top2"             to AllTrim(STR( nTop2  , 5, IIF( nMeasure = 2, 2, 0 ) )) OF oIni
          SET SECTION "General" ENTRY "TopVariable"      to IIF( lTop = .F., "0", "1") OF oIni
-         SET SECTION "General" ENTRY "Condition"        to ALLTRIM(STR( nCondition, 1 )) OF oIni
-         SET SECTION "General" ENTRY "Width"            to ALLTRIM(STR( nWidth , 5, IIF( nMeasure = 2, 2, 0 ) )) OF oIni
-         SET SECTION "General" ENTRY "Height"           to ALLTRIM(STR( nHeight, 5, IIF( nMeasure = 2, 2, 0 ) )) OF oIni
+         SET SECTION "General" ENTRY "Condition"        to AllTrim(STR( nCondition, 1 )) OF oIni
+         SET SECTION "General" ENTRY "Width"            to AllTrim(STR( nWidth , 5, IIF( nMeasure = 2, 2, 0 ) )) OF oIni
+         SET SECTION "General" ENTRY "Height"           to AllTrim(STR( nHeight, 5, IIF( nMeasure = 2, 2, 0 ) )) OF oIni
          SET SECTION "General" ENTRY "DelEmptySpace"    to IIF( lDelSpace = .F., "0", "1") OF oIni
          SET SECTION "General" ENTRY "BreakBefore"      to IIF( lBreakBefore   = .F., "0", "1") OF oIni
          SET SECTION "General" ENTRY "BreakAfter"       to IIF( lBreakAfter    = .F., "0", "1") OF oIni
          SET SECTION "General" ENTRY "PrintBeforeBreak" to IIF( lPrBeforeBreak = .F., "0", "1") OF oIni
          SET SECTION "General" ENTRY "PrintAfterBreak"  to IIF( lPrAfterBreak  = .F., "0", "1") OF oIni
-         SET SECTION "General" ENTRY "ControlDBF"       to ALLTRIM( cDatabase ) OF oIni
+         SET SECTION "General" ENTRY "ControlDBF"       to AllTrim( cDatabase ) OF oIni
 
          for i := 1 to 12
-            SET SECTION "General" ENTRY "Formula" + ALLTRIM(STR(i,2)) to ALLTRIM( aTmpSource[i] ) OF oIni
+            SET SECTION "General" ENTRY "Formula" + AllTrim(STR(i,2)) to AllTrim( aTmpSource[ i ] ) OF oIni
          next
 
       ENDINI
@@ -2823,10 +2912,10 @@ function SetAreaFormulaBtn( nID, nField, oDlg )
    local oBtn
 
    REDEFINE BTNBMP oBtn ID nID OF oDlg NOBORDER ;
-      RESOURCE "B_SOURCE_" + IIF( EMPTY( aTmpSource[ nField ] ), "NO", "YES" ) TRANSPARENT ;
+      RESOURCE "B_SOURCE_" + IIF( Empty( aTmpSource[ nField ] ), "NO", "YES" ) TRANSPARENT ;
       TOOLTIP GetSourceToolTip( aTmpSource[ nField ] ) ;
       ACTION ( aTmpSource[ nField ] := EditSourceCode( 0, aTmpSource[ nField ] ), ;
-               oBtn:LoadBitmaps( "B_SOURCE_" + IIF( EMPTY( aTmpSource[ nField ] ), "NO", "YES" ) ), ;
+               oBtn:LoadBitmaps( "B_SOURCE_" + IIF( Empty( aTmpSource[ nField ] ), "NO", "YES" ) ), ;
                oBtn:cToolTip := GetSourceToolTip( aTmpSource[ nField ] ), ;
                oBtn:Refresh() )
 
@@ -2844,13 +2933,13 @@ function AreaChange( nArea, cAreaTitle, nOldWidth, nWidth, nOldHeight, nHeight )
 
    aCbxItems[oCbxArea:nAt] := cAreaTitle
    oCbxArea:Modify( cAreaTitle, oCbxArea:nAt )
-   oCbxArea:Set( ALLTRIM( cAreaTitle ) )
+   oCbxArea:Set( AllTrim( cAreaTitle ) )
 
    if nOldWidth <> nWidth
 
       for i := 1 to 100
-         if aWnd[i] <> nil
-            aWnd[i]:Refresh()
+         if aWnd[ i ] <> nil
+            aWnd[ i ]:Refresh()
          endif
       next
 
@@ -2863,9 +2952,9 @@ function AreaChange( nArea, cAreaTitle, nOldWidth, nWidth, nOldHeight, nHeight )
          IIF( oGenVar:aAreaHide[ nArea ], nRulerTop, ER_GetPixel( nHeight ) + nAreaZugabe ), .T. )
 
       for i := nArea+1 to 100
-         if aWnd[i] <> nil
-            aWnd[i]:Move( aWnd[i]:nTop + ER_GetPixel( nHeight - nOldHeight ), ;
-               aWnd[i]:nLeft,,, .T. )
+         if aWnd[ i ] <> nil
+            aWnd[ i ]:Move( aWnd[ i ]:nTop + ER_GetPixel( nHeight - nOldHeight ), ;
+               aWnd[ i ]:nLeft,,, .T. )
          endif
       next
 
@@ -2894,8 +2983,8 @@ function AreaHide( nArea )
       IIF( oGenVar:aAreaHide[nAktArea], 18, ER_GetPixel( nAreaHeight ) + nAreaZugabe ), .T. )
 
    for i := nArea+1 to 100
-      if aWnd[i] <> nil
-         aWnd[i]:Move( aWnd[i]:nTop + nDifferenz, aWnd[i]:nLeft,,, .T. )
+      if aWnd[ i ] <> nil
+         aWnd[ i ]:Move( aWnd[ i ]:nTop + nDifferenz, aWnd[ i ]:nLeft,,, .T. )
       endif
    next
 
@@ -2928,11 +3017,9 @@ CLASS TEasyReport
    DATA oMainWnd
    DATA cGeneralIni
    DATA cDataPath
+   DATA bClrBar,aColorDlg
 
    METHOD New() CONSTRUCTOR
-
-  ::cGeneralIni := ".\vrd.ini"
-   ::cDataPath := GetCurDir()+"\Datas\"
 
 ENDCLASS
 
@@ -2940,15 +3027,32 @@ ENDCLASS
 
 METHOD New() CLASS TEasyReport
 
-   ::cGeneralIni := ".\vrd.ini"
+   ::cGeneralIni = ".\vrd.ini"
+   ::cDataPath   = GetCurDir() + "\Datas\"
+   
+     ::bClrBar = { | lInvert | If( ! lInvert,;
+                                        { { 0.25, RGB( 219, 230, 244 ), RGB( 207, 221, 239 ) },;
+                                          { 0.75, RGB( 201, 217, 237 ), RGB( 231, 242, 255 ) } },;
+                                        { { 0.25, RGB( 255, 253, 222 ), RGB( 255, 231, 151 ) }, ;
+                                          { 0.75, RGB( 255, 215,  84 ), RGB( 255, 233, 162 ) } } ) }
 
-RETURN Self
+
+ //  ::bClrBar := { | lInvert | If( ! lInvert,;
+ //                                 { { 0.50, nRGB( 254, 254, 254 ), nRGB( 225, 225, 225 ) },;
+ //                                   { 0.50, nRGB( 225, 225, 225 ), nRGB( 185, 185, 185 ) } },;
+ //                                 { { 0.40, nRGB( 68, 68, 68 ), nRGB( 109, 109, 109 ) }, ;
+ //                                   { 0.60, nRGB( 109, 109, 109 ), nRGB( 116, 116, 116 ) } } ) }
+
+
+   ::aColorDlg :=  { { 1, RGB( 199, 216, 237 ), RGB( 237, 242, 248 ) } } 
+
+ //   ::aColorDlg :=  { { 0.60,  nRGB( 221, 227, 233) ,  nRGB( 221, 227, 233 ) }, ;
+ //                        { 0.40,nRGB( 221, 227, 233), nRGB( 221, 227, 233) } }
+
+
+return Self
 
 //------------------------------------------------------------------------------
-
-
-
-//----------------------------------------------------------------------------//
 
 #define TME_LEAVE 2
 #define WM_MOUSELEAVE 675
