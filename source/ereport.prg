@@ -166,6 +166,13 @@ function BarMenu()
          WHEN .NOT. EMPTY( cDefIni )
    endif
 
+   DEFINE BUTTON RESOURCE "print" ;
+      OF oBar ;
+      PROMPT FWString( "Print" ) ;
+      TOOLTIP GL( "Print" ) ;
+      ACTION PrintReport() ;
+      WHEN .NOT. EMPTY( cDefIni )
+      
    DEFINE BUTTON aBtn[2] RESOURCE "B_UNDO" ;
       OF oBar GROUP ;
       PROMPT FWString( "Undo" ) ;
