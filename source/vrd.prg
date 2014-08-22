@@ -685,7 +685,7 @@ METHOD SetPrevRecord( nAlias ) CLASS VRD
    LOCAL i, nOldSel
    LOCAL aCurRec := {}
 
-   IF nAlias <> 0 .AND. ::aDBType[ nAlias ] = "DBF"
+   IF nAlias <> 0 .AND. Upper(::aDBType[ nAlias ]) = "DBF"
 
       //from DBF file
       nOldSel := SELECT()
@@ -2173,7 +2173,7 @@ METHOD OpenDatabases() CLASS VRD
 
       IF FILE( VRD_LF2SF( cDBName ) )
          AADD( ::aDBAlias     , cDBAlias )
-         AADD( ::aDBType      , cFileExt( cDatabase ) )
+         AADD( ::aDBType      , Upper( cFileExt( cDatabase ) ) )
          AADD( ::aDBPrevRecord, NIL )
          AADD( ::aDBFilter    , cDBFilter )
          AADD( ::aDBFieldNames, cFieldNames )
