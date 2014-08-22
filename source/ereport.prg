@@ -201,7 +201,7 @@ function BarMenu()
          OF oBar ;
          PROMPT FWString( "Fonts" ) ;
          TOOLTIP GL("Fonts and Colors") ;
-         ACTION GeneralSettings() ;
+         ACTION FontsAndColors() ;
          WHEN .NOT. Empty( cDefIni )
    endif
 
@@ -984,7 +984,7 @@ function BuildMenu()
       WHEN .NOT. Empty( cDefIni )
    if Val( GetPvProfString( "General", "EditProperties", "1", cDefIni ) ) = 1
       MENUITEM GL("&Fonts and Colors") + chr(9) + GL("Ctrl+F") RESOURCE "B_FONTCOLOR" ;
-         ACTION GeneralSettings() ;
+         ACTION FontsAndColors() ;
          ACCELERATOR ACC_CONTROL, ASC( GL("F") ) ;
          WHEN .NOT. Empty( cDefIni )
    endif
@@ -1058,7 +1058,7 @@ function PopupMenu( nArea, oItem, nRow, nCol, lItem )
    MENUITEM GL("Area and Item &List") + CHR(9) + GL("Ctrl+L") RESOURCE "B_ITEMLIST" ;
       ACTION Itemlist()
    MENUITEM GL("&Fonts and Colors") + CHR(9) + GL("Ctrl+F")   RESOURCE "B_FONTCOLOR" ;
-      ACTION GeneralSettings()
+      ACTION FontsAndColors()
    SEPARATOR
    MENUITEM GL("&Area Properties") + CHR(9) + GL("Ctrl+A")    RESOURCE "B_AREA" ;
       ACTION ( aWnd[ nArea ]:SetFocus(), AreaProperties( nAktArea ) )
@@ -1803,7 +1803,7 @@ return ( aColors )
 
 //----------------------------------------------------------------------------//
 
-function GeneralSettings()
+function FontsAndColors()
 
    local i, oDlg, oFld, oLbx, oSay1, oGet1, nDefClr, oIni
    local aColorGet[30], aColorSay[30]
@@ -1821,9 +1821,9 @@ function GeneralSettings()
    SysRefresh()
    MEMORY(-1)
 
-   DEFINE DIALOG oDlg NAME "GENERALSETTINGS" TITLE GL("Fonts, Colors and Databases")
+   DEFINE DIALOG oDlg NAME "FontsAndColors" TITLE GL( "Fonts and Colors" )
 
-   REDEFINE BUTTON PROMPT GL("&OK") ID 101 OF oDlg ACTION oDlg:End()
+   REDEFINE BUTTON PROMPT GL( "&OK" ) ID 101 OF oDlg ACTION oDlg:End()
 
    nDefClr := oDlg:nClrPane
 
@@ -1858,36 +1858,39 @@ function GeneralSettings()
    REDEFINE SAY PROMPT GL("Nr.")   ID 174 OF oFld:aDialogs[ i ]
    REDEFINE SAY PROMPT GL("Color") ID 175 OF oFld:aDialogs[ i ]
 
-   REDEFINE SAY aColorSay[1 ] PROMPT "" ID 401 OF oFld:aDialogs[ i ] COLORS SetColor( aColors[1 ], nDefClr ), SetColor( aColors[1 ], nDefClr )
-   REDEFINE SAY aColorSay[2 ] PROMPT "" ID 402 OF oFld:aDialogs[ i ] COLORS SetColor( aColors[2 ], nDefClr ), SetColor( aColors[2 ], nDefClr )
-   REDEFINE SAY aColorSay[3 ] PROMPT "" ID 403 OF oFld:aDialogs[ i ] COLORS SetColor( aColors[3 ], nDefClr ), SetColor( aColors[3 ], nDefClr )
-   REDEFINE SAY aColorSay[4 ] PROMPT "" ID 404 OF oFld:aDialogs[ i ] COLORS SetColor( aColors[4 ], nDefClr ), SetColor( aColors[4 ], nDefClr )
-   REDEFINE SAY aColorSay[5 ] PROMPT "" ID 405 OF oFld:aDialogs[ i ] COLORS SetColor( aColors[5 ], nDefClr ), SetColor( aColors[5 ], nDefClr )
-   REDEFINE SAY aColorSay[6 ] PROMPT "" ID 406 OF oFld:aDialogs[ i ] COLORS SetColor( aColors[6 ], nDefClr ), SetColor( aColors[6 ], nDefClr )
-   REDEFINE SAY aColorSay[7 ] PROMPT "" ID 407 OF oFld:aDialogs[ i ] COLORS SetColor( aColors[7 ], nDefClr ), SetColor( aColors[7 ], nDefClr )
-   REDEFINE SAY aColorSay[8 ] PROMPT "" ID 408 OF oFld:aDialogs[ i ] COLORS SetColor( aColors[8 ], nDefClr ), SetColor( aColors[8 ], nDefClr )
-   REDEFINE SAY aColorSay[9 ] PROMPT "" ID 409 OF oFld:aDialogs[ i ] COLORS SetColor( aColors[9 ], nDefClr ), SetColor( aColors[9 ], nDefClr )
-   REDEFINE SAY aColorSay[10] PROMPT "" ID 410 OF oFld:aDialogs[ i ] COLORS SetColor( aColors[10], nDefClr ), SetColor( aColors[10], nDefClr )
-   REDEFINE SAY aColorSay[11] PROMPT "" ID 411 OF oFld:aDialogs[ i ] COLORS SetColor( aColors[11], nDefClr ), SetColor( aColors[11], nDefClr )
-   REDEFINE SAY aColorSay[12] PROMPT "" ID 412 OF oFld:aDialogs[ i ] COLORS SetColor( aColors[12], nDefClr ), SetColor( aColors[12], nDefClr )
-   REDEFINE SAY aColorSay[13] PROMPT "" ID 413 OF oFld:aDialogs[ i ] COLORS SetColor( aColors[13], nDefClr ), SetColor( aColors[13], nDefClr )
-   REDEFINE SAY aColorSay[14] PROMPT "" ID 414 OF oFld:aDialogs[ i ] COLORS SetColor( aColors[14], nDefClr ), SetColor( aColors[14], nDefClr )
-   REDEFINE SAY aColorSay[15] PROMPT "" ID 415 OF oFld:aDialogs[ i ] COLORS SetColor( aColors[15], nDefClr ), SetColor( aColors[15], nDefClr )
-   REDEFINE SAY aColorSay[16] PROMPT "" ID 416 OF oFld:aDialogs[ i ] COLORS SetColor( aColors[16], nDefClr ), SetColor( aColors[16], nDefClr )
-   REDEFINE SAY aColorSay[17] PROMPT "" ID 417 OF oFld:aDialogs[ i ] COLORS SetColor( aColors[17], nDefClr ), SetColor( aColors[17], nDefClr )
-   REDEFINE SAY aColorSay[18] PROMPT "" ID 418 OF oFld:aDialogs[ i ] COLORS SetColor( aColors[18], nDefClr ), SetColor( aColors[18], nDefClr )
-   REDEFINE SAY aColorSay[19] PROMPT "" ID 419 OF oFld:aDialogs[ i ] COLORS SetColor( aColors[19], nDefClr ), SetColor( aColors[19], nDefClr )
-   REDEFINE SAY aColorSay[20] PROMPT "" ID 420 OF oFld:aDialogs[ i ] COLORS SetColor( aColors[20], nDefClr ), SetColor( aColors[20], nDefClr )
-   REDEFINE SAY aColorSay[21] PROMPT "" ID 421 OF oFld:aDialogs[ i ] COLORS SetColor( aColors[21], nDefClr ), SetColor( aColors[21], nDefClr )
-   REDEFINE SAY aColorSay[22] PROMPT "" ID 422 OF oFld:aDialogs[ i ] COLORS SetColor( aColors[22], nDefClr ), SetColor( aColors[22], nDefClr )
-   REDEFINE SAY aColorSay[23] PROMPT "" ID 423 OF oFld:aDialogs[ i ] COLORS SetColor( aColors[23], nDefClr ), SetColor( aColors[23], nDefClr )
-   REDEFINE SAY aColorSay[24] PROMPT "" ID 424 OF oFld:aDialogs[ i ] COLORS SetColor( aColors[24], nDefClr ), SetColor( aColors[24], nDefClr )
-   REDEFINE SAY aColorSay[25] PROMPT "" ID 425 OF oFld:aDialogs[ i ] COLORS SetColor( aColors[25], nDefClr ), SetColor( aColors[25], nDefClr )
-   REDEFINE SAY aColorSay[26] PROMPT "" ID 426 OF oFld:aDialogs[ i ] COLORS SetColor( aColors[26], nDefClr ), SetColor( aColors[26], nDefClr )
-   REDEFINE SAY aColorSay[27] PROMPT "" ID 427 OF oFld:aDialogs[ i ] COLORS SetColor( aColors[27], nDefClr ), SetColor( aColors[27], nDefClr )
-   REDEFINE SAY aColorSay[28] PROMPT "" ID 428 OF oFld:aDialogs[ i ] COLORS SetColor( aColors[28], nDefClr ), SetColor( aColors[28], nDefClr )
-   REDEFINE SAY aColorSay[29] PROMPT "" ID 429 OF oFld:aDialogs[ i ] COLORS SetColor( aColors[29], nDefClr ), SetColor( aColors[29], nDefClr )
-   REDEFINE SAY aColorSay[30] PROMPT "" ID 430 OF oFld:aDialogs[ i ] COLORS SetColor( aColors[30], nDefClr ), SetColor( aColors[30], nDefClr )
+   REDEFINE BTNBMP aColorSay[1 ]   ID 401 OF oFld:aDialogs[ i ] NOBORDER
+   REDEFINE BTNBMP aColorSay[2 ]   ID 402 OF oFld:aDialogs[ i ] NOBORDER 
+   REDEFINE BTNBMP aColorSay[3 ]   ID 403 OF oFld:aDialogs[ i ] NOBORDER 
+   REDEFINE BTNBMP aColorSay[4 ]   ID 404 OF oFld:aDialogs[ i ] NOBORDER 
+   REDEFINE BTNBMP aColorSay[5 ]   ID 405 OF oFld:aDialogs[ i ] NOBORDER 
+   REDEFINE BTNBMP aColorSay[6 ]   ID 406 OF oFld:aDialogs[ i ] NOBORDER 
+   REDEFINE BTNBMP aColorSay[7 ]   ID 407 OF oFld:aDialogs[ i ] NOBORDER 
+   REDEFINE BTNBMP aColorSay[8 ]   ID 408 OF oFld:aDialogs[ i ] NOBORDER 
+   REDEFINE BTNBMP aColorSay[9 ]   ID 409 OF oFld:aDialogs[ i ] NOBORDER 
+   REDEFINE BTNBMP aColorSay[10]   ID 410 OF oFld:aDialogs[ i ] NOBORDER 
+   REDEFINE BTNBMP aColorSay[11]   ID 411 OF oFld:aDialogs[ i ] NOBORDER 
+   REDEFINE BTNBMP aColorSay[12]   ID 412 OF oFld:aDialogs[ i ] NOBORDER 
+   REDEFINE BTNBMP aColorSay[13]   ID 413 OF oFld:aDialogs[ i ] NOBORDER 
+   REDEFINE BTNBMP aColorSay[14]   ID 414 OF oFld:aDialogs[ i ] NOBORDER 
+   REDEFINE BTNBMP aColorSay[15]   ID 415 OF oFld:aDialogs[ i ] NOBORDER 
+   REDEFINE BTNBMP aColorSay[16]   ID 416 OF oFld:aDialogs[ i ] NOBORDER 
+   REDEFINE BTNBMP aColorSay[17]   ID 417 OF oFld:aDialogs[ i ] NOBORDER 
+   REDEFINE BTNBMP aColorSay[18]   ID 418 OF oFld:aDialogs[ i ] NOBORDER 
+   REDEFINE BTNBMP aColorSay[19]   ID 419 OF oFld:aDialogs[ i ] NOBORDER 
+   REDEFINE BTNBMP aColorSay[20]   ID 420 OF oFld:aDialogs[ i ] NOBORDER 
+   REDEFINE BTNBMP aColorSay[21]   ID 421 OF oFld:aDialogs[ i ] NOBORDER 
+   REDEFINE BTNBMP aColorSay[22]   ID 422 OF oFld:aDialogs[ i ] NOBORDER 
+   REDEFINE BTNBMP aColorSay[23]   ID 423 OF oFld:aDialogs[ i ] NOBORDER 
+   REDEFINE BTNBMP aColorSay[24]   ID 424 OF oFld:aDialogs[ i ] NOBORDER 
+   REDEFINE BTNBMP aColorSay[25]   ID 425 OF oFld:aDialogs[ i ] NOBORDER 
+   REDEFINE BTNBMP aColorSay[26]   ID 426 OF oFld:aDialogs[ i ] NOBORDER 
+   REDEFINE BTNBMP aColorSay[27]   ID 427 OF oFld:aDialogs[ i ] NOBORDER 
+   REDEFINE BTNBMP aColorSay[28]   ID 428 OF oFld:aDialogs[ i ] NOBORDER 
+   REDEFINE BTNBMP aColorSay[29]   ID 429 OF oFld:aDialogs[ i ] NOBORDER 
+   REDEFINE BTNBMP aColorSay[30]   ID 430 OF oFld:aDialogs[ i ] NOBORDER 
+
+   AEval( aColorSay, { | o, n | o:SetColor( 0,;
+      If( Empty( aColors[ n ] ), CLR_WHITE, Val( aColors[ n ] ) ) ) } )
 
    REDEFINE GET aColorGet[1 ] VAR aColors[1 ] ID 201 OF oFld:aDialogs[ i ] VALID Set2Color( aColorSay[1 ], aColors[1 ], nDefClr )
    REDEFINE GET aColorGet[2 ] VAR aColors[2 ] ID 202 OF oFld:aDialogs[ i ] VALID Set2Color( aColorSay[2 ], aColors[2 ], nDefClr )
