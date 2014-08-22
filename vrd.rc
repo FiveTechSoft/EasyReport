@@ -245,6 +245,8 @@ B_SAVE3            BITMAP         ".\bitmaps\bitmap48.bmp"
 LANGUAGE 7, SUBLANG_DEFAULT
 print              BITMAP         ".\bitmaps\print.bmp"
 
+LANGUAGE 7, SUBLANG_DEFAULT
+print16            BITMAP         ".\bitmaps\print16.bmp"
 
 LANGUAGE 7, SUBLANG_DEFAULT
 B_SOURCE_NO        BITMAP         ".\bitmaps\bitmap49.bmp"

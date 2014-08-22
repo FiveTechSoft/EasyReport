@@ -868,7 +868,7 @@ function BuildMenu()
          WHEN .NOT. Empty( cDefIni )
    endif
 
-   MENUITEM GL("&Print") /*RESOURCE "PRINTER"*/ ;
+   MENUITEM GL("&Print") RESOURCE "print16" ;
          ACTION PrintReport() ;
          WHEN .NOT. Empty( cDefIni )
 
