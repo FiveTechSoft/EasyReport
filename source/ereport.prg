@@ -90,6 +90,9 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
 
    SetDlgGradient( { { 1, RGB( 199, 216, 237 ), RGB( 237, 242, 248 ) } } )
    
+  //  SetDlgGradient(  { { 0.60,  nRGB( 221, 227, 233) ,  nRGB( 221, 227, 233 ) }, ;
+  //                       { 0.40,nRGB( 221, 227, 233), nRGB( 221, 227, 233) } } )
+   
    DEFINE WINDOW oMainWnd FROM 0, 0 to 50, 200 VSCROLL ;
       TITLE MainCaption() ;
       BRUSH oBrush MDI ;
@@ -135,8 +138,10 @@ function BarMenu()
 
    local aBtn[3]
    local lPrompt := ( GetSysMetrics( 0 ) > 800 )
-
+   
    DEFINE BUTTONBAR oBar OF oMainWnd SIZE 70, 70 2010
+   
+   oBar:bClrGrad :=  oER:bClrBar
 
    DEFINE BUTTON RESOURCE "New" ;
       OF oBar ;
@@ -2474,8 +2479,81 @@ function Options()
 
 return .T.
 
-//----------------------------------------------------------------------------//
 
+ function ItemList()
+
+   local oDlg
+   local oTree
+   LOCAL oImageList, oBmp1, oBmp2
+
+   DEFINE DIALOG oDlg RESOURCE "Itemlist" TITLE GL("Item List")
+
+     oImageList = TImageList():New()
+
+   oBmp1 = TBitmap():Define( "FoldOpen",, oDlg )
+   oBmp2 = TBitmap():Define("FoldClose",, oDlg )
+
+   oTree := TTreeView():ReDefine( 201, oDlg,,, .T. ,"ll" )
+
+   oTree:bLDblClick := { | nRow, nCol, nKeyFlags | msginfo(1) }
+
+   REDEFINE BUTTON PROMPT GL("&OK") ID 101 OF oDlg ACTION oDlg:End()
+
+   ACTIVATE DIALOG oDlg CENTERED ON INIT carga(oTree)  //ListTrees( oTree )
+
+return nil
+
+STATIC Function Carga(oTree)
+   local lFirstArea    := .T.
+   local aIniEntries   := GetIniSection( "Areas", cDefIni )
+   local cAreaFilesDir := CheckPath( GetPvProfString( "General", "AreaFilesDir", "", cDefIni ) )
+   LOCAL oTr1
+   LOCAL aTr:= {}
+
+   for i := 1 to LEN( aIniEntries )
+      nEntry := EntryNr( aIniEntries[ i ] )
+      if nEntry != 0
+            cTitle := aWndTitle[nEntry]
+            oTr1 := oTree:Add( AllTrim(STR(nEntry,5)) + ". " + cTitle )
+            AAdd(aTr,oTr1)
+
+            if Empty( cAreaFilesDir )
+                cAreaFilesDir := cDefaultPath
+           endif
+           if Empty( cAreaFilesDir )
+               cAreaFilesDir := cDefIniPath
+           endif
+           cItemDef := VRD_LF2SF( cAreaFilesDir + ;
+            AllTrim( GetIniEntry( aIniEntries, AllTrim(STR(nEntry,5)) , "" ) ) )
+            if .NOT. Empty( cItemDef )
+
+            cItemDef := IIF( AT( "\", cItemDef ) = 0, ".\", "" ) + cItemDef
+
+            aElemente := GetAllItems( cItemDef )
+            oTr1:Add( GL("Area Properties") )
+
+            for y := 1 to LEN( aElemente )
+
+               oTr2 := oTr1:Add( aElemente[y, 2 ], aElemente[y,3], aElemente[y,3] )
+               if aElemente[y,6] <> 0
+                  oTr2:Add( GL("Visible"), aElemente[y,5], aElemente[y,4] )
+               endif
+               oTr2:Add( GL("Item Properties") )
+
+            next
+
+         endif
+
+
+      endif
+  NEXT
+
+   oTree:Expand()
+
+Return NIL
+
+//----------------------------------------------------------------------------//
+/*
 function ItemList()
 
    local oDlg
@@ -2496,7 +2574,7 @@ function ItemList()
    ACTIVATE DIALOG oDlg CENTERED ON INIT ListTrees( oTree )
 
 return nil
-
+*/
 //----------------------------------------------------------------------------//
 
 function ListTrees( oTree )
@@ -2938,6 +3016,7 @@ CLASS TEasyReport
    DATA oMainWnd
    DATA cGeneralIni
    DATA cDataPath
+   DATA bClrBar,aColorDlg
 
    METHOD New() CONSTRUCTOR
 
@@ -2949,6 +3028,26 @@ METHOD New() CLASS TEasyReport
 
    ::cGeneralIni = ".\vrd.ini"
    ::cDataPath   = GetCurDir() + "\Datas\"
+   
+     ::bClrBar = { | lInvert | If( ! lInvert,;
+                                        { { 0.25, RGB( 219, 230, 244 ), RGB( 207, 221, 239 ) },;
+                                          { 0.75, RGB( 201, 217, 237 ), RGB( 231, 242, 255 ) } },;
+                                        { { 0.25, RGB( 255, 253, 222 ), RGB( 255, 231, 151 ) }, ;
+                                          { 0.75, RGB( 255, 215,  84 ), RGB( 255, 233, 162 ) } } ) }
+
+
+ //  ::bClrBar := { | lInvert | If( ! lInvert,;
+ //                                 { { 0.50, nRGB( 254, 254, 254 ), nRGB( 225, 225, 225 ) },;
+ //                                   { 0.50, nRGB( 225, 225, 225 ), nRGB( 185, 185, 185 ) } },;
+ //                                 { { 0.40, nRGB( 68, 68, 68 ), nRGB( 109, 109, 109 ) }, ;
+ //                                   { 0.60, nRGB( 109, 109, 109 ), nRGB( 116, 116, 116 ) } } ) }
+
+
+   ::aColorDlg :=  { { 1, RGB( 199, 216, 237 ), RGB( 237, 242, 248 ) } } )
+
+ //   ::aColorDlg :=  { { 0.60,  nRGB( 221, 227, 233) ,  nRGB( 221, 227, 233 ) }, ;
+                         { 0.40,nRGB( 221, 227, 233), nRGB( 221, 227, 233) } }
+
 
 return Self
 
