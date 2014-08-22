@@ -2,7 +2,7 @@
 
 HBDIR=c:\harbour
 BCDIR=c:\bcc582
-FWDIR=c:\fwteam
+FWDIR=c:\fwh
 
 #change these paths as needed
 .path.obj = .\obj
@@ -21,8 +21,6 @@ PRG =        \
 .\erstart.prg  \
 .\ertools.prg  \
 #.\fileedit.prg \
-.\treelink.prg \
-.\tvitem.prg   \
 .\vrd.prg      \
 .\vrdbcode.prg \
 .\vrditem.prg  

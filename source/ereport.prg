@@ -88,11 +88,11 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
 
    DEFINE BRUSH oBrush RESOURCE "background"
 
-   SetDlgGradient( { { 1, RGB( 199, 216, 237 ), RGB( 237, 242, 248 ) } } )
+   // SetDlgGradient( oER:aColorDlg  )
    
   //  SetDlgGradient(  { { 0.60,  nRGB( 221, 227, 233) ,  nRGB( 221, 227, 233 ) }, ;
   //                       { 0.40,nRGB( 221, 227, 233), nRGB( 221, 227, 233) } } )
-   
+      
    DEFINE WINDOW oMainWnd FROM 0, 0 to 50, 200 VSCROLL ;
       TITLE MainCaption() ;
       BRUSH oBrush MDI ;
@@ -2495,7 +2495,7 @@ return .T.
 
    oTree := TTreeView():ReDefine( 201, oDlg,,, .T. ,"ll" )
 
-   oTree:bLDblClick := { | nRow, nCol, nKeyFlags | msginfo(1) }
+   oTree:bLDblClick := { | nRow, nCol, nKeyFlags | ClickListTree( oTree ) }
 
    REDEFINE BUTTON PROMPT GL("&OK") ID 101 OF oDlg ACTION oDlg:End()
 
@@ -2694,6 +2694,23 @@ return aWerte
 //----------------------------------------------------------------------------//
 
 function ClickListTree( oTree )
+   LOCAL nArea
+   local cPrompt    := oTree:GetSelText()
+   LOCAL oItem := oTree:GetSelected()
+   if cPrompt = GL("Area Properties")
+      
+      nArea     := Val( oItem:GetParent():cPrompt )
+      AreaProperties( nArea )
+    endif
+
+
+return .T.
+
+
+//----------------------------------------------------------------------------//
+
+/*
+function ClickListTree( oTree )
 
    local cItemDef ,nItem, oLinkArea, nArea, lWert
    local oLinkItem   := oTree:GetLinkAt( oTree:GetCursel() )
@@ -2748,7 +2765,7 @@ function ClickListTree( oTree )
    endif
 
 return .T.
-
+*/
 //----------------------------------------------------------------------------//
 
 function SetGraphTreeBmp( nItem, cAreaIni )
@@ -3030,11 +3047,10 @@ METHOD New() CLASS TEasyReport
    ::cGeneralIni = ".\vrd.ini"
    ::cDataPath   = GetCurDir() + "\Datas\"
    
-     ::bClrBar = { | lInvert | If( ! lInvert,;
-                                        { { 0.25, RGB( 219, 230, 244 ), RGB( 207, 221, 239 ) },;
-                                          { 0.75, RGB( 201, 217, 237 ), RGB( 231, 242, 255 ) } },;
-                                        { { 0.25, RGB( 255, 253, 222 ), RGB( 255, 231, 151 ) }, ;
-                                          { 0.75, RGB( 255, 215,  84 ), RGB( 255, 233, 162 ) } } ) }
+     ::bClrBar =  { | lInvert | If( ! lInvert,;
+                                    { { 1, RGB( 255, 255, 255 ), RGB( 229, 233, 238 ) } },;
+                                    { { 2/5, RGB( 255, 253, 222 ), RGB( 255, 231, 147 ) },;
+                                      { 3/5, RGB( 255, 215,  86 ), RGB( 255, 231, 153 ) } } ) }
 
 
  //  ::bClrBar := { | lInvert | If( ! lInvert,;
