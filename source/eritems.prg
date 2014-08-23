@@ -564,7 +564,7 @@ function TextProperties( i, nArea, cAreaIni, lFromList, lNew )
    REDEFINE SAY PROMPT cMeasure ID 183 OF oCurDlg
    REDEFINE SAY PROMPT cMeasure ID 184 OF oCurDlg
 
-   ACTIVATE DIALOG oCurDlg CENTERED NOMODAL ;
+   ACTIVATE DIALOG oCurDlg CENTERED ; // NOMODAL ;
       ON INIT ( GetItemDlgPos(), ;
                 IIF( nDeveloper = 0, ( aGet[5]:Hide(), aSay[4]:Hide(), aGet[4]:nWidth( 329 ), oBtn2:nLeft := 352, oBtn3:nLeft := 374 ), ), ;
                 IIF( oVar:cShowExpr = "0" .OR. lProfi = .F., oBtn3:Hide(), ), ;
@@ -903,7 +903,7 @@ function ImageProperties( i, nArea, cAreaIni, lFromList, lNew )
    REDEFINE SAY PROMPT GL("Width:")  ID 175 OF oCurDlg
    REDEFINE SAY PROMPT GL("Height:") ID 176 OF oCurDlg
 
-   ACTIVATE DIALOG oCurDlg CENTERED NOMODAL ;
+   ACTIVATE DIALOG oCurDlg CENTERED ; //NOMODAL ;
       ON INIT ( GetItemDlgPos(), ;
                 IIF( nDeveloper = 0, ( aGet[3]:Hide(), aSay[1]:Hide(), aGet[2]:nWidth( 328 ) ), ), ;
                 IIF( lFromList = .T. .OR. oItem:nItemID > 0, aBtn[1]:Hide(), ), ;
@@ -1112,7 +1112,7 @@ function GraphicProperties( i, nArea, cAreaIni, lFromList, lNew )
    REDEFINE SAY PROMPT GL("Height:")     ID 183 OF oCurDlg
    REDEFINE SAY PROMPT GL("Rounded Corners") + ":" ID 184 OF oCurDlg
 
-   ACTIVATE DIALOG oCurDlg CENTERED NOMODAL ;
+   ACTIVATE DIALOG oCurDlg CENTERED ; // NOMODAL ;
       ON INIT ( GetItemDlgPos(), ;
                 IIF( nDeveloper = 0, EVAL( {|| aGet[3]:Hide(), aSay[3]:Hide() }), ), ;
                 IIF( lFromList = .T. .OR. oItem:nItemID > 0, oBtn:Hide(), ), ;
@@ -1300,7 +1300,7 @@ function BarcodeProperties( i, nArea, cAreaIni, lFromList, lNew )
    REDEFINE SAY PROMPT cMeasure ID 184 OF oCurDlg
    REDEFINE SAY PROMPT cMeasure ID 185 OF oCurDlg
 
-   ACTIVATE DIALOG oCurDlg CENTERED NOMODAL ;
+   ACTIVATE DIALOG oCurDlg CENTERED ; // NOMODAL ;
       ON INIT ( GetItemDlgPos(), ;
                 IIF( nDeveloper = 0, ( aGet[5]:Hide(), aSay[4]:Hide() ), ), ;
                 IIF( oVar:cShowExpr = "0" .OR. lProfi = .F., aBtn[2]:Hide(), ), ;

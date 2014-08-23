@@ -2500,49 +2500,17 @@ STATIC Function Carga( oTree, oDlg )
    LOCAL oTr1
    LOCAL aTr:= {}
    local i, y, oTr2, cItemDef, aElemente, nEntry, cTitle
-   LOCAL oImageList, oBmp1
    LOCAL ele
 
-      oImageList = TImageList():New()
-
-      oBmp1 = TBitmap():Define( "FoldOpen",, oDlg )
-      oImageList:Add( oBmp1,setMasked( oBmp1:hBitmap, oTree:nClrPane ) ) // 0
-
-      oBmp1 = TBitmap():Define("FoldClose",, oDlg )
-      oImageList:Add( oBmp1,setMasked( oBmp1:hBitmap, oTree:nClrPane )  ) //1
-
-      oBmp1 = TBitmap():Define( "B_itemList",, oDlg )
-      oImageList:Add( oBmp1,setMasked( oBmp1:hBitmap, oTree:nClrPane )  ) //2
-
-      oBmp1 = TBitmap():Define( "Checkon",, oDlg )
-      oImageList:Add( oBmp1,setMasked( oBmp1:hBitmap, oTree:nClrPane )  ) //3
-
-
-      oBmp1 = TBitmap():Define("Unchecked" ,, oDlg )
-      oImageList:Add( oBmp1,setMasked( oBmp1:hBitmap, oTree:nClrPane )  ) //4
-
-       oBmp1 = TBitmap():Define("b_edit" ,, oDlg )
-      oImageList:Add( oBmp1,setMasked( oBmp1:hBitmap, oTree:nClrPane )  ) //5
-
-      oBmp1 = TBitmap():Define( "Typ_Text",, oDlg )
-      oImageList:Add( oBmp1,setMasked( oBmp1:hBitmap, oTree:nClrPane )  ) //6
-
-
-         oBmp1 = TBitmap():Define(  "Typ_Barcode",, oDlg )
-         oImageList:Add( oBmp1, setMasked( oBmp1:hBitmap, oTree:nClrPane ) ) // 7
-
-            oBmp1 = TBitmap():Define( "Typ_Image",, oDlg )
-         oImageList:Add( oBmp1,setMasked( oBmp1:hBitmap, oTree:nClrPane )  ) //8
-
-
-        oTree:SetImageList( oImageList )
+   CreateTreeImageList( oDlg, oTree )
 
    for i := 1 to LEN( aIniEntries )
       nEntry := EntryNr( aIniEntries[ i ] )
       if nEntry != 0
             cTitle := aWndTitle[nEntry]
-            oTr1 := oTree:Add( AllTrim(STR(nEntry,5)) + ". " + cTitle,0 )
-          
+            oTr1 := oTree:Add( AllTrim(STR(nEntry,5)) + ". " + cTitle , 0 )
+            oTr1:Set( , IF( oTr1:IsExpanded() , 1  , 0   )    )
+
             if Empty( cAreaFilesDir )
                 cAreaFilesDir := cDefaultPath
            endif
@@ -2579,6 +2547,29 @@ STATIC Function Carga( oTree, oDlg )
    oTree:Expand()
 
 Return NIL
+
+//------------------------------------------------------------------------------
+
+Static FUNCTION CreateTreeImageList( oDlg, oTree )
+
+ LOCAL aBmps := { "FoldOpen", "FoldClose", "B_itemList", "Checkon", "Unchecked", "b_edit", ;
+               "Typ_Text", "Typ_Image", "Typ_Graphic", "Typ_Barcode", ;
+               "TreeGraph1", "TreeGraph2", "TreeGraph3", "TreeGraph4", ;
+               "TreeGraph5", "TreeGraph6" }
+ LOCAL i,oBmp1
+ LOCAL nLen:= Len( aBmps )
+ LOCAL oImageList := TImageList():New()
+
+ FOR i=1 TO nLen
+
+     oBmp1 = TBitmap():Define( aBmps[i], oDlg )
+     oImageList:Add( oBmp1,setMasked( oBmp1:hBitmap, oTree:nClrPane ) )
+
+ NEXT
+
+ oTree:SetImageList( oImageList )
+
+RETURN nil
 
 //------------------------------------------------------------------------------
 
@@ -2760,10 +2751,7 @@ function ClickListTree( oTree )
 
    if cPrompt = GL("Visible")
 
-    //   nItem     := Val( oLinkArea:cPrompt )
-    //   nArea     := Val( oLinkArea:GetParent():cPrompt )
-
-      cItemDef := AllTrim( GetPvProfString( "Items", AllTrim(STR(nItem,5)) , "", aAreaIni[ nArea ] ) )
+     cItemDef := AllTrim( GetPvProfString( "Items", AllTrim(STR(nItem,5)) , "", aAreaIni[ nArea ] ) )
 
       if Val( GetField( cItemDef, 4 ) ) = 0
          lWert := .F.
@@ -2771,8 +2759,19 @@ function ClickListTree( oTree )
          lWert := .T.
       endif
       oItem:Set( , IF( lWert , 4  , 3   )    )
-   //  oItem:SetCheck( !lWert )
-     DeleteItem( nItem, nArea, .T., lWert )
+   
+      DeleteItem( nItem, nArea, .T., lWert )
+
+   elseif cPrompt = GL("Item Properties")
+
+     oLinkArea:SetText( ItemProperties( nItem, nArea, .T. ) )
+
+     cItemDef := AllTrim( GetPvProfString( "Items", AllTrim(STR(nItem,5)) , "", aAreaIni[ nArea ] ) )
+
+     if IsGraphic( UPPER(AllTrim( GetField( cItemDef, 1 ) )) )
+         oLinkArea:set( ,  SetGraphTreeBmp( nItem, aAreaIni[ nArea ] ) )
+
+     endif
 
    endif
    
@@ -3183,5 +3182,50 @@ METHOD MouseLeave( nRow, nCol, nFlags ) CLASS ER_MdiChild
    SetReticule( nRow, nCol, ::nArea )
 
 return nil
+
+
+//----------------------------------------------------------------------------//
+
+#pragma BEGINDUMP
+
+    #include <windows.h>
+    #include <hbapi.h>
+
+
+void MaskRegion(HDC hdc, RECT * rct,
+                       COLORREF cTransparentColor,
+                       COLORREF cBackgroundColor);
+
+//----------------------------------------------------------------------------//
+
+
+ HB_FUNC( SETMASKED ) // ( hBitmap , lMaskColor) --> nil
+{
+   HBITMAP hBitmap ;
+   DWORD lMaskColor ;
+   HDC     hDC ;
+   BITMAP  Bmp ;
+   RECT    rct ;
+
+   hBitmap  =  ( HBITMAP ) hb_parnl( 1 ) ;
+   lMaskColor   =  hb_parnl( 2 ) ;
+
+   hDC      = CreateCompatibleDC( NULL ) ;
+   GetObject( hBitmap, sizeof( BITMAP ), ( LPSTR ) &Bmp ) ;
+   SelectObject( hDC, ( HGDIOBJ ) LOWORD( hBitmap ) ) ;
+
+   rct.top = 0 ;
+   rct.left = 0 ;
+   rct.right = Bmp.bmWidth - 1 ;
+   rct.bottom = Bmp.bmHeight -1 ;
+
+   MaskRegion( hDC, &rct, GetPixel( hDC, 0, 0 ), lMaskColor ) ;
+
+   DeleteDC( hDC ) ;
+
+}
+#pragma ENDDUMP
+
+
 
 //----------------------------------------------------------------------------//
