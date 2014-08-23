@@ -573,7 +573,7 @@ function IniMainWindow()
       //Fonts definieren
       DefineFonts()
       //Areas initieren
-      // IniAreasOnBar()
+       IniAreasOnBar()
       //Designwindows �ffnen
       ClientWindows()
       //Areas anzeigen
@@ -755,6 +755,28 @@ function ScrollHorizont( lLeft, lRight, lPageLeft, lPageRight, lPos, nPosZugabe 
 return .T.
 
 //----------------------------------------------------------------------------//
+ 
+function IniAreasOnBar()
+
+   local i, oFont1
+   local cCbxItem   := ""
+   local nAreaStart := oMainWnd:nRight - 180
+
+   aCbxItems := {""}
+
+   DEFINE FONT oFont1 NAME "Ms Sans Serif" SIZE 0,-10
+
+   //@ 9, nAreaStart - 75 SAY GL("Area") + ":" OF oBar PIXEL SIZE 70, 16 FONT oFont1 RIGHT
+
+   @ 25, nAreaStart COMBOBOX oCbxArea VAR cCbxItem ITEMS aCbxItems OF oBar ;
+      PIXEL SIZE 150, 300 FONT oFont1 ;
+      WHEN .NOT. EMPTY( cDefIni ) ;
+
+   oFont1:End()
+
+return .T.
+
+//----------------------------------------------------------------------------//
 
 function SetMainWnd()
 
@@ -785,15 +807,15 @@ return .T.
 function ShowAreasOnBar()
 
    local n
-   // local cCbxItem  := aWndTitle[ 1 ]
+    local cCbxItem  := aWndTitle[ 1 ]
 
-   // aCbxItems := {}
+    aCbxItems := {}
 
-   // for n := 1 to LEN( aWndTitle )
-   //    if .NOT. Empty( aWndTitle[ n ] )
-   //      AADD( aCbxItems, aWndTitle[ n ] )
-   //    endif
-   // next
+    for n := 1 to LEN( aWndTitle )
+       if .NOT. Empty( aWndTitle[ n ] )
+         AADD( aCbxItems, aWndTitle[ n ] )
+       endif
+    next
    
    if oMenuAreas != nil
       oMenuAreas:End()
@@ -814,9 +836,9 @@ function ShowAreasOnBar()
    //Fokus auf das erste Fenster legen
    aWnd[ AScan( aWnd, { |x| x != nil } ) ]:SetFocus()
 
-   // oCbxArea:SetItems( aCbxItems )
-   // oCbxArea:Select( 1 )
-   // oCbxArea:bChange = {|| aWnd[ASCAN( aWndTitle, oCbxArea:cTitle )]:SetFocus(), SetWinNull() }
+    oCbxArea:SetItems( aCbxItems )
+    oCbxArea:Select( 1 )
+    oCbxArea:bChange = {|| aWnd[ASCAN( aWndTitle, oCbxArea:cTitle )]:SetFocus(), SetWinNull() }
 
 return .T.
 
@@ -1329,7 +1351,8 @@ function FillWindow( nArea, cAreaIni )
    aWnd[ nArea ]:bPainted  = {| hDC, cPS | ZeichneHintergrund( nArea ) }
 
    aWnd[ nArea ]:bGotFocus = {|| SetTitleColor( .F. ), ;
-                               nAktArea := nArea,; /* oCbxArea:Set( aWndTitle[ nArea ] ), ; */
+                               nAktArea := nArea,; 
+                               oCbxArea:Set( aWndTitle[ nArea ] ), ; 
                                SetTitleColor( .T. ) }
 
    aWnd[ nArea ]:bMMoved = {|nRow,nCol,nFlags| ;

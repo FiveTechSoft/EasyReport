@@ -95,7 +95,7 @@ FUNCTION OpenFile( cFile )
          oCbxArea:End()
       ENDIF
 
-      // IniAreasOnBar()
+       IniAreasOnBar()
       //Designwindows öffnen
       ClientWindows()
       //Areas anzeigen
