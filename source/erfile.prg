@@ -1,7 +1,5 @@
-
-#INCLUDE "Folder.ch"
-#INCLUDE "FiveWin.ch"
-#INCLUDE "Treeview.ch"
+#include "FiveWin.ch"
+#include "Treeview.ch"
 
 MEMVAR aItems, aFonts, oAppFont, aAreaIni, aWnd, aWndTitle, oBar, oMru
 MEMVAR oCbxArea, aCbxItems, nAktuellItem, aRuler, cLongDefIni, cDefaultPath
@@ -14,41 +12,41 @@ MEMVAR cInfoWidth, cInfoHeight, nInfoRow, nInfoCol, aItemPosition, aItemPixelPos
 MEMVAR oClpGeneral, cDefIni, cDefIniPath, cGeneralIni, nMeasure, cMeasure, lDemo, lBeta, oTimer
 MEMVAR oMainWnd, lProfi, nUndoCount, nRedoCount, nDlgTextCol, nDlgBackCol
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: OpenFile
 * Beschreibung:
 * Argumente...: None
 * Rückgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION OpenFile( cFile )
+function OpenFile( cFile )
 
-   LOCAL i
-   LOCAL cLongFile  := cFile
-   LOCAL cMainTitle := ""
+   local i
+   local cLongFile  := cFile
+   local cMainTitle := ""
 
-   IF cFile = NIL
+   if cFile = NIL
       cLongFile   := GetFile( GL("Designer Files") + " (*.vrd)|*.vrd|" + ;
                               GL("All Files") + " (*.*)|*.*", GL("Open"), 1 )
-   ENDIF
+   endif
 
    cLongDefIni := cLongFile
    cFile       := VRD_LF2SF( cLongFile )
 
-   IF AT( "[AREAS]", UPPER( MEMOREAD( cFile ) ) ) = 0 .AND. .NOT. EMPTY( cFile )
+   if AT( "[AREAS]", UPPER( MEMOREAD( cFile ) ) ) = 0 .AND. .NOT. EMPTY( cFile )
       MsgStop( ALLTRIM( cLongFile ) + CRLF + CRLF + GL("is not a valid file."), GL("Stop!") )
-      RETURN( .F. )
-   ENDIF
+      return( .F. )
+   endif
 
    // Neustart des Programmes
-   IF .NOT. EMPTY( cFile ) .AND. oGenVar:lFirstFile = .F.
+   if .NOT. EMPTY( cFile ) .AND. oGenVar:lFirstFile = .F.
       oGenVar:cLoadFile := cFile
       oMainWnd:End()
-      RETURN (.T.)
-   ENDIF
+      return .T.
+   endif
 
    // Aufruf des neuen Reports im gleichen Frame gibt optische Probleme
-   IF .NOT. EMPTY( cFile )
+   if .NOT. EMPTY( cFile )
 
       oGenVar:lFirstFile := .F.
 
@@ -69,19 +67,19 @@ FUNCTION OpenFile( cFile )
       aRuler    := Array( 100, 2 )
 
       //Fontobjekte beenden
-      FOR i := 1 TO 20
-         IF aFonts[i] <> NIL
+      for i := 1 TO 20
+         if aFonts[i] <> NIL
             aFonts[i]:End()
-         ENDIF
-      NEXT
+         endif
+      next
       aFonts := Array( 20 )
 
       SysRefresh()
 
       cDefIni := cFile
-      IF AT( "\", cDefIni ) = 0
+      if AT( "\", cDefIni ) = 0
          cDefIni := ".\" + cDefIni
-      ENDIF
+      endif
 
       cDefIniPath := CheckPath( cFilePath( cDefIni ) )
 
@@ -90,10 +88,10 @@ FUNCTION OpenFile( cFile )
       //Fonts definieren
       DefineFonts()
       //Areas initieren
-      IF oCbxArea = NIL
-      ELSE
+      if oCbxArea = NIL
+      else
          oCbxArea:End()
-      ENDIF
+      endif
 
       //Designwindows öffnen
       ClientWindows()
@@ -113,56 +111,44 @@ FUNCTION OpenFile( cFile )
 
       SetSave( .T. )
 
-      IF VAL( GetPvProfString( "General", "MruList"  , "4", cGeneralIni ) ) > 0
+      if VAL( GetPvProfString( "General", "MruList"  , "4", cGeneralIni ) ) > 0
          oMru:Save( cLongDefIni )
-      ENDIF
+      endif
 
       CreateBackup()
 
-   ENDIF
+   endif
 
-RETURN (.T.)
+return .T.
 
-
-*-- FUNCTION -----------------------------------------------------------------
-*         Name: CreateBackup
-*  Description:
-*    Arguments: None
-* Return Value: .T.
-*       Author: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION CreateBackup()
 
-   LOCAL nArea
+function CreateBackup()
 
-   IF VAL( GetPvProfString( "General", "CreateBackup", "0", cGeneralIni ) ) = 1
+   local nArea
+
+   if VAL( GetPvProfString( "General", "CreateBackup", "0", cGeneralIni ) ) = 1
 
       CopyFile( cDefIni, STUFF( cDefIni, RAT( ".", cDefIni ), 1, "_backup." ) )
 
-      FOR nArea := 1 TO LEN( aAreaIni )
+      for nArea := 1 TO LEN( aAreaIni )
 
-         IF .NOT. EMPTY( aAreaIni[nArea] )
+         if .NOT. EMPTY( aAreaIni[nArea] )
             CopyFile( aAreaIni[nArea], ;
                STUFF( aAreaIni[nArea], RAT( ".", aAreaIni[nArea] ), 1, "_backup." ) )
-         ENDIF
+         endif
 
-      NEXT
+      next
 
-   ENDIF
+   endif
 
-RETURN (.T.)
+return .T.
 
-
-*-- FUNCTION -----------------------------------------------------------------
-* Name........: SaveFile
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION SaveFile()
 
-   LOCAL nArea
+function SaveFile()
+
+   local nArea
 
    aVRDSave := ARRAY( 102, 2 )
 
@@ -171,81 +157,69 @@ FUNCTION SaveFile()
    aVRDSave[102,1] := cGeneralIni
    aVRDSave[102,2] := MEMOREAD( cGeneralIni )
 
-   FOR nArea := 1 TO LEN( aAreaIni )
+   for nArea := 1 TO LEN( aAreaIni )
 
       aVRDSave[nArea,1] := aAreaIni[nArea]
       aVRDSave[nArea,2] := MEMOREAD( aAreaIni[nArea] )
 
-   NEXT
+   next
 
    SetSave( .T. )
 
-RETURN (.T.)
+return .T.
 
-
-*-- FUNCTION -----------------------------------------------------------------
-* Name........: SaveAsFile
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION SaveAsFile()
 
-   LOCAL cFile := GetFile( GL("Designer Files") + " (*.vrd)|*.vrd|" + ;
+function SaveAsFile()
+
+   local cFile := GetFile( GL("Designer Files") + " (*.vrd)|*.vrd|" + ;
                            GL("All Files") + " (*.*)|*.*", GL("Save as"), 1,, .T. )
 
-   IF .NOT. EMPTY( cFile )
+   if .NOT. EMPTY( cFile )
       VRD_MsgRun( GL("Please wait..."), ;
          STRTRAN( GL("Save &as"), "&", "" ), {|| SaveAs( cFile ) } )
-   ENDIF
+   endif
 
-RETURN NIL
+return NIL
 
-
-*-- FUNCTION -----------------------------------------------------------------
-* Name........: SaveAs
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION SaveAs( cFile )
 
-   LOCAL i, nArea, cAreaFile, cAltDefIni
+function SaveAs( cFile )
+
+   local i, nArea, cAreaFile, cAltDefIni
 
    cLongDefIni := cFile
 
-   IF EMPTY( cFileExt( cFile ) )
+   if EMPTY( cFileExt( cFile ) )
       cFile += ".vrd"
-   ELSEIF UPPER( cFileExt( cFile ) ) <> "VRD"
+   elseif UPPER( cFileExt( cFile ) ) <> "VRD"
       cFile := ALLTRIM( cFile )
       cFile := SUBSTR( cFile, 1, RAT( UPPER(ALLTRIM(cFileExt( cFile ))), UPPER( cFile ) ) - 1 ) + "vrd"
-   ENDIF
+   endif
 
-   IF FILE( VRD_LF2SF( cFile ) ) = .T.
-      IF MsgNoYes( GL("The file already exists.") + CRLF + CRLF + ;
+   if FILE( VRD_LF2SF( cFile ) ) = .T.
+      if MsgNoYes( GL("The file already exists.") + CRLF + CRLF + ;
                    GL("Overwrite?"), GL("Save as") ) = .F.
-         RETURN( .F. )
-      ELSE
+         return( .F. )
+      else
          cAltDefIni := VRD_LF2SF( ALLTRIM( cFile ) )
          IIF( AT( "\", cAltDefIni ) = 0, cAltDefIni := ".\" + cAltDefIni, )
-         FOR i := 1 TO 100
+         for i := 1 TO 100
             DelFile( VRD_LF2SF( ALLTRIM( GetPvProfString( "Areas", ALLTRIM(STR(i,5)) , "", cAltDefIni ) ) ) )
-         NEXT
+         next
          DelFile( cAltDefIni )
-      ENDIF
-   ENDIF
+      endif
+   endif
 
    CreateNewFile( cFile )
 
-   IF .NOT. EMPTY( cFile )
+   if .NOT. EMPTY( cFile )
 
       cDefIni := VRD_LF2SF( ALLTRIM( cFile ) )
 
-      IF AT( "\", cDefIni ) = 0
+      if AT( "\", cDefIni ) = 0
          cDefIni := ".\" + cDefIni
-      ENDIF
+      endif
 
       aVRDSave[101,1] := cDefIni
       MEMOWRIT( aVRDSave[101,1], aVRDSave[101,2] )
@@ -255,9 +229,9 @@ FUNCTION SaveAs( cFile )
       DelIniSection( "Areas", cDefIni )
 
       //Areas abspeichern
-      FOR nArea := 1 TO LEN( aAreaIni )
+      for nArea := 1 TO LEN( aAreaIni )
 
-         IF .NOT. EMPTY( aVRDSave[nArea,1] )
+         if .NOT. EMPTY( aVRDSave[nArea,1] )
 
             cAreaFile := SUBSTR( cFile, 1, LEN( cFile )-2 ) + PADL( ALLTRIM( STR( nArea, 2) ), 2, "0" )
             CreateNewFile( cAreaFile )
@@ -272,111 +246,100 @@ FUNCTION SaveAs( cFile )
             //Areas in General Ini File ablegen
             WritePProString( "Areas", ALLTRIM(STR( nArea, 3)), cFileName( cAreaFile ), cDefIni )
 
-         ENDIF
+         endif
 
          //Areapfad speichern
          WritePProString( "General", "AreaFilesDir", cFilePath( cDefIni ), cDefIni )
 
-      NEXT
+      next
 
       SetSave( .T. )
 
-      IF VAL( GetPvProfString( "General", "MruList"  , "4", cGeneralIni ) ) > 0
+      if VAL( GetPvProfString( "General", "MruList"  , "4", cGeneralIni ) ) > 0
          oMru:Save( cLongDefIni )
-      ENDIF
+      endif
 
-   ENDIF
+   endif
 
 
-RETURN (.T.)
+return .T.
 
-*-- FUNCTION -----------------------------------------------------------------
-* Name........: NoSaveFiles
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION AskSaveFiles()
 
-   LOCAL nArea, nSave
-   LOCAL lReturn := .T.
+function AskSaveFiles()
 
-   IF lVRDSave = .F.
+   local nArea, nSave
+   local lreturn := .T.
+
+   if lVRDSave = .F.
 
       nSave := MessageBox( oMainWnd:hWnd, ;
                            GL("Your changes are not saved.") + CRLF + CRLF + ;
                            GL("Save the current report?"), GL("Save"), 35 )
 
-      IF nSave = 7
+      if nSave = 7
          MEMOWRIT( aVRDSave[101,1], aVRDSave[101,2] )
          MEMOWRIT( aVRDSave[102,1], aVRDSave[102,2] )
-         FOR nArea := 1 TO LEN( aAreaIni )
+         for nArea := 1 TO LEN( aAreaIni )
             MEMOWRIT( aVRDSave[nArea,1], aVRDSave[nArea,2] )
-         NEXT
-      ELSEIF nSave = 6
+         next
+      elseif nSave = 6
          SetSaveInfos()
-      ELSE
+      else
          oGenVar:cLoadFile := ""
-         lReturn := .F.
-      ENDIF
+         lreturn := .F.
+      endif
 
-   ENDIF
+   endif
 
-   IF .NOT. EMPTY( oGenVar:cLoadFile )
+   if .NOT. EMPTY( oGenVar:cLoadFile )
       ShellExecute( 0, "Open", GetModuleFileName( GetInstance() ), oGenVar:cLoadFile, NIL, 1 )
-   ENDIF
+   endif
 
-RETURN ( lReturn )
+return ( lreturn )
 
-
-*-- FUNCTION -----------------------------------------------------------------
-* Name........: FileInfos
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION FileInfos()
 
-   LOCAL i, oDlg, oBrw, cAreaDef, aFileInfo, oFld, nWnd, oIni, cLastSave
-   LOCAL lSave        := .F.
-   LOCAL aFiles       := { { GL("General"), ALLTRIM( cLongDefIni ) } }
-   LOCAL cTitle       := PADR( GetPvProfString( "General", "Title", "", cDefIni ), 80 )
-   LOCAL cGroup       := PADR( GetPvProfString( "General", "Group", "", cDefIni ), 80 )
-   LOCAL aIniEntries  := GetIniSection( "Infos", cDefIni )
-   LOCAL cAuthor      := PADR( GetIniEntry( aIniEntries, "Author" ), 100 )
-   LOCAL cCompany     := PADR( GetIniEntry( aIniEntries, "Company" ), 100 )
-   LOCAL cComment     := PADR( GetIniEntry( aIniEntries, "Comment" ), 200 )
-   LOCAL cSaveDate    := GetIniEntry( aIniEntries, "SaveDate" )
-   LOCAL cSaveTime    := GetIniEntry( aIniEntries, "SaveTime" )
-   LOCAL cRevision    := GetIniEntry( aIniEntries, "Revision", "0" )
-   LOCAL nNrItems     := 0
-   LOCAL nNrAreas     := 0
-   LOCAL aAreaEntries := GetIniSection( "Areas", cDefIni )
+function FileInfos()
 
-   IF EMPTY( cSaveDate )
+   local i, oDlg, oBrw, cAreaDef, aFileInfo, oFld, nWnd, oIni, cLastSave
+   local lSave        := .F.
+   local aFiles       := { { GL("General"), ALLTRIM( cLongDefIni ) } }
+   local cTitle       := PADR( GetPvProfString( "General", "Title", "", cDefIni ), 80 )
+   local cGroup       := PADR( GetPvProfString( "General", "Group", "", cDefIni ), 80 )
+   local aIniEntries  := GetIniSection( "Infos", cDefIni )
+   local cAuthor      := PADR( GetIniEntry( aIniEntries, "Author" ), 100 )
+   local cCompany     := PADR( GetIniEntry( aIniEntries, "Company" ), 100 )
+   local cComment     := PADR( GetIniEntry( aIniEntries, "Comment" ), 200 )
+   local cSaveDate    := GetIniEntry( aIniEntries, "SaveDate" )
+   local cSaveTime    := GetIniEntry( aIniEntries, "SaveTime" )
+   local cRevision    := GetIniEntry( aIniEntries, "Revision", "0" )
+   local nNrItems     := 0
+   local nNrAreas     := 0
+   local aAreaEntries := GetIniSection( "Areas", cDefIni )
+
+   if EMPTY( cSaveDate )
       cLastSave := "-"
-   ELSE
+   else
       cLastSave := cSaveDate + "  " + cSaveTime
-   ENDIF
+   endif
 
-   FOR i := 1 TO LEN( aAreaEntries )
-      IF VAL( aAreaEntries[i] ) <> 0
+   for i := 1 TO LEN( aAreaEntries )
+      if VAL( aAreaEntries[i] ) <> 0
          nWnd := EntryNr( aAreaEntries[i] )
          cAreaDef := GetIniEntry( aAreaEntries,, "",, i )
-         IF .NOT. EMPTY( cAreaDef )
+         if .NOT. EMPTY( cAreaDef )
             AADD( aFiles, { aWndTitle[nWnd], cAreaDef } )
-         ENDIF
-      ENDIF
-   NEXT
+         endif
+      endif
+   next
 
-   AEVAL( aWnd, {|x| IIF( x <> NIL, ++nNrAreas, ) } )
-   FOR i := 1 TO 100
-      IF aItems[i] <> NIL
-         AEVAL( aItems[i], {|x| IIF( x <> NIL, ++nNrItems, ) } )
-      ENDIF
-   NEXT
+   AEval( aWnd, {|x| IIF( x <> NIL, ++nNrAreas, ) } )
+   for i := 1 TO 100
+      if aItems[i] <> NIL
+         AEval( aItems[i], {|x| IIF( x <> NIL, ++nNrItems, ) } )
+      endif
+   next
 
    DEFINE DIALOG oDlg NAME "FILEINFOS" TITLE GL("File Informations")
 
@@ -432,7 +395,7 @@ FUNCTION FileInfos()
 
    ACTIVATE DIALOG oDlg CENTER
 
-   IF lSave = .T.
+   if lSave = .T.
 
       INI oIni FILE cDefIni
          SET SECTION "General" ENTRY "Title"   TO ALLTRIM( cTitle ) OF oIni
@@ -446,42 +409,30 @@ FUNCTION FileInfos()
 
       SetSave( .F. )
 
-   ENDIF
+   endif
 
-RETURN (.T.)
+return .T.
 
-
-*-- FUNCTION -----------------------------------------------------------------
-* Name........: SetSave
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION SetSave( lSave )
 
-   IF lSave = .T.
+function SetSave( lSave )
+
+   if lSave = .T.
       lVRDSave := .T.
       SetSaveInfos()
-   ELSE
+   else
       lVRDSave := .F.
-   ENDIF
+   endif
 
    oBar:AEvalWhen()
 
-RETURN (.T.)
+return .T.
 
-
-*-- FUNCTION -----------------------------------------------------------------
-* Name........: SetSaveInfos
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION SetSaveInfos()
 
-   LOCAL oIni
+function SetSaveInfos()
+
+   local oIni
 
    INI oIni FILE cDefIni
       SET SECTION "Infos" ENTRY "Revision" TO ;
@@ -490,35 +441,29 @@ FUNCTION SetSaveInfos()
       SET SECTION "Infos" ENTRY "SaveTime" TO TIME() OF oIni
    ENDINI
 
-RETURN (.T.)
+return .T.
 
-
-*-- FUNCTION -----------------------------------------------------------------
-* Name........: NewReport
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION NewReport()
 
-   LOCAL i, y, oDlg, oFld, oFont, oBrw, cTmpFile, oRad1, oRad2
-   LOCAL aGet[3], aBtn[2], aGet2[1], aCbx1[1], aCbx2[1], aCbx3[8], aCheck[9]
-   LOCAL nAltSel      := SELECT()
-   LOCAL lCreate      := .F.
-   LOCAL aMeasure     := { "mm", "inch", "pixel" }
-   LOCAL cMeasure     := aMeasure[1]
-   LOCAL cGeneralName := SPACE(100)
-   LOCAL cSourceCode  := SPACE(100)
-   LOCAL cReportName  := SPACE(100)
-   LOCAL lMakeSource  := .F.
-   LOCAL nTop         := 20
-   LOCAL nLeft        := 20
-   LOCAL nPageBreak   := 270
-   LOCAL nOrient      := 1
+function NewReport()
+
+   local i, y, oDlg, oFld, oFont, oBrw, cTmpFile, oRad1, oRad2
+   local aGet[3], aBtn[2], aGet2[1], aCbx1[1], aCbx2[1], aCbx3[8], aCheck[9]
+   local nAltSel      := SELECT()
+   local lCreate      := .F.
+   local aMeasure     := { "mm", "inch", "pixel" }
+   local cMeasure     := aMeasure[1]
+   local cGeneralName := SPACE(100)
+   local cSourceCode  := SPACE(100)
+   local cReportName  := SPACE(100)
+   local lMakeSource  := .F.
+   local nTop         := 20
+   local nLeft        := 20
+   local nPageBreak   := 270
+   local nOrient      := 1
 
    //Defaults
-   AFILL( aCheck, .T. )
+   AFill( aCheck, .T. )
 
    DEFINE FONT oFont NAME "Arial" SIZE 0, -12
 
@@ -695,11 +640,11 @@ FUNCTION NewReport()
 
    oFont:End()
 
-   IF lCreate = .T.
+   if lCreate = .T.
       VRD_MsgRun( GL("Please wait..."), GL("New Report"), ;
          {|| CreateNewReport( aCheck, cGeneralName, cSourceCode, cReportName, lMakeSource, ;
                               nTop, nLeft, nPageBreak, nOrient, aMeasure, cMeasure ) } )
-   ENDIF
+   endif
 
    AREAS->(DBCLOSEAREA())
    SELECT( nAltSel )
@@ -707,34 +652,28 @@ FUNCTION NewReport()
    ERASE VRDTMPST.DBF
    ERASE VRDTMP.DBF
 
-   IF lCreate = .T.
+   if lCreate = .T.
       OpenFile( cGeneralName )
-   ENDIF
+   endif
 
-RETURN (.T.)
+return .T.
 
-
-*-- FUNCTION -----------------------------------------------------------------
-* Name........: CreateNewReport
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION CreateNewReport( aCheck, cGeneralName, cSourceCode, cReportName, lMakeSource, ;
+
+function CreateNewReport( aCheck, cGeneralName, cSourceCode, cReportName, lMakeSource, ;
                           nTop, nLeft, nPageBreak, nOrient, aMeasure, cMeasure )
 
-   LOCAL i, nCol, nRow, nXCol, nXRow, nColStart, oIni, cSource
-   LOCAL cAreaTmpFile, cDefTmpIni
+   local i, nCol, nRow, nXCol, nXRow, nColStart, oIni, cSource
+   local cAreaTmpFile, cDefTmpIni
 
    //General ini file
    CreateNewFile( cGeneralName )
    cLongDefIni := ALLTRIM( cGeneralName )
    cDefTmpIni  := ALLTRIM( cGeneralName )
 
-   IF AT( "\", cDefTmpIni ) = 0
+   if AT( "\", cDefTmpIni ) = 0
       cDefTmpIni := ".\" + cDefTmpIni
-   ENDIF
+   endif
 
    nMeasure := ASCAN( aMeasure, cMeasure )
 
@@ -801,18 +740,18 @@ FUNCTION CreateNewReport( aCheck, cGeneralName, cSourceCode, cReportName, lMakeS
          nXRow := 0
          nXCol := 0
 
-         FOR i := 1 TO AREAS->TEXTNR
+         for i := 1 TO AREAS->TEXTNR
             nXRow := 5 + ( nRow - 1 ) * 24
             nXCol := 5 + ( nCol - 1 ) * 55
-            IF GetCmInch( nXRow + 48 ) > AREAS->HEIGHT
+            if GetCmInch( nXRow + 48 ) > AREAS->HEIGHT
                nRow := 1
                nCol += 1
-            ELSE
+            else
                nRow += 1
-            ENDIF
-            IF GetCmInch( nXCol + 55 ) > AREAS->WIDTH
+            endif
+            if GetCmInch( nXCol + 55 ) > AREAS->WIDTH
                EXIT
-            ENDIF
+            endif
             SET SECTION "Items" ENTRY ALLTRIM(STR(i,3)) ;
                TO "Text|" + ALLTRIM(STR(i,3)) + "| " + ALLTRIM(STR(i,3)) + "|1|1|1|" + ;
                ALLTRIM(STR( GetCmInch( nXRow ), 5, IIF( nMeasure = 2, 2, 0 ) )) + "|" + ;
@@ -820,28 +759,28 @@ FUNCTION CreateNewReport( aCheck, cGeneralName, cSourceCode, cReportName, lMakeS
                ALLTRIM(STR( GetCmInch( 50 ), 5, IIF( nMeasure = 2, 2, 0 ) )) + "|" + ;
                ALLTRIM(STR( GetCmInch( 20 ), 5, IIF( nMeasure = 2, 2, 0 ) )) + "|" + ;
                "1|1|2|0|0|0|" OF oIni
-         NEXT
+         next
 
-         IF AREAS->TEXTNR > 0
+         if AREAS->TEXTNR > 0
             nColStart := nXCol + 55
-         ELSE
+         else
             nColStart := 5
-         ENDIF
+         endif
          nCol := 1
          nRow := 1
 
-         FOR i := 1 TO AREAS->IMAGENR
+         for i := 1 TO AREAS->IMAGENR
             nXRow := 5 + ( nRow - 1 ) * 24
             nXCol := nColStart + ( nCol - 1 ) * 55
-            IF GetCmInch( nXRow + 48 ) > AREAS->HEIGHT
+            if GetCmInch( nXRow + 48 ) > AREAS->HEIGHT
                nRow := 1
                nCol += 1
-            ELSE
+            else
                nRow += 1
-            ENDIF
-            IF GetCmInch( nXCol + 55 ) > AREAS->WIDTH
+            endif
+            if GetCmInch( nXCol + 55 ) > AREAS->WIDTH
                EXIT
-            ENDIF
+            endif
             SET SECTION "Items" ENTRY ALLTRIM(STR(100+i,3)) ;
                TO "Image|| " + ALLTRIM(STR(100+i,3)) + "|1|1|1|" + ;
                ALLTRIM(STR( GetCmInch( nXRow ), 5, IIF( nMeasure = 2, 2, 0 ) )) + "|" + ;
@@ -849,28 +788,28 @@ FUNCTION CreateNewReport( aCheck, cGeneralName, cSourceCode, cReportName, lMakeS
                ALLTRIM(STR( GetCmInch( 50 ), 5, IIF( nMeasure = 2, 2, 0 ) )) + "|" + ;
                ALLTRIM(STR( GetCmInch( 20 ), 5, IIF( nMeasure = 2, 2, 0 ) )) + "|" + ;
                "|0" OF oIni
-         NEXT
+         next
 
-         IF AREAS->TEXTNR > 0 .OR. AREAS->IMAGENR > 0
+         if AREAS->TEXTNR > 0 .OR. AREAS->IMAGENR > 0
             nColStart := nXCol + 55
-         ELSE
+         else
             nColStart := 5
-         ENDIF
+         endif
          nCol := 1
          nRow := 1
 
-         FOR i := 1 TO AREAS->GRAPHNR
+         for i := 1 TO AREAS->GRAPHNR
             nXRow := 5 + ( nRow - 1 ) * 24
             nXCol := nColStart + ( nCol - 1 ) * 55
-            IF GetCmInch( nXRow + 48 ) > AREAS->HEIGHT
+            if GetCmInch( nXRow + 48 ) > AREAS->HEIGHT
                nRow := 1
                nCol += 1
-            ELSE
+            else
                nRow += 1
-            ENDIF
-            IF GetCmInch( nXCol + 55 ) > AREAS->WIDTH
+            endif
+            if GetCmInch( nXCol + 55 ) > AREAS->WIDTH
                EXIT
-            ENDIF
+            endif
             SET SECTION "Items" ENTRY ALLTRIM(STR(200+i,3)) ;
                TO "LineHorizontal|" + GL("Line horizontal") + "| " + ALLTRIM(STR(200+i,3)) + "|1|1|1|" + ;
                ALLTRIM(STR( GetCmInch( nXRow ), 5, IIF( nMeasure = 2, 2, 0 ) )) + "|" + ;
@@ -878,28 +817,28 @@ FUNCTION CreateNewReport( aCheck, cGeneralName, cSourceCode, cReportName, lMakeS
                ALLTRIM(STR( GetCmInch( 50 ), 5, IIF( nMeasure = 2, 2, 0 ) )) + "|" + ;
                ALLTRIM(STR( GetCmInch( 20 ), 5, IIF( nMeasure = 2, 2, 0 ) )) + "|" + ;
                "1|2|1|1|0|0" OF oIni
-         NEXT
+         next
 
-         IF AREAS->TEXTNR > 0 .OR. AREAS->IMAGENR > 0 .OR. AREAS->GRAPHNR > 0
+         if AREAS->TEXTNR > 0 .OR. AREAS->IMAGENR > 0 .OR. AREAS->GRAPHNR > 0
             nColStart := nXCol + 55
-         ELSE
+         else
             nColStart := 5
-         ENDIF
+         endif
          nCol := 1
          nRow := 1
 
-         FOR i := 1 TO AREAS->BCODENR
+         for i := 1 TO AREAS->BCODENR
             nXRow := 5 + ( nRow - 1 ) * 24
             nXCol := nColStart + ( nCol - 1 ) * 175
-            IF GetCmInch( nXRow + 48 ) > AREAS->HEIGHT
+            if GetCmInch( nXRow + 48 ) > AREAS->HEIGHT
                nRow := 1
                nCol += 1
-            ELSE
+            else
                nRow += 1
-            ENDIF
-            IF GetCmInch( nXCol + 175 ) > AREAS->WIDTH
+            endif
+            if GetCmInch( nXCol + 175 ) > AREAS->WIDTH
                EXIT
-            ENDIF
+            endif
             SET SECTION "Items" ENTRY ALLTRIM(STR(300+i,3)) ;
                TO "Barcode|12345678| " + ALLTRIM(STR(300+i,3)) + "|1|1|1|" + ;
                ALLTRIM(STR( GetCmInch( nXRow ), 5, IIF( nMeasure = 2, 2, 0 ) )) + "|" + ;
@@ -907,7 +846,7 @@ FUNCTION CreateNewReport( aCheck, cGeneralName, cSourceCode, cReportName, lMakeS
                ALLTRIM(STR( GetCmInch( 170 ), 5, IIF( nMeasure = 2, 2, 0 ) )) + "|" + ;
                ALLTRIM(STR( GetCmInch( 20 ), 5, IIF( nMeasure = 2, 2, 0 ) )) + "|" + ;
                "1|1|2|1|1|0.3|" OF oIni
-         NEXT
+         next
 
       ENDINI
 
@@ -916,7 +855,7 @@ FUNCTION CreateNewReport( aCheck, cGeneralName, cSourceCode, cReportName, lMakeS
    ENDDO
 
    //Create source code
-   IF lMakeSource = .T.
+   if lMakeSource = .T.
 
       cSource := CRLF
       cSource += SPACE(3) + 'oVRD := VRD():New( "' + ALLTRIM(cGeneralName) + '", lPreview, cPrinter, oWnd )'
@@ -926,41 +865,41 @@ FUNCTION CreateNewReport( aCheck, cGeneralName, cSourceCode, cReportName, lMakeS
 
       DO WHILE .NOT. AREAS->(EOF())
 
-         IF .NOT. EMPTY( AREAS->NAME )
+         if .NOT. EMPTY( AREAS->NAME )
             cSource += SPACE(3) + "//--- Area: " + ALLTRIM( AREAS->NAME ) + " ---"
-         ENDIF
+         endif
 
-         IF AREAS->TEXTNR > 0
+         if AREAS->TEXTNR > 0
             cSource += CRLF + SPACE(3) + "//Text items" + CRLF
-         ENDIF
-         FOR i := 1 TO AREAS->TEXTNR
+         endif
+         for i := 1 TO AREAS->TEXTNR
             cSource += SPACE(3) + "oVRD:PrintItem( " + ALLTRIM(STR(AREAS->(RECNO()),3)) + ;
                        ", " + ALLTRIM(STR( i, 5)) + ", )" + CRLF
-         NEXT
+         next
 
-         IF AREAS->IMAGENR > 0
+         if AREAS->IMAGENR > 0
             cSource += CRLF + SPACE(3) + "//Image items" + CRLF
-         ENDIF
-         FOR i := 1 TO AREAS->IMAGENR
+         endif
+         for i := 1 TO AREAS->IMAGENR
             cSource += SPACE(3) + "oVRD:PrintItem( " + ALLTRIM(STR(AREAS->(RECNO()),3)) + ;
                        ", " + ALLTRIM(STR( 100+i, 5)) + ", )" + CRLF
-         NEXT
+         next
 
-         IF AREAS->GRAPHNR > 0
+         if AREAS->GRAPHNR > 0
             cSource += CRLF + SPACE(3) + "//Graphic items" + CRLF
-         ENDIF
-         FOR i := 1 TO AREAS->GRAPHNR
+         endif
+         for i := 1 TO AREAS->GRAPHNR
             cSource += SPACE(3) + "oVRD:PrintItem( " + ALLTRIM(STR(AREAS->(RECNO()),3)) + ;
                        ", " + ALLTRIM(STR( 200+i, 5)) + ", )" + CRLF
-         NEXT
+         next
 
-         IF AREAS->BCODENR > 0
+         if AREAS->BCODENR > 0
             cSource += CRLF + SPACE(3) + "//Barcode items" + CRLF
-         ENDIF
-         FOR i := 1 TO AREAS->BCODENR
+         endif
+         for i := 1 TO AREAS->BCODENR
             cSource += SPACE(3) + "oVRD:PrintItem( " + ALLTRIM(STR(AREAS->(RECNO()),3)) + ;
                        ", " + ALLTRIM(STR( 300+i, 5)) + ", )" + CRLF
-         NEXT
+         next
 
          cSource += CRLF + SPACE(3) + ;
                     "oVRD:PrintRest( " + ALLTRIM(STR(AREAS->(RECNO()),3)) + " )" + ;
@@ -975,49 +914,37 @@ FUNCTION CreateNewReport( aCheck, cGeneralName, cSourceCode, cReportName, lMakeS
       CreateNewFile( cSourceCode )
       MEMOWRIT( VRD_LF2SF( cSourceCode ), cSource )
 
-   ENDIF
+   endif
 
-RETURN (.T.)
+return .T.
 
-
-*-- FUNCTION -----------------------------------------------------------------
-* Name........: CheckFileName
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION CheckFileName( cGeneralName, cSourceCode, lMakeSource )
 
-   LOCAL lReturn := .T.
+function CheckFileName( cGeneralName, cSourceCode, lMakeSource )
+
+   local lreturn := .T.
 
    DEFAULT lMakeSource := .F.
 
-   IF EMPTY( cGeneralName ) .OR. AT( "\\", cGeneralName ) <> 0
-      lReturn := .F.
+   if EMPTY( cGeneralName ) .OR. AT( "\\", cGeneralName ) <> 0
+      lreturn := .F.
       MsgStop( GL("Please insert a valid file name."), GL("Stop!") )
-   ELSEIF AT( ".", cGeneralName ) = 0
+   elseif AT( ".", cGeneralName ) = 0
       cGeneralName := ALLTRIM( cGeneralName ) + ".vrd"
-      //lReturn := .F.
+      //lreturn := .F.
       //MsgStop( GL("Please add the file extension."), GL("Stop!") )
-   ELSEIF lMakeSource = .T.
-      IF EMPTY( cSourceCode ) .OR. AT( "\\", cSourceCode ) <> 0
-         lReturn := .F.
+   elseif lMakeSource = .T.
+      if EMPTY( cSourceCode ) .OR. AT( "\\", cSourceCode ) <> 0
+         lreturn := .F.
          MsgStop( GL("Please insert a valid source code file name."), GL("Stop!") )
-      ENDIF
-   ENDIF
+      endif
+   endif
 
-RETURN ( lReturn )
+return ( lreturn )
 
-
-*-- FUNCTION -----------------------------------------------------------------
-* Name........: SetNewReportDefaults
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION SetNewReportDefaults()
+
+function SetNewReportDefaults()
 
    REPLACE AREAS->NAME      WITH ALLTRIM(STR( AREAS->(RECNO()) )) + ". " + GL("Area")
    REPLACE AREAS->LTOP      WITH .T.
@@ -1025,52 +952,46 @@ FUNCTION SetNewReportDefaults()
    REPLACE AREAS->HEIGHT    WITH 40
    REPLACE AREAS->CONDITION WITH 1
 
-RETURN (.T.)
+return .T.
 
-
-*-- FUNCTION -----------------------------------------------------------------
-* Name........: MoveRecord
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION MoveRecord( lUp, oBrw )
 
-   LOCAL i, xFeld
-   LOCAL aFields1 := {}
-   LOCAL aFields2 := {}
+function MoveRecord( lUp, oBrw )
+
+   local i, xFeld
+   local aFields1 := {}
+   local aFields2 := {}
 
    //alte Werte einlesen
-   FOR i := 1 to FCOUNT()
+   for i := 1 to FCOUNT()
       xFeld = FIELDNAME(i)
       aadd( aFields1, &xFeld)
-   NEXT
+   next
 
    DBSKIP( IIF( lUp, -1, 1) )
 
-   FOR i := 1 to FCOUNT()
+   for i := 1 to FCOUNT()
       xFeld = FIELDNAME(i)
       aadd( aFields2, &xFeld)
-   NEXT
+   next
 
    //neue Werte wegschreiben
-   FOR i := 1 to FCOUNT()
+   for i := 1 to FCOUNT()
       xFeld = FIELDNAME(i)
       REPLACE &xFeld WITH aFields1[i]
-   NEXT
+   next
 
    DBSKIP( IIF( lUp, 1, -1) )
 
-   FOR i := 1 to FCOUNT()
+   for i := 1 to FCOUNT()
       xFeld = FIELDNAME(i)
       REPLACE &xFeld WITH aFields2[i]
-   NEXT
+   next
 
-   IF lUp
+   if lUp
       oBrw:GoUp()
-   ELSE
+   else
       oBrw:GoDown()
-   ENDIF
+   endif
 
-RETURN (.T.)
+return .T.
