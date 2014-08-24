@@ -2479,15 +2479,18 @@ return .T.
    DEFINE DIALOG oDlg RESOURCE "Itemlist" TITLE GL("Item List")
 
    oTree := TTreeView():ReDefine( 201, oDlg, 0, , .F. ,"" )
-   oTree:bLDblClick := { | nRow, nCol, nKeyFlags | ClickListTree( oTree ) }
+
+   oTree:bLDblClick  = { | nRow, nCol, nKeyFlags | ClickListTree( oTree ) }
+   oTree:bEraseBkGnd = { || nil }  // to properly erase the tree background 
 
    REDEFINE BUTTON PROMPT GL("&OK") ID 101 OF oDlg ACTION oDlg:End()
 
-   ACTIVATE DIALOG oDlg CENTERED ON INIT carga( oTree, oDlg )  //ListTrees( oTree )
+   ACTIVATE DIALOG oDlg CENTERED ON INIT FillTree( oTree, oDlg )  //ListTrees( oTree )
 
 return nil
 
-STATIC Function Carga( oTree, oDlg )
+static Function FillTree( oTree, oDlg )
+   
    local lFirstArea    := .T.
    local aIniEntries   := GetIniSection( "Areas", cDefIni )
    local cAreaFilesDir := CheckPath( GetPvProfString( "General", "AreaFilesDir", "", cDefIni ) )
@@ -2536,11 +2539,13 @@ STATIC Function Carga( oTree, oDlg )
 
 
       endif
-  NEXT
+   NEXT
 
    oTree:Expand()
+   oTree:GoTop()
+   oTree:SetFocus()
 
-Return NIL
+Return .T.
 
 //------------------------------------------------------------------------------
 
