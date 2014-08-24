@@ -87,7 +87,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
 
    DEFINE BRUSH oBrush RESOURCE "background"
 
-  // SetDlgGradient( oER:aClrDialogs )
+   SetDlgGradient( oER:aClrDialogs )
       
    DEFINE WINDOW oMainWnd FROM 0, 0 to 50, 200 VSCROLL ;
       TITLE MainCaption() ;
@@ -573,7 +573,7 @@ function IniMainWindow()
       //Fonts definieren
       DefineFonts()
       //Areas initieren
-       IniAreasOnBar()
+      // IniAreasOnBar()
       //Designwindows �ffnen
       ClientWindows()
       //Areas anzeigen
@@ -755,28 +755,6 @@ function ScrollHorizont( lLeft, lRight, lPageLeft, lPageRight, lPos, nPosZugabe 
 return .T.
 
 //----------------------------------------------------------------------------//
- 
-function IniAreasOnBar()
-
-   local i, oFont1
-   local cCbxItem   := ""
-   local nAreaStart := oMainWnd:nRight - 180
-
-   aCbxItems := {""}
-
-   DEFINE FONT oFont1 NAME "Ms Sans Serif" SIZE 0,-10
-
-   //@ 9, nAreaStart - 75 SAY GL("Area") + ":" OF oBar PIXEL SIZE 70, 16 FONT oFont1 RIGHT
-
-   @ 25, nAreaStart COMBOBOX oCbxArea VAR cCbxItem ITEMS aCbxItems OF oBar ;
-      PIXEL SIZE 150, 300 FONT oFont1 ;
-      WHEN .NOT. EMPTY( cDefIni ) ;
-
-   oFont1:End()
-
-return .T.
-
-//----------------------------------------------------------------------------//
 
 function SetMainWnd()
 
@@ -835,10 +813,6 @@ function ShowAreasOnBar()
 
    //Fokus auf das erste Fenster legen
    aWnd[ AScan( aWnd, { |x| x != nil } ) ]:SetFocus()
-
-    oCbxArea:SetItems( aCbxItems )
-    oCbxArea:Select( 1 )
-    oCbxArea:bChange = {|| aWnd[ASCAN( aWndTitle, oCbxArea:cTitle )]:SetFocus(), SetWinNull() }
 
 return .T.
 
@@ -1350,10 +1324,7 @@ function FillWindow( nArea, cAreaIni )
    
    aWnd[ nArea ]:bPainted  = {| hDC, cPS | ZeichneHintergrund( nArea ) }
 
-   aWnd[ nArea ]:bGotFocus = {|| SetTitleColor( .F. ), ;
-                               nAktArea := nArea,; 
-                               oCbxArea:Set( aWndTitle[ nArea ] ), ; 
-                               SetTitleColor( .T. ) }
+   aWnd[ nArea ]:bGotFocus = { || SetTitleColor( .T. ) }
 
    aWnd[ nArea ]:bMMoved = {|nRow,nCol,nFlags| ;
                            SetReticule( nRow, nCol, nArea ), ;
@@ -2503,27 +2474,30 @@ return .T.
 
    local oDlg
    local oTree
-   LOCAL oImageList, oBmp1, oBmp2
+   local oImageList, oBmp1, oBmp2
 
    DEFINE DIALOG oDlg RESOURCE "Itemlist" TITLE GL("Item List")
 
    oTree := TTreeView():ReDefine( 201, oDlg, 0, , .F. ,"" )
-   oTree:bLDblClick := { | nRow, nCol, nKeyFlags | ClickListTree( oTree ) }
+
+   oTree:bLDblClick  = { | nRow, nCol, nKeyFlags | ClickListTree( oTree ) }
+   oTree:bEraseBkGnd = { || nil }  // to properly erase the tree background 
 
    REDEFINE BUTTON PROMPT GL("&OK") ID 101 OF oDlg ACTION oDlg:End()
 
-   ACTIVATE DIALOG oDlg CENTERED ON INIT carga( oTree, oDlg )  //ListTrees( oTree )
+   ACTIVATE DIALOG oDlg CENTERED ON INIT FillTree( oTree, oDlg )  //ListTrees( oTree )
 
 return nil
 
-STATIC Function Carga( oTree, oDlg )
+static Function FillTree( oTree, oDlg )
+   
    local lFirstArea    := .T.
    local aIniEntries   := GetIniSection( "Areas", cDefIni )
    local cAreaFilesDir := CheckPath( GetPvProfString( "General", "AreaFilesDir", "", cDefIni ) )
-   LOCAL oTr1
-   LOCAL aTr:= {}
+   local oTr1
+   local aTr:= {}
    local i, y, oTr2, cItemDef, aElemente, nEntry, cTitle
-   LOCAL ele
+   local ele
 
    CreateTreeImageList( oDlg, oTree )
 
@@ -2565,32 +2539,34 @@ STATIC Function Carga( oTree, oDlg )
 
 
       endif
-  NEXT
+   next
 
    oTree:Expand()
+   oTree:GoTop()
+   oTree:SetFocus()
 
-Return NIL
+Return .T.
 
 //------------------------------------------------------------------------------
 
-Static FUNCTION CreateTreeImageList( oDlg, oTree )
+static function CreateTreeImageList( oDlg, oTree )
 
- LOCAL aBmps := { "FoldOpen", "FoldClose", "B_itemList", "Checkon", "Unchecked", "b_edit", ;
+   local aBmps := { "FoldOpen", "FoldClose", "B_itemList", "Checkon", "Unchecked", "b_edit", ;
                "Typ_Text", "Typ_Image", "Typ_Graphic", "Typ_Barcode", ;
                "TreeGraph1", "TreeGraph2", "TreeGraph3", "TreeGraph4", ;
                "TreeGraph5", "TreeGraph6" }
- LOCAL i,oBmp1
- LOCAL nLen:= Len( aBmps )
- LOCAL oImageList := TImageList():New()
+   local n, oBmp
+   local oImageList := TImageList():New()
 
- FOR i=1 TO nLen
+   for n = 1 TO Len( aBmps )
 
-     oBmp1 = TBitmap():Define( aBmps[i], oDlg )
-     oImageList:Add( oBmp1,setMasked( oBmp1:hBitmap, oTree:nClrPane ) )
+     oBmp = TBitmap():Define( aBmps[ n ], oDlg )
+     oImageList:Add( oBmp, SetMasked( oBmp:hBitmap, oTree:nClrPane ) )
+     oBmp:End()
 
- NEXT
+   next
 
- oTree:SetImageList( oImageList )
+   oTree:SetImageList( oImageList )
 
 RETURN nil
 
@@ -2598,11 +2574,11 @@ RETURN nil
 
 STATIC function GetItemVisible( oItem )
 
-LOCAL  oLinkArea := oItem:GetParent()
-LOCAL  nItem     := Val( oLinkArea:cPrompt )
-LOCAL  nArea     := Val( oLinkArea:GetParent():cPrompt )
-LOCAL  cItemDef := AllTrim( GetPvProfString( "Items", AllTrim(STR(nItem,5)) , "", aAreaIni[ nArea ] ) )
-LOCAL  lWert
+local  oLinkArea := oItem:GetParent()
+local  nItem     := Val( oLinkArea:cPrompt )
+local  nArea     := Val( oLinkArea:GetParent():cPrompt )
+local  cItemDef := AllTrim( GetPvProfString( "Items", AllTrim(STR(nItem,5)) , "", aAreaIni[ nArea ] ) )
+local  lWert
 
       if Val( GetField( cItemDef, 4 ) ) = 0
          lWert := .F.
@@ -2753,9 +2729,9 @@ return aWerte
 //----------------------------------------------------------------------------//
 
 function ClickListTree( oTree )
-   LOCAL nArea , nItem, oLinkArea, cItemDef,  lWert
+   local nArea , nItem, oLinkArea, cItemDef,  lWert
    local cPrompt := oTree:GetSelText()
-   LOCAL oItem   := oTree:GetSelected()
+   local oItem   := oTree:GetSelected()
 
    if cPrompt = GL("Visible") .OR. cPrompt = GL("Item Properties")
 
@@ -3151,8 +3127,7 @@ METHOD New() CLASS TEasyReport
    //                                 { { 0.40, nRGB( 68, 68, 68 ), nRGB( 109, 109, 109 ) }, ;
    //                                   { 0.60, nRGB( 109, 109, 109 ), nRGB( 116, 116, 116 ) } } ) }
 
-   ::aClrDialogs = { { 0.60,  nRGB( 221, 227, 233) ,  nRGB( 221, 227, 233 ) }, ;
-                     { 0.40,nRGB( 221, 227, 233), nRGB( 221, 227, 233) } }  
+   ::aClrDialogs = { { 1, RGB( 199, 216, 237 ), RGB( 237, 242, 248 ) } }
 
   //  ::aColorDlg :=  { { 1, RGB( 199, 216, 237 ), RGB( 237, 242, 248 ) } } 
 
@@ -3205,50 +3180,6 @@ METHOD MouseLeave( nRow, nCol, nFlags ) CLASS ER_MdiChild
    SetReticule( nRow, nCol, ::nArea )
 
 return nil
-
-
-//----------------------------------------------------------------------------//
-
-#pragma BEGINDUMP
-
-    #include <windows.h>
-    #include <hbapi.h>
-
-
-void MaskRegion(HDC hdc, RECT * rct,
-                       COLORREF cTransparentColor,
-                       COLORREF cBackgroundColor);
-
-//----------------------------------------------------------------------------//
-
-
- HB_FUNC( SETMASKED ) // ( hBitmap , lMaskColor) --> nil
-{
-   HBITMAP hBitmap ;
-   DWORD lMaskColor ;
-   HDC     hDC ;
-   BITMAP  Bmp ;
-   RECT    rct ;
-
-   hBitmap  =  ( HBITMAP ) hb_parnl( 1 ) ;
-   lMaskColor   =  hb_parnl( 2 ) ;
-
-   hDC      = CreateCompatibleDC( NULL ) ;
-   GetObject( hBitmap, sizeof( BITMAP ), ( LPSTR ) &Bmp ) ;
-   SelectObject( hDC, ( HGDIOBJ ) LOWORD( hBitmap ) ) ;
-
-   rct.top = 0 ;
-   rct.left = 0 ;
-   rct.right = Bmp.bmWidth - 1 ;
-   rct.bottom = Bmp.bmHeight -1 ;
-
-   MaskRegion( hDC, &rct, GetPixel( hDC, 0, 0 ), lMaskColor ) ;
-
-   DeleteDC( hDC ) ;
-
-}
-#pragma ENDDUMP
-
 
 
 //----------------------------------------------------------------------------//
