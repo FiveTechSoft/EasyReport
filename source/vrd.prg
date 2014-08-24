@@ -245,16 +245,16 @@ METHOD New( cReportName, lPreview, cPrinter, oWnd, lModal, lPrintIDs, lNoPrint, 
       ::lPreview := .T.
    ENDIF
 
-   #IFDEF __XPP__
-      hTmpWnd := ::oTmpWnd:getHWND()
-      //Otherwise pictures can not be printed under Xbase++
-      ::oTmpWnd := NIL
-      DEFINE WINDOW oTmpWnd
-      SetWndApp( oTmpWnd:hWnd )
-      SetForegroundWindow( oTmpWnd:hWnd )
-      EnableWindow( hTmpWnd, 0 )
-      oTmpWnd:Hide()
-   #ENDIF
+ //  #IFDEF __XPP__
+ //     hTmpWnd := ::oTmpWnd:getHWND()
+ //     //Otherwise pictures can not be printed under Xbase++
+ //     ::oTmpWnd := NIL
+ //     DEFINE WINDOW oTmpWnd
+ //     SetWndApp( oTmpWnd:hWnd )
+ //     SetForegroundWindow( oTmpWnd:hWnd )
+  //    EnableWindow( hTmpWnd, 0 )
+ //     oTmpWnd:Hide()
+ //  #ENDIF
 
    IF lPrintDialog = .T.
       IF ::PrintDialog() = .F.
@@ -263,6 +263,7 @@ METHOD New( cReportName, lPreview, cPrinter, oWnd, lModal, lPrintIDs, lNoPrint, 
          RETURN( Self )
       ENDIF
    ENDIF
+
 
    IF FILE( ::cDefIni ) = .F.
       AADD( ::aErrors, "1" + CHR(9) + "General ini file not found: " + ALLTRIM( cReportName ) )
@@ -314,13 +315,13 @@ METHOD New( cReportName, lPreview, cPrinter, oWnd, lModal, lPrintIDs, lNoPrint, 
       DEFINE FONT oInfoFont  NAME "MS SANS SERIF" SIZE 0,-14 BOLD
       DEFINE FONT oInfo2Font NAME "MS SANS SERIF" SIZE 0,-8
 
-      #IFDEF __XPP__
-         DEFINE DIALOG ::oInfoDlg FROM 0,0 TO 104, 300 PIXEL TITLE cDlgTitle ;
-            STYLE nOr( DS_MODALFRAME, WS_POPUP )
-      #ELSE
+    //  #IFDEF __XPP__
+     //    DEFINE DIALOG ::oInfoDlg FROM 0,0 TO 104, 300 PIXEL TITLE cDlgTitle ;
+    //        STYLE nOr( DS_MODALFRAME, WS_POPUP )
+    //  #ELSE
          DEFINE DIALOG ::oInfoDlg FROM 0,0 TO 86, 300 PIXEL ;
             STYLE nOr( DS_MODALFRAME, WS_POPUP )
-      #ENDIF
+    //  #ENDIF
 
       @ 10, 0 SAY aSay[1] PROMPT aPrompt[1] OF ::oInfoDlg SIZE 300, 20 PIXEL //FONT oInfo2Font
       @  4, 8 SAY aSay[2] PROMPT aPrompt[2] OF ::oInfoDlg SIZE 300, 10 PIXEL //FONT oInfoFont
@@ -587,10 +588,10 @@ METHOD End( lPrintArea ) CLASS VRD
 
    SYSREFRESH()
 
-   #IFDEF __XPP__
-      EnableWindow( hTmpWnd, 1 )
-      SetForegroundWindow( hTmpWnd )
-   #ENDIF
+ //  #IFDEF __XPP__
+ //     EnableWindow( hTmpWnd, 1 )
+ //     SetForegroundWindow( hTmpWnd )
+ //  #ENDIF
 
 RETURN ( oInfo )
 
@@ -716,12 +717,8 @@ METHOD SetPrevRecord( nAlias ) CLASS VRD
 
 RETURN ( NIL )
 
+//------------------------------------------------------------------------------
 
-*-- METHOD -------------------------------------------------------------------
-*         Name: AreaStart2
-*  Description:
-*       Author: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 METHOD AreaStart2( nArea, lPrintArea, aIDs, aStrings, lPageBreak ) CLASS VRD
 
    LOCAL i, nAreaTop1, nAreaTop2
@@ -783,12 +780,8 @@ METHOD AreaStart2( nArea, lPrintArea, aIDs, aStrings, lPageBreak ) CLASS VRD
 
 RETURN ( NIL )
 
+//------------------------------------------------------------------------------
 
-*-- METHOD -------------------------------------------------------------------
-*         Name: EvalAreaSource
-*  Description:
-*       Author: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 METHOD EvalAreaSource( xValue, cSource ) CLASS VRD
 
    IF .NOT. EMPTY( cSource )
@@ -1794,9 +1787,9 @@ METHOD SetExpression( cName, cExpression, cInfo ) CLASS VRD
    LOCAL nAltSel
    LOCAL cGenExpr := ::cDataPath + ;
                      GetPvProfString( "General", "GeneralExpressions", "", ::cDefIni )
-                     
+
   //  LOCAL cGenExpr := ::cDefaultPath + ;
-  //                   GetPvProfString( "General", "GeneralExpressions", "", ::cDefIni )                  
+  //                   GetPvProfString( "General", "GeneralExpressions", "", ::cDefIni )
 
    DEFAULT cName       := ""
    DEFAULT cExpression := ""
@@ -1839,7 +1832,7 @@ METHOD GetExpression( cName ) CLASS VRD
    LOCAL cGenExpr    := ::cDataPath + GetPvProfString( "General", "GeneralExpressions", "", ::cDefIni )
    LOCAL cUserExpr   := ::cDataPath + GetPvProfString( "General", "UserExpressions"   , "", ::cDefIni )
    LOCAL cDataExpr   := ::cDataPath + GetPvProfString( "General", "DataExpressions"   , "", ::cDefIni )
-   
+
   // LOCAL cGenExpr    := ::cDefaultPath + GetPvProfString( "General", "GeneralExpressions", "", ::cDefIni )
   // LOCAL cUserExpr   := ::cDefaultPath + GetPvProfString( "General", "UserExpressions"   , "", ::cDefIni )
   // LOCAL cDataExpr   := ::cDefaultPath + GetPvProfString( "General", "DataExpressions"   , "", ::cDefIni )
@@ -2123,10 +2116,10 @@ METHOD PrintDialog() CLASS VRD
 
    ACTIVATE DIALOG oDlg CENTERED
 
-   #IFDEF __XPP__
-      EnableWindow( hTmpWnd, 1 )
-      SetForegroundWindow( hTmpWnd )
-   #ENDIF
+ //  #IFDEF __XPP__
+ //     EnableWindow( hTmpWnd, 1 )
+ //     SetForegroundWindow( hTmpWnd )
+ //  #ENDIF
 
    IF lPrint = .T.
       ::cPrinter := cPrinter
@@ -2962,11 +2955,8 @@ RETURN substr(c,1,at(chr(0),c)-1)
 #ENDIF
 #ENDIF
 
-*-- FUNCTION -----------------------------------------------------------------
-* Name........: VRD_GetFullPath
-* Beschreibung: Short File Name to Long Path Name (works with long too)
-*               Returns a complete, LONG pathname and LONG filename.
-*-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+
 Function VRD_GetFullPath( cSpec )
 
    LOCAL cLongName := Space(261)
@@ -2976,6 +2966,7 @@ Function VRD_GetFullPath( cSpec )
 
 RETURN ALLTRIM( cLongName )
 
+//------------------------------------------------------------------------------
 
 //for access to the windows registry
 #DEFINE HKEY_CLASSES_ROOT           2147483648
@@ -2993,14 +2984,8 @@ RETURN ALLTRIM( cLongName )
 #DEFINE KEY_CREATE_LINK             32
 #DEFINE KEY_ALL_ACCESS              63
 
+//------------------------------------------------------------------------------
 
-*-- FUNCTION -----------------------------------------------------------------
-* Name........: VRD_GetPrinters
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Juan Gálvez / Timm Sodtalbers
-*-----------------------------------------------------------------------------
 FUNCTION VRD_GetPrinters()
 
    LOCAL cName, nWert
@@ -3015,14 +3000,8 @@ FUNCTION VRD_GetPrinters()
 
 RETURN aPrinters
 
+//------------------------------------------------------------------------------
 
-*-- FUNCTION -----------------------------------------------------------------
-* Name........: VRD_TakeOut
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Juan Gálvez / Timm Sodtalbers
-*-----------------------------------------------------------------------------
 FUNCTION VRD_TakeOut( cString, nPos, cChar )
 
    LOCAL nLen
@@ -3040,26 +3019,20 @@ FUNCTION VRD_TakeOut( cString, nPos, cChar )
 
 RETURN cReturn
 
+//------------------------------------------------------------------------------
 
-*-- FUNCTION -----------------------------------------------------------------
-* Name........: VRD_DefaultPrinter
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 FUNCTION VRD_DefaultPrinter()
 
-#IFDEF __XPP__
+//#IFDEF __XPP__
 /// !!! Antonio muß PrnGetName in FW++ einbauen
-RETURN VRD_GetRegistry( HKEY_CURRENT_CONFIG, ;
-                        "System\CurrentControlSet\Control\Print\Printers", ;
-                        "Default" )
-#ELSE
+//RETURN VRD_GetRegistry( HKEY_CURRENT_CONFIG, ;
+//                        "System\CurrentControlSet\Control\Print\Printers", ;
+//                        "Default" )
+//#ELSE
 
 RETURN PrnGetName()
 
-#ENDIF
+//#ENDIF
 
 
 *-- FUNCTION -----------------------------------------------------------------
@@ -3167,15 +3140,16 @@ FUNCTION VRD_NewStructure()
 
    LOCAL oStruct
 
-   #IFDEF __XPP__
-      oStruct := TStruct():New() // !!! Hier muß TExStruct einbaut werden
-   #ELSE
+ //  #IFDEF __XPP__
+ //     oStruct := TStruct():New() // !!! Hier muß TExStruct einbaut werden
+ //  #ELSE
       #IFDEF USE_TEXSTRUC
          oStruct := TExStruc():New()
       #ELSE
          oStruct := TExStruct():New()
       #ENDIF
-   #ENDIF
+
+  // #ENDIF
 
 RETURN oStruct
 
