@@ -10,38 +10,38 @@ MEMVAR oClpGeneral, cDefIni, cGeneralIni, nMeasure, lDemo, lBeta, oTimer
 MEMVAR oMainWnd, lProfi, nUndoCount, nRedoCount, lPersonal, lStandard, oGenVar
 MEMVAR oER
 
-Function GetFreeSystemResources()
-Return 0
+function GetFreeSystemResources()
+return 0
 
 //-----------------------------------------------------------------------------//
 
-FUNCTION CheckPath( cPath )
+function CheckPath( cPath )
 
    cPath := ALLTRIM( cPath )
 
-   IF .NOT. EMPTY( cPath ) .AND. SUBSTR( cPath, LEN( cPath ) ) <> "\"
+   if .NOT. EMPTY( cPath ) .AND. SUBSTR( cPath, LEN( cPath ) ) <> "\"
       cPath += "\"
-   ENDIF
+   endif
 
-RETURN ( cPath )
+return ( cPath )
 
 //-----------------------------------------------------------------------------//
 
-FUNCTION InsertArea( lBefore, cTitle )
+function InsertArea( lBefore, cTitle )
 
-   LOCAL i, oGet, oDlg, cTmpFile
-   LOCAL aAreaInis   := {}
-   LOCAL lReturn     := .T.
-   LOCAL cFile       := SPACE( 200 )
-   LOCAL aIniEntries := GetIniSection( "Areas", cDefIni )
-   LOCAL nNewArea    := nAktArea + IIF( lBefore, 0, 1 )
-   LOCAL cDir        := CheckPath( GetPvProfString( "General", "AreaFilesDir", "", cDefIni ) )
+   local i, oGet, oDlg, cTmpFile
+   local aAreaInis   := {}
+   local lreturn     := .T.
+   local cFile       := SPACE( 200 )
+   local aIniEntries := GetIniSection( "Areas", cDefIni )
+   local nNewArea    := nAktArea + IIF( lBefore, 0, 1 )
+   local cDir        := CheckPath( GetPvProfString( "General", "AreaFilesDir", "", cDefIni ) )
 
-   IF EMPTY( cDir )
+   if EMPTY( cDir )
       cDir := cDefaultPath
-   ENDIF
+   endif
 
-   FOR i := 1 TO 100
+   for i := 1 TO 100
       AADD( aAreaInis, ALLTRIM( GetIniEntry( aIniEntries, ALLTRIM(STR( i, 5 )) , "" ) ) )
    NEXT
 
@@ -49,7 +49,7 @@ FUNCTION InsertArea( lBefore, cTitle )
 
    REDEFINE BUTTON PROMPT GL("&OK") ID 101 OF oDlg ACTION ;
       IIF( FILE( cDir + cFile ), MsgStop( GL("The file already exists."), GL("Stop!") ), ;
-                                 ( lReturn := .T., oDlg:End() ) )
+                                 ( lreturn := .T., oDlg:End() ) )
 
    REDEFINE BUTTON PROMPT GL("&Cancel") ID 102 OF oDlg ACTION oDlg:End()
 
@@ -59,7 +59,7 @@ FUNCTION InsertArea( lBefore, cTitle )
 
    ACTIVATE DIALOG oDlg CENTERED
 
-   IF lReturn = .T.
+   if lreturn = .T.
 
       nNewArea := IIF( nNewArea < 1, 1, nNewArea )
       AINS( aAreaInis, nNewArea )
@@ -67,10 +67,10 @@ FUNCTION InsertArea( lBefore, cTitle )
 
       DelIniSection( "Areas", cDefIni )
 
-      FOR i := 1 TO LEN( aAreaInis )
-         IF .NOT. EMPTY( aAreaInis[i] )
+      for i := 1 TO LEN( aAreaInis )
+         if .NOT. EMPTY( aAreaInis[i] )
             WritePProString( "Areas", ALLTRIM(STR( i, 3 )), ALLTRIM( aAreaInis[i] ), cDefIni )
-         ENDIF
+         endif
       NEXT
 
       MEMOWRIT( cDir + cFile, ;
@@ -85,196 +85,197 @@ FUNCTION InsertArea( lBefore, cTitle )
 
       AreaProperties( nAktArea )
 
-   ENDIF
+   endif
 
-RETURN (.T.)
+return .T.
 
 //-----------------------------------------------------------------------------//
 
-FUNCTION DeleteArea()
+function DeleteArea()
 
-   IF MsgNoYes( GL("Do you really want to delete this area?"), GL("Select an option") ) = .T.
+   if MsgNoYes( GL("Do you really want to delete this area?"), GL("Select an option") ) = .T.
 
       DelFile( aVRDSave[nAktArea,1] )
       DelIniEntry( "Areas", ALLTRIM(STR( nAktArea, 5 )), cDefIni )
 
       OpenFile( cDefIni )
 
-   ENDIF
+   endif
 
-RETURN (.T.)
+return .T.
 
 //-----------------------------------------------------------------------------//
 
-FUNCTION IniColor( cColor, nDefColor )
+function IniColor( cColor, nDefColor )
 
-   LOCAL nColor
+   local nColor
 
    DEFAULT nDefColor := 0
 
-   IF EMPTY( cColor )
+   if EMPTY( cColor )
       nColor := nDefColor
-   ELSEIF AT( ",", cColor ) <> 0
+   ELSEif AT( ",", cColor ) <> 0
       nColor := RGB( VAL(StrToken( cColor, 1, "," )), ;
                      VAL(StrToken( cColor, 2, "," )), ;
                      VAL(StrToken( cColor, 3, "," )) )
    ELSE
       nColor := VAL( cColor )
-   ENDIF
+   endif
 
-RETURN ( nColor )
+return ( nColor )
 
 //-----------------------------------------------------------------------------//
 
-FUNCTION GetDBField( oGet, lInsert )
-   LOCAL oDlg, oLbx1, oLbx2, i, cDbase, cField, oBtn, aTemp, cGeneral, cUser
-   LOCAL nShowExpr  := VAL( GetPvProfString( "General", "Expressions", "0", cDefIni ) )
-   LOCAL nShowDBase := VAL( GetPvProfString( "General", "EditDatabases", "1", cDefIni ) )
-   LOCAL cGenExpr   := ALLTRIM( oEr:cDataPath + GetPvProfString( "General", "GeneralExpressions", "", cDefIni ) )  // change CDefaultPath 
-   LOCAL cUserExpr  := ALLTRIM( oEr:cDataPath + GetPvProfString( "General", "UserExpressions", "", cDefIni ) )      // change CDefaultPath 
-  // LOCAL cGenExpr   := ALLTRIM( cDefaultPath + GetPvProfString( "General", "GeneralExpressions", "", cDefIni ) )
-  // LOCAL cUserExpr  := ALLTRIM( cDefaultPath + GetPvProfString( "General", "UserExpressions", "", cDefIni ) )
-   LOCAL nLen       := LEN( oGenVar:aDBFile )
-   LOCAL aDbase     := {}
-   LOCAL lOK        := .T.
-   LOCAL lReturn    := .F.
-   LOCAL aFields    := {}
+function GetDBField( oGet, lInsert )
+
+   local oDlg, oLbx1, oLbx2, i, cDbase, cField, oBtn, aTemp, cGeneral, cUser
+   local nShowExpr  := VAL( GetPvProfString( "General", "Expressions", "0", cDefIni ) )
+   local nShowDBase := VAL( GetPvProfString( "General", "EditDatabases", "1", cDefIni ) )
+   local cGenExpr   := ALLTRIM( oEr:cDataPath + GetPvProfString( "General", "GeneralExpressions", "", cDefIni ) )  // change CDefaultPath 
+   local cUserExpr  := ALLTRIM( oEr:cDataPath + GetPvProfString( "General", "UserExpressions", "", cDefIni ) )      // change CDefaultPath 
+  // local cGenExpr   := ALLTRIM( cDefaultPath + GetPvProfString( "General", "GeneralExpressions", "", cDefIni ) )
+  // local cUserExpr  := ALLTRIM( cDefaultPath + GetPvProfString( "General", "UserExpressions", "", cDefIni ) )
+   local nLen       := LEN( oGenVar:aDBFile )
+   local aDbase     := {}
+   local lOK        := .T.
+   local lreturn    := .F.
+   local aFields    := {}
 
    DEFAULT lInsert := .F.
 
-   IF nShowDbase > 0
+   if nShowDbase > 0
 
-      FOR i := 1 TO nLen
-         IF .NOT. EMPTY( oGenVar:aDBFile[i,2] )
+      for i := 1 TO nLen
+         if .NOT. EMPTY( oGenVar:aDBFile[i,2] )
             AADD( aDbase , ALLTRIM( oGenVar:aDBFile[i,2] ) )
             AADD( aFields, oGenVar:aDBFile[i,3] )
-         ENDIF
+         endif
       NEXT
 
-   ENDIF
+   endif
 
-   IF nShowExpr > 0 .AND. lInsert = .F.
+   if nShowExpr > 0 .AND. lInsert = .F.
       AADD( aDbase, GL("Expressions") + ": " + GL("General") )
       AADD( aFields, GetExprFields( cGenExpr ) )
       cGeneral := aDbase[ LEN( aDbase ) ]
-   ENDIF
+   endif
 
-   IF nShowExpr <> 2 .AND. lInsert = .F.
+   if nShowExpr <> 2 .AND. lInsert = .F.
       AADD( aDbase, GL("Expressions") + ": " + GL("User defined") )
       AADD( aFields, GetExprFields( cUserExpr ) )
       cUser := aDbase[ LEN( aDbase ) ]
-   ENDIF
+   endif
 
-   IF LEN( aDbase ) = 0
+   if LEN( aDbase ) = 0
       MsgStop( GL("No databases defined."), GL("Stop!") )
-      RETURN (.T.)
-   ENDIF
+      return .T.
+   endif
 
-   cDbase := aDbase[1]
-   cField := aFields[1,1]
+   cDbase := aDbase[ 1 ]
+   cField := aFields[ 1, 1 ]
    //cField := oGenVar:aDBFile[1,3][1]
 
    DEFINE DIALOG oDlg NAME "DATABASEFIELDS" TITLE GL("Databases and Expressions")
 
    REDEFINE BUTTON oBtn PROMPT GL("&OK") ID 101 OF oDlg WHEN lOK ;
-      ACTION ( lReturn := .T., oDlg:End() )
+      ACTION ( lreturn := .T., oDlg:End() )
    REDEFINE BUTTON PROMPT GL("&Cancel") ID 102 OF oDlg ACTION oDlg:End()
 
    REDEFINE LISTBOX oLbx1 VAR cDbase ITEMS aDbase ID 201 OF oDlg ;
       ON CHANGE ( oLbx2:SetItems( aFields[oLbx1:GetPos()] ), oLbx2:Refresh(), ;
                   IIF( LEN( aFields[oLbx1:GetPos()] ) = 0, ;
                   ( oLbx2:Disable(), oBtn:Disable() ), ( oLbx2:Enable(), oBtn:Enable() ) ) ) ;
-      ON DBLCLICK ( lReturn := .T. , oDlg:End() )
+      ON DBLCLICK ( lreturn := .T. , oDlg:End() )
 
    REDEFINE LISTBOX oLbx2 VAR cField ITEMS aFields[oLbx1:GetPos()] ID 202 OF oDlg ;
-      ON DBLCLICK ( lReturn := .T. , oDlg:End() )
+      ON DBLCLICK ( lreturn := .T. , oDlg:End() )
 
    REDEFINE SAY PROMPT GL("Sources") ID 171 OF oDlg
    REDEFINE SAY PROMPT GL("Fields")  ID 172 OF oDlg
 
    ACTIVATE DIALOG oDlg CENTERED
 
-   IF lReturn = .T. .AND. .NOT. EMPTY( cField ) .AND. lInsert = .T.
+   if lreturn = .T. .AND. .NOT. EMPTY( cField ) .AND. lInsert = .T.
       //oClpGeneral:SetText( "[" + ALLTRIM( cDbase ) + ":" + ALLTRIM( cField ) + "]" )
       oGet:Paste( "[" + ALLTRIM( cDbase ) + ":" + ALLTRIM( cField ) + "]" )
-   ELSEIF lReturn = .T. .AND. .NOT. EMPTY( cField )
-      IF ALLTRIM( cDbase ) == cGeneral
+   ELSEif lreturn = .T. .AND. .NOT. EMPTY( cField )
+      if ALLTRIM( cDbase ) == cGeneral
          oGet:VarPut( "[1]" + ALLTRIM( cField ) )
-      ELSEIF ALLTRIM( cDbase ) == cUser
+      ELSEif ALLTRIM( cDbase ) == cUser
          oGet:VarPut( "[2]" + ALLTRIM( cField ) )
       ELSE
          oGet:VarPut( "[" + ALLTRIM( cDbase ) + ":" + ALLTRIM( cField ) + "]" )
-      ENDIF
+      endif
       oGet:Refresh()
-   ENDIF
+   endif
 
-RETURN (.T.)
+return .T.
 
 //-----------------------------------------------------------------------------//
 
-FUNCTION GetExprFields( cDatabase )
+function GetExprFields( cDatabase )
 
-   LOCAL nSelect := SELECT()
-   LOCAL aTemp   := {}
+   local nSelect := SELECT()
+   local aTemp   := {}
 
    DBUSEAREA( .T.,, cDatabase, "TEMPEXPR" )
 
    DO WHILE .NOT. EOF()
-      IF .NOT. EMPTY( TEMPEXPR->NAME )
+      if .NOT. EMPTY( TEMPEXPR->NAME )
          AADD( aTemp, ALLTRIM( TEMPEXPR->NAME ) )
-      ENDIF
+      endif
       TEMPEXPR->(DBSKIP())
    ENDDO
 
    TEMPEXPR->(DBCLOSEAREA())
    SELECT( nSelect )
 
-RETURN ( aTemp )
+return ( aTemp )
 
 //-----------------------------------------------------------------------------//
 
-FUNCTION CreateDbfsExpressions()
+function CreateDbfsExpressions()
 
-  LOCAL cGenExpr   := ALLTRIM( oEr:cDataPath + GetPvProfString( "General", "GeneralExpressions", "", cDefIni ) )
-  LOCAL cUserExpr  := ALLTRIM( oEr:cDataPath + GetPvProfString( "General", "UserExpressions", "", cDefIni ) )
+  local cGenExpr   := ALLTRIM( oEr:cDataPath + GetPvProfString( "General", "GeneralExpressions", "", cDefIni ) )
+  local cUserExpr  := ALLTRIM( oEr:cDataPath + GetPvProfString( "General", "UserExpressions", "", cDefIni ) )
 
- LOCAL aGeneral := {;
+ local aGeneral := {;
                     { "NAME"      , "C",    60,    0 },;
                     { "EXPRESSION", "C",   200,    0 },;
                     { "INFO"      , "C",   200,    0 } }
 
 
- LOCAL aUser := {;
+ local aUser := {;
                  { "NAME"      , "C",   100,    0 },;
                  { "EXPRESSION", "C",   200,    0 },;
                  { "INFO"      , "C",   200,    0 } }
 
-  IF ! lIsDir( oEr:cDataPath )
+  if ! lIsDir( oEr:cDataPath )
      lMkDir( oEr:cDataPath )
-  ENDIF
-  IF !File( cGenExpr  )
+  endif
+  if !File( cGenExpr  )
      DBCreate( cGenExpr, aGeneral )
   endif
-  IF  !File( cUserExpr  )
+  if  !File( cUserExpr  )
      DBCreate( cUserExpr, aUser )
 
-  ENDIF
+  endif
 
-RETURN nil
+return nil
 
 //-----------------------------------------------------------------------------//
 
-FUNCTION OpenDatabases()
+function OpenDatabases()
 
-   LOCAL i, x, cEntry, cDbase, aFields, cFilter, cFieldNames, cFieldPos
-   LOCAL nSelect     := SELECT()
-   LOCAL cSeparator  := GetPvProfString( "Databases", "Separator" , ";", cDefIni )
+   local i, x, cEntry, cDbase, aFields, cFilter, cFieldNames, cFieldPos
+   local nSelect     := SELECT()
+   local cSeparator  := GetPvProfString( "Databases", "Separator" , ";", cDefIni )
 
    CreateDbfsExpressions()
 
    oGenVar:aDBFile := {}
 
-   FOR i := 1 TO 12
+   for i := 1 TO 12
 
       cEntry      := GetPvProfString( "Databases", ALLTRIM(STR( i, 3 )), "", cDefIni )
       cDbase      := ALLTRIM( GetField( cEntry, 1 ) )
@@ -284,13 +285,13 @@ FUNCTION OpenDatabases()
 
       aFields := {}
 
-      IF FILE( cDbase ) = .T.
+      if FILE( cDbase ) = .T.
 
-         IF Upper( cFileExt( cDBase ) ) = "DBF"
+         if Upper( cFileExt( cDBase ) ) = "DBF"
 
             DBUSEAREA( .T.,, cDbase, "DBTEMP", .T. )
             DBGOTOP()
-            FOR x := 1 to DBTEMP->(FCOUNT())
+            for x := 1 to DBTEMP->(FCOUNT())
               AADD( aFields, LOWER( FieldName( x ) ) )
             NEXT
             DBTEMP->(DBCLOSEAREA())
@@ -302,17 +303,17 @@ FUNCTION OpenDatabases()
             cFieldNames := ALLTRIM( GetField( cEntry, 4 ) )
             cFieldPos   := ALLTRIM( GetField( cEntry, 5 ) )
 
-            IF EMPTY( cFieldNames )
+            if EMPTY( cFieldNames )
                aFields := VRD_aToken( MEMOLINE( MEMOREAD( cDBase ), 10000, 1,,, .T. ), cSeparator )
             ELSE
                aFields := VRD_aToken( cFieldNames, ";" )
-            ENDIF
+            endif
 
             AEVAL( aFields, {|x,y| aFields[y] := ALLTRIM( x ) } )
 
-         ENDIF
+         endif
 
-      ENDIF
+      endif
 
       AADD( oGenVar:aDBFile, ;
          { PADR( cDbase, 200 ), ;
@@ -324,11 +325,11 @@ FUNCTION OpenDatabases()
 
    NEXT
 
-RETURN (.T.)
+return .T.
 
 //-----------------------------------------------------------------------------//
 
-FUNCTION SaveDatabases()
+function SaveDatabases()
 
    AEVAL( oGenVar:aDBFile, {|x,y| ;
       WritePProString( "Databases", ALLTRIM(STR( y, 3 )), ;
@@ -338,13 +339,13 @@ FUNCTION SaveDatabases()
                        ALLTRIM( x[5] ) + "|" + ;
                        ALLTRIM( x[6] ), cDefIni ) } )
 
-RETURN (.T.)
+return .T.
 
 //-----------------------------------------------------------------------------//
 
-FUNCTION Databases( lTake )
+function Databases( lTake )
 
-   LOCAL oDlg, aDBGet1[12], aDBGet2[12]
+   local oDlg, aDBGet1[12], aDBGet2[12]
 
    DEFINE DIALOG oDlg NAME "DATABASES" TITLE GL("Databases")
 
@@ -411,20 +412,20 @@ FUNCTION Databases( lTake )
    SaveDatabases()
    OpenDatabases()
 
-RETURN ( NIL )
+return ( NIL )
 
 //-----------------------------------------------------------------------------//
 
-FUNCTION GetDBase( cOldFile, oGet1, oGet2 )
+function GetDBase( cOldFile, oGet1, oGet2 )
 
-   LOCAL cFile := GetFile( GL("Databases") + " (DBF,TXT,XML)" + "|*.DBF;*.TXT;*.XML|" + ;
+   local cFile := GetFile( GL("Databases") + " (DBF,TXT,XML)" + "|*.DBF;*.TXT;*.XML|" + ;
                            "dBase (*.dbf)| *.dbf|" + ;
                            GL("Textfile") + "(*.txt)| *.txt|" + ;
                            "XML (*.xml)| *.xml|" + ;
                            GL("All Files") + "(*.*)| *.*", ;
                            GL("Open Database"), 1 )
 
-   LOCAL cNewFile := ALLTRIM( IIF( EMPTY( cFile ), cOldFile, cFile ) )
+   local cNewFile := ALLTRIM( IIF( EMPTY( cFile ), cOldFile, cFile ) )
 
    oGet1:VarPut( PADR( cNewFile, 200 ) )
    oGet1:Refresh()
@@ -432,30 +433,30 @@ FUNCTION GetDBase( cOldFile, oGet1, oGet2 )
    oGet2:VarPut( LOWER( PADR( cFileNoExt( cNewFile ), 30 ) ) )
    oGet2:Refresh()
 
-RETURN NIL
+return NIL
 
 //-----------------------------------------------------------------------------//
 
-FUNCTION DelDBase( oGet1, oGet2 )
+function DelDBase( oGet1, oGet2 )
 
    oGet1:VarPut( SPACE( 200 ) )
    oGet2:VarPut( SPACE( 30 ) )
    oGet1:Refresh()
    oGet2:Refresh()
 
-RETURN NIL
+return NIL
 
 //-----------------------------------------------------------------------------//
 
-FUNCTION VRD_MsgRun( cCaption, cTitle, bAction )
+function VRD_MsgRun( cCaption, cTitle, bAction )
 
-   LOCAL oDlg, nWidth, oFont
+   local oDlg, nWidth, oFont
 
    DEFINE FONT oFont NAME "Ms Sans Serif" SIZE 0, -8
 
    DEFAULT cCaption := "Please, wait...", cTitle := "", bAction  := { || Inkey( 1 ) }
 
-   IF EMPTY( cTitle )
+   if EMPTY( cTitle )
       DEFINE DIALOG oDlg ;
          FROM 0,0 TO 3, Len( cCaption ) + 4 ;
          STYLE nOr( DS_MODALFRAME, WS_POPUP ) FONT oFont
@@ -464,7 +465,7 @@ FUNCTION VRD_MsgRun( cCaption, cTitle, bAction )
          FROM 0,0 TO 4, Max( Len( cCaption ), Len( cTitle ) ) + 4 ;
          TITLE cTitle ;
          STYLE DS_MODALFRAME FONT oFont
-   ENDIF
+   endif
 
    oDlg:bStart := { || Eval( bAction, oDlg ), oDlg:End(), SysRefresh() }
    oDlg:cMsg   := cCaption
@@ -474,102 +475,102 @@ FUNCTION VRD_MsgRun( cCaption, cTitle, bAction )
    ACTIVATE DIALOG oDlg CENTER ;
       ON PAINT oDlg:Say( 1, 0, xPadC( oDlg:cMsg, nWidth ) )
 
-RETURN NIL
+return NIL
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: CreateNewFile
 * Beschreibung:
 * Argumente...: None
 * R�ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION CreateNewFile( cFile )
+function CreateNewFile( cFile )
 
-   LOCAL cTmpFile := cTempFile() + ".TMP"
-   LOCAL hFile    := lCreat( cTmpFile, 0 )
+   local cTmpFile := cTempFile() + ".TMP"
+   local hFile    := lCreat( cTmpFile, 0 )
 
    lClose( hFile )
    CopyFile( cTmpFile, cFile )
    DelFile( cTmpFile )
 
-RETURN (.T.)
+return .T.
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 *         Name: CopyFile
 *  Description:
 *       Author: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION CopyFile( cSource, cTarget )
+function CopyFile( cSource, cTarget )
 
    COPY FILE &cSource TO &cTarget
 
-RETURN (.T.)
+return .T.
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: GetSysFont
 * Beschreibung:
 * Argumente...: None
 * R�ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION GetSysFont()
+function GetSysFont()
 
    do case
    case !IsWinNt() .and. !IsWin95()              // Win 3.1
-      RETURN "System"
+      return "System"
    case IsWin2000()     // Win2000
-      RETURN "Ms Sans Serif" //"SysTahoma"
+      return "Ms Sans Serif" //"SysTahoma"
    endcase
 
-RETURN "Ms Sans Serif"                           // Resto (Win NT, 95, 98)
+return "Ms Sans Serif"                           // Resto (Win NT, 95, 98)
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: GetDivisible
 * Beschreibung:
 * Argumente...: None
 * R�ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION GetDivisible( nNr, nDivisor, lPrevious )
+function GetDivisible( nNr, nDivisor, lPrevious )
 
-   LOCAL i
+   local i
 
    DEFAULT lPrevious := .F.
 
-   FOR i := 1 TO nDivisor
-      IF IsDivisible( nNr, nDivisor ) = .T.
+   for i := 1 TO nDivisor
+      if IsDivisible( nNr, nDivisor ) = .T.
          EXIT
       ELSE
          IIF( lPrevious, --nNr, ++nNr )
-      ENDIF
+      endif
    NEXT
 
-RETURN ( nNr )
+return ( nNr )
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: IsDivisible
 * Beschreibung:
 * Argumente...: None
 * R�ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION IsDivisible( nNr, nDivisor )
+function IsDivisible( nNr, nDivisor )
 
-   LOCAL lReturn := .F.
+   local lreturn := .F.
 
-   IF nNr / nDivisor = INT( nNr / nDivisor )
-      lReturn := .T.
-   ENDIF
+   if nNr / nDivisor = INT( nNr / nDivisor )
+      lreturn := .T.
+   endif
 
-RETURN ( lReturn )
+return ( lreturn )
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: ADelete( <aArray>, <nIndex> )
 
 * Beschreibung: ADelete() l�scht das Array-Element an der Stelle <nIndex> und
@@ -577,21 +578,21 @@ RETURN ( lReturn )
 * R�ckgabewert: Das ge�nderte Array
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION ADelete( aArray, nIndex )
+function ADelete( aArray, nIndex )
 
-   LOCAL i
-   LOCAL aNewArray := {}
+   local i
+   local aNewArray := {}
 
    ADEL( aArray, nIndex )
 
-   FOR i := 1 TO LEN( aArray ) - 1
+   for i := 1 TO LEN( aArray ) - 1
       AADD( aNewArray, aArray[i] )
    NEXT
 
-RETURN ( aNewArray )
+return ( aNewArray )
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: StrAtNum( <cSearch>, <cString>, <nCount> )
 * Beschreibung: n-tes Auftreten einer Zeichenfolge in Strings ermitteln
 *               StrAtNum() sucht das <nCount>-te Auftreten von <cSearch>
@@ -600,142 +601,142 @@ RETURN ( aNewArray )
 * R�ckgabewert: die Position des <nCount>-ten Auftretens von <cSearch>.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION StrAtNum( cSearch, cString, nNr )
+function StrAtNum( cSearch, cString, nNr )
 
    cString := STRTRAN( cString, cSearch, REPLICATE( "@", LEN( cSearch ) ),, nNr - 1 )
 
-RETURN AT( cSearch, cString )
+return AT( cSearch, cString )
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: GoBottom
 * Beschreibung:
 * Argumente...: None
 * R�ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION GoBottom()
+function GoBottom()
 
   GO BOTTOM
 
-RETURN ! Eof()
+return ! Eof()
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: GetFile
 * Beschreibung:
 * Argumente...: None
 * R�ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION GetFile( cFileMask, cTitle, nDefaultMask, cInitDir, lSave, nFlags )
+function GetFile( cFileMask, cTitle, nDefaultMask, cInitDir, lSave, nFlags )
 
-   LOCAL cTmpPath := CheckPath( GetPvProfString( "General", "DefaultPath", "", cGeneralIni ) )
+   local cTmpPath := CheckPath( GetPvProfString( "General", "DefaultPath", "", cGeneralIni ) )
 
-   IF .NOT. EMPTY( cTmpPath )
+   if .NOT. EMPTY( cTmpPath )
       cInitDir := cTmpPath
-   ENDIF
+   endif
 
    DEFAULT cInitDir := cFilePath( GetModuleFileName( GetInstance() ) )
 
-RETURN cGetFile32( cFileMask, cTitle, nDefaultMask, cInitDir, lSave, nFlags )
+return cGetFile32( cFileMask, cTitle, nDefaultMask, cInitDir, lSave, nFlags )
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: IsIntersectRect
 * Beschreibung:
 * Argumente...: None
 * R�ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION IsIntersectRect( aRect1, aBoxRect )
+function IsIntersectRect( aRect1, aBoxRect )
 
-   LOCAL aSect
-   LOCAL lReturn := .F.
+   local aSect
+   local lreturn := .F.
 
-   IF aBoxRect[1] > aBoxRect[3]
+   if aBoxRect[1] > aBoxRect[3]
       aBoxRect := { aBoxRect[3], aBoxRect[2], aBoxRect[1], aBoxRect[4] }
-   ENDIF
-   IF aBoxRect[2] > aBoxRect[4]
+   endif
+   if aBoxRect[2] > aBoxRect[4]
       aBoxRect := { aBoxRect[1], aBoxRect[4], aBoxRect[3], aBoxRect[2] }
-   ENDIF
+   endif
 
    aSect := { MAX( aRect1[1], aBoxRect[1] ), ;
               MAX( aRect1[2], aBoxRect[2] ), ;
               MIN( aRect1[3], aBoxRect[3] ), ;
               MIN( aRect1[4], aBoxRect[4] ) }
 
-   IF IsPointInRect( { aSect[1], aSect[2] }, aRect1 ) .AND. ;
+   if IsPointInRect( { aSect[1], aSect[2] }, aRect1 ) .AND. ;
       IsPointInRect( { aSect[1], aSect[2] }, aBoxRect ) .OR. ;
       IsPointInRect( { aSect[3], aSect[4] }, aRect1 ) .AND. ;
       IsPointInRect( { aSect[3], aSect[4] }, aBoxRect )
-      lReturn := .T.
-   ENDIF
+      lreturn := .T.
+   endif
 
-RETURN ( lReturn )
+return ( lreturn )
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: IsPointInRect
 * Beschreibung:
 * Argumente...: None
 * R�ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION IsPointInRect( aPoint, aRect )
+function IsPointInRect( aPoint, aRect )
 
-   LOCAL lReturn := .F.
+   local lreturn := .F.
 
-   IF aRect[1] <= aPoint[1] .AND. aRect[3] >= aPoint[1] .AND. ;
+   if aRect[1] <= aPoint[1] .AND. aRect[3] >= aPoint[1] .AND. ;
       aRect[2] <= aPoint[2] .AND. aRect[4] >= aPoint[2]
-      lReturn := .T.
-   ENDIF
+      lreturn := .T.
+   endif
 
-RETURN ( lReturn )
+return ( lreturn )
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: GetSourceToolTip
 * Beschreibung:
 * Argumente...: None
 * R�ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION GetSourceToolTip( cSourceCode )
+function GetSourceToolTip( cSourceCode )
 
-   LOCAL cText := GL("Formula")
+   local cText := GL("Formula")
 
-   IF EMPTY( cSourceCode ) = .F.
+   if EMPTY( cSourceCode ) = .F.
       cText += ":" + CRLF
-      IF LEN( cSourceCode ) >= 200
+      if LEN( cSourceCode ) >= 200
          cText += SUBSTR( cSourceCode,   1, 100 ) + CRLF + ;
                   SUBSTR( cSourceCode, 100, 100 ) + CRLF + ;
                   SUBSTR( cSourceCode, 200 )
-      ELSEIF LEN( cSourceCode ) >= 100
+      ELSEif LEN( cSourceCode ) >= 100
          cText += SUBSTR( cSourceCode,   1, 100 ) + CRLF + ;
                   SUBSTR( cSourceCode, 100 )
       ELSE
          cText += cSourceCode
-      ENDIF
-   ENDIF
+      endif
+   endif
 
-RETURN ( cText )
+return ( cText )
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: AddToRecentDocs
 * Beschreibung:
 * Argumente...: None
 * R�ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION AddToRecentDocs( cFullPathFile )
+function AddToRecentDocs( cFullPathFile )
 
-   LOCAL hDLL, uResult, cFarProc
+   local hDLL, uResult, cFarProc
 
    hDLL := LoadLib32( "Shell32.dll" )
 
-   IF ABS( hDLL ) <= 32
+   if ABS( hDLL ) <= 32
 
       MsgAlert( "Error code: " + LTrim( Str( hDLL ) ) + ;
       " loading " + "Shell32.dll" )
@@ -746,21 +747,21 @@ FUNCTION AddToRecentDocs( cFullPathFile )
       uResult  := FWCallDLL( cFarProc, 2, cFullPathFile + Chr(0) )
       FreeLibrary( hDLL )
 
-   ENDIF
+   endif
 
-RETURN uResult
+return uResult
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: GetBarCodes
 * Beschreibung:
 * Argumente...: None
 * R�ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION GetBarCodes()
+function GetBarCodes()
 
-   LOCAL aBarcodes := { "Code 39", ;
+   local aBarcodes := { "Code 39", ;
                         "Code 39 check digit", ;
                         "Code 128 auto select", ;
                         "Code 128 mode A", ;
@@ -779,75 +780,75 @@ FUNCTION GetBarCodes()
                         "Matrix 2 of 5 check digit" ;
                       }
 
-RETURN ( aBarcodes )
+return ( aBarcodes )
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: MainCaption
 * Beschreibung:
 * Argumente...: None
 * R�ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION MainCaption()
+function MainCaption()
 
-   LOCAL cReturn    := ""
-   LOCAL cVersion   := ""
-   LOCAL cMainTitle := ""
-   LOCAL cUserApp   := ALLTRIM( GetPvProfString( "General", "MainAppTitle", "", cGeneralIni ) )
+   local creturn    := ""
+   local cVersion   := ""
+   local cMainTitle := ""
+   local cUserApp   := ALLTRIM( GetPvProfString( "General", "MainAppTitle", "", cGeneralIni ) )
 
-   IF lBeta = .T.
+   if lBeta = .T.
       cVersion := " - Beta Version"
-   ELSEIF lDemo = .T.
+   ELSEif lDemo = .T.
       cVersion := " - Full version" // " - Unregistered Demo Version" FiveTech
-   ENDIF
+   endif
 
-   IF .NOT. EMPTY( cDefIni )
+   if .NOT. EMPTY( cDefIni )
       cMainTitle := ALLTRIM( GetPvProfString( "General", "Title", "", cDefIni ) )
-   ENDIF
+   endif
 
-   cReturn := IIF( EMPTY( cUserApp ), "EasyReport", cUserApp ) + ;
+   creturn := IIF( EMPTY( cUserApp ), "EasyReport", cUserApp ) + ;
               cVersion + ;
               IIF( EMPTY(cMainTitle), "", " - " + cMainTitle )
 
-RETURN ( cReturn )
+return ( creturn )
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: Expressions
 * Beschreibung:
 * Argumente...: None
 * R�ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION Expressions( lTake, cAltText )
+function Expressions( lTake, cAltText )
 
-   LOCAL i, oDlg, oFld, oBrw, oBrw2, oBrw3, oFont, cReturn, oSay1, nTyp, oGet1
-   LOCAL oBtn1, aBtn[3], aGet[5], cName
-   LOCAL nAltSel    := SELECT()
-   LOCAL nShowExpr  := VAL( GetPvProfString( "General", "Expressions", "0", cDefIni ) )
-   LOCAL cGenExpr   := ALLTRIM( oEr:cDataPath + GetPvProfString( "General", "GeneralExpressions", "General.dbf", cDefIni ) )
-   LOCAL cUserExpr  := ALLTRIM( oEr:cDataPath + GetPvProfString( "General", "UserExpressions", "User.dbf", cDefIni ) )
- //  LOCAL cGenExpr   := ALLTRIM( cDefaultPath + GetPvProfString( "General", "GeneralExpressions", "", cDefIni ) )
- //  LOCAL cUserExpr  := ALLTRIM( cDefaultPath + GetPvProfString( "General", "UserExpressions", "", cDefIni ) )
-   LOCAL aUndo      := {}
-   LOCAL cErrorFile := ""
-   //LOCAL aRDD      := { "DBFNTX", "COMIX", "DBFCDX" }
+   local i, oDlg, oFld, oBrw, oBrw2, oBrw3, oFont, creturn, oSay1, nTyp, oGet1
+   local oBtn1, aBtn[3], aGet[5], cName
+   local nAltSel    := SELECT()
+   local nShowExpr  := VAL( GetPvProfString( "General", "Expressions", "0", cDefIni ) )
+   local cGenExpr   := ALLTRIM( oEr:cDataPath + GetPvProfString( "General", "GeneralExpressions", "General.dbf", cDefIni ) )
+   local cUserExpr  := ALLTRIM( oEr:cDataPath + GetPvProfString( "General", "UserExpressions", "User.dbf", cDefIni ) )
+ //  local cGenExpr   := ALLTRIM( cDefaultPath + GetPvProfString( "General", "GeneralExpressions", "", cDefIni ) )
+ //  local cUserExpr  := ALLTRIM( cDefaultPath + GetPvProfString( "General", "UserExpressions", "", cDefIni ) )
+   local aUndo      := {}
+   local cErrorFile := ""
+   //local aRDD      := { "DBFNTX", "COMIX", "DBFCDX" }
 
    DEFAULT cAltText := ""
    DEFAULT lTake    := .F.
 
-   IF FILE( VRD_LF2SF( cGenExpr ) ) = .F.
+   if FILE( VRD_LF2SF( cGenExpr ) ) = .F.
       cErrorFile += cGenExpr + CRLF
-   ENDIF
-   IF FILE( VRD_LF2SF( cUserExpr ) ) = .F.
+   endif
+   if FILE( VRD_LF2SF( cUserExpr ) ) = .F.
       cErrorFile += cUserExpr + CRLF
-   ENDIF
+   endif
 
-   IF .NOT. EMPTY( cErrorFile )
+   if .NOT. EMPTY( cErrorFile )
       MsgStop( GL("This file(s) could no be found:") + CRLF + CRLF + cErrorFile, GL("Stop!") )
-      RETURN( cAltText )
-   ENDIF
+      return( cAltText )
+   endif
 
    DEFINE FONT oFont NAME "Arial" SIZE 0, -12
 
@@ -858,7 +859,7 @@ FUNCTION Expressions( lTake, cAltText )
 
    REDEFINE BUTTON PROMPT GL("&OK") ID 101 OF oDlg ACTION oDlg:End()
 
-   IF nShowExpr = 2
+   if nShowExpr = 2
       REDEFINE FOLDER oFld ID 110 OF oDlg ;
          PROMPT " " + GL("General") + " " ;
          DIALOGS "EXPRESS_FOLDER1"
@@ -868,7 +869,7 @@ FUNCTION Expressions( lTake, cAltText )
                 " " + GL("User defined") + " " ;
          DIALOGS "EXPRESS_FOLDER1", ;
                  "EXPRESS_FOLDER2"
-   ENDIF
+   endif
 
    SELECT 0
    USE ( VRD_LF2SF( cGenExpr ) ) ALIAS "GENEXPR"
@@ -878,12 +879,12 @@ FUNCTION Expressions( lTake, cAltText )
       FIELDSIZES 180, 400 ;
       HEADERS " " + GL("Name"), " " + GL("Description") ;
       ID 301 OF oFld:aDialogs[1] FONT oFont ;
-      ON LEFT DBLCLICK ( cReturn := GENEXPR->NAME, nTyp := 1, oDlg:End() )
+      ON LEFT DBLCLICK ( creturn := GENEXPR->NAME, nTyp := 1, oDlg:End() )
 
    oBrw:bKeyDown = { | nKey, nFlags | IIF( nKey == VK_RETURN, ;
-                     EVAL( {|| cReturn := GENEXPR->NAME, nTyp := 1, oDlg:End() } ), .T. ) }
+                     EVAL( {|| creturn := GENEXPR->NAME, nTyp := 1, oDlg:End() } ), .T. ) }
 
-   IF nShowExpr = 1
+   if nShowExpr = 1
 
    i := 2
    SELECT 0
@@ -895,10 +896,10 @@ FUNCTION Expressions( lTake, cAltText )
       HEADERS " " + GL("Name"), " " + GL("Description") ;
       ID 301 OF oFld:aDialogs[i] FONT oFont ;
       ON CHANGE ( oDlg:Update(), aUndo := {} ) ;
-      ON LEFT DBLCLICK ( cReturn := USEREXPR->NAME, nTyp := 2, oDlg:End() )
+      ON LEFT DBLCLICK ( creturn := USEREXPR->NAME, nTyp := 2, oDlg:End() )
 
    oBrw2:bKeyDown = { | nKey, nFlags | IIF( nKey == VK_RETURN, ;
-                      EVAL( {|| cReturn := USEREXPR->NAME, nTyp := 2, oDlg:End() } ), .T. ) }
+                      EVAL( {|| creturn := USEREXPR->NAME, nTyp := 2, oDlg:End() } ), .T. ) }
 
    REDEFINE BUTTON PROMPT GL("&New")    ID 101 OF oFld:aDialogs[i] ;
       ACTION ( USEREXPR->(DBAPPEND()), oBrw2:Refresh(), oBrw2:GoBottom(), oDlg:Update() )
@@ -949,92 +950,92 @@ FUNCTION Expressions( lTake, cAltText )
    REDEFINE SAY ID 171 OF oFld:aDialogs[i] PROMPT GL("Expression") + ":"
    REDEFINE SAY ID 172 OF oFld:aDialogs[i] PROMPT GL("Description") + ":"
 
-   ENDIF
+   endif
 
    ACTIVATE DIALOG oDlg CENTER ;
       ON INIT IIF( lTake = .F., oSay1:Hide, .T. )
 
-   IF .NOT. EMPTY( cReturn )
-      cReturn := "[" + ALLTRIM(STR( nTyp , 1 )) + "]" + ALLTRIM( cReturn )
-   ELSEIF .NOT. EMPTY( cAltText )
-      cReturn := cAltText
-   ENDIF
+   if .NOT. EMPTY( creturn )
+      creturn := "[" + ALLTRIM(STR( nTyp , 1 )) + "]" + ALLTRIM( creturn )
+   ELSEif .NOT. EMPTY( cAltText )
+      creturn := cAltText
+   endif
 
    GENEXPR->(DBCLOSEAREA())
 
-   IF nShowExpr = 1
+   if nShowExpr = 1
       USEREXPR->(DBCLOSEAREA())
-   ENDIF
+   endif
 
    SELECT( nAltSel )
    oFont:End()
    aUndo := {}
 
-RETURN ( cReturn )
+return ( creturn )
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: CheckExpression
 * Beschreibung:
 * Argumente...: None
 * R�ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION CheckExpression( cText )
+function CheckExpression( cText )
 
-   LOCAL lReturn, xReturn, oScript
+   local lreturn, xreturn, oScript
 
-   oScript := TScript():New( "FUNCTION TEST()" + CRLF + cText + CRLF + "RETURN" )
+   oScript := TScript():New( "function TEST()" + CRLF + cText + CRLF + "return" )
 
    oScript:Compile()
 
-   IF EMPTY( oScript:cError )
+   if EMPTY( oScript:cError )
       MsgWait( GL("Correct expression"), GL("Check"), 1.5 )
-      lReturn := .T.
+      lreturn := .T.
    ELSE
       MsgStop( GL("Incorrect expression"), GL("Check") )
-      lReturn := .F.
-   ENDIF
+      lreturn := .F.
+   endif
 
-RETURN (.T.)
+return .T.
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: DBPack
 * Beschreibung:
 * Argumente...: None
 * R�ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION DBPack()
+function DBPack()
 
    PACK
 
-RETURN (.T.)
+return .T.
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: DBReplace
 * Beschreibung:
 * Argumente...: None
 * R�ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION DBReplace( cReplFeld, xAusdruck )
+function DBReplace( cReplFeld, xAusdruck )
 
    REPLACE &cReplFeld with xAusdruck
 
-RETURN (.T.)
+return .T.
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: CopyToExpress
 * Beschreibung:
 * Argumente...: None
 * R�ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION CopyToExpress( cText, oGet, aUndo )
+function CopyToExpress( cText, oGet, aUndo )
 
    AADD( aUndo, oGet:cText )
 
@@ -1042,43 +1043,43 @@ FUNCTION CopyToExpress( cText, oGet, aUndo )
    oGet:Paste( cText )
    oGet:SetPos( oGet:nPos + LEN( cText ) )
 
-RETURN (.T.)
+return .T.
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: UndoExpression
 * Beschreibung:
 * Argumente...: None
 * R�ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION UnDoExpression( oGet, aUndo )
+function UnDoExpression( oGet, aUndo )
 
-   IF Len( aUndo ) > 0
-      IF .NOT. EMPTY( ATAIL( aUndo ) )
+   if Len( aUndo ) > 0
+      if .NOT. EMPTY( ATAIL( aUndo ) )
          oGet:cText( ATAIL( aUndo ) )
          oGet:Refresh()
          ASIZE( aUndo, Len( aUndo ) - 1 )
-      ENDIF
-   ENDIF
+      endif
+   endif
 
    oGet:SetFocus()
 
-RETURN ( aUndo )
+return ( aUndo )
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: VRDLogo
 * Beschreibung:
 * Argumente...: None
 * R�ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION VRDLogo()
+function VRDLogo()
 
-   LOCAL oDlg, oSay
-   LOCAL aFonts    := ARRAY(2)
-   LOCAL nInterval := 1
+   local oDlg, oSay
+   local aFonts    := ARRAY(2)
+   local nInterval := 1
 
    DEFINE FONT aFonts[1] NAME "Ms Sans Serif" SIZE 0, -14
    DEFINE FONT aFonts[2] NAME "Ms Sans Serif" SIZE 0, -6
@@ -1107,19 +1108,19 @@ FUNCTION VRDLogo()
    aFonts[1]:End()
    aFonts[2]:End()
 
-RETURN NIL
+return NIL
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: EndMsgLogo
 * Beschreibung:
 * Argumente...: None
 * R�ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION EndMsgLogo( oDlg, aFonts )
+function EndMsgLogo( oDlg, aFonts )
 
-   LOCAL nInterval := 0
+   local nInterval := 0
 
    oDlg:End()
    AEVAL( aFonts, {| oFont| oFont:End() } )
@@ -1128,66 +1129,66 @@ FUNCTION EndMsgLogo( oDlg, aFonts )
    MEMORY(-1)
 
    //Demo mode: App l�uft nur 3 Minuten
-   IF lDemo = .T.
+   if lDemo = .T.
       DEFINE TIMER oTimer INTERVAL 1000 OF oMainWnd ;
          ACTION ( TimerRunOut( ++nInterval ) )
       ACTIVATE TIMER oTimer
-   ENDIF
+   endif
 
-RETURN (.T.)
+return .T.
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: TimerRunOut
 * Beschreibung:
 * Argumente...: None
 * R�ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION TimerRunOut( nInterval )
+function TimerRunOut( nInterval )
 
-   IF nInterval = 300
+   if nInterval = 300
       MsgStop( "Demo version time run out (5 minutes)!" )
       oTimer:End()
       QUIT
-   ENDIF
+   endif
 
-RETURN (.T.)
+return .T.
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: CheckTimer
 * Beschreibung:
 * Argumente...: None
 * R�ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION CheckTimer( nInterval, oSay )
+function CheckTimer( nInterval, oSay )
 
-    LOCAL lReturn := .F.
+    local lreturn := .F.
 
-    IF lDemo = .T.
+    if lDemo = .T.
        oSay:SetText( "Please wait: " + ALLTRIM(STR( 20 - nInterval, 3)) + " Sec." )
-    ENDIF
+    endif
 
-    IF lDemo = .T. .AND. nInterval = 20 .OR. lDemo = .F. .AND. nInterval = 3
-      lReturn := .T.
-    ENDIF
+    if lDemo = .T. .AND. nInterval = 20 .OR. lDemo = .F. .AND. nInterval = 3
+      lreturn := .T.
+    endif
 
-RETURN ( lReturn )
+return ( lreturn )
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: VRDAbout
 * Beschreibung:
 * Argumente...: None
 * R�ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION VRDAbout()
+function VRDAbout()
 
-   LOCAL oDlg, oFont, cVersion := ""
-   LOCAL nClrBack := RGB( 255, 255, 255 )
+   local oDlg, oFont, cVersion := ""
+   local nClrBack := RGB( 255, 255, 255 )
 
    oGenVar:cRelease = "3.0"
 
@@ -1219,20 +1220,20 @@ FUNCTION VRDAbout()
 
    oFont:End()
 
-RETURN NIL
+return NIL
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: VRDBeta
 * Beschreibung:
 * Argumente...: None
 * R�ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION BetaVersion()
+function BetaVersion()
 
-   LOCAL oDlg, oFont
-   LOCAL nClrBack := RGB( 255, 255, 255 )
+   local oDlg, oFont
+   local nClrBack := RGB( 255, 255, 255 )
 
    DEFINE FONT oFont  NAME "Ms Sans Serif" SIZE 0, -14
 
@@ -1251,45 +1252,45 @@ FUNCTION BetaVersion()
 
    oFont:End()
 
-RETURN NIL
+return NIL
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: QuietRegCheck
 * Beschreibung:
 * Argumente...: None
 * R�ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION QuietRegCheck()
+function QuietRegCheck()
 
-   LOCAL nSerial := GetSerialHD()
-   LOCAL cSerial := IIF( nSerial = 0, "8"+"2"+"2"+"7"+"3"+"6"+"5"+"1", ALLTRIM( STR( ABS( nSerial ), 20 ) ) )
-   LOCAL cRegist := PADR( GetPvProfString( "General", "RegistKey", "", cGeneralIni ), 40 )
+   local nSerial := GetSerialHD()
+   local cSerial := IIF( nSerial = 0, "8"+"2"+"2"+"7"+"3"+"6"+"5"+"1", ALLTRIM( STR( ABS( nSerial ), 20 ) ) )
+   local cRegist := PADR( GetPvProfString( "General", "RegistKey", "", cGeneralIni ), 40 )
 
-RETURN CheckRegist( cSerial, cRegist )
+return CheckRegist( cSerial, cRegist )
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: VRDMsgPersonal
 * Beschreibung:
 * Argumente...: None
 * R�ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION VRDMsgPersonal()
+function VRDMsgPersonal()
 
-   LOCAL oDlg, oFont, oFont2
-   LOCAL lOK          := .T. // .F.
-   LOCAL lTestVersion := .F.
-   LOCAL nClr1        := RGB( 128, 128, 128 )
-   LOCAL nClrBack     := RGB( 255, 255, 255 )
-   LOCAL nSerial      := GetSerialHD()
-   LOCAL cSerial      := IIF( nSerial = 0, "8"+"2"+"2"+"7"+"3"+"6"+"5"+"1", ALLTRIM( STR( ABS( nSerial ), 20 ) ) )
-   LOCAL cRegist      := PADR( GetPvProfString( "General", "RegistKey", "", cGeneralIni ), 40 )
-   LOCAL cCompany     := PADR( GetPvProfString( "General", "Company"  , "", cGeneralIni ), 100 )
-   LOCAL cUser        := PADR( GetPvProfString( "General", "User"     , "", cGeneralIni ), 100 )
-   LOCAL cVersion     := IIF( lStandard, "Standard", "Personal" )
+   local oDlg, oFont, oFont2
+   local lOK          := .T. // .F.
+   local lTestVersion := .F.
+   local nClr1        := RGB( 128, 128, 128 )
+   local nClrBack     := RGB( 255, 255, 255 )
+   local nSerial      := GetSerialHD()
+   local cSerial      := IIF( nSerial = 0, "8"+"2"+"2"+"7"+"3"+"6"+"5"+"1", ALLTRIM( STR( ABS( nSerial ), 20 ) ) )
+   local cRegist      := PADR( GetPvProfString( "General", "RegistKey", "", cGeneralIni ), 40 )
+   local cCompany     := PADR( GetPvProfString( "General", "Company"  , "", cGeneralIni ), 100 )
+   local cUser        := PADR( GetPvProfString( "General", "User"     , "", cGeneralIni ), 100 )
+   local cVersion     := IIF( lStandard, "Standard", "Personal" )
 
    DEFINE FONT oFont  NAME "Ms Sans Serif" SIZE 0, -14
    DEFINE FONT oFont2 NAME "Ms Sans Serif" SIZE 0, -6
@@ -1339,56 +1340,56 @@ FUNCTION VRDMsgPersonal()
    WritePProString( "General", "Company", ALLTRIM( cCompany ), cGeneralIni )
    WritePProString( "General", "User"   , ALLTRIM( cUser )   , cGeneralIni )
 
-   IF lOK = .F. .AND. lTestVersion = .F.
+   if lOK = .F. .AND. lTestVersion = .F.
       MsgInfo( "The registration key is not valid!" + CRLF + CRLF + ;
                "EasyReport starts in demo mode." )
       WritePProString( "General", "RegistKey", "", cGeneralIni )
-   ENDIF
+   endif
 
-   IF lOK = .F.
+   if lOK = .F.
       lDemo  := .T.
       lProfi := .T.
       oBar:AEvalWhen()
       oMainWnd:cTitle := MainCaption()
       oMainWnd:SetMenu( BuildMenu() )
       VRDLogo()
-   ENDIF
+   endif
 
    oFont:End()
    oFont2:End()
 
-RETURN ( lOK )
+return ( lOK )
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: CheckRegist
 * Beschreibung:
 * Argumente...: None
 * R�ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION CheckRegist( cSerial, cRegist )
+function CheckRegist( cSerial, cRegist )
 
-   LOCAL lOK := .F.
+   local lOK := .F.
 
-   IF ALLTRIM( cRegist ) == GetRegistKey( cSerial )
+   if ALLTRIM( cRegist ) == GetRegistKey( cSerial )
       WritePProString( "General", "RegistKey", ALLTRIM( cRegist ) , cGeneralIni )
       lOK := .T.
-   ENDIF
+   endif
 
-RETURN ( lOK )
+return ( lOK )
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: GetRegistKey
 * Beschreibung:
 * Argumente...: None
 * R�ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION GetRegistKey( cSerial )
+function GetRegistKey( cSerial )
 
-   LOCAL cReg := ALLTRIM( STR( INT( ( VAL( ALLTRIM( cSerial ) ) * 167 ) * 4.12344 ), 30 ) )
+   local cReg := ALLTRIM( STR( INT( ( VAL( ALLTRIM( cSerial ) ) * 167 ) * 4.12344 ), 30 ) )
 
    cReg := SUBSTR( cReg + ALLTRIM( STR( 47348147489715610655, 30 ) ), 1, 12 )
 
@@ -1398,19 +1399,19 @@ FUNCTION GetRegistKey( cSerial )
            CHR( VAL( SUBSTR( cReg, 6, 1 ) ) + 66 ) + ;
            SUBSTR( cReg, 5 )
 
-RETURN ( cReg )
+return ( cReg )
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: SendRegInfos
 * Beschreibung:
 * Argumente...: None
 * R�ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION SendRegInfos( cSerial, cCompany, cUser, cVersion )
+function SendRegInfos( cSerial, cCompany, cUser, cVersion )
 
-   LOCAL i, oMail
+   local i, oMail
 
    DEFINE MAIL oMail SUBJECT "EasyReport " + cVersion + " Registration" ;
                      TEXT "      Company: " + cCompany + CRLF + ;
@@ -1421,32 +1422,32 @@ FUNCTION SendRegInfos( cSerial, cCompany, cUser, cVersion )
 
    oMail:Activate()
 
-RETURN (.T.)
+return .T.
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: GetSerialHD
 * Beschreibung:
 * Argumente...: None
 * R�ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION GetSerialHD( cDrive )
+function GetSerialHD( cDrive )
 
-   LOCAL cLabel      := Space(32)
-   LOCAL cFileSystem := Space(32)
-   LOCAL nSerial     := 0
-   LOCAL nMaxComp    := 0
-   LOCAL nFlags      := 0
+   local cLabel      := Space(32)
+   local cFileSystem := Space(32)
+   local nSerial     := 0
+   local nMaxComp    := 0
+   local nFlags      := 0
 
    DEFAULT cDrive := "C:\"
 
    GetVolInfo( cDrive, @cLabel, Len( cLabel ), @nSerial, @nMaxComp, @nFlags, ;
                @cFileSystem, Len( cFileSystem ) )
 
-RETURN nSerial
+return nSerial
 
-DLL32 Function GetVolInfo( sDrive          AS STRING, ;
+DLL32 function GetVolInfo( sDrive          AS STRING, ;
                            sVolName        AS STRING, ;
                            lVolSize        AS LONG  , ;
                            @lVolSerial     AS PTR   , ;
@@ -1459,93 +1460,93 @@ DLL32 Function GetVolInfo( sDrive          AS STRING, ;
                LIB  "kernel32.dll"
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: GetRegistInfos
 * Beschreibung:
 * Argumente...: None
 * R�ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION GetRegistInfos()
+function GetRegistInfos()
 
-   LOCAL cRegText := ""
-   LOCAL cRegFile := IIF( FILE( ".\VRD.LIZ" ), ".\VRD.LIZ", ;
+   local cRegText := ""
+   local cRegFile := IIF( FILE( ".\VRD.LIZ" ), ".\VRD.LIZ", ;
                           "..\VDESIGN.PRG\LICENCE\VRD.LIZ" )
 
    cRegText := DeCrypt( MEMOREAD( cRegFile ), "A"+"N"+"I"+"G"+"E"+"R" )
 
-   IF lPersonal = .T. .OR. lStandard = .T.
+   if lPersonal = .T. .OR. lStandard = .T.
       cRegText := "S" +"o"+"d"+"t"+"a"+"l"+"b"+"e"+"r"+"s" + "+Partner"
-   ELSEIF SUBSTR( cRegText, 11, 3 ) <> "209" .AND. lBeta = .F.
+   ELSEif SUBSTR( cRegText, 11, 3 ) <> "209" .AND. lBeta = .F.
       lDemo := .T.
       cRegText := "U"+"n"+"r"+"e"+"g"+"i"+"s"+"t"+"e"+"r"+"e"+"d "+"D"+"e"+"m"+"o "+"V"+"e"+"r"+"s"+"i"+"o"+"n"
-   ELSEIF SUBSTR( cRegText, 11, 3 ) <> "209" .AND. lBeta = .T.
+   ELSEif SUBSTR( cRegText, 11, 3 ) <> "209" .AND. lBeta = .T.
       lDemo := .T.
       cRegText := "beta version"
-   ELSEIF lBeta = .F.
-      IF SUBSTR( cRegText, 14, 7 ) = "Ghze646" .OR. SUBSTR( cRegText, 14, 7 ) = "fSDFh23"
-         IF SUBSTR( cRegText, 14, 7 ) <> "Ghze646"
+   ELSEif lBeta = .F.
+      if SUBSTR( cRegText, 14, 7 ) = "Ghze646" .OR. SUBSTR( cRegText, 14, 7 ) = "fSDFh23"
+         if SUBSTR( cRegText, 14, 7 ) <> "Ghze646"
             lProfi := .F.
-         ENDIF
+         endif
          cRegText := ALLTRIM( SUBSTR( cRegText, 21, 10 ) + ;
                               SUBSTR( cRegText, 41, 10 ) + ;
                               SUBSTR( cRegText, 61, 10 ) + ;
                               SUBSTR( cRegText, 81, 10 ) + ;
                               SUBSTR( cRegText, 101, 10 ) )
-      ENDIF
-   ENDIF
+      endif
+   endif
 
    lDemo = .F. // FiveTech
    cRegText = "(c) FiveTech Software 2014" // FiveTech
 
-RETURN ( cRegText )
+return ( cRegText )
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: GetLicLanguage
 * Beschreibung:
 * Argumente...: None
 * R�ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION GetLicLanguage()
+function GetLicLanguage()
 
-   LOCAL cText     := ""
-   LOCAL nLanguage := VAL( GetPvProfString( "General", "Language", "1", cGeneralIni ) )
+   local cText     := ""
+   local nLanguage := VAL( GetPvProfString( "General", "Language", "1", cGeneralIni ) )
 
-   IF lBeta = .F.
-      IF nLanguage = 2
+   if lBeta = .F.
+      if nLanguage = 2
          cText := "Lizensiert f�r: "
-      ELSEIF nLanguage = 3
+      ELSEif nLanguage = 3
          cText := "In licenza a: "
-      ELSEIF nLanguage = 4
+      ELSEif nLanguage = 4
          cText := "Licenciado a: "
       ELSE
          cText := "Licenced to: "
-      ENDIF
-   ENDIF
+      endif
+   endif
 
-RETURN ( cText )
+return ( cText )
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: EditLanguage
 * Beschreibung:
 * Argumente...: None
 * R�ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION EditLanguage()
+function EditLanguage()
 
-   LOCAL oDlg, oBrw
-   LOCAL aHeader    := ARRAY(20)
-   LOCAL aCol       := ARRAY(20)
-   LOCAL nVorColor  := RGB( 0, 0, 0 )
-   LOCAL nHinColor  := RGB( 224, 239, 223 )
-   LOCAL nHinColor2 := RGB( 223, 231, 224 )
-   LOCAL nHinColor3 := RGB( 235, 234, 203 )
-   LOCAL nHVorCol   := RGB( 0, 0, 0 )
-   LOCAL nSelect    := SELECT()
+   local oDlg, oBrw
+   local aHeader    := ARRAY(20)
+   local aCol       := ARRAY(20)
+   local nVorColor  := RGB( 0, 0, 0 )
+   local nHinColor  := RGB( 224, 239, 223 )
+   local nHinColor2 := RGB( 223, 231, 224 )
+   local nHinColor3 := RGB( 235, 234, 203 )
+   local nHVorCol   := RGB( 0, 0, 0 )
+   local nSelect    := SELECT()
 
    DBUSEAREA( .T.,, "LANGUAGE.DBF",, .F. )
 
@@ -1590,19 +1591,19 @@ FUNCTION EditLanguage()
    LANGUAGE->(DBCLOSEAREA())
    SELECT( nSelect )
 
-RETURN (.T.)
+return .T.
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: GetLanguage
 * Beschreibung:
 * Argumente...: None
 * R�ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION GetLanguage()
+function GetLanguage()
 
-   LOCAL oDlg
+   local oDlg
 
    LANGUAGE->(RLOCK())
 
@@ -1634,121 +1635,121 @@ FUNCTION GetLanguage()
 
    LANGUAGE->(DBUNLOCK())
 
-RETURN (.T.)
+return .T.
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: ER_GetPixel
 * Beschreibung:
 * Argumente...: None
 * R�ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION ER_GetPixel( nValue )
+function ER_GetPixel( nValue )
 
-   IF Upper( ValType( nMeasure ) ) = "L"
+   if Upper( ValType( nMeasure ) ) = "L"
       nMeasure := 1
-   ENDIF
+   endif
 
-   IF nMeasure = 1
+   if nMeasure = 1
       //mm
       nValue := nValue * 3
-   ELSEIF nMeasure = 2
+   ELSEif nMeasure = 2
       //Inch
       nValue := nValue * 100
-   ENDIF
+   endif
 
-RETURN ( nValue )
+return ( nValue )
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: GetCmInch
 * Beschreibung:
 * Argumente...: None
 * R�ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION GetCmInch( nValue )
+function GetCmInch( nValue )
 
-   IF nMeasure = 1
+   if nMeasure = 1
       //mm
       nValue := ROUND( nValue / 3, 0 )
-   ELSEIF nMeasure = 2
+   ELSEif nMeasure = 2
       //Inch
       nValue := ROUND( nValue / 100, 2 )
-   ENDIF
+   endif
 
-RETURN ( nValue )
+return ( nValue )
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: GetField
 * Beschreibung:
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION GetField( cString, nNr, cSepChar )
+function GetField( cString, nNr, cSepChar )
 
    DEFAULT cSepChar := "|"
 
-RETURN StrToken( cString, nNr, cSepChar )
+return StrToken( cString, nNr, cSepChar )
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: StrCount
 * Beschreibung:
 * Argumente...: None
 * R�ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION StrCount( cText, cString )
+function StrCount( cText, cString )
 
-   LOCAL i
-   LOCAL nCount := 0
+   local i
+   local nCount := 0
 
-   FOR i := 1 TO LEN( ALLTRIM( cText ) )
-      IF SUBSTR( cText, i, LEN( cString ) ) == cString
+   for i := 1 TO LEN( ALLTRIM( cText ) )
+      if SUBSTR( cText, i, LEN( cString ) ) == cString
          ++nCount
-      ENDIF
+      endif
    NEXT
 
-RETURN ( nCount )
+return ( nCount )
 
 
-* - FUNCTION ---------------------------------------------------------------
-*  Function....: GetResDLL()
+* - function ---------------------------------------------------------------
+*  function....: GetResDLL()
 *  Beschreibung:
 *  Argumente...: None
 *  R�ckgabewert:
 *  Author......: Timm Sodtalbers
 * --------------------------------------------------------------------------
-FUNCTION GetResDLL()
+function GetResDLL()
 
-   LOCAL cDLLName
-   LOCAL nLanguage := VAL( GetPvProfString( "General", "Language", "1", cGeneralIni ) )
+   local cDLLName
+   local nLanguage := VAL( GetPvProfString( "General", "Language", "1", cGeneralIni ) )
 
-   IF nLanguage < 1
+   if nLanguage < 1
       nLanguage := 1
-   ENDIF
+   endif
 
    cDLLName := "VRD" + ALLTRIM(STR( nLanguage, 1, 3)) + ".DLL"
 
-   IF FILE( cDLLName ) = .F.
+   if FILE( cDLLName ) = .F.
       MsgInfo( GL("Language specific file") + " " + cDLLName + " " + GL("not found!") + CRLF + CRLF + ;
                GL("The english file will be used instead.") )
       cDLLName := "VRD1.DLL"
-   ENDIF
+   endif
 
-RETURN ( cDLLName )
+return ( cDLLName )
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: OpenLanguage
 * Beschreibung:
 * Argumente...: None
 * R�ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION OpenLanguage()
+function OpenLanguage()
 
    USE LANGUAGE.DBF
 
@@ -1765,25 +1766,25 @@ FUNCTION OpenLanguage()
 
    LANGUAGE->(DBCLOSEAREA())
 
-RETURN (.T.)
+return .T.
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: GL
 * Beschreibung: Get Language
 * Argumente...: None
 * R�ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION GL( cOriginal )
+function GL( cOriginal )
 
-   LOCAL cAltText := strtran( cOriginal, " ", "_" )
-   LOCAL cText    := cAltText
-   LOCAL nSelect  := Select()
-   LOCAL nPos     := ASCAN( oGenVar:aLanguages, ;
+   local cAltText := strtran( cOriginal, " ", "_" )
+   local cText    := cAltText
+   local nSelect  := Select()
+   local nPos     := ASCAN( oGenVar:aLanguages, ;
                             { |aVal| ALLTRIM( aVal[1] ) == ALLTRIM( cAltText ) } )
 
-   IF nPos = 0
+   if nPos = 0
       //New String
       SELECT 0
       USE LANGUAGE
@@ -1797,151 +1798,151 @@ FUNCTION GL( cOriginal )
       SELECT( nSelect )
    ELSE
       cText := oGenVar:aLanguages[ nPos, oGenVar:nLanguage ]
-      IF EMPTY( cText )
+      if EMPTY( cText )
          cText := oGenVar:aLanguages[ nPos, 1 ]
-      ENDIF
-   ENDIF
+      endif
+   endif
 
-RETURN ( STRTRAN(ALLTRIM( cText ), "_", " " ) )
+return ( STRTRAN(ALLTRIM( cText ), "_", " " ) )
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: PrintReport
 * Beschreibung:
 * Argumente...: None
 * R�ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION PrintReport( lPreview, lDeveloper, lPrintDlg )
+function PrintReport( lPreview, lDeveloper, lPrintDlg )
 
-   LOCAL i, oVRD, cCondition
-   LOCAL lPrintIDs := IIF( GetPvProfString( "General", "PrintIDs", "0", cDefIni ) = "0", .F., .T. )
+   local i, oVRD, cCondition
+   local lPrintIDs := IIF( GetPvProfString( "General", "PrintIDs", "0", cDefIni ) = "0", .F., .T. )
 
    DEFAULT lPreview   := .F.
    DEFAULT lDeveloper := .F.
    DEFAULT lPrintDlg  := .T.
 
-   IF lDeveloper = .F.
+   if lDeveloper = .F.
       ShellExecute( 0, "Open", ;
          "ERSTART.EXE", ;
          "-File=" + ALLTRIM( cDefIni ) + ;
          IIF( lPreview, " -PREVIEW", " -PRINTDIALOG" ) + ;
          "-CHECK", ;
          NIL, 1 )
-      RETURN (.T.)
+      return .T.
    ELSE
       EASYREPORT oVRD NAME cDefIni OF oMainWnd PREVIEW lPreview ;
                  PRINTDIALOG IIF( lPreview, .F., lPrintDlg ) PRINTIDS NOEXPR
-   ENDIF
+   endif
 
-   IF oVRD:lDialogCancel = .T.
-      RETURN( .F. )
-   ENDIF
+   if oVRD:lDialogCancel = .T.
+      return( .F. )
+   endif
 
    //erste Seite
-   FOR i := 1 TO LEN( oVRD:aAreaInis )
+   for i := 1 TO LEN( oVRD:aAreaInis )
 
-      IF GetPvProfString( "General", "Condition", "0", oVRD:aAreaInis[i] ) <> "4"
+      if GetPvProfString( "General", "Condition", "0", oVRD:aAreaInis[i] ) <> "4"
          PRINTAREA i OF oVRD
-      ENDIF
+      endif
 
    NEXT
 
    //zweite Seite
-   IF IsSecondPage( oVRD ) = .T.
+   if IsSecondPage( oVRD ) = .T.
 
       oVRD:PageBreak()
 
-      FOR i := 1 TO LEN( oVRD:aAreaInis )
+      for i := 1 TO LEN( oVRD:aAreaInis )
          cCondition := GetPvProfString( "General", "Condition", "0", oVRD:aAreaInis[i] )
-         IF cCondition = "1" .OR. cCondition = "4"
+         if cCondition = "1" .OR. cCondition = "4"
             PRINTAREA i OF oVRD
-         ENDIF
+         endif
       NEXT
 
-   ENDIF
+   endif
 
    END EASYREPORT oVRD
 
-RETURN (.T.)
+return .T.
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: PrintReport
 * Beschreibung:
 * Argumente...: None
 * R�ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION AltPrintReport( lPreview, cPrinter )
+function AltPrintReport( lPreview, cPrinter )
 
-   LOCAL i, oVRD, cCondition
-   LOCAL lPrintIDs := IIF( GetPvProfString( "General", "PrintIDs", "0", cDefIni ) = "0", .F., .T. )
+   local i, oVRD, cCondition
+   local lPrintIDs := IIF( GetPvProfString( "General", "PrintIDs", "0", cDefIni ) = "0", .F., .T. )
 
    oVRD := VRD():New( cDefIni, lPreview, cPrinter, oMainWnd,, lPrintIDs,, .T. )
 
    //erste Seite
-   FOR i := 1 TO LEN( oVRD:aAreaInis )
+   for i := 1 TO LEN( oVRD:aAreaInis )
 
-      IF GetPvProfString( "General", "Condition", "0", oVRD:aAreaInis[i] ) <> "4"
+      if GetPvProfString( "General", "Condition", "0", oVRD:aAreaInis[i] ) <> "4"
          oVRD:PrintArea( i )
-      ENDIF
+      endif
 
    NEXT
 
    //zweite Seite
-   IF IsSecondPage( oVRD ) = .T.
+   if IsSecondPage( oVRD ) = .T.
 
       oVRD:PageBreak()
 
-      FOR i := 1 TO LEN( oVRD:aAreaInis )
+      for i := 1 TO LEN( oVRD:aAreaInis )
          cCondition := GetPvProfString( "General", "Condition", "0", oVRD:aAreaInis[i] )
-         IF cCondition = "1" .OR. cCondition = "4"
+         if cCondition = "1" .OR. cCondition = "4"
             oVRD:PrintArea( i )
-         ENDIF
+         endif
       NEXT
 
-   ENDIF
+   endif
 
    oVrd:End()
 
-RETURN (.T.)
+return .T.
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: IsSecondPage
 * Beschreibung:
 * Argumente...: None
 * R�ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION IsSecondPage( oVRD )
+function IsSecondPage( oVRD )
 
-   LOCAL i
-   LOCAL lReturn := .F.
+   local i
+   local lreturn := .F.
 
-   FOR i := 1 TO LEN( oVRD:aAreaInis )
+   for i := 1 TO LEN( oVRD:aAreaInis )
 
-      IF GetPvProfString( "General", "Condition", "0", oVRD:aAreaInis[i] ) = "4"
-         lReturn := .T.
+      if GetPvProfString( "General", "Condition", "0", oVRD:aAreaInis[i] ) = "4"
+         lreturn := .T.
          EXIT
-      ENDIF
+      endif
 
    NEXT
 
-RETURN ( lReturn )
+return ( lreturn )
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: OpenUndo()
 * Beschreibung:
 * Argumente...: None
 * R�ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION OpenUndo()
+function OpenUndo()
 
-   LOCAL nSelect := SELECT()
+   local nSelect := SELECT()
 
    oGenVar:AddMember( "cUndoFileName",, cTempFile() )
    oGenVar:AddMember( "cRedoFileName",, cTempFile() )
@@ -1966,36 +1967,36 @@ FUNCTION OpenUndo()
    TMPREDO->(DBCLOSEAREA())
    SELECT( nSelect )
 
-RETURN (.T.)
+return .T.
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: CloseUndo()
 * Beschreibung:
 * Argumente...: None
 * R�ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION CloseUndo()
+function CloseUndo()
 
   DelFile( ".\" + oGenVar:cUndoFileName + ".dbf" )
   DelFile( ".\" + oGenVar:cUndoFileName + ".dbt" )
   DelFile( ".\" + oGenVar:cRedoFileName + ".dbf" )
   DelFile( ".\" + oGenVar:cRedoFileName + ".dbt" )
 
-RETURN (.T.)
+return .T.
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: Add2Undo()
 * Beschreibung:
 * Argumente...: None
 * R�ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION Add2Undo( cEntryText, nEntryNr, nAreaNr, cAreaText )
+function Add2Undo( cEntryText, nEntryNr, nAreaNr, cAreaText )
 
-   LOCAL nSelect := SELECT()
+   local nSelect := SELECT()
 
    DEFAULT cAreaText := ""
 
@@ -2015,22 +2016,22 @@ FUNCTION Add2Undo( cEntryText, nEntryNr, nAreaNr, cAreaText )
 
    oBar:AEvalWhen()
 
-RETURN (.T.)
+return .T.
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: Undo
 * Beschreibung:
 * Argumente...: None
 * R�ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION Undo()
+function Undo()
 
-   LOCAL oIni, oItemInfo, nOldWidth, nOldHeight
-   LOCAL nSelect   := SELECT()
-   LOCAL aFirst    := { .F., 0, 0, 0, 0, 0 }
-   LOCAL nElemente := 0
+   local oIni, oItemInfo, nOldWidth, nOldHeight
+   local nSelect   := SELECT()
+   local aFirst    := { .F., 0, 0, 0, 0, 0 }
+   local nElemente := 0
 
    UnSelectAll()
 
@@ -2050,7 +2051,7 @@ FUNCTION Undo()
 
    SELECT TMPUNDO
 
-   IF TMPUNDO->ENTRYNR = 0
+   if TMPUNDO->ENTRYNR = 0
 
       //Area undo
       nOldWidth  := VAL( GetPvProfString( "General", "Width", "600", aAreaIni[ TMPUNDO->AREANR ] ) )
@@ -2069,7 +2070,7 @@ FUNCTION Undo()
 
       ERASE ".\TMPAREA.INI"
 
-   ELSEIF EMPTY( TMPUNDO->ENTRYTEXT )
+   ELSEif EMPTY( TMPUNDO->ENTRYTEXT )
 
       //New item was build
       DeleteItem( TMPUNDO->ENTRYNR, TMPUNDO->AREANR, .T.,, .T. )
@@ -2077,9 +2078,9 @@ FUNCTION Undo()
 
    ELSE
 
-      IF aItems[ TMPUNDO->AREANR, TMPUNDO->ENTRYNR ] <> NIL
+      if aItems[ TMPUNDO->AREANR, TMPUNDO->ENTRYNR ] <> NIL
          DeleteItem( TMPUNDO->ENTRYNR, TMPUNDO->AREANR, .T.,, .T. )
-      ENDIF
+      endif
 
       INI oIni FILE aAreaIni[ TMPUNDO->AREANR ]
          SET SECTION "Items" ENTRY ALLTRIM(STR(TMPUNDO->ENTRYNR,5)) TO TMPUNDO->ENTRYTEXT OF oIni
@@ -2087,13 +2088,13 @@ FUNCTION Undo()
 
       oItemInfo := VRDItem():New( TMPUNDO->ENTRYTEXT )
 
-      IF oItemInfo:nShow = 1
+      if oItemInfo:nShow = 1
          aItems[ TMPUNDO->AREANR, TMPUNDO->ENTRYNR ] := NIL
          ShowItem( TMPUNDO->ENTRYNR, TMPUNDO->AREANR, aAreaIni[ TMPUNDO->AREANR ], aFirst, nElemente )
          aItems[ TMPUNDO->AREANR, TMPUNDO->ENTRYNR ]:lDrag := .T.
-      ENDIF
+      endif
 
-   ENDIF
+   endif
 
    DELETE
    PACK
@@ -2106,22 +2107,22 @@ FUNCTION Undo()
    TMPREDO->(DBCLOSEAREA())
    SELECT( nSelect )
 
-RETURN (.T.)
+return .T.
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: Redo
 * Beschreibung:
 * Argumente...: None
 * R�ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION Redo()
+function Redo()
 
-   LOCAL oIni, oItemInfo, nOldWidth, nOldHeight
-   LOCAL nSelect   := SELECT()
-   LOCAL aFirst    := { .F., 0, 0, 0, 0, 0 }
-   LOCAL nElemente := 0
+   local oIni, oItemInfo, nOldWidth, nOldHeight
+   local nSelect   := SELECT()
+   local aFirst    := { .F., 0, 0, 0, 0, 0 }
+   local nElemente := 0
 
    UnSelectAll()
 
@@ -2141,7 +2142,7 @@ FUNCTION Redo()
 
    SELECT TMPREDO
 
-   IF TMPREDO->ENTRYNR = 0
+   if TMPREDO->ENTRYNR = 0
 
       //Area redo
       nOldWidth  := VAL( GetPvProfString( "General", "Width", "600", aAreaIni[ TMPREDO->AREANR ] ) )
@@ -2159,7 +2160,7 @@ FUNCTION Redo()
 
       ERASE ".\TMPAREA.INI"
 
-   ELSEIF EMPTY( TMPREDO->ENTRYTEXT )
+   ELSEif EMPTY( TMPREDO->ENTRYTEXT )
 
       //New item was build
       DeleteItem( TMPREDO->ENTRYNR, TMPREDO->AREANR, .T.,, .T. )
@@ -2167,9 +2168,9 @@ FUNCTION Redo()
 
    ELSE
 
-      IF aItems[ TMPUNDO->AREANR, TMPUNDO->ENTRYNR ] <> NIL
+      if aItems[ TMPUNDO->AREANR, TMPUNDO->ENTRYNR ] <> NIL
          DeleteItem( TMPREDO->ENTRYNR, TMPREDO->AREANR, .T.,, .T. )
-      ENDIF
+      endif
 
       INI oIni FILE aAreaIni[ TMPREDO->AREANR ]
          SET SECTION "Items" ENTRY ALLTRIM(STR(TMPREDO->ENTRYNR,5)) TO TMPREDO->ENTRYTEXT OF oIni
@@ -2177,13 +2178,13 @@ FUNCTION Redo()
 
       oItemInfo := VRDItem():New( TMPREDO->ENTRYTEXT )
 
-      IF oItemInfo:nShow = 1
+      if oItemInfo:nShow = 1
          aItems[ TMPREDO->AREANR, TMPREDO->ENTRYNR ] := NIL
          ShowItem( TMPREDO->ENTRYNR, TMPREDO->AREANR, aAreaIni[ TMPREDO->AREANR ], aFirst, nElemente )
          aItems[ TMPREDO->AREANR, TMPREDO->ENTRYNR ]:lDrag := .T.
-      ENDIF
+      endif
 
-   ENDIF
+   endif
 
    DELETE
    PACK
@@ -2196,47 +2197,47 @@ FUNCTION Redo()
    TMPREDO->(DBCLOSEAREA())
    SELECT( nSelect )
 
-RETURN (.T.)
+return .T.
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: RefreshUndo()
 * Beschreibung:
 * Argumente...: None
 * R�ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION RefreshUndo()
+function RefreshUndo()
 
    nUndoCount := TMPUNDO->(LASTREC())
 
-RETURN (.T.)
+return .T.
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: RefreshRedo()
 * Beschreibung:
 * Argumente...: None
 * R�ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION RefreshRedo()
+function RefreshRedo()
 
    nRedoCount := TMPREDO->(LASTREC())
 
-RETURN (.T.)
+return .T.
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: ClearUndoRedo
 * Beschreibung:
 * Argumente...: None
 * R�ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION ClearUndoRedo()
+function ClearUndoRedo()
 
-   LOCAL nSelect := SELECT()
+   local nSelect := SELECT()
 
    SELECT 0
    USE ( oGenVar:cUndoFileName + ".dbf" ) ALIAS TMPUNDO
@@ -2253,23 +2254,23 @@ FUNCTION ClearUndoRedo()
 
    oBar:AEvalWhen()
 
-RETURN (.T.)
+return .T.
 
 
-* - FUNCTION ---------------------------------------------------------------
-*  Function....: UndoRedoMenu
+* - function ---------------------------------------------------------------
+*  function....: UndoRedoMenu
 *  Beschreibung: Shell-Menu anzeigen
 *  Argumente...: None
 *  R�ckgabewert: ( NIL )
 *  Author......: Timm Sodtalbers
 * --------------------------------------------------------------------------
-FUNCTION UndoRedoMenu( nTyp, oBtn )
+function UndoRedoMenu( nTyp, oBtn )
 
-   LOCAL i, oMenu
-   LOCAL cText1 := "" //IIF( nTyp = 1, GL("Undo"), GL("Redo") )
-   LOCAL cText2 := IIF( nTyp = 1, GL("Undo all"), GL("Redo all") )
-   LOCAL nCount := IIF( nTyp = 1, nUndoCount, nRedoCount )
-   LOCAL aRect  := GetClientRect( oBtn:hWnd )
+   local i, oMenu
+   local cText1 := "" //IIF( nTyp = 1, GL("Undo"), GL("Redo") )
+   local cText2 := IIF( nTyp = 1, GL("Undo all"), GL("Redo all") )
+   local nCount := IIF( nTyp = 1, nUndoCount, nRedoCount )
+   local aRect  := GetClientRect( oBtn:hWnd )
 
    MENU oMenu POPUP
 
@@ -2310,22 +2311,22 @@ FUNCTION UndoRedoMenu( nTyp, oBtn )
 
    ACTIVATE POPUP oMenu AT aRect[3], aRect[2] OF oBtn
 
-RETURN( oMenu )
+return( oMenu )
 
 
-*-- FUNCTION -----------------------------------------------------------------
+*-- function -----------------------------------------------------------------
 * Name........: MultiUndoRedo
 * Beschreibung:
 * Argumente...: None
 * R�ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION MultiUndoRedo( nTyp, nCount )
+function MultiUndoRedo( nTyp, nCount )
 
-   LOCAL i
+   local i
 
-   FOR i := 1 TO nCount
+   for i := 1 TO nCount
       IIF( nTyp = 1, Undo(), Redo() )
    NEXT
 
-RETURN (.T.)
+return .T.
