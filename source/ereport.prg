@@ -3018,9 +3018,18 @@ function AreaChange( nArea, cAreaTitle, nOldWidth, nWidth, nOldHeight, nHeight )
    aWnd[ nArea ]:cTitle := cAreaTitle
    oGenVar:aAreaTitle[ nAktArea ]:Refresh()
 
-   aCbxItems[oCbxArea:nAt] := cAreaTitle
-   oCbxArea:Modify( cAreaTitle, oCbxArea:nAt )
-   oCbxArea:Set( AllTrim( cAreaTitle ) )
+  // aCbxItems[oCbxArea:nAt] := cAreaTitle
+  // oCbxArea:Modify( cAreaTitle, oCbxArea:nAt )
+  // oCbxArea:Set( AllTrim( cAreaTitle ) )
+
+  oMenuAreas:DelItems()
+   for n = 1 to Len( aWndTitle )
+      if ! Empty( aWndTitle[ n ] )
+         oMenuAreas:Add( TmenuItem():New( aWndTitle[ n ],,,,;
+         {||   aWnd[ AScan( aWndTitle, oMenuItem:cPrompt ) ]:SetFocus(), SetWinNull() }  )  )
+
+      endif
+   next
 
    if nOldWidth <> nWidth
 
