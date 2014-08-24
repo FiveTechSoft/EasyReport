@@ -2,7 +2,7 @@
 
 HBDIR=c:\harbour
 BCDIR=c:\bcc582
-FWDIR=c:\fwh
+FWDIR=c:\fwteam
 
 #change these paths as needed
 .path.obj = .\obj

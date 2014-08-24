@@ -87,7 +87,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
 
    DEFINE BRUSH oBrush RESOURCE "background"
 
-  // SetDlgGradient( oER:aClrDialogs )
+   SetDlgGradient( oER:aClrDialogs )
       
    DEFINE WINDOW oMainWnd FROM 0, 0 to 50, 200 VSCROLL ;
       TITLE MainCaption() ;
@@ -573,7 +573,7 @@ function IniMainWindow()
       //Fonts definieren
       DefineFonts()
       //Areas initieren
-       IniAreasOnBar()
+      // IniAreasOnBar()
       //Designwindows �ffnen
       ClientWindows()
       //Areas anzeigen
@@ -755,28 +755,6 @@ function ScrollHorizont( lLeft, lRight, lPageLeft, lPageRight, lPos, nPosZugabe 
 return .T.
 
 //----------------------------------------------------------------------------//
- 
-function IniAreasOnBar()
-
-   local i, oFont1
-   local cCbxItem   := ""
-   local nAreaStart := oMainWnd:nRight - 180
-
-   aCbxItems := {""}
-
-   DEFINE FONT oFont1 NAME "Ms Sans Serif" SIZE 0,-10
-
-   //@ 9, nAreaStart - 75 SAY GL("Area") + ":" OF oBar PIXEL SIZE 70, 16 FONT oFont1 RIGHT
-
-   @ 25, nAreaStart COMBOBOX oCbxArea VAR cCbxItem ITEMS aCbxItems OF oBar ;
-      PIXEL SIZE 150, 300 FONT oFont1 ;
-      WHEN .NOT. EMPTY( cDefIni ) ;
-
-   oFont1:End()
-
-return .T.
-
-//----------------------------------------------------------------------------//
 
 function SetMainWnd()
 
@@ -835,10 +813,6 @@ function ShowAreasOnBar()
 
    //Fokus auf das erste Fenster legen
    aWnd[ AScan( aWnd, { |x| x != nil } ) ]:SetFocus()
-
-    oCbxArea:SetItems( aCbxItems )
-    oCbxArea:Select( 1 )
-    oCbxArea:bChange = {|| aWnd[ASCAN( aWndTitle, oCbxArea:cTitle )]:SetFocus(), SetWinNull() }
 
 return .T.
 
@@ -1350,10 +1324,7 @@ function FillWindow( nArea, cAreaIni )
    
    aWnd[ nArea ]:bPainted  = {| hDC, cPS | ZeichneHintergrund( nArea ) }
 
-   aWnd[ nArea ]:bGotFocus = {|| SetTitleColor( .F. ), ;
-                               nAktArea := nArea,; 
-                               oCbxArea:Set( aWndTitle[ nArea ] ), ; 
-                               SetTitleColor( .T. ) }
+   aWnd[ nArea ]:bGotFocus = { || SetTitleColor( .T. ) }
 
    aWnd[ nArea ]:bMMoved = {|nRow,nCol,nFlags| ;
                            SetReticule( nRow, nCol, nArea ), ;
@@ -3151,8 +3122,7 @@ METHOD New() CLASS TEasyReport
    //                                 { { 0.40, nRGB( 68, 68, 68 ), nRGB( 109, 109, 109 ) }, ;
    //                                   { 0.60, nRGB( 109, 109, 109 ), nRGB( 116, 116, 116 ) } } ) }
 
-   ::aClrDialogs = { { 0.60,  nRGB( 221, 227, 233) ,  nRGB( 221, 227, 233 ) }, ;
-                     { 0.40,nRGB( 221, 227, 233), nRGB( 221, 227, 233) } }  
+   ::aClrDialogs = { { 1, RGB( 199, 216, 237 ), RGB( 237, 242, 248 ) } }
 
   //  ::aColorDlg :=  { { 1, RGB( 199, 216, 237 ), RGB( 237, 242, 248 ) } } 
 
@@ -3205,50 +3175,6 @@ METHOD MouseLeave( nRow, nCol, nFlags ) CLASS ER_MdiChild
    SetReticule( nRow, nCol, ::nArea )
 
 return nil
-
-
-//----------------------------------------------------------------------------//
-
-#pragma BEGINDUMP
-
-    #include <windows.h>
-    #include <hbapi.h>
-
-
-void MaskRegion(HDC hdc, RECT * rct,
-                       COLORREF cTransparentColor,
-                       COLORREF cBackgroundColor);
-
-//----------------------------------------------------------------------------//
-
-
- HB_FUNC( SETMASKED ) // ( hBitmap , lMaskColor) --> nil
-{
-   HBITMAP hBitmap ;
-   DWORD lMaskColor ;
-   HDC     hDC ;
-   BITMAP  Bmp ;
-   RECT    rct ;
-
-   hBitmap  =  ( HBITMAP ) hb_parnl( 1 ) ;
-   lMaskColor   =  hb_parnl( 2 ) ;
-
-   hDC      = CreateCompatibleDC( NULL ) ;
-   GetObject( hBitmap, sizeof( BITMAP ), ( LPSTR ) &Bmp ) ;
-   SelectObject( hDC, ( HGDIOBJ ) LOWORD( hBitmap ) ) ;
-
-   rct.top = 0 ;
-   rct.left = 0 ;
-   rct.right = Bmp.bmWidth - 1 ;
-   rct.bottom = Bmp.bmHeight -1 ;
-
-   MaskRegion( hDC, &rct, GetPixel( hDC, 0, 0 ), lMaskColor ) ;
-
-   DeleteDC( hDC ) ;
-
-}
-#pragma ENDDUMP
-
 
 
 //----------------------------------------------------------------------------//
