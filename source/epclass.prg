@@ -2978,6 +2978,7 @@ METHOD Img_Save( aSaveFiles, cFileName, cFormat, nCompress, lOverWrite, nOption,
    endcase
 
    if img_typ = 500
+     // comentado para quitar errores
     //  oPDF := TPDF():NEW( ::cIni, cFilename, ::oDevice, ::cPDFLicName, ::cPDFLicCode, ::nPDFLicNr )
     //  IF !oPDF:PDFInit()
     //     RETURN NIL
@@ -2989,6 +2990,7 @@ METHOD Img_Save( aSaveFiles, cFileName, cFormat, nCompress, lOverWrite, nOption,
    lOK := ::SaveProcess( cFileName, aSaveFiles, @aFileName, img_typ, img_option, oPDF, lOverWrite )
 
    IF img_typ = 500
+     // comentado para quitar errores
    //   ::aFilesSaved := { ALLTRIM( cFilename ) }
    //   aFileName     := { ALLTRIM( cFilename ) }
    //   oPDF:EndDoc()
@@ -3155,7 +3157,7 @@ METHOD SavePreview( cFileName, aSaveFiles, aFileName, img_typ, img_option, ;
             aMeter[1]:Set( 100 )
 
          ELSE
-
+           // comentado para quitar errores
           //  ImagSaveAs( ::oWnd:hwnd, henhmeta, cFileSave, img_typ, img_option )
           //  AADD( ::aFilesSaved, ALLTRIM( cFileSave ) )
 
@@ -3196,7 +3198,7 @@ METHOD Copy2Clipboard() CLASS EPREVIEW
    ::Watermark( ::oDevice:hDCOut )
    DeleteEnhMetafile( hOldMeta )
    henhmeta := CloseEnhMetaFile(::odevice:hDCOut )
-
+  // comentado para quitar errores
  //  CopyClip( ::oWnd:hwnd, henhmeta )
 
 RETURN NIL
@@ -3230,6 +3232,7 @@ METHOD SaveProcess( cFileName, aSaveFiles, aFileName, img_typ, img_option, ;
    @ 2.9, 18.0 BUTTON oBtn PROMPT EP_GL("&Cancel") OF oDlg ;
       ACTION ( lEnd := .T., lCancel := .T. ) SIZE 46, 10
 
+  // comentado para quitar errores
  //  oDlg:bStart = { ||  ImgCallbackMsg( {|nr| aMeter[1]:Set( nr ) } ), ;
  //     aFileName := ::SavePreview( cFileName, aSaveFiles, aFileName, img_typ, ;
   //                                img_option, oPDF, lOverWrite, aMeter, aVal, aText ), ;
@@ -3247,12 +3250,8 @@ METHOD SaveProcess( cFileName, aSaveFiles, aFileName, img_typ, img_option, ;
 
 RETURN ( !lCancel )
 
+//------------------------------------------------------------------------------
 
-*-- METHOD -------------------------------------------------------------------
-*         Name: Img_Zip
-*  Description:
-*       Author: Juergen Baez / Timm Sodtalbers
-*-----------------------------------------------------------------------------
 METHOD Img_Zip( aFiles, cFilename, lOverwrite ) CLASS EPREVIEW
 
    LOCAL i, lOK
@@ -3269,7 +3268,7 @@ METHOD Img_Zip( aFiles, cFilename, lOverwrite ) CLASS EPREVIEW
    ELSEIF LEN( aFiles ) > 0
 
       FERASE( cFilename )
-    //  lOK := Hb_ZipFile( cFilename, aFiles )  // comentada de momento
+     // lOK := Hb_ZipFile( cFilename, aFiles )  // comentado para quitar errores
        IF !lOk
           MsgStop( EP_GL( "Error Zipping" ) )
        ENDIF
@@ -3280,12 +3279,8 @@ RETURN NIL
 
 #ENDIF
 
+//------------------------------------------------------------------------------
 
-*-- METHOD -------------------------------------------------------------------
-*         Name: SaveMessage
-*  Description:
-*       Author: Juergen Baez / Timm Sodtalbers
-*-----------------------------------------------------------------------------
 METHOD SaveMessage( cFileName ) CLASS EPREVIEW
 
    LOCAL oDlg, oFont
@@ -3299,7 +3294,7 @@ METHOD SaveMessage( cFileName ) CLASS EPREVIEW
 
    @ 16, 4 SAY ALLTRIM( cFileName ) OF oDlg SIZE 173, 13 PIXEL CENTER FONT oFont
 
-//   @ 26, 5 TO 29, 176 OF oDlg PIXEL   // comentada
+//   @ 26, 5 TO 29, 176 OF oDlg PIXEL   // comentada para quitar errores
 
    @ 38, 5 SAY ::RegInfos() OF oDlg SIZE 129, 10 PIXEL
 
