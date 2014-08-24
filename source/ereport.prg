@@ -2474,7 +2474,7 @@ return .T.
 
    local oDlg
    local oTree
-   LOCAL oImageList, oBmp1, oBmp2
+   local oImageList, oBmp1, oBmp2
 
    DEFINE DIALOG oDlg RESOURCE "Itemlist" TITLE GL("Item List")
 
@@ -2494,10 +2494,10 @@ static Function FillTree( oTree, oDlg )
    local lFirstArea    := .T.
    local aIniEntries   := GetIniSection( "Areas", cDefIni )
    local cAreaFilesDir := CheckPath( GetPvProfString( "General", "AreaFilesDir", "", cDefIni ) )
-   LOCAL oTr1
-   LOCAL aTr:= {}
+   local oTr1
+   local aTr:= {}
    local i, y, oTr2, cItemDef, aElemente, nEntry, cTitle
-   LOCAL ele
+   local ele
 
    CreateTreeImageList( oDlg, oTree )
 
@@ -2539,7 +2539,7 @@ static Function FillTree( oTree, oDlg )
 
 
       endif
-   NEXT
+   next
 
    oTree:Expand()
    oTree:GoTop()
@@ -2549,24 +2549,24 @@ Return .T.
 
 //------------------------------------------------------------------------------
 
-Static FUNCTION CreateTreeImageList( oDlg, oTree )
+static function CreateTreeImageList( oDlg, oTree )
 
- LOCAL aBmps := { "FoldOpen", "FoldClose", "B_itemList", "Checkon", "Unchecked", "b_edit", ;
+   local aBmps := { "FoldOpen", "FoldClose", "B_itemList", "Checkon", "Unchecked", "b_edit", ;
                "Typ_Text", "Typ_Image", "Typ_Graphic", "Typ_Barcode", ;
                "TreeGraph1", "TreeGraph2", "TreeGraph3", "TreeGraph4", ;
                "TreeGraph5", "TreeGraph6" }
- LOCAL i,oBmp1
- LOCAL nLen:= Len( aBmps )
- LOCAL oImageList := TImageList():New()
+   local n, oBmp
+   local oImageList := TImageList():New()
 
- FOR i=1 TO nLen
+   for n = 1 TO Len( aBmps )
 
-     oBmp1 = TBitmap():Define( aBmps[i], oDlg )
-     oImageList:Add( oBmp1,setMasked( oBmp1:hBitmap, oTree:nClrPane ) )
+     oBmp = TBitmap():Define( aBmps[ n ], oDlg )
+     oImageList:Add( oBmp, SetMasked( oBmp:hBitmap, oTree:nClrPane ) )
+     oBmp:End()
 
- NEXT
+   next
 
- oTree:SetImageList( oImageList )
+   oTree:SetImageList( oImageList )
 
 RETURN nil
 
@@ -2574,11 +2574,11 @@ RETURN nil
 
 STATIC function GetItemVisible( oItem )
 
-LOCAL  oLinkArea := oItem:GetParent()
-LOCAL  nItem     := Val( oLinkArea:cPrompt )
-LOCAL  nArea     := Val( oLinkArea:GetParent():cPrompt )
-LOCAL  cItemDef := AllTrim( GetPvProfString( "Items", AllTrim(STR(nItem,5)) , "", aAreaIni[ nArea ] ) )
-LOCAL  lWert
+local  oLinkArea := oItem:GetParent()
+local  nItem     := Val( oLinkArea:cPrompt )
+local  nArea     := Val( oLinkArea:GetParent():cPrompt )
+local  cItemDef := AllTrim( GetPvProfString( "Items", AllTrim(STR(nItem,5)) , "", aAreaIni[ nArea ] ) )
+local  lWert
 
       if Val( GetField( cItemDef, 4 ) ) = 0
          lWert := .F.
@@ -2729,9 +2729,9 @@ return aWerte
 //----------------------------------------------------------------------------//
 
 function ClickListTree( oTree )
-   LOCAL nArea , nItem, oLinkArea, cItemDef,  lWert
+   local nArea , nItem, oLinkArea, cItemDef,  lWert
    local cPrompt := oTree:GetSelText()
-   LOCAL oItem   := oTree:GetSelected()
+   local oItem   := oTree:GetSelected()
 
    if cPrompt = GL("Visible") .OR. cPrompt = GL("Item Properties")
 
