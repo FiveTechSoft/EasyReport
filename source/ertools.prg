@@ -1822,18 +1822,21 @@ function PrintReport( lPreview, lDeveloper, lPrintDlg )
    DEFAULT lDeveloper := .F.
    DEFAULT lPrintDlg  := .T.
 
-   if lDeveloper = .F.
-      ShellExecute( 0, "Open", ;
-         "ERSTART.EXE", ;
-         "-File=" + ALLTRIM( cDefIni ) + ;
-         IIF( lPreview, " -PREVIEW", " -PRINTDIALOG" ) + ;
-         "-CHECK", ;
-         NIL, 1 )
-      return .T.
-   ELSE
+   lpreview := .t. // de momento para ver como sale 
+   lDeveloper:= .t.   // de momento para ver como sale 
+   
+ //  if lDeveloper = .F.
+ //     ShellExecute( 0, "Open", ;
+ //        "ERSTART.EXE", ;
+ //        "-File=" + ALLTRIM( cDefIni ) + ;
+  //       IIF( lPreview, " -PREVIEW", " -PRINTDIALOG" ) + ;
+   //      "-CHECK", ;
+   //      NIL, 1 )
+   //   return .T.
+ //  ELSE
       EASYREPORT oVRD NAME cDefIni OF oMainWnd PREVIEW lPreview ;
                  PRINTDIALOG IIF( lPreview, .F., lPrintDlg ) PRINTIDS NOEXPR
-   endif
+ //  endif
 
    if oVRD:lDialogCancel = .T.
       return( .F. )

@@ -30,7 +30,7 @@ STATIC lWaitRun     := .F.
 * Return value: none
 * Author......: Juergen Baez / Timm Sodtalbers
 *-----------------------------------------------------------------------------
-FUNCTION RPreview( oPrn )
+FUNCTION ER_RPreview( oPrn )
 
    LOCAL aSize, cAppPath
    LOCAL cIni := cSetupFile
