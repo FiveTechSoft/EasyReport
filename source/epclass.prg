@@ -38,7 +38,7 @@ STATIC lShowSaveMessage := .F.
 #INCLUDE "richedit.ch"
 
 #IFDEF __HARBOUR__
-//  #INCLUDE "davinci.ch"
+  #INCLUDE "davinci.ch"
 #ENDIF
 
 #DEFINE PAGE_NEXT    1
@@ -642,13 +642,13 @@ METHOD EPShow() CLASS EPREVIEW
 
    ACTIVATE WINDOW ::oWnd ;
       ON INIT ( oMenuUnZoom:Disable(), ;
-                IIF( lMaximize = .T.         , oPrev:oWnd:Maximize(), .T. ), ;
-                IIF( oPrev:lZoomAtStart = .T., oPrev:Zoom(), .T. ), ;
+                IIF( lMaximize         , oPrev:oWnd:Maximize(), ), ;
+                IIF( oPrev:lZoomAtStart, oPrev:Zoom(), ), ;
                 CursorArrow(), ;
-                IIF( oPrev:lDemo = .T.       , oPrev:Registration(), .T. ), ;
-                IIF( oPrev:lExtDemoMode = .T., MsgInfo( oPrev:cDemoMessage ), .T. ), ;
-                IIF( oPrev:lSaveAtStart = .T., oPrev:PrViewSave(), .T. ), ;
-                IIF( oPrev:lMailAtStart = .T. .AND. oPrev:lShowSendTo = .T., oPrev:EMail(), .T. ) ) ;
+                IIF( oPrev:lDemo       , oPrev:Registration(),  ), ;
+                IIF( oPrev:lExtDemoMode, MsgInfo( oPrev:cDemoMessage ), ), ;
+                IIF( oPrev:lSaveAtStart, oPrev:PrViewSave(),  ), ;
+                IIF( oPrev:lMailAtStart .AND. oPrev:lShowSendTo, oPrev:EMail(), ) ) ;
       ON RESIZE    ::PaintMeta()               ;
       ON UP        ::vScroll(GO_UP)            ;
       ON DOWN      ::vScroll(GO_DOWN)          ;
