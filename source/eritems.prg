@@ -500,8 +500,12 @@ function TextProperties( i, nArea, cAreaIni, lFromList, lNew )
    REDEFINE CHECKBOX aCbx[1] VAR oItem:lBorder ID 601 OF oCurDlg
    REDEFINE CHECKBOX aCbx[2] VAR oItem:lTrans  ID 602 OF oCurDlg
 
-   REDEFINE SAY aSay[1] PROMPT "" ID 401 OF oCurDlg COLORS GetColor( oItem:nColText ), GetColor( oItem:nColText )
-   REDEFINE SAY aSay[2] PROMPT "" ID 402 OF oCurDlg COLORS GetColor( oItem:nColPane ), GetColor( oItem:nColPane )
+   REDEFINE BTNBMP aSay[1] PROMPT "" ID 401 OF oCurDlg NOBORDER
+   aSay[1]:SetColor( GetColor( oItem:nColText ), GetColor( oItem:nColText ) )
+
+   REDEFINE BTNBMP aSay[2] PROMPT "" ID 402 OF oCurDlg NOBORDER
+   aSay[2]:SetColor(  GetColor( oItem:nColPane ), GetColor( oItem:nColPane ) )
+ 
    REDEFINE SAY aSay[3] PROMPT ;
       IIF( oItem:nFont > 0, " " + GetCurrentFont( oItem:nFont, GetFonts(), 1 ), "" ) ;
       ID 403 OF oCurDlg

@@ -1664,6 +1664,7 @@ function ShowColorChoice( nCurrentClr )
    local oIni, oDlg, nDefClr
    local aColors := GetAllColors()
    local aSay    := ARRAY(30)
+   local osay
    local aBtn    := ARRAY(30)
    local nColor  := 0
 
@@ -1676,8 +1677,12 @@ function ShowColorChoice( nCurrentClr )
    REDEFINE SAY PROMPT GL("Current:") ID 170 OF oDlg
 
    REDEFINE SAY PROMPT AllTrim(STR( nCurrentClr )) + "." ID 401 OF oDlg
-   REDEFINE SAY PROMPT "" ID 402 OF oDlg COLORS SetColor( aColors[nCurrentClr], nDefClr ), SetColor( aColors[nCurrentClr], nDefClr )
+   
+ //  REDEFINE SAY PROMPT "" ID 402 OF oDlg COLORS SetColor( aColors[nCurrentClr], nDefClr ), SetColor( aColors[nCurrentClr], nDefClr )
+   REDEFINE BTNBMP oSay PROMPT "" ID 402 OF oDlg NOBORDER
+   osay:SetColor( SetColor(aColors[nCurrentClr], nDefClr ), SetColor( aColors[nCurrentClr], nDefClr ) )
 
+/*
    REDEFINE SAY aSay[1 ] PROMPT "" ID 301 OF oDlg COLORS SetColor( aColors[1 ], nDefClr ), SetColor( aColors[1 ], nDefClr )
    REDEFINE SAY aSay[2 ] PROMPT "" ID 302 OF oDlg COLORS SetColor( aColors[2 ], nDefClr ), SetColor( aColors[2 ], nDefClr )
    REDEFINE SAY aSay[3 ] PROMPT "" ID 303 OF oDlg COLORS SetColor( aColors[3 ], nDefClr ), SetColor( aColors[3 ], nDefClr )
@@ -1708,6 +1713,46 @@ function ShowColorChoice( nCurrentClr )
    REDEFINE SAY aSay[28] PROMPT "" ID 328 OF oDlg COLORS SetColor( aColors[28], nDefClr ), SetColor( aColors[28], nDefClr )
    REDEFINE SAY aSay[29] PROMPT "" ID 329 OF oDlg COLORS SetColor( aColors[29], nDefClr ), SetColor( aColors[29], nDefClr )
    REDEFINE SAY aSay[30] PROMPT "" ID 330 OF oDlg COLORS SetColor( aColors[30], nDefClr ), SetColor( aColors[30], nDefClr )
+*/
+
+ REDEFINE BTNBMP aSay[1]  ID 301 OF oDlg NOBORDER
+   REDEFINE BTNBMP aSay[2]  ID 302 OF oDlg NOBORDER
+   REDEFINE BTNBMP aSay[3]  ID 303 OF oDlg NOBORDER
+   REDEFINE BTNBMP aSay[4]  ID 304 OF oDlg NOBORDER
+   REDEFINE BTNBMP aSay[5]  ID 305 OF oDlg NOBORDER
+   REDEFINE BTNBMP aSay[6]  ID 306 OF oDlg NOBORDER
+   REDEFINE BTNBMP aSay[7]  ID 307 OF oDlg NOBORDER
+   REDEFINE BTNBMP aSay[8]  ID 308 OF oDlg NOBORDER
+   REDEFINE BTNBMP aSay[9]  ID 309 OF oDlg NOBORDER
+
+   REDEFINE BTNBMP aSay[10]  ID 310 OF oDlg NOBORDER
+   REDEFINE BTNBMP aSay[11]  ID 311 OF oDlg NOBORDER
+   REDEFINE BTNBMP aSay[12]  ID 312 OF oDlg NOBORDER
+   REDEFINE BTNBMP aSay[13]  ID 313 OF oDlg NOBORDER
+   REDEFINE BTNBMP aSay[14]  ID 314 OF oDlg NOBORDER
+   REDEFINE BTNBMP aSay[15]  ID 315 OF oDlg NOBORDER
+   REDEFINE BTNBMP aSay[16]  ID 316 OF oDlg NOBORDER
+   REDEFINE BTNBMP aSay[17]  ID 317 OF oDlg NOBORDER
+   REDEFINE BTNBMP aSay[18]  ID 318 OF oDlg NOBORDER
+   REDEFINE BTNBMP aSay[19]  ID 319 OF oDlg NOBORDER
+
+
+   REDEFINE BTNBMP aSay[20]  ID 320 OF oDlg NOBORDER
+   REDEFINE BTNBMP aSay[21]  ID 321 OF oDlg NOBORDER
+   REDEFINE BTNBMP aSay[22]  ID 322 OF oDlg NOBORDER
+   REDEFINE BTNBMP aSay[23]  ID 323 OF oDlg NOBORDER
+   REDEFINE BTNBMP aSay[24]  ID 324 OF oDlg NOBORDER
+   REDEFINE BTNBMP aSay[25]  ID 325 OF oDlg NOBORDER
+   REDEFINE BTNBMP aSay[26]  ID 326 OF oDlg NOBORDER
+   REDEFINE BTNBMP aSay[27]  ID 327 OF oDlg NOBORDER
+   REDEFINE BTNBMP aSay[28]  ID 328 OF oDlg NOBORDER
+   REDEFINE BTNBMP aSay[29]  ID 329 OF oDlg NOBORDER
+   REDEFINE BTNBMP aSay[30]  ID 330 OF oDlg NOBORDER
+
+
+
+   AEval( aSay, { | o, n | o:SetColor( 0,;
+      If( Empty( aColors[ n ] ), CLR_WHITE, Val( aColors[ n ] ) ) ) } )
 
    REDEFINE BUTTON aBtn[1 ] ID 201 OF oDlg ACTION ( nColor := 1 , oDlg:End() )
    REDEFINE BUTTON aBtn[2 ] ID 202 OF oDlg ACTION ( nColor := 2 , oDlg:End() )
