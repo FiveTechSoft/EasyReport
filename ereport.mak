@@ -2,6 +2,7 @@
 
 HBDIR=c:\harbour
 BCDIR=c:\bcc582
+#FWDIR=c:\fwH
 FWDIR=c:\fwTeam
 
 #change these paths as needed
@@ -14,7 +15,7 @@ FWDIR=c:\fwTeam
 
 PRG =        \
 .\ereport.prg  \ 
-.\easyprev.prg \
+.\epfunc.prg \
 .\erfile.prg   \
 .\eritems.prg  \
 .\eritems2.prg \

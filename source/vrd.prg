@@ -2092,7 +2092,7 @@ METHOD PrintDialog() CLASS VRD
 
    LOCAL oDlg, oTitleFont, cTmpFile, oIni
    LOCAL lPrint      := .F.
-   LOCAL aPrinters   := VRD_GetPrinters()
+   LOCAL aPrinters   := aGetPrinters()
    LOCAL cPrinter    := IIF( EMPTY( ::cPrinter ), VRD_DefaultPrinter(), ::cPrinter )
    LOCAL nDlgTextCol := RGB( 255, 255, 255 )
    LOCAL nDlgBackCol := RGB( 150, 150, 150 )
@@ -2985,7 +2985,7 @@ RETURN ALLTRIM( cLongName )
 #DEFINE KEY_ALL_ACCESS              63
 
 //------------------------------------------------------------------------------
-
+/*
 FUNCTION VRD_GetPrinters()
 
    LOCAL cName, nWert
@@ -3018,7 +3018,7 @@ FUNCTION VRD_TakeOut( cString, nPos, cChar )
    ENDIF
 
 RETURN cReturn
-
+*/
 //------------------------------------------------------------------------------
 
 FUNCTION VRD_DefaultPrinter()
