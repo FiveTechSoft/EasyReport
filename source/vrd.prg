@@ -2093,7 +2093,7 @@ METHOD PrintDialog() CLASS VRD
    LOCAL oDlg, oTitleFont, cTmpFile, oIni
    LOCAL lPrint      := .F.
    LOCAL aPrinters   := aGetPrinters()
-   LOCAL cPrinter    := IIF( EMPTY( ::cPrinter ), VRD_DefaultPrinter(), ::cPrinter )
+   LOCAL cPrinter    := IIF( EMPTY( ::cPrinter ),  PrnGetName() , ::cPrinter )
    LOCAL nDlgTextCol := RGB( 255, 255, 255 )
    LOCAL nDlgBackCol := RGB( 150, 150, 150 )
    LOCAL cIni        := ".\VRD.INI"
@@ -3018,7 +3018,7 @@ FUNCTION VRD_TakeOut( cString, nPos, cChar )
    ENDIF
 
 RETURN cReturn
-*/
+
 //------------------------------------------------------------------------------
 
 FUNCTION VRD_DefaultPrinter()
@@ -3033,7 +3033,7 @@ FUNCTION VRD_DefaultPrinter()
 RETURN PrnGetName()
 
 //#ENDIF
-
+*/
 
 *-- FUNCTION -----------------------------------------------------------------
 * Name........: VRD_GetRegistry

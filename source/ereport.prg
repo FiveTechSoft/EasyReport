@@ -804,7 +804,7 @@ function ShowAreasOnBar()
       for n = 1 to Len( aWndTitle )
          if ! Empty( aWndTitle[ n ] )
             MENUITEM aWndTitle[ n ] ;
-               ACTION aWnd[ AScan( aWndTitle, oMenuItem:cPrompt ) ]:SetFocus(),;
+               ACTION nAktArea:= AScan( aWndTitle, oMenuItem:cPrompt ) , aWnd[ nAktArea ]:SetFocus(),;
                       SetWinNull()
          endif
       next
@@ -1303,8 +1303,8 @@ function FillWindow( nArea, cAreaIni )
    @ 0, 0 SAY " " SIZE 1200, nRulerTop-nRuler PIXEL ;
       COLORS 0, oGenVar:nBClrAreaTitle OF aWnd[ nArea ]
 
-   @ 2,  3 BTNBMP RESOURCE "AREAMINMAX" SIZE 12,12 ACTION AreaHide( nAktArea )
-   @ 2, 17 BTNBMP RESOURCE "AREAPROP"   SIZE 12,12 ACTION AreaProperties( nAktArea )
+   @ 2,  3 BTNBMP RESOURCE "AREAMINMAX" SIZE 12,12 ACTION  nAktArea:= nArea, AreaHide( nAktArea )
+   @ 2, 17 BTNBMP RESOURCE "AREAPROP"   SIZE 12,12 ACTION  nAktArea:= nArea, AreaProperties( nAktArea )
 
    @ 2, 29 SAY oGenVar:aAreaTitle[ nArea ] ;
       PROMPT " " + AllTrim( GetPvProfString( "General", "Title" , "", cAreaIni ) ) ;
@@ -3026,7 +3026,7 @@ function AreaChange( nArea, cAreaTitle, nOldWidth, nWidth, nOldHeight, nHeight )
    for n = 1 to Len( aWndTitle )
       if ! Empty( aWndTitle[ n ] )
          oMenuAreas:Add( TmenuItem():New( aWndTitle[ n ],,,,;
-         {||   aWnd[ AScan( aWndTitle, oMenuItem:cPrompt ) ]:SetFocus(), SetWinNull() }  )  )
+         {|| nAktArea:= AScan( aWndTitle, oMenuItem:cPrompt ), aWnd[ nAktArea ]:SetFocus(), SetWinNull() }  )  )
 
       endif
    next
