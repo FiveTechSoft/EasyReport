@@ -1813,10 +1813,12 @@ return ( STRTRAN(ALLTRIM( cText ), "_", " " ) )
 * R�ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-function PrintReport( lPreview, lDeveloper, lPrintDlg )
+function PrintReport( lPreview, lDeveloper, lPrintDlg, LPrintIDs )
 
    local i, oVRD, cCondition
-   local lPrintIDs := IIF( GetPvProfString( "General", "PrintIDs", "0", cDefIni ) = "0", .F., .T. )
+   //local lPrintIDs := IIF( GetPvProfString( "General", "PrintIDs", "0", cDefIni ) = "0", .F., .T. )
+
+   DEFAULT lPrintIDs := .F.
 
    DEFAULT lPreview   := .F.
    DEFAULT lDeveloper := .F.
@@ -1837,6 +1839,8 @@ function PrintReport( lPreview, lDeveloper, lPrintDlg )
       EASYREPORT oVRD NAME cDefIni OF oMainWnd PREVIEW lPreview ;
                  PRINTDIALOG IIF( lPreview, .F., lPrintDlg ) PRINTIDS NOEXPR
  //  endif
+
+   oVRD:LPrintIDs :=  lPrintIDs
 
    if oVRD:lDialogCancel = .T.
       return( .F. )
