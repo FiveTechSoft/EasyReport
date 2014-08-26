@@ -186,7 +186,7 @@ METHOD New( cReportName, lPreview, cPrinter, oWnd, lModal, lPrintIDs, lNoPrint, 
    DEFAULT cPreviewDir  := ""
    DEFAULT lAutoBreak   := .F.
 
-   ::lPreview         := lPreview
+    ::lPreview         := lPreview
    ::cPrinter         := cPrinter
    ::aFonts           := ARRAY( 20, 10 )
    ::aItemsPrinted    := {}
@@ -256,8 +256,8 @@ METHOD New( cReportName, lPreview, cPrinter, oWnd, lModal, lPrintIDs, lNoPrint, 
  //     oTmpWnd:Hide()
  //  #ENDIF
 
-   IF lPrintDialog = .T.
-      IF ::PrintDialog() = .F.
+   IF lPrintDialog
+      IF !::PrintDialog()
          ::lDialogCancel := .T.
          ::CloseDatabases()
          RETURN( Self )
@@ -265,7 +265,7 @@ METHOD New( cReportName, lPreview, cPrinter, oWnd, lModal, lPrintIDs, lNoPrint, 
    ENDIF
 
 
-   IF FILE( ::cDefIni ) = .F.
+   IF !FILE( ::cDefIni )
       AADD( ::aErrors, "1" + CHR(9) + "General ini file not found: " + ALLTRIM( cReportName ) )
       ::MsgError( .T. )
    ENDIF
@@ -304,7 +304,7 @@ METHOD New( cReportName, lPreview, cPrinter, oWnd, lModal, lPrintIDs, lNoPrint, 
 
    ::cAreaFilesDir := ::CheckPath( ::cAreaFilesDir )
 
-   IF ::lShowInfo = .T. .AND. lNoPrint = .F. .AND. ::loPrnExist = .F.
+   IF ::lShowInfo  .AND. !lNoPrint .AND. !::loPrnExist
 
       aPrompt[1]     := REPLICATE("_", 100 )
       aPrompt[2]     := ALLTRIM( ::cTitle )
@@ -326,7 +326,7 @@ METHOD New( cReportName, lPreview, cPrinter, oWnd, lModal, lPrintIDs, lNoPrint, 
       @ 10, 0 SAY aSay[1] PROMPT aPrompt[1] OF ::oInfoDlg SIZE 300, 20 PIXEL //FONT oInfo2Font
       @  4, 8 SAY aSay[2] PROMPT aPrompt[2] OF ::oInfoDlg SIZE 300, 10 PIXEL //FONT oInfoFont
       @ 21, 8 SAY aSay[3] PROMPT aPrompt[3] OF ::oInfoDlg SIZE 300, 20 PIXEL //FONT oInfo2Font
-      IF ::lCheck = .F.
+      IF !::lCheck
          @ 31, 8 SAY ::oInfoSay PROMPT ::cInfoSay ;
             OF ::oInfoDlg SIZE 94, 20 PIXEL FONT oInfo2Font
       ENDIF
@@ -338,23 +338,19 @@ METHOD New( cReportName, lPreview, cPrinter, oWnd, lModal, lPrintIDs, lNoPrint, 
                      ::lBreak := .T. )
       //ENDIF
 
-      #IFDEF __XPP__
-         ACTIVATE DIALOG ::oInfoDlg CENTER NOMODAL
-         SetForegroundWindow( ::oInfoDlg:hWnd )
-         EnableWindow( hTmpWnd, 0 )
-      #ELSE
-         ACTIVATE DIALOG ::oInfoDlg CENTER NOMODAL ;
+
+      ACTIVATE DIALOG ::oInfoDlg CENTER NOMODAL ;
             ON INIT ( aSay[1]:SetFont( oInfo2Font ), ;
                       aSay[2]:SetFont( oInfoFont ) , ;
                       aSay[3]:SetFont( oInfo2Font ) )
-      #ENDIF
+
 
       oInfoFont:End()
       oInfo2Font:End()
 
    ENDIF
 
-   IF lNoPrint = .F. .AND. ::loPrnExist = .F.
+   IF !lNoPrint .AND. !::loPrnExist
 
       ::oPrn := PrintBegin( ::cTitle,, ::lPreview, ;
                             IIF( EMPTY( ::cPrinter ), NIL, ::cPrinter ), ;
@@ -497,11 +493,11 @@ METHOD New( cReportName, lPreview, cPrinter, oWnd, lModal, lPrintIDs, lNoPrint, 
 
    NEXT
 
-   IF lNoPrint = .F. .AND. ::loPrnExist = .F.
+   IF !lNoPrint .AND. !::loPrnExist
 
       ::oPrn:StartPage()
 
-      IF ::lShowInfo = .T. .AND. ::lCheck = .F.
+      IF ::lShowInfo .AND. !::lCheck
          ::oInfoSay:SetText( ::cInfoSay2 + " 1" )
       ENDIF
 
@@ -529,7 +525,7 @@ METHOD End( lPrintArea ) CLASS VRD
 
    oInfo:AddMember( "nPages",, ::oPrn:nPage )
 
-   IF ::lBreak = .F.
+   IF !::lBreak
 
       IF LEN( ::aPrBeforeBreak ) > 0
          FOR i := 1 TO LEN( ::aPrBeforeBreak )
@@ -540,16 +536,16 @@ METHOD End( lPrintArea ) CLASS VRD
       ::oPrn:EndPage()
 
       //Preview
-      IF ::oPrn:lMeta = .T.
+      IF ::oPrn:lMeta
 
-         IF ::lCheck = .T.
+         IF ::lCheck
 
             ::oPrn:End()
             SYSREFRESH()
 
          ELSE
 
-            IF ::lShowInfo = .T.
+            IF ::lShowInfo
                ::oInfoDlg:End()
                ::lShowInfo := .F.
                SYSREFRESH()
@@ -572,7 +568,7 @@ METHOD End( lPrintArea ) CLASS VRD
       ::oPrn := nil
 
       //End the info dialog
-      IF ::lShowInfo = .T.
+      IF ::lShowInfo
          ::oInfoDlg:End()
       ENDIF
 
@@ -656,7 +652,7 @@ METHOD AreaStart( nArea, lPrintArea, aIDs, aStrings, lPageBreak ) CLASS VRD
       ::aBreakBefore[nArea] := ;
          ::EvalAreaSource( ::aBreakBefore[nArea], ::aAreaSource[nArea,AREASOURCE_BREAKBEFORE] )
 
-      IF lPageBreak = .T. .OR. ::aBreakBefore[ nArea ] = .T.
+      IF lPageBreak .OR. ::aBreakBefore[ nArea ]
          ::PageBreak( lPrintArea )
       ENDIF
 
@@ -665,7 +661,7 @@ METHOD AreaStart( nArea, lPrintArea, aIDs, aStrings, lPageBreak ) CLASS VRD
       ::aBreakAfter[nArea] := ;
          ::EvalAreaSource( ::aBreakAfter[nArea], ::aAreaSource[nArea,AREASOURCE_BREAKAFTER] )
 
-      IF ::lAutoPageBreak = .T. .AND. ::nNextRow > ::nPageBreak .OR. ::aBreakAfter[ nArea ] = .T.
+      IF ::lAutoPageBreak  .AND. ::nNextRow > ::nPageBreak .OR. ::aBreakAfter[ nArea ]
          //IF nArea <> LEN( ::aAreaInis )
             ::PageBreak( lPrintArea )
          //ENDIF
@@ -737,10 +733,10 @@ METHOD AreaStart2( nArea, lPrintArea, aIDs, aStrings, lPageBreak ) CLASS VRD
    ::EvalAreaSource( @nAreaTop1, ::aAreaSource[nArea,AREASOURCE_TOP1] )
    ::EvalAreaSource( @nAreaTop2, ::aAreaSource[nArea,AREASOURCE_TOP2] )
 
-   IF lAreaTop = .T.
+   IF lAreaTop
 
       //Top depends on previous area
-      IF ::lFirstAreaOnPage = .T.
+      IF ::lFirstAreaOnPage
          ::nLastRow := ::nTopMargin
       ELSE
          ::nLastRow := IIF( ::nLastPrintedRow <> 0, ::nLastPrintedRow, ::nNextRow )
@@ -828,7 +824,7 @@ METHOD PrintItem( nArea, nItemID, cValue, nAddToTop, lMemo, nEntry ) CLASS VRD
 
    oItem := ::EvalFormula( oItem )
 
-   IF ::lBreak = .T.
+   IF ::lBreak
       RETURN ( NIL )
    ENDIF
 
@@ -845,11 +841,11 @@ METHOD PrintItem( nArea, nItemID, cValue, nAddToTop, lMemo, nEntry ) CLASS VRD
 
    nItemTop := oItem:nTop + nAddToTop
 
-   IF ::lAreaStartUsed = .T.
+   IF ::lAreaStartUsed
 
       nItemTop := ::nLastRow + oItem:nTop
 
-   ELSEIF lAreaTop = .T. .AND. ::lAreaStartUsed = .F.
+   ELSEIF lAreaTop .AND. !::lAreaStartUsed
 
       //Top depends on previous area
       IF ::nLastArea <> nArea
@@ -863,7 +859,7 @@ METHOD PrintItem( nArea, nItemID, cValue, nAddToTop, lMemo, nEntry ) CLASS VRD
          nItemTop    += ::nLastRow
       ENDIF
 
-   ELSEIF ::lAreaStartUsed = .F.
+   ELSEIF !::lAreaStartUsed
 
       //Fix area position
       nItemTop    += IIF( ::oPrn:nPage = 1, nAreaTop1, nAreaTop2 )
@@ -873,7 +869,7 @@ METHOD PrintItem( nArea, nItemID, cValue, nAddToTop, lMemo, nEntry ) CLASS VRD
 
    ENDIF
 
-   IF lAreaTop = .T.
+   IF lAreaTop
       IF nAreaTop1 <> 0 .AND. ::oPrn:nPage = 1
          nItemTop := MAX( nItemTop, nAreaTop1 )
       ELSEIF nAreaTop2 <> 0 .AND. ::oPrn:nPage <> 1
@@ -938,7 +934,7 @@ METHOD PrintItem( nArea, nItemID, cValue, nAddToTop, lMemo, nEntry ) CLASS VRD
          oBrush:End()
       ENDIF
 
-      IF lMemo = .T.
+      IF lMemo
          IF oItem:nOrient < 4
             aMemo := ::SayMemo( ::ToPix( nItemTop, .T. ), ;
                      ::ToPix( nTextLeft, .F. ), ;
@@ -999,7 +995,7 @@ METHOD PrintItem( nArea, nItemID, cValue, nAddToTop, lMemo, nEntry ) CLASS VRD
                      ::ToPix( oItem:nHeight, .T. ) )
       oImg:End()
 
-   ELSEIF oItem:lGraphic = .T. .AND. oItem:nShow = 1
+   ELSEIF oItem:lGraphic .AND. oItem:nShow = 1
 
       nTop       := ::ToPix( nItemTop, .T. )
       nLeft      := ::ToPix( ::nLeftMargin + oItem:nLeft, .F. )
@@ -1075,7 +1071,7 @@ METHOD PrintItem( nArea, nItemID, cValue, nAddToTop, lMemo, nEntry ) CLASS VRD
    ENDIF
 
    //Print the item ID
-   IF ::lPrintIDs = .T. .AND. oItem:nShow = 1
+   IF ::lPrintIDs .AND. oItem:nShow = 1
 
       DEFINE FONT oFont NAME "Arial" SIZE 0,-8 OF ::oPrn
 
@@ -1089,7 +1085,7 @@ METHOD PrintItem( nArea, nItemID, cValue, nAddToTop, lMemo, nEntry ) CLASS VRD
    ENDIF
 
    //Last printed row
-   IF oItem:nShow = 1 .AND. ::aDelEmptySpace[nArea] = .T.
+   IF oItem:nShow = 1 .AND. ::aDelEmptySpace[nArea]
       IF lMemoPageBreak = .T.
          ::nLastPrintedRow := ::ToMmInch( nMemoHeight, .T. )
       ELSE
@@ -1271,7 +1267,7 @@ METHOD PrintArea( nArea, nAddToTop, lPageBreak ) CLASS VRD
 
    NEXT
 
-   IF ::aBreakAfter[ nArea ] = .T. .AND. lPageBreak = .T.
+   IF ::aBreakAfter[ nArea ] .AND. lPageBreak
       ::PageBreak()
    ENDIF
 
@@ -1311,7 +1307,7 @@ METHOD PrintRest( nArea, nAddToTop, lPageBreak ) CLASS VRD
 
    NEXT
 
-   IF ::aBreakAfter[ nArea ] = .T. .AND. lPageBreak = .T.
+   IF ::aBreakAfter[ nArea ] .AND. lPageBreak
       ::PageBreak()
    ENDIF
 
@@ -1360,7 +1356,7 @@ RETURN (NIL)
 *-----------------------------------------------------------------------------
 METHOD DrawBox( nTop, nLeft, nBottom, nRight ) CLASS VRD
 
-   IF ::lBreak = .T.
+   IF ::lBreak
       RETURN ( NIL )
    ENDIF
 
@@ -1671,11 +1667,9 @@ METHOD GetEntryNr( nArea, nItemID ) CLASS VRD
 RETURN ( cEntry )
 
 
-*-- METHOD -------------------------------------------------------------------
-*         Name: DefineFonts
 *  Description: Defines all fonts
-*       Author: Timm Sodtalbers
-*-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+
 METHOD DefineFonts() CLASS VRD
 
    LOCAL i
@@ -1698,12 +1692,9 @@ METHOD DefineFonts() CLASS VRD
 
 RETURN aAllFonts
 
-
-*-- METHOD -------------------------------------------------------------------
-*         Name: AreaTitle
 *  Description: Returns the title of a certain area
-*       Author: Timm Sodtalbers
-*-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+
 METHOD AreaTitle( nArea ) CLASS VRD
 
 RETURN ALLTRIM( GetPvProfString( "General", "Title" , "", ::aAreaInis[ nArea ] ) )
@@ -1944,7 +1935,7 @@ METHOD PageBreak( lPrintArea ) CLASS VRD
 
    DEFAULT lPrintArea := .T.
 
-   IF ::lBreak = .F. .AND. ::loPrnExist = .F.
+   IF !::lBreak  .AND. !::loPrnExist
 
       IF LEN( ::aPrBeforeBreak ) > 0
          FOR i := 1 TO LEN( ::aPrBeforeBreak )
@@ -1964,7 +1955,7 @@ METHOD PageBreak( lPrintArea ) CLASS VRD
          NEXT
       ENDIF
 
-      IF ::lShowInfo = .T. .AND. ::lCheck = .F.
+      IF ::lShowInfo  .AND. !::lCheck
          ::oInfoSay:SetText( ::cInfoSay2 + " " + ALLTRIM(STR( ::oPrn:nPage, 3 )) )
       ENDIF
 

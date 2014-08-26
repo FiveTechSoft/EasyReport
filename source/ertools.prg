@@ -1849,8 +1849,9 @@ function PrintReport( lPreview, lDeveloper, lPrintDlg, LPrintIDs )
  //  endif
 
    oVRD:LPrintIDs :=  lPrintIDs
-
-   if oVRD:lDialogCancel = .T.
+   oVrd:lAutoPageBreak := .T.
+   
+   if oVRD:lDialogCancel 
       return( .F. )
    endif
 
@@ -1864,7 +1865,7 @@ function PrintReport( lPreview, lDeveloper, lPrintDlg, LPrintIDs )
    NEXT
 
    //zweite Seite
-   if IsSecondPage( oVRD ) = .T.
+   if IsSecondPage( oVRD ) 
 
       oVRD:PageBreak()
 
@@ -1906,7 +1907,7 @@ function AltPrintReport( lPreview, cPrinter )
    NEXT
 
    //zweite Seite
-   if IsSecondPage( oVRD ) = .T.
+   if IsSecondPage( oVRD ) 
 
       oVRD:PageBreak()
 
@@ -2329,13 +2330,7 @@ function UndoRedoMenu( nTyp, oBtn )
 return( oMenu )
 
 
-*-- function -----------------------------------------------------------------
-* Name........: MultiUndoRedo
-* Beschreibung:
-* Argumente...: None
-* R�ckgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
+
 function MultiUndoRedo( nTyp, nCount )
 
    local i
