@@ -171,6 +171,14 @@ function GetDBField( oGet, lInsert )
       return .T.
    endif
 
+  IF Len(AFields[1]) == 0
+      MsgStop( GL("No databases defined."), GL("Stop!") )
+      IF MsgYesNo( "Quiere definir una Base de Datos ?"   )
+         Databases()
+      ENDIF
+      return .T.
+   endif
+
    cDbase := aDbase[ 1 ]
    cField := aFields[ 1, 1 ]
    //cField := oGenVar:aDBFile[1,3][1]
