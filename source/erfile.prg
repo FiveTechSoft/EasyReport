@@ -1,5 +1,4 @@
 #include "FiveWin.ch"
-#include "Treeview.ch"
 
 MEMVAR aItems, aFonts, oAppFont, aAreaIni, aWnd, aWndTitle, oBar, oMru
 MEMVAR oCbxArea, aCbxItems, nAktuellItem, aRuler, cLongDefIni, cDefaultPath

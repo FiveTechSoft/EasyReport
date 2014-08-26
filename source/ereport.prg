@@ -1,5 +1,4 @@
 #include "FiveWin.ch"
-#include "Treeview.ch"
 
 //Areazugabe
 STATIC nAreaZugabe  := 42
@@ -1664,7 +1663,7 @@ function ShowColorChoice( nCurrentClr )
    local oIni, oDlg, nDefClr
    local aColors := GetAllColors()
    local aSay    := ARRAY(30)
-   local osay
+   local oSay
    local aBtn    := ARRAY(30)
    local nColor  := 0
 
@@ -3057,8 +3056,9 @@ return oBtn
 
 function AreaChange( nArea, cAreaTitle, nOldWidth, nWidth, nOldHeight, nHeight )
 
-   local i
-
+   local i, n
+   local oMenuItem
+   
    aWndTitle[ nArea ]   := cAreaTitle
    aWnd[ nArea ]:cTitle := cAreaTitle
    oGenVar:aAreaTitle[ nAktArea ]:Refresh()
@@ -3070,7 +3070,7 @@ function AreaChange( nArea, cAreaTitle, nOldWidth, nWidth, nOldHeight, nHeight )
   oMenuAreas:DelItems()
    for n = 1 to Len( aWndTitle )
       if ! Empty( aWndTitle[ n ] )
-         oMenuAreas:Add( TmenuItem():New( aWndTitle[ n ],,,,;
+         oMenuAreas:Add( oMenuitem:=TmenuItem():New( aWndTitle[ n ],,,,;
          {|| nAktArea:= AScan( aWndTitle, oMenuItem:cPrompt ), aWnd[ nAktArea ]:SetFocus(), SetWinNull() }  )  )
 
       endif

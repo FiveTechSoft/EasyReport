@@ -30,8 +30,7 @@ PRG =        \
 
 C =            \
 .\cfunc.c      \               
-.\setmask.c    \
-.\treedraw.c      
+.\setmask.c   
 
 OBJ=$(PRG:.prg=.obj)
 OBJS=$(OBJ:.\=.\obj\)
