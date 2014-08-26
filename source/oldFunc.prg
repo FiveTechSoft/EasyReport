@@ -1,6 +1,14 @@
 #include "FiveWin.ch"
 #INCLUDE "Mail.ch"
 
+MEMVAR aItems, aFonts, aAreaIni, aWnd, oBar
+MEMVAR cDefaultPath
+MEMVAR nAktArea
+MEMVAR aVRDSave
+MEMVAR oClpGeneral, cDefIni, cGeneralIni, nMeasure, lDemo, lBeta, oTimer
+MEMVAR oMainWnd, lProfi, nUndoCount, nRedoCount, lPersonal, lStandard, oGenVar
+MEMVAR oER
+
 //------------------------------------------------------------------------------
 
 function BetaVersion()

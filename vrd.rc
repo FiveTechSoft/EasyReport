@@ -850,7 +850,7 @@ CAPTION "Language Database"
 FONT 8, "MS Sans Serif"
 {
     PUSHBUTTON      "&OK", 101, 324, 202, 66, 14, 0, WS_EX_LEFT
-    CONTROL         "", 301, "TWBrowse", 0x50B10000, 4, 4, 386, 194, 0x00000000
+    CONTROL         "", 301, "TxBrowse", 0x50B10000, 4, 4, 386, 194, 0x00000000
     CTEXT           "Please restart the programm to activate the changes.", 170, 4, 204, 238, 10, NOT WS_GROUP | SS_CENTER | SS_SUNKEN, WS_EX_LEFT
 }
 

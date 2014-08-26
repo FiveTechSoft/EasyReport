@@ -536,7 +536,7 @@ CAPTION "Language Database"
 FONT 8, "MS Sans Serif"
 {
   CONTROL "&OK", 101, "Button", WS_TABSTOP, 324, 202, 66, 14
-  CONTROL "", 301, "TWBrowse", WS_TABSTOP|0x00b00000, 4, 4, 386, 194
+  CONTROL "", 301, "TxBrowse", WS_TABSTOP|0x00b00000, 4, 4, 386, 194
   CONTROL "Please restart the programm to activate the changes.", 170, "Static", SS_CENTER|SS_SUNKEN, 4, 204, 238, 10
 }
 

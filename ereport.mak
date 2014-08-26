@@ -2,8 +2,8 @@
 
 HBDIR=c:\harbour
 BCDIR=c:\bcc582
-#FWDIR=c:\fwH
-FWDIR=c:\fwTeam
+FWDIR=c:\fwH
+#FWDIR=c:\fwTeam
 
 #change these paths as needed
 .path.obj = .\obj
@@ -21,6 +21,7 @@ PRG =        \
 .\eritems2.prg \
 .\erstart.prg  \
 .\ertools.prg  \
+.\oldfunc.prg  \
 #.\fileedit.prg \
 .\epclass.prg  \
 .\epmeta.prg \
