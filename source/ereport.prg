@@ -151,7 +151,7 @@ function BarMenu()
       TOOLTIP GL("Open") ;
       ACTION OpenFile()
 
-   DEFINE BUTTON RESOURCE "B_SAVE" ;
+   DEFINE BUTTON RESOURCE "B_SAVE", "B_SAVE", "B_SAVE1", "B_SAVE1" ;
       OF oBar ;
       PROMPT FWString( "Save" ) ;
       TOOLTIP GL("Save") ;
@@ -159,7 +159,7 @@ function BarMenu()
       WHEN .NOT. Empty( cDefIni ) .and. lVRDSave = .F.
 
    if nDeveloper = 1 .OR. oGenVar:lStandalone = .T.
-      DEFINE BUTTON aBtn[ 1 ] RESOURCE "B_PREVIEW" ;
+      DEFINE BUTTON aBtn[ 1 ] RESOURCE "B_PREVIEW", "B_PREVIEW", "B_PREVIEW1", "B_PREVIEW1" ;
          OF oBar ;
          PROMPT FWString( "Preview" ) ;
          TOOLTIP GL("Preview") ;
@@ -167,14 +167,14 @@ function BarMenu()
          WHEN .NOT. Empty( cDefIni )
    endif
 
-   DEFINE BUTTON RESOURCE "print" ;
+   DEFINE BUTTON RESOURCE "print", "print", "print1", "print1" ;
       OF oBar ;
       PROMPT FWString( "Print" ) ;
       TOOLTIP GL( "Print" ) ;
       ACTION PrintReport() ;
       WHEN .NOT. Empty( cDefIni )
       
-   DEFINE BUTTON aBtn[2] RESOURCE "B_UNDO" ;
+   DEFINE BUTTON aBtn[2] RESOURCE "B_UNDO", "B_UNDO", "B_UNDO1", "B_UNDO1" ;
       OF oBar GROUP ;
       PROMPT FWString( "Undo" ) ;
       TOOLTIP STRTRAN( GL("&Undo"), "&" ) ;
@@ -182,7 +182,7 @@ function BarMenu()
       WHEN .NOT. Empty( cDefIni ) .and. nUndoCount > 0 
       // MENU UndoRedoMenu( 1, aBtn[2] ) ;
 
-   DEFINE BUTTON aBtn[3] RESOURCE "B_REDO" ;
+   DEFINE BUTTON aBtn[3] RESOURCE "B_REDO", "B_REDO", "B_REDO1", "B_REDO1" ;
       OF oBar ;
       PROMPT FWString( "Redo" ) ;
       TOOLTIP STRTRAN( GL("&Redo"), "&" ) ;
@@ -190,7 +190,7 @@ function BarMenu()
       WHEN .NOT. Empty( cDefIni ) .and. nRedoCount > 0
       // MENU UndoRedoMenu( 2, aBtn[2] ) ;
 
-   DEFINE BUTTON RESOURCE "B_ITEMLIST32" ;
+   DEFINE BUTTON RESOURCE "B_ITEMLIST32", "B_ITEMLIST32", "B_ITEMLIST321", "B_ITEMLIST321" ;
       OF oBar GROUP ;
       PROMPT FWSTring( "Items" ) ;
       TOOLTIP GL("Area and Item List") ;
@@ -198,7 +198,7 @@ function BarMenu()
       WHEN .NOT. Empty( cDefIni )
 
    if Val( GetPvProfString( "General", "EditSetting", "1", cDefIni ) ) = 1
-      DEFINE BUTTON RESOURCE "B_FONTCOLOR32" ;
+      DEFINE BUTTON RESOURCE "B_FONTCOLOR32", "B_FONTCOLOR32", "B_FONTCOLOR321", "B_FONTCOLOR321" ;
          OF oBar ;
          PROMPT FWString( "Fonts" ) ;
          TOOLTIP GL("Fonts and Colors") ;
@@ -210,7 +210,7 @@ function BarMenu()
       MENU oMenuAreas POPUP
       ENDMENU
    
-      DEFINE BUTTON oBtnAreas RESOURCE "B_AREA32" ;
+      DEFINE BUTTON oBtnAreas RESOURCE "B_AREA32", "B_AREA32", "B_AREA321", "B_AREA321" ;
          OF oBar ;
          PROMPT FWSTring( "Areas" ) ; 
          TOOLTIP GL("Area Properties") ;
@@ -219,7 +219,7 @@ function BarMenu()
          MENU oMenuAreas
    endif
 
-   DEFINE BUTTON RESOURCE "B_EDIT32" ;
+   DEFINE BUTTON RESOURCE "B_EDIT32", "B_EDIT32", "B_EDIT321", "B_EDIT321" ;
       OF oBar ;
       PROMPT FWString( "Properties" ) ;
       TOOLTIP GL("Item Properties") ;
@@ -227,28 +227,28 @@ function BarMenu()
       WHEN .NOT. Empty( cDefIni )
 
    if Val( GetPvProfString( "General", "InsertMode", "1", cDefIni ) ) = 1
-      DEFINE BUTTON RESOURCE "B_TEXT32" ;
+      DEFINE BUTTON RESOURCE "B_TEXT32", "B_TEXT32", "B_TEXT321", "B_TEXT321" ;
          OF oBar GROUP ;
          PROMPT FWString( "&Text" ) ;
          TOOLTIP STRTRAN( GL("Insert &Text"), "&" ) ;
          ACTION NewItem( "TEXT", nAktArea ) ;
          WHEN .NOT. Empty( cDefIni )
 
-      DEFINE BUTTON RESOURCE "B_IMAGE32" ;
+      DEFINE BUTTON RESOURCE "B_IMAGE32", "B_IMAGE32", "B_IMAGE321", "B_IMAGE321" ;
          OF oBar ;
          PROMPT FWString( "Image" ) ;
          TOOLTIP STRTRAN( GL("&Image"), "&" ) ;
          ACTION NewItem( "IMAGE", nAktArea ) ;
          WHEN .NOT. Empty( cDefIni )
 
-      DEFINE BUTTON RESOURCE "B_GRAPHIC32" ;
+      DEFINE BUTTON RESOURCE "B_GRAPHIC32", "B_GRAPHIC32", "B_GRAPHIC321", "B_GRAPHIC321" ;
          OF oBar ;
          PROMPT FWString( "Graphic" ) ;
          TOOLTIP STRTRAN( GL("Insert &Graphic"), "&" ) ;
          ACTION NewItem( "GRAPHIC", nAktArea ) ;
          WHEN .NOT. Empty( cDefIni )
 
-      DEFINE BUTTON RESOURCE "B_BARCODE32" ;
+      DEFINE BUTTON RESOURCE "B_BARCODE32", "B_BARCODE32", "B_BARCODE321", "B_BARCODE321" ;
          OF oBar ;
          PROMPT FWString( "Barcode" ) ;
          TOOLTIP STRTRAN( GL("Insert &Barcode"), "&" ) ;
