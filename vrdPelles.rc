@@ -29,6 +29,8 @@ BACKGROUND BITMAP "bitmaps\\iosbg.bmp"
 
 B_AREA32 BITMAP "bitmaps\\areas.bmp"
 
+B_AREA321  BITMAP "bitmaps\\areas1.bmp"
+
 B_AREA BITMAP "bitmaps\\bitmap9.bmp"
 
 B_AREA2 BITMAP "bitmaps\\bitmap10.bmp"
@@ -47,6 +49,8 @@ B_DEL BITMAP "bitmaps\\bitmap15.bmp"
 
 B_EDIT32 BITMAP "bitmaps\\properties.bmp"
 
+B_EDIT321  BITMAP "bitmaps\\properties1.bmp"
+
 B_EDIT BITMAP "bitmaps\\bitmap16.bmp"
 
 B_EDIT2 BITMAP "bitmaps\\bitmap17.bmp"
@@ -61,6 +65,8 @@ B_EXIT2 BITMAP "bitmaps\\bitmap20.bmp"
 
 B_FONTCOLOR32 BITMAP "bitmaps\\fontcolor.bmp"
 
+B_FONTCOLOR321  BITMAP  "bitmaps\\fontcolor1.bmp"
+
 B_FONTCOLOR BITMAP "bitmaps\\bitmap21.bmp"
 
 B_FONTCOLOR2 BITMAP "bitmaps\\bitmap22.bmp"
@@ -68,6 +74,8 @@ B_FONTCOLOR2 BITMAP "bitmaps\\bitmap22.bmp"
 B_FONTCOLOR3 BITMAP "bitmaps\\bitmap23.bmp"
 
 B_GRAPHIC32 BITMAP "bitmaps\\graphic.bmp"
+
+B_GRAPHIC321       BITMAP  "bitmaps\\graphic1.bmp"
 
 B_GRAPHIC BITMAP "bitmaps\\bitmap24.bmp"
 
@@ -77,6 +85,8 @@ B_GRAPHIC3 BITMAP "bitmaps\\bitmap26.bmp"
 
 B_IMAGE32 BITMAP "bitmaps\\image.bmp"
 
+B_IMAGE321   BITMAP "bitmaps\\image1.bmp"
+
 B_IMAGE BITMAP "bitmaps\\bitmap27.bmp"
 
 B_IMAGE2 BITMAP "bitmaps\\bitmap28.bmp"
@@ -84,6 +94,8 @@ B_IMAGE2 BITMAP "bitmaps\\bitmap28.bmp"
 B_IMAGE3 BITMAP "bitmaps\\bitmap29.bmp"
 
 B_ITEMLIST32 BITMAP "bitmaps\\itemlist.bmp"
+
+B_ITEMLIST321  BITMAP "bitmaps\\itemlist1.bmp"
 
 B_ITEMLIST BITMAP "bitmaps\\bitmap30.bmp"
 
@@ -109,6 +121,8 @@ B_OPEN3 BITMAP "bitmaps\\bitmap38.bmp"
 
 B_PREVIEW BITMAP "bitmaps\\preview.bmp"
 
+B_PREVIEW1  BITMAP  "bitmaps\\preview1.bmp"
+
 B_PREVIEW2 BITMAP "bitmaps\\bitmap40.bmp"
 
 B_PREVIEW3 BITMAP "bitmaps\\bitmap41.bmp"
@@ -116,6 +130,8 @@ B_PREVIEW3 BITMAP "bitmaps\\bitmap41.bmp"
 B_PRINT BITMAP "bitmaps\\bitmap42.bmp"
 
 B_REDO BITMAP "bitmaps\\redo.bmp"
+
+B_REDO1   BITMAP   "bitmaps\\redo1.bmp"
 
 B_REDO_16 BITMAP "bitmaps\\redo16x16.bmp"
 
@@ -125,11 +141,19 @@ B_REDO3 BITMAP "bitmaps\\bitmap45.bmp"
 
 B_SAVE BITMAP "bitmaps\\save.bmp"
 
+B_SAVE1   BITMAP    "bitmaps\\save1.bmp"
+
 B_SAVE_16 BITMAP "bitmaps\\save16x16.bmp"
 
 B_SAVE2 BITMAP "bitmaps\\bitmap47.bmp"
 
 B_SAVE3 BITMAP "bitmaps\\bitmap48.bmp"
+
+print    BITMAP    "bitmaps\\print.bmp"
+
+print1   BITMAP    "bitmaps\\print1.bmp"
+
+print16  BITMAP  "bitmaps\\print16.bmp"
 
 B_SOURCE_NO BITMAP "bitmaps\\bitmap49.bmp"
 
@@ -145,6 +169,8 @@ B_SOURCE_YES2 BITMAP "bitmaps\\bitmap54.bmp"
 
 B_TEXT32 BITMAP "bitmaps\\text.bmp"
 
+B_TEXT321   BITMAP   "bitmaps\\text1.bmp"
+
 B_TEXT BITMAP "bitmaps\\bitmap55.bmp"
 
 B_TEXT2 BITMAP "bitmaps\\bitmap56.bmp"
@@ -152,6 +178,8 @@ B_TEXT2 BITMAP "bitmaps\\bitmap56.bmp"
 B_TEXT3 BITMAP "bitmaps\\bitmap57.bmp"
 
 B_UNDO BITMAP "bitmaps\\undo.bmp"
+
+B_UNDO1   BITMAP   "bitmaps\\undo1.bmp"
 
 B_UNDO_16 BITMAP "bitmaps\\undo16x16.bmp"
 
@@ -248,10 +276,6 @@ LINEUP BITMAP "bitmaps\\bitmap104.bmp"
 LINEVERT BITMAP "bitmaps\\bitmap105.bmp"
 
 LOGO BITMAP "bitmaps\\bitmap106.bmp"
-
-PRINT BITMAP "bitmaps\\print.bmp"
-
-print16   BITMAP "bitmaps\\print16.bmp"
 
 RECTANGLE BITMAP "bitmaps\\bitmap107.bmp"
 
@@ -1461,7 +1485,7 @@ STYLE WS_POPUP|DS_MODALFRAME|DS_3DLOOK|WS_CAPTION|WS_SYSMENU|WS_VISIBLE
 CAPTION "Item List"
 FONT 8, "MS Sans Serif"
 {
-  CONTROL "", 201, "SysTreeView32", TVS_HASBUTTONS|TVS_HASLINES|TVS_LINESATROOT|TVS_NOTOOLTIPS, 1, 1, 263, 227
+  CONTROL "", 201, "SysTreeView32", WS_BORDER|TVS_HASBUTTONS|TVS_HASLINES|TVS_LINESATROOT|TVS_NOTOOLTIPS, 1, 1, 263, 227
   CONTROL "&OK", 101, "Button", WS_TABSTOP, 217, 238, 50, 14
 }
 
