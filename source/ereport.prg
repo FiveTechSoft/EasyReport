@@ -1,4 +1,4 @@
-#include "FiveWin.ch"
+﻿#include "FiveWin.ch"
 
 //Areazugabe
 STATIC nAreaZugabe  := 42
@@ -23,7 +23,7 @@ MEMVAR oMainWnd, lProfi, nUndoCount, nRedoCount, nDlgTextCol, nDlgBackCol
 MEMVAR lPersonal, lStandard, oGenVar, oCurDlg
 MEMVAR oER
 
-static oBtnAreas, oMenuAreas
+static oBtnAreas, oMenuAreas, lScrollVert
 
 //----------------------------------------------------------------------------//
 
@@ -279,7 +279,7 @@ function ER_MouseWheel( nKey, nDelta, nXPos, nYPos )
    local aPoint := { nYPos, nXPos }
    
    ScreenToClient( oMainWnd:oWndClient:hWnd, aPoint )
-
+   lScrollVert  := .T.
    if IsOverWnd( oMainWnd:oWndClient:hWnd, aPoint[ 1 ], aPoint[ 2 ] )
       if lAnd( nKey, MK_MBUTTON )
          if nDelta > 0
@@ -537,6 +537,8 @@ function DeclarePublics( cDefFile )
 
    oGenVar:AddMember( "cLoadFile" ,, "" )
    oGenVar:AddMember( "lFirstFile",, .T. )
+
+   lScrollVert  := .F.
 
 return .T.
 
@@ -1327,9 +1329,10 @@ function FillWindow( nArea, cAreaIni )
    aWnd[ nArea ]:bGotFocus = { || SetTitleColor( .T. ) }
 
    aWnd[ nArea ]:bMMoved = {|nRow,nCol,nFlags| ;
-                           SetReticule( nRow, nCol, nArea ), ;
                            MsgBarInfos( nRow, nCol ), ;
-                           MoveSelection( nRow, nCol, aWnd[ nArea ] ) }
+                           MoveSelection( nRow, nCol, aWnd[ nArea ] ) ,;
+                           if(!lScrollVert,SetReticule( nRow, nCol, nArea ),SetReticule( 0, 0, nArea )),;
+                           lScrollVert :=  .F. }
 
    aWnd[ nArea ]:bRClicked = {|nRow,nCol,nFlags| PopupMenu( nArea,, nRow, nCol ) }
    aWnd[ nArea ]:bLClicked = {|nRow,nCol,nFlags| DeactivateItem(), ;
