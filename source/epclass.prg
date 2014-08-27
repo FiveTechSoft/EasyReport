@@ -3608,10 +3608,6 @@ Function EP_GetFullPath( cSpec )
 
 RETURN ALLTRIM( cLongName )
 
-DLL32 Function FullPathName( lpszFile AS LPSTR, cchPath AS DWORD,;
-               lpszPath AS LPSTR, @nFilePos AS PTR ) AS DWORD ;
-               PASCAL FROM "GetFullPathNameA" LIB "kernel32.dll"
-
 *-- FUNCTION -----------------------------------------------------------------
 *         Name: CheckFileExt
 *  Description:
