@@ -2,24 +2,16 @@
 #INCLUDE "Folder.ch"
 #INCLUDE "FiveWin.ch"
 
-MEMVAR aItems, aFonts, oAppFont, aAreaIni, aWnd, aWndTitle, oBar, oMru
-MEMVAR oCbxArea, aCbxItems, nAktuellItem, aRuler, cLongDefIni, cDefaultPath
+MEMVAR aItems, aAreaIni, aWnd
+MEMVAR nAktuellItem, cDefaultPath
 MEMVAR nAktItem, nAktArea, nSelArea, cAktIni, aSelection, nTotalHeight, nTotalWidth
-MEMVAR nHinCol1, nHinCol2, nHinCol3, oMsgInfo, oGenVar
-MEMVAR aVRDSave, lVRDSave, lFillWindow, nDeveloper, oRulerBmp1, oRulerBmp2
+MEMVAR oGenVar
 MEMVAR lBoxDraw, nBoxTop, nBoxLeft, nBoxBottom, nBoxRight
-MEMVAR cItemCopy, nCopyEntryNr, nCopyAreaNr, aSelectCopy, aItemCopy, nXMove, nYMove
-MEMVAR cInfoWidth, cInfoHeight, nInfoRow, nInfoCol, aItemPosition, aItemPixelPos
-MEMVAR oClpGeneral, cDefIni, cGeneralIni, nMeasure, cMeasure, lDemo, lBeta, oTimer
-MEMVAR oMainWnd, lProfi, nUndoCount, nRedoCount
+MEMVAR cInfoWidth, cInfoHeight
+MEMVAR oMainWnd
 
-*-- FUNCTION -----------------------------------------------------------------
-* Name........: SelectItem
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+
 FUNCTION SelectItem( nItem, nArea, cAreaIni )
 
    LOCAL cItemDef := ALLTRIM( GetPvProfString( "Items", ALLTRIM(STR(nItem,5)) , "", cAreaIni ) )
@@ -40,14 +32,8 @@ FUNCTION SelectItem( nItem, nArea, cAreaIni )
 
 RETURN (.T.)
 
+//------------------------------------------------------------------------------
 
-*-- FUNCTION -----------------------------------------------------------------
-* Name........: ToggleItemSelection
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 FUNCTION ToggleItemSelection( nItem, nArea )
 
    LOCAL nSelSearch := ASCAN( aSelection, {| aVal | aVal[1] = nArea .AND. aVal[2] = nItem } )
@@ -63,14 +49,8 @@ FUNCTION ToggleItemSelection( nItem, nArea )
 
 RETURN (.T.)
 
-
-*-- FUNCTION -----------------------------------------------------------------
-* Name........: RefreshSelection
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+-
 FUNCTION RefreshSelection()
 
    LOCAL i
@@ -86,14 +66,8 @@ FUNCTION RefreshSelection()
 
 RETURN (.T.)
 
+//------------------------------------------------------------------------------
 
-*-- FUNCTION -----------------------------------------------------------------
-* Name........: UnSelectAll
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 FUNCTION UnSelectAll( lDelSelection )
 
    LOCAL i
@@ -110,16 +84,10 @@ FUNCTION UnSelectAll( lDelSelection )
       aSelection := {}
    ENDIF
 
-RETURN (.T.)
+   RETURN (.T.)
 
+//------------------------------------------------------------------------------
 
-*-- FUNCTION -----------------------------------------------------------------
-* Name........: SelectAllItems
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 FUNCTION SelectAllItems( lCurArea )
 
    LOCAL i, y, nCurArea
@@ -154,14 +122,8 @@ FUNCTION SelectAllItems( lCurArea )
 
 RETURN (.T.)
 
+//------------------------------------------------------------------------------
 
-*-- FUNCTION -----------------------------------------------------------------
-* Name........: InvertSelection
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 FUNCTION InvertSelection( lCurArea )
 
    LOCAL i, y, nCurArea
@@ -190,14 +152,8 @@ FUNCTION InvertSelection( lCurArea )
 
 RETURN (.T.)
 
+//------------------------------------------------------------------------------
 
-*-- FUNCTION -----------------------------------------------------------------
-* Name........: StartSelection
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 FUNCTION StartSelection( nRow, nCol, oAktWnd )
 
    lBoxDraw   = .T.
@@ -213,14 +169,8 @@ FUNCTION StartSelection( nRow, nCol, oAktWnd )
 
 RETURN (.T.)
 
+//------------------------------------------------------------------------------
 
-*-- FUNCTION -----------------------------------------------------------------
-* Name........: MoveSelection
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 FUNCTION MoveSelection( nRow, nCol, oAktWnd )
 
    IF lBoxDraw = .T.
@@ -232,14 +182,8 @@ FUNCTION MoveSelection( nRow, nCol, oAktWnd )
 
 RETURN (.T.)
 
+//------------------------------------------------------------------------------
 
-*-- FUNCTION -----------------------------------------------------------------
-* Name........: StopSelection
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 FUNCTION StopSelection( nRow, nCol, oAktWnd )
 
    LOCAL i, aBoxRect, aItemRect
@@ -277,14 +221,8 @@ FUNCTION StopSelection( nRow, nCol, oAktWnd )
 
 RETURN (.T.)
 
+//------------------------------------------------------------------------------
 
-*-- FUNCTION -----------------------------------------------------------------
-* Name........: MsgSelected
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 FUNCTION MsgSelected()
 
    LOCAL i, cSel := ""
@@ -297,14 +235,8 @@ FUNCTION MsgSelected()
 
 RETURN (.T.)
 
+//------------------------------------------------------------------------------
 
-*-- FUNCTION -----------------------------------------------------------------
-* Name........:
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 FUNCTION MarkItem( hWnd )
 
    CtrlDrawFocus( hWnd )
