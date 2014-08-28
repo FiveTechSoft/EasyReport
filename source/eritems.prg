@@ -2,16 +2,16 @@
 #INCLUDE "Folder.ch"
 #INCLUDE "FiveWin.ch"
 
-MEMVAR aItems, aFonts, oAppFont, aAreaIni, aWnd, aWndTitle, oBar, oMru
-MEMVAR oCbxArea, aCbxItems, nAktuellItem, aRuler, cLongDefIni, cDefaultPath
-MEMVAR nAktItem, nAktArea, nSelArea, cAktIni, aSelection, nTotalHeight, nTotalWidth
-MEMVAR nHinCol1, nHinCol2, nHinCol3, oMsgInfo
-MEMVAR aVRDSave, lVRDSave, lFillWindow, nDeveloper, oRulerBmp1, oRulerBmp2
-MEMVAR lBoxDraw, nBoxTop, nBoxLeft, nBoxBottom, nBoxRight, nRuler, nRulerTop
+MEMVAR aItems, aFonts, oAppFont, aAreaIni, aWnd, aWndTitle, oBar
+MEMVAR oCbxArea, aCbxItems, aRuler
+MEMVAR nAktItem, nAktArea, nSelArea, cAktIni, aSelection
+MEMVAR oMsgInfo
+MEMVAR lFillWindow, nDeveloper
+MEMVAR nRuler, nRulerTop
 MEMVAR cItemCopy, nCopyEntryNr, nCopyAreaNr, aSelectCopy, aItemCopy, nXMove, nYMove
 MEMVAR cInfoWidth, cInfoHeight, nInfoRow, nInfoCol, aItemPosition, aItemPixelPos
-MEMVAR oClpGeneral, cDefIni, cGeneralIni, nMeasure, cMeasure, lDemo, lBeta, oTimer
-MEMVAR oMainWnd, lProfi, nUndoCount, nRedoCount, oCurDlg, oGenVar,oER
+MEMVAR oClpGeneral, cDefIni, cGeneralIni, nMeasure, cMeasure, oTimer
+MEMVAR oMainWnd, lProfi, oCurDlg, oGenVar,oER
 
 //----------------------------------------------------------------------------//
 
@@ -55,7 +55,7 @@ function ElementActions( oItem, i, cName, nArea, cAreaIni, cTyp )
                          ItemPopupMenu( oItem, i, nArea, nRow, nCol ) }
 
    oItem:nDlgCode = DLGC_WANTALLKEYS
-   
+
    oItem:bKeyDown   = { | nKey | KeyDownAction( nKey, i, nArea, cAreaIni ) }
 
    oItem:bLostFocus = { | nRow, nCol, nFlags | ;
@@ -504,7 +504,7 @@ function TextProperties( i, nArea, cAreaIni, lFromList, lNew )
 
    REDEFINE BTNBMP aSay[2] PROMPT "" ID 402 OF oCurDlg NOBORDER
    aSay[2]:SetColor(  GetColor( oItem:nColPane ), GetColor( oItem:nColPane ) )
- 
+
    REDEFINE SAY aSay[3] PROMPT ;
       IIF( oItem:nFont > 0, " " + GetCurrentFont( oItem:nFont, GetFonts(), 1 ), "" ) ;
       ID 403 OF oCurDlg
@@ -1480,7 +1480,7 @@ function MsgBarItem( nItem, nArea, cAreaIni, nRow, nCol, lResize )
 
    ELSE
       nInfoRow := 0; nInfoCol := 0 // nRulerTop := 0; nRuler := 0 // FiveTech
-      
+
       nTop  := aItems[nArea,nItem]:nTop  + ;
                   ( nLoWord( aItems[nArea,nItem]:nPoint ) - nInfoRow ) - nRulerTop
       nLeft := aItems[nArea,nItem]:nLeft + ;
@@ -1492,7 +1492,7 @@ function MsgBarItem( nItem, nArea, cAreaIni, nRow, nCol, lResize )
                         GL("Left:")   + " " + AllTrim(STR( GetCmInch( nLeft), 5, IIF( nMeasure = 2, 2, 0 ) )) + "  " + ;
                         GL("Width:")  + " " + AllTrim( cInfoWidth ) + "  " + ;
                         GL("Height:") + " " + AllTrim( cInfoHeight ) )
-      */                  
+      */
 
    endif
 
