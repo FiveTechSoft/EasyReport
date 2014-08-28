@@ -157,3 +157,102 @@ function GetRegistInfos()
 
 return ( cRegText )
 
+//------------------------------------------------------------------------------
+
+function VRDLogo()
+
+   local oDlg, oSay
+   local aFonts    := ARRAY(2)
+   local nInterval := 1
+
+   DEFINE FONT aFonts[1] NAME "Ms Sans Serif" SIZE 0, -14
+   DEFINE FONT aFonts[2] NAME "Ms Sans Serif" SIZE 0, -6
+
+   DEFINE TIMER oTimer INTERVAL 1000 OF oDlg ;
+      ACTION IIF( CheckTimer( nInterval++, oSay ) = .T., EndMsgLogo( oDlg, aFonts ), )
+
+   DEFINE DIALOG oDlg NAME "MSGLOGO" COLOR 0, RGB( 255, 255, 255 )
+
+   REDEFINE SAY PROMPT GetLicLanguage() ID 201 OF oDlg FONT aFonts[1] COLOR 0, RGB( 255, 255, 255 )
+   REDEFINE SAY PROMPT GetRegistInfos() ID 202 OF oDlg FONT aFonts[1] COLOR 0, RGB( 255, 255, 255 )
+
+   REDEFINE BITMAP ID 301 OF oDlg RESOURCE "LOGO"
+
+   REDEFINE SAY PROMPT "copyright Sodtalbers+Partner, " + oGenVar:cCopyright + " - www.reportdesigner.info " ;
+      ID 203 OF oDlg FONT aFonts[2] COLOR 0, RGB( 255, 255, 255 )
+
+   REDEFINE SAY oSay PROMPT ;
+      IIF( lDemo = .T., "Please wait: 20 Sec.", "") ID 204 OF oDlg FONT aFonts[2] ;
+      COLOR 0, RGB( 255, 255, 255 )
+
+   ACTIVATE DIALOG oDlg CENTER ;
+      ON INIT oTimer:Activate() ;
+      VALID IF( GETKEYSTATE( VK_ESCAPE ) .AND. lDemo = .T. , .F., .T. )
+
+   aFonts[1]:End()
+   aFonts[2]:End()
+
+return NIL
+
+//------------------------------------------------------------------------------
+
+function GetLicLanguage()
+
+   local cText     := ""
+   local nLanguage := VAL( GetPvProfString( "General", "Language", "1", cGeneralIni ) )
+
+   if lBeta = .F.
+      if nLanguage = 2
+         cText := "Lizensiert f�r: "
+      ELSEif nLanguage = 3
+         cText := "In licenza a: "
+      ELSEif nLanguage = 4
+         cText := "Licenciado a: "
+      ELSE
+         cText := "Licenced to: "
+      endif
+   endif
+
+return ( cText )
+
+//------------------------------------------------------------------------------
+
+function VRDAbout()
+
+   local oDlg, oFont, cVersion := ""
+   local nClrBack := RGB( 255, 255, 255 )
+
+   oGenVar:cRelease = "3.0"
+
+   IIF( lProfi   , cVersion := "Professional", )
+   IIF( lPersonal, cVersion := "Personal"    , )
+   IIF( lStandard, cVersion := "Standard"    , )
+
+   DEFINE FONT oFont  NAME "Ms Sans Serif" SIZE 0, -14
+
+   DEFINE DIALOG oDlg NAME "MSGINFO" TITLE GL("About") COLOR 0, nClrBack
+
+   REDEFINE SAY PROMPT GL("Release") + " " + oGenVar:cRelease + " - " + cVersion ;
+      ID 204 OF oDlg FONT oFont COLOR 0, nClrBack
+
+   REDEFINE SAY PROMPT GetLicLanguage() ID 201 OF oDlg FONT oFont COLOR 0, nClrBack
+   REDEFINE SAY PROMPT GetRegistInfos() ID 202 OF oDlg FONT oFont COLOR 0, nClrBack
+
+   REDEFINE BITMAP ID 301 OF oDlg RESOURCE "LOGO"
+
+   REDEFINE SAY PROMPT "copyright Timm Sodtalbers, " + oGenVar:cCopyright + + ;
+                       "     Sodtalbers+Partner - Ihlow - Germany" ;
+      ID 203 OF oDlg COLOR 0, nClrBack
+
+   REDEFINE BUTTON ID 101 OF oDlg ACTION oDlg:End()
+   REDEFINE BUTTON ID 102 OF oDlg ACTION ;
+      ShellExecute( 0, "Open", "http://www.reportdesigner.info", Nil, Nil, 1 )
+
+   ACTIVATE DIALOG oDlg CENTER
+
+   oFont:End()
+
+return NIL
+
+//------------------------------------------------------------------------------
+

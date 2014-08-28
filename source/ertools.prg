@@ -504,26 +504,16 @@ function CreateNewFile( cFile )
 
 return .T.
 
+//------------------------------------------------------------------------------
 
-*-- function -----------------------------------------------------------------
-*         Name: CopyFile
-*  Description:
-*       Author: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function CopyFile( cSource, cTarget )
 
-   COPY FILE &cSource TO &cTarget
+   COPY FILE ( cSource ) TO ( cTarget )
 
 return .T.
 
+//------------------------------------------------------------------------------
 
-*-- function -----------------------------------------------------------------
-* Name........: GetSysFont
-* Beschreibung:
-* Argumente...: None
-* R�ckgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function GetSysFont()
 
    do case
@@ -535,14 +525,8 @@ function GetSysFont()
 
 return "Ms Sans Serif"                           // Resto (Win NT, 95, 98)
 
+//------------------------------------------------------------------------------
 
-*-- function -----------------------------------------------------------------
-* Name........: GetDivisible
-* Beschreibung:
-* Argumente...: None
-* R�ckgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function GetDivisible( nNr, nDivisor, lPrevious )
 
    local i
@@ -559,14 +543,8 @@ function GetDivisible( nNr, nDivisor, lPrevious )
 
 return ( nNr )
 
+//------------------------------------------------------------------------------
 
-*-- function -----------------------------------------------------------------
-* Name........: IsDivisible
-* Beschreibung:
-* Argumente...: None
-* R�ckgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function IsDivisible( nNr, nDivisor )
 
    local lreturn := .F.
@@ -577,15 +555,8 @@ function IsDivisible( nNr, nDivisor )
 
 return ( lreturn )
 
+//------------------------------------------------------------------------------
 
-*-- function -----------------------------------------------------------------
-* Name........: ADelete( <aArray>, <nIndex> )
-
-* Beschreibung: ADelete() l�scht das Array-Element an der Stelle <nIndex> und
-*               verkleinert das Array um eins.
-* R�ckgabewert: Das ge�nderte Array
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function ADelete( aArray, nIndex )
 
    local i
@@ -649,14 +620,8 @@ function GetFile( cFileMask, cTitle, nDefaultMask, cInitDir, lSave, nFlags )
 
 return cGetFile32( cFileMask, cTitle, nDefaultMask, cInitDir, lSave, nFlags )
 
+//------------------------------------------------------------------------------
 
-*-- function -----------------------------------------------------------------
-* Name........: IsIntersectRect
-* Beschreibung:
-* Argumente...: None
-* R�ckgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function IsIntersectRect( aRect1, aBoxRect )
 
    local aSect
@@ -683,14 +648,8 @@ function IsIntersectRect( aRect1, aBoxRect )
 
 return ( lreturn )
 
+//------------------------------------------------------------------------------
 
-*-- function -----------------------------------------------------------------
-* Name........: IsPointInRect
-* Beschreibung:
-* Argumente...: None
-* R�ckgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function IsPointInRect( aPoint, aRect )
 
    local lreturn := .F.
@@ -1076,48 +1035,6 @@ function UnDoExpression( oGet, aUndo )
 return ( aUndo )
 
 
-*-- function -----------------------------------------------------------------
-* Name........: VRDLogo
-* Beschreibung:
-* Argumente...: None
-* R�ckgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
-function VRDLogo()
-
-   local oDlg, oSay
-   local aFonts    := ARRAY(2)
-   local nInterval := 1
-
-   DEFINE FONT aFonts[1] NAME "Ms Sans Serif" SIZE 0, -14
-   DEFINE FONT aFonts[2] NAME "Ms Sans Serif" SIZE 0, -6
-
-   DEFINE TIMER oTimer INTERVAL 1000 OF oDlg ;
-      ACTION IIF( CheckTimer( nInterval++, oSay ) = .T., EndMsgLogo( oDlg, aFonts ), )
-
-   DEFINE DIALOG oDlg NAME "MSGLOGO" COLOR 0, RGB( 255, 255, 255 )
-
-   REDEFINE SAY PROMPT GetLicLanguage() ID 201 OF oDlg FONT aFonts[1] COLOR 0, RGB( 255, 255, 255 )
-   REDEFINE SAY PROMPT GetRegistInfos() ID 202 OF oDlg FONT aFonts[1] COLOR 0, RGB( 255, 255, 255 )
-
-   REDEFINE BITMAP ID 301 OF oDlg RESOURCE "LOGO"
-
-   REDEFINE SAY PROMPT "copyright Sodtalbers+Partner, " + oGenVar:cCopyright + " - www.reportdesigner.info " ;
-      ID 203 OF oDlg FONT aFonts[2] COLOR 0, RGB( 255, 255, 255 )
-
-   REDEFINE SAY oSay PROMPT ;
-      IIF( lDemo = .T., "Please wait: 20 Sec.", "") ID 204 OF oDlg FONT aFonts[2] ;
-      COLOR 0, RGB( 255, 255, 255 )
-
-   ACTIVATE DIALOG oDlg CENTER ;
-      ON INIT oTimer:Activate() ;
-      VALID IF( GETKEYSTATE( VK_ESCAPE ) .AND. lDemo = .T. , .F., .T. )
-
-   aFonts[1]:End()
-   aFonts[2]:End()
-
-return NIL
-
 
 *-- function -----------------------------------------------------------------
 * Name........: EndMsgLogo
@@ -1145,14 +1062,8 @@ function EndMsgLogo( oDlg, aFonts )
 
 return .T.
 
+//------------------------------------------------------------------------------
 
-*-- function -----------------------------------------------------------------
-* Name........: TimerRunOut
-* Beschreibung:
-* Argumente...: None
-* R�ckgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function TimerRunOut( nInterval )
 
    if nInterval = 300
@@ -1163,14 +1074,8 @@ function TimerRunOut( nInterval )
 
 return .T.
 
+//------------------------------------------------------------------------------
 
-*-- function -----------------------------------------------------------------
-* Name........: CheckTimer
-* Beschreibung:
-* Argumente...: None
-* R�ckgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function CheckTimer( nInterval, oSay )
 
     local lreturn := .F.
@@ -1185,59 +1090,8 @@ function CheckTimer( nInterval, oSay )
 
 return ( lreturn )
 
+//------------------------------------------------------------------------------
 
-*-- function -----------------------------------------------------------------
-* Name........: VRDAbout
-* Beschreibung:
-* Argumente...: None
-* R�ckgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
-function VRDAbout()
-
-   local oDlg, oFont, cVersion := ""
-   local nClrBack := RGB( 255, 255, 255 )
-
-   oGenVar:cRelease = "3.0"
-
-   IIF( lProfi   , cVersion := "Professional", )
-   IIF( lPersonal, cVersion := "Personal"    , )
-   IIF( lStandard, cVersion := "Standard"    , )
-
-   DEFINE FONT oFont  NAME "Ms Sans Serif" SIZE 0, -14
-
-   DEFINE DIALOG oDlg NAME "MSGINFO" TITLE GL("About") COLOR 0, nClrBack
-
-   REDEFINE SAY PROMPT GL("Release") + " " + oGenVar:cRelease + " - " + cVersion ;
-      ID 204 OF oDlg FONT oFont COLOR 0, nClrBack
-
-   REDEFINE SAY PROMPT GetLicLanguage() ID 201 OF oDlg FONT oFont COLOR 0, nClrBack
-   REDEFINE SAY PROMPT GetRegistInfos() ID 202 OF oDlg FONT oFont COLOR 0, nClrBack
-
-   REDEFINE BITMAP ID 301 OF oDlg RESOURCE "LOGO"
-
-   REDEFINE SAY PROMPT "copyright Timm Sodtalbers, " + oGenVar:cCopyright + + ;
-                       "     Sodtalbers+Partner - Ihlow - Germany" ;
-      ID 203 OF oDlg COLOR 0, nClrBack
-
-   REDEFINE BUTTON ID 101 OF oDlg ACTION oDlg:End()
-   REDEFINE BUTTON ID 102 OF oDlg ACTION ;
-      ShellExecute( 0, "Open", "http://www.reportdesigner.info", Nil, Nil, 1 )
-
-   ACTIVATE DIALOG oDlg CENTER
-
-   oFont:End()
-
-return NIL
-
-
-*-- function -----------------------------------------------------------------
-* Name........: VRDMsgPersonal
-* Beschreibung:
-* Argumente...: None
-* R�ckgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function VRDMsgPersonal()
 
    local oDlg, oFont, oFont2
@@ -1320,34 +1174,6 @@ function VRDMsgPersonal()
 
 return ( lOK )
 
-
-
-*-- function -----------------------------------------------------------------
-* Name........: GetLicLanguage
-* Beschreibung:
-* Argumente...: None
-* R�ckgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
-function GetLicLanguage()
-
-   local cText     := ""
-   local nLanguage := VAL( GetPvProfString( "General", "Language", "1", cGeneralIni ) )
-
-   if lBeta = .F.
-      if nLanguage = 2
-         cText := "Lizensiert f�r: "
-      ELSEif nLanguage = 3
-         cText := "In licenza a: "
-      ELSEif nLanguage = 4
-         cText := "Licenciado a: "
-      ELSE
-         cText := "Licenced to: "
-      endif
-   endif
-
-return ( cText )
-
 //------------------------------------------------------------------------------
 
 function EditLanguage()
@@ -1407,14 +1233,8 @@ function EditLanguage()
 
 return .T.
 
+//------------------------------------------------------------------------------
 
-*-- function -----------------------------------------------------------------
-* Name........: GetLanguage
-* Beschreibung:
-* Argumente...: None
-* R�ckgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function GetLanguage()
 
    local oDlg
@@ -1436,6 +1256,7 @@ function GetLanguage()
    REDEFINE SAY PROMPT GetPvProfString( "Languages", "9", "Language 9", cGeneralIni ) + ":" ID 159 OF oDlg
 
    REDEFINE SAY PROMPT " " + LANGUAGE->LANGUAGE1 ID 201 OF oDlg
+
    REDEFINE GET LANGUAGE->LANGUAGE2 ID 202 OF oDlg
    REDEFINE GET LANGUAGE->LANGUAGE3 ID 203 OF oDlg
    REDEFINE GET LANGUAGE->LANGUAGE4 ID 204 OF oDlg
@@ -1451,14 +1272,8 @@ function GetLanguage()
 
 return .T.
 
+//------------------------------------------------------------------------------
 
-*-- function -----------------------------------------------------------------
-* Name........: ER_GetPixel
-* Beschreibung:
-* Argumente...: None
-* R�ckgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function ER_GetPixel( nValue )
 
    if Upper( ValType( nMeasure ) ) = "L"
@@ -1495,26 +1310,16 @@ function GetCmInch( nValue )
 
 return ( nValue )
 
+//------------------------------------------------------------------------------
 
-*-- function -----------------------------------------------------------------
-* Name........: GetField
-* Beschreibung:
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function GetField( cString, nNr, cSepChar )
 
    DEFAULT cSepChar := "|"
 
 return StrToken( cString, nNr, cSepChar )
 
+//------------------------------------------------------------------------------
 
-*-- function -----------------------------------------------------------------
-* Name........: StrCount
-* Beschreibung:
-* Argumente...: None
-* R�ckgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function StrCount( cText, cString )
 
    local i
@@ -1528,14 +1333,8 @@ function StrCount( cText, cString )
 
 return ( nCount )
 
+//------------------------------------------------------------------------------
 
-* - function ---------------------------------------------------------------
-*  function....: GetResDLL()
-*  Beschreibung:
-*  Argumente...: None
-*  R�ckgabewert:
-*  Author......: Timm Sodtalbers
-* --------------------------------------------------------------------------
 function GetResDLL()
 
    local cDLLName
@@ -1555,14 +1354,8 @@ function GetResDLL()
 
 return ( cDLLName )
 
+//------------------------------------------------------------------------------
 
-*-- function -----------------------------------------------------------------
-* Name........: OpenLanguage
-* Beschreibung:
-* Argumente...: None
-* R�ckgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function OpenLanguage()
 
    USE LANGUAGE.DBF
@@ -1582,14 +1375,8 @@ function OpenLanguage()
 
 return .T.
 
+//------------------------------------------------------------------------------
 
-*-- function -----------------------------------------------------------------
-* Name........: GL
-* Beschreibung: Get Language
-* Argumente...: None
-* R�ckgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function GL( cOriginal )
 
    local cAltText := strtran( cOriginal, " ", "_" )
@@ -1619,14 +1406,8 @@ function GL( cOriginal )
 
 return ( STRTRAN(ALLTRIM( cText ), "_", " " ) )
 
+//------------------------------------------------------------------------------
 
-*-- function -----------------------------------------------------------------
-* Name........: PrintReport
-* Beschreibung:
-* Argumente...: None
-* R�ckgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function PrintReport( lPreview, lDeveloper, lPrintDlg, LPrintIDs )
 
    local i, oVRD, cCondition
@@ -1688,14 +1469,8 @@ function PrintReport( lPreview, lDeveloper, lPrintDlg, LPrintIDs )
 
 return .T.
 
+//------------------------------------------------------------------------------
 
-*-- function -----------------------------------------------------------------
-* Name........: PrintReport
-* Beschreibung:
-* Argumente...: None
-* R�ckgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function AltPrintReport( lPreview, cPrinter )
 
    local i, oVRD, cCondition
@@ -1730,14 +1505,8 @@ function AltPrintReport( lPreview, cPrinter )
 
 return .T.
 
+//------------------------------------------------------------------------------
 
-*-- function -----------------------------------------------------------------
-* Name........: IsSecondPage
-* Beschreibung:
-* Argumente...: None
-* R�ckgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function IsSecondPage( oVRD )
 
    local i
@@ -1754,14 +1523,8 @@ function IsSecondPage( oVRD )
 
 return ( lreturn )
 
+//------------------------------------------------------------------------------
 
-*-- function -----------------------------------------------------------------
-* Name........: OpenUndo()
-* Beschreibung:
-* Argumente...: None
-* R�ckgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function OpenUndo()
 
    local nSelect := SELECT()
@@ -1791,14 +1554,8 @@ function OpenUndo()
 
 return .T.
 
+//------------------------------------------------------------------------------
 
-*-- function -----------------------------------------------------------------
-* Name........: CloseUndo()
-* Beschreibung:
-* Argumente...: None
-* R�ckgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function CloseUndo()
 
   DelFile( ".\" + oGenVar:cUndoFileName + ".dbf" )
@@ -1808,14 +1565,8 @@ function CloseUndo()
 
 return .T.
 
+//------------------------------------------------------------------------------
 
-*-- function -----------------------------------------------------------------
-* Name........: Add2Undo()
-* Beschreibung:
-* Argumente...: None
-* R�ckgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function Add2Undo( cEntryText, nEntryNr, nAreaNr, cAreaText )
 
    local nSelect := SELECT()
@@ -1840,14 +1591,8 @@ function Add2Undo( cEntryText, nEntryNr, nAreaNr, cAreaText )
 
 return .T.
 
+//------------------------------------------------------------------------------
 
-*-- function -----------------------------------------------------------------
-* Name........: Undo
-* Beschreibung:
-* Argumente...: None
-* R�ckgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function Undo()
 
    local oIni, oItemInfo, nOldWidth, nOldHeight
@@ -1931,14 +1676,8 @@ function Undo()
 
 return .T.
 
+//------------------------------------------------------------------------------
 
-*-- function -----------------------------------------------------------------
-* Name........: Redo
-* Beschreibung:
-* Argumente...: None
-* R�ckgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function Redo()
 
    local oIni, oItemInfo, nOldWidth, nOldHeight
