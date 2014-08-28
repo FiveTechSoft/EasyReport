@@ -1,23 +1,14 @@
 #include "FiveWin.ch"
 
-MEMVAR aItems, aFonts, oAppFont, aAreaIni, aWnd, aWndTitle, oBar, oMru
+MEMVAR aItems, aFonts, aAreaIni, aWnd, aWndTitle, oBar, oMru
 MEMVAR oCbxArea, aCbxItems, nAktuellItem, aRuler, cLongDefIni, cDefaultPath
-MEMVAR nAktItem, nAktArea, nSelArea, cAktIni, aSelection, nTotalHeight, nTotalWidth
-MEMVAR nHinCol1, nHinCol2, nHinCol3, oMsgInfo, oGenVar
-MEMVAR aVRDSave, lVRDSave, lFillWindow, nDeveloper, oRulerBmp1, oRulerBmp2
-MEMVAR lBoxDraw, nBoxTop, nBoxLeft, nBoxBottom, nBoxRight
-MEMVAR cItemCopy, nCopyEntryNr, nCopyAreaNr, aSelectCopy, aItemCopy, nXMove, nYMove
-MEMVAR cInfoWidth, cInfoHeight, nInfoRow, nInfoCol, aItemPosition, aItemPixelPos
-MEMVAR oClpGeneral, cDefIni, cDefIniPath, cGeneralIni, nMeasure, cMeasure, lDemo, lBeta, oTimer
-MEMVAR oMainWnd, lProfi, nUndoCount, nRedoCount, nDlgTextCol, nDlgBackCol
+MEMVAR oGenVar
+MEMVAR aVRDSave, lVRDSave, lFillWindow
+MEMVAR cDefIni, cDefIniPath, cGeneralIni, nMeasure, cMeasure, oTimer
+MEMVAR oMainWnd, nDlgTextCol, nDlgBackCol
 
-*-- function -----------------------------------------------------------------
-* Name........: OpenFile
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+
 function OpenFile( cFile )
 
    local i
@@ -120,7 +111,7 @@ function OpenFile( cFile )
 
 return .T.
 
-*-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 
 function CreateBackup()
 
@@ -143,7 +134,7 @@ function CreateBackup()
 
 return .T.
 
-*-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 
 function SaveFile()
 
@@ -167,7 +158,7 @@ function SaveFile()
 
 return .T.
 
-*-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 
 function SaveAsFile()
 
@@ -181,7 +172,7 @@ function SaveAsFile()
 
 return NIL
 
-*-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 
 function SaveAs( cFile )
 

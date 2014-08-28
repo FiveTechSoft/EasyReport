@@ -50,7 +50,7 @@ FUNCTION ToggleItemSelection( nItem, nArea )
 RETURN (.T.)
 
 //------------------------------------------------------------------------------
--
+
 FUNCTION RefreshSelection()
 
    LOCAL i
