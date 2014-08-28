@@ -76,8 +76,8 @@ function InsertArea( lBefore, cTitle )
       MEMOWRIT( cDir + cFile, ;
          "[General]" + CRLF + ;
          "Title=New Area" + CRLF + ;
-         "Width="  + ALLTRIM(STR( oGenVar:aAreaSizes[nAktArea,1], 5, IIF( nMeasure = 2, 2, 0 ) )) + CRLF + ;
-         "Height=" + ALLTRIM(STR( oGenVar:aAreaSizes[nAktArea,2], 5, IIF( nMeasure = 2, 2, 0 ) )) )
+         "Width="  + ALLTRIM(STR( oGenVar:aAreaSizes[nAktArea,1], 5, IIF( oER:nMeasure = 2, 2, 0 ) )) + CRLF + ;
+         "Height=" + ALLTRIM(STR( oGenVar:aAreaSizes[nAktArea,2], 5, IIF( oER:nMeasure = 2, 2, 0 ) )) )
 
       OpenFile( cDefIni )
 
@@ -1276,14 +1276,14 @@ return .T.
 
 function ER_GetPixel( nValue )
 
-   if Upper( ValType( nMeasure ) ) = "L"
-      nMeasure := 1
+   if Upper( ValType( oER:nMeasure ) ) = "L"
+      oER:nMeasure := 1
    endif
 
-   if nMeasure = 1
+   if oER:nMeasure = 1
       //mm
       nValue := nValue * 3
-   ELSEif nMeasure = 2
+   ELSEif oER:nMeasure = 2
       //Inch
       nValue := nValue * 100
    endif
@@ -1300,10 +1300,10 @@ return ( nValue )
 *-----------------------------------------------------------------------------
 function GetCmInch( nValue )
 
-   if nMeasure = 1
+   if oER:nMeasure = 1
       //mm
       nValue := ROUND( nValue / 3, 0 )
-   ELSEif nMeasure = 2
+   ELSEif oER:nMeasure = 2
       //Inch
       nValue := ROUND( nValue / 100, 2 )
    endif

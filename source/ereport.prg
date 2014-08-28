@@ -546,10 +546,10 @@ return .T.
 
 function SetGeneralSettings()
 
-   nMeasure := Val( GetPvProfString( "General", "Measure", "1", cDefIni ) )
-   IIF( nMeasure = 1, cMeasure := GL("mm"), )
-   IIF( nMeasure = 2, cMeasure := GL("inch"), )
-   IIF( nMeasure = 3, cMeasure := GL("Pixel"), )
+   oER:nMeasure := Val( GetPvProfString( "General", "Measure", "1", cDefIni ) )
+   IIF( oER:nMeasure = 1, cMeasure := GL("mm"), )
+   IIF( oER:nMeasure = 2, cMeasure := GL("inch"), )
+   IIF( oER:nMeasure = 3, cMeasure := GL("Pixel"), )
 
    nDeveloper := Val( GetPvProfString( "General", "DeveloperMode", STR( nDeveloper, 1 ), cDefIni ) )
 
@@ -1046,34 +1046,43 @@ function PopupMenu( nArea, oItem, nRow, nCol, lItem )
    MENU oMenu POPUP
 
    if LEN( aSelection ) <> 0 .OR. nAktItem <> 0
-   MENUITEM GL("&Item Properties") + chr(9) + GL("Ctrl+I") RESOURCE "B_EDIT" ;
+      MENUITEM GL("&Item Properties") + chr(9) + GL("Ctrl+I") RESOURCE "B_EDIT" ;
       ACTION IIF( LEN( aSelection ) <> 0, MultiItemProperties(), ItemProperties( nAktItem, nAktArea ) )
    endif
+
    if LEN( aSelection ) <> 0
-   MENUITEM GL("&Delete selected Items") + CHR(9) + GL("Del") ;
+      MENUITEM GL("&Delete selected Items") + CHR(9) + GL("Del") ;
       ACTION DelselectItems()
-   SEPARATOR
+      SEPARATOR
    endif
+
    MENUITEM GL("Area and Item &List") + CHR(9) + GL("Ctrl+L") RESOURCE "B_ITEMLIST" ;
       ACTION Itemlist()
    MENUITEM GL("&Fonts and Colors") + CHR(9) + GL("Ctrl+F")   RESOURCE "B_FONTCOLOR" ;
-      ACTION FontsAndColors()
+    ACTION FontsAndColors()
+
    SEPARATOR
+
    MENUITEM GL("&Area Properties") + CHR(9) + GL("Ctrl+A")    RESOURCE "B_AREA" ;
       ACTION ( aWnd[ nArea ]:SetFocus(), AreaProperties( nAktArea ) )
+
    SEPARATOR
+
    MENUITEM GL("&Report Settings") ACTION ReportSettings()
    MENUITEM GL("&Options")         ACTION Options()
+
    if Val( GetPvProfString( "General", "Help", "1", cGeneralIni ) ) = 1
       SEPARATOR
       MENUITEM GL("&Help Topics") + CHR(9) + GL("F1") ACTION WinHelp( "VRD.HLP" )
    endif
+
    if nDeveloper = 1
       SEPARATOR
       MENUITEM GL("&Generate Source Code") ACTION GenerateSource( nArea )
    endif
 
    SEPARATOR
+
    MENUITEM GL("&Paste") + chr(9) + GL("Ctrl+V") ;
       ACTION ItemPaste() ;
       WHEN .NOT. Empty( cItemCopy )
@@ -1297,9 +1306,9 @@ function FillWindow( nArea, cAreaIni )
    local aIniEntries := GetIniSection( "Items", cAreaIni )
 
    //Ruler anzeigen
-   if nMeasure = 1 ; cRuler1 := "RULER1_MM" ; cRuler2 := "RULER2_MM" ; endif
-   if nMeasure = 2 ; cRuler1 := "RULER1_IN" ; cRuler2 := "RULER2_IN" ; endif
-   if nMeasure = 3 ; cRuler1 := "RULER1_PI" ; cRuler2 := "RULER2_PI" ; endif
+   if oER:nMeasure = 1 ; cRuler1 := "RULER1_MM" ; cRuler2 := "RULER2_MM" ; endif
+   if oER:nMeasure = 2 ; cRuler1 := "RULER1_IN" ; cRuler2 := "RULER2_IN" ; endif
+   if oER:nMeasure = 3 ; cRuler1 := "RULER1_PI" ; cRuler2 := "RULER2_PI" ; endif
 
    @ 0, 0 SAY " " SIZE 1200, nRulerTop-nRuler PIXEL ;
       COLORS 0, oGenVar:nBClrAreaTitle OF aWnd[ nArea ]
@@ -1428,13 +1437,9 @@ return nil
 //----------------------------------------------------------------------------//
 
 function SetTitleColor( lOff )
+LOCAL nColor :=  IIF( lOff, oGenVar:nF2ClrAreaTitle , oGenVar:nF1ClrAreaTitle )
 
-   if lOff = .T.
-      oGenVar:aAreaTitle[nAktArea]:SetColor( oGenVar:nF2ClrAreaTitle, oGenVar:nBClrAreaTitle )
-   else
-      oGenVar:aAreaTitle[nAktArea]:SetColor( oGenVar:nF1ClrAreaTitle, oGenVar:nBClrAreaTitle )
-   endif
-
+   oGenVar:aAreaTitle[nAktArea]:SetColor( nColor, oGenVar:nBClrAreaTitle )
    oGenVar:aAreaTitle[ nAktArea ]:Refresh()
 
 return .T.
@@ -1453,7 +1458,7 @@ function ZeichneHintergrund( nArea )
               nRulerTop, nRuler, nRulerTop + nHeight + 1, nRuler + nWidth + 1 )
 
    //Grid zeichnen
-   if oGenVar:lShowGrid = .T.
+   if oGenVar:lShowGrid
       ShowGrid( aWnd[ nArea ]:hDC, aWnd[ nArea ]:cPS, ;
                 ER_GetPixel( oGenVar:nGridWidth ), ER_GetPixel( oGenVar:nGridHeight ), ;
                 nWidth, nHeight, nRulerTop, nRuler )
@@ -1515,7 +1520,7 @@ function WndKeyDownAction( nKey, nArea, cAreaIni )
       ENDCASE
    endif
 
-   if lMove = .T.
+   if lMove
 
       UnSelectAll( .F. )
 
@@ -1551,7 +1556,7 @@ function DelselectItems()
 
       for i := 1 to LEN( aSelection )
 
-         if aItems[ aSelection[i, 1 ], aSelection[i, 2 ] ] <> nil
+         if aItems[ aSelection[i, 1 ], aSelection[i, 2 ] ] != nil
 
             MarkItem( aItems[ aSelection[i, 1 ], aSelection[i, 2 ] ]:hWnd )
             DelItemWithKey( aSelection[i, 2 ], aSelection[i, 1 ] )
@@ -1571,8 +1576,8 @@ function MsgBarInfos( nRow, nCol )
    DEFAULT nRow := 0
    DEFAULT nCol := 0
 
-   oMsgInfo:SetText( GL("Row:")    + " " + AllTrim(STR( GetCmInch( nRow - nRulerTop ), 5, IIF( nMeasure = 2, 2, 0 ) ) ) + "    " + ;
-                     GL("Column:") + " " + AllTrim(STR( GetCmInch( nCol - nRuler ), 5, IIF( nMeasure = 2, 2, 0 ) ) ) )
+   oMsgInfo:SetText( GL("Row:")    + " " + AllTrim(STR( GetCmInch( nRow - nRulerTop ), 5, IIF( oER:nMeasure = 2, 2, 0 ) ) ) + "    " + ;
+                     GL("Column:") + " " + AllTrim(STR( GetCmInch( nCol - nRuler ), 5, IIF( oER:nMeasure = 2, 2, 0 ) ) ) )
 
 return .T.
 
@@ -1627,7 +1632,7 @@ function ShowFontChoice( nCurrentFont )
 
    ACTIVATE DIALOG oDlg CENTERED ON INIT PreviewRefresh( oSay1, oLbx, oGet1 )
 
-   if lSave = .T.
+   if lSave
       nFont := Val(SUBSTR( AllTrim(cFont), 1, 2 ))
    endif
 
@@ -1717,7 +1722,7 @@ function ShowColorChoice( nCurrentClr )
    REDEFINE SAY aSay[30] PROMPT "" ID 330 OF oDlg COLORS SetColor( aColors[30], nDefClr ), SetColor( aColors[30], nDefClr )
 */
 
- REDEFINE BTNBMP aSay[1]  ID 301 OF oDlg NOBORDER
+   REDEFINE BTNBMP aSay[1]  ID 301 OF oDlg NOBORDER
    REDEFINE BTNBMP aSay[2]  ID 302 OF oDlg NOBORDER
    REDEFINE BTNBMP aSay[3]  ID 303 OF oDlg NOBORDER
    REDEFINE BTNBMP aSay[4]  ID 304 OF oDlg NOBORDER
@@ -2015,8 +2020,9 @@ return .T.
 //----------------------------------------------------------------------------//
 
 function Set2Color( oColorSay, cColor, nDefClr )
+  LOCAL nColor := IF( Empty( cColor ), nDefClr, Val( cColor ) )
 
-   oColorSay:SetColor( SetColor( cColor, nDefClr ), SetColor( cColor, nDefClr ) )
+   oColorSay:SetColor( nColor, nColor )
    oColorSay:Refresh()
 
 return .T.
@@ -2033,16 +2039,7 @@ return ( cColor )
 //----------------------------------------------------------------------------//
 
 function SetColor( cColor, nDefClr )
-
-   local nColor
-
-   if Empty( cColor ) = .T.
-      nColor := nDefClr
-   else
-      nColor := Val( cColor )
-   endif
-
-return ( nColor )
+RETURN IF( Empty( cColor ), nDefClr, Val( cColor ) )
 
 //----------------------------------------------------------------------------//
 
@@ -2272,7 +2269,7 @@ function ReportSettings()
    local nOrient     := Val( GetPvProfString( "General", "Orientation", "1", cDefIni ) )
    local cTitle      := PADR( GetPvProfString( "General", "Title", "", cDefIni ), 80 )
    local cGroup      := PADR( GetPvProfString( "General", "Group", "", cDefIni ), 80 )
-   local cPicture    := IIF( nMeasure = 2, "999.99", "99999" )
+   local cPicture    := IIF( oER:nMeasure = 2, "999.99", "99999" )
    local aFormat     := GetPaperSizes()
    local nFormat     := Val( GetPvProfString( "General", "PaperSize", "9", cDefIni ) )
    local cFormat     := aFormat[ IIF( nFormat = 0, 9, nFormat ) ]
@@ -2328,11 +2325,11 @@ function ReportSettings()
 
       INI oIni FILE cDefIni
          SET SECTION "General" ENTRY "PaperSize"    to AllTrim(STR( ASCAN( aFormat, AllTrim( cFormat ) ), 3 )) OF oIni
-         SET SECTION "General" ENTRY "PaperWidth"   to AllTrim(STR( nWidth , 5, IIF( nMeasure = 2, 2, 0 ) )) OF oIni
-         SET SECTION "General" ENTRY "PaperHeight"  to AllTrim(STR( nHeight, 5, IIF( nMeasure = 2, 2, 0 ) )) OF oIni
-         SET SECTION "General" ENTRY "TopMargin"    to AllTrim(STR( nTop   , 5, IIF( nMeasure = 2, 2, 0 ) )) OF oIni
-         SET SECTION "General" ENTRY "LeftMargin"   to AllTrim(STR( nLeft  , 5, IIF( nMeasure = 2, 2, 0 ) )) OF oIni
-         SET SECTION "General" ENTRY "PageBreak"    to AllTrim(STR( nPageBreak, 5, IIF( nMeasure = 2, 2, 0 ) )) OF oIni
+         SET SECTION "General" ENTRY "PaperWidth"   to AllTrim(STR( nWidth , 5, IIF( oER:nMeasure = 2, 2, 0 ) )) OF oIni
+         SET SECTION "General" ENTRY "PaperHeight"  to AllTrim(STR( nHeight, 5, IIF( oER:nMeasure = 2, 2, 0 ) )) OF oIni
+         SET SECTION "General" ENTRY "TopMargin"    to AllTrim(STR( nTop   , 5, IIF( oER:nMeasure = 2, 2, 0 ) )) OF oIni
+         SET SECTION "General" ENTRY "LeftMargin"   to AllTrim(STR( nLeft  , 5, IIF( oER:nMeasure = 2, 2, 0 ) )) OF oIni
+         SET SECTION "General" ENTRY "PageBreak"    to AllTrim(STR( nPageBreak, 5, IIF( oER:nMeasure = 2, 2, 0 ) )) OF oIni
          SET SECTION "General" ENTRY "Orientation"  to AllTrim(STR( nOrient, 1 )) OF oIni
          SET SECTION "General" ENTRY "Title"        to AllTrim( cTitle ) OF oIni
          SET SECTION "General" ENTRY "Group"        to AllTrim( cGroup ) OF oIni
@@ -2407,7 +2404,7 @@ function Options()
    local lMaximize     := IIF( nMaximize = 1, .T., .F. )
    local nMruList      := Val( GetPvProfString( "General", "MruList"  , "4", cGeneralIni ) )
    local aLanguage     := {}
-   local cPicture      := IIF( nMeasure = 2, "999.99", "99999" )
+   local cPicture      := IIF( oER:nMeasure = 2, "999.99", "99999" )
    local nGridWidth    := oGenVar:nGridWidth
    local nGridHeight   := oGenVar:nGridHeight
    local lShowGrid     := oGenVar:lShowGrid
@@ -2478,8 +2475,8 @@ function Options()
       oGenVar:lShowBorder   := lShowBorder
 
       INI oIni FILE cDefIni
-         SET SECTION "General" ENTRY "GridWidth"  to AllTrim(STR( nGridWidth , 5, IIF( nMeasure = 2, 2, 0 ) )) OF oIni
-         SET SECTION "General" ENTRY "GridHeight" to AllTrim(STR( nGridHeight, 5, IIF( nMeasure = 2, 2, 0 ) )) OF oIni
+         SET SECTION "General" ENTRY "GridWidth"  to AllTrim(STR( nGridWidth , 5, IIF( oER:nMeasure = 2, 2, 0 ) )) OF oIni
+         SET SECTION "General" ENTRY "GridHeight" to AllTrim(STR( nGridHeight, 5, IIF( oER:nMeasure = 2, 2, 0 ) )) OF oIni
          SET SECTION "General" ENTRY "ShowGrid"   to IIF( lShowGrid, "1", "0") OF oIni
       ENDINI
 
@@ -2914,7 +2911,7 @@ function AreaProperties( nArea )
    local cDatabase      := AllTrim( GetPvProfString( "General", "ControlDBF", GL("none"), aAreaIni[ nArea ] ) )
    local nOldWidth      := nWidth
    local nOldHeight     := nHeight
-   local cPicture       := IIF( nMeasure = 2, "999.99", "99999" )
+   local cPicture       := IIF( oER:nMeasure = 2, "999.99", "99999" )
    local cAreaTitle     := aWndTitle[ nArea ]
    local cOldAreaText   := MEMOREAD( aAreaIni[ nArea ] )
 
@@ -3005,12 +3002,12 @@ function AreaProperties( nArea )
 
       INI oIni FILE aAreaIni[ nArea ]
          SET SECTION "General" ENTRY "Title"            to AllTrim( cAreaTitle ) OF oIni
-         SET SECTION "General" ENTRY "Top1"             to AllTrim(STR( nTop1  , 5, IIF( nMeasure = 2, 2, 0 ) )) OF oIni
-         SET SECTION "General" ENTRY "Top2"             to AllTrim(STR( nTop2  , 5, IIF( nMeasure = 2, 2, 0 ) )) OF oIni
+         SET SECTION "General" ENTRY "Top1"             to AllTrim(STR( nTop1  , 5, IIF( oER:nMeasure = 2, 2, 0 ) )) OF oIni
+         SET SECTION "General" ENTRY "Top2"             to AllTrim(STR( nTop2  , 5, IIF( oER:nMeasure = 2, 2, 0 ) )) OF oIni
          SET SECTION "General" ENTRY "TopVariable"      to IIF( lTop = .F., "0", "1") OF oIni
          SET SECTION "General" ENTRY "Condition"        to AllTrim(STR( nCondition, 1 )) OF oIni
-         SET SECTION "General" ENTRY "Width"            to AllTrim(STR( nWidth , 5, IIF( nMeasure = 2, 2, 0 ) )) OF oIni
-         SET SECTION "General" ENTRY "Height"           to AllTrim(STR( nHeight, 5, IIF( nMeasure = 2, 2, 0 ) )) OF oIni
+         SET SECTION "General" ENTRY "Width"            to AllTrim(STR( nWidth , 5, IIF( oER:nMeasure = 2, 2, 0 ) )) OF oIni
+         SET SECTION "General" ENTRY "Height"           to AllTrim(STR( nHeight, 5, IIF( oER:nMeasure = 2, 2, 0 ) )) OF oIni
          SET SECTION "General" ENTRY "DelEmptySpace"    to IIF( lDelSpace = .F., "0", "1") OF oIni
          SET SECTION "General" ENTRY "BreakBefore"      to IIF( lBreakBefore   = .F., "0", "1") OF oIni
          SET SECTION "General" ENTRY "BreakAfter"       to IIF( lBreakAfter    = .F., "0", "1") OF oIni
@@ -3162,6 +3159,7 @@ CLASS TEasyReport
    DATA cGeneralIni
    DATA cDataPath
    DATA bClrBar, aClrDialogs
+   DATA nMeasure
 
    METHOD New() CONSTRUCTOR
 

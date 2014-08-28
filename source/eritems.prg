@@ -348,7 +348,7 @@ function MultiItemProperties()
    local nWidth    := VAL( GetField( cItemDef, 9 ) )
    local nHeight   := VAL( GetField( cItemDef, 10 ) )
    local aOldValue := { nTop, nLeft, nWidth, nHeight }
-   local cPicture  := IIF( nMeasure = 2, "999.99", "99999" )
+   local cPicture  := IIF( oER:nMeasure = 2, "999.99", "99999" )
    local lAddValue := .F.
 
    DEFINE DIALOG oDlg RESOURCE "MULTISELECT" TITLE GL("Item Properties")
@@ -593,7 +593,7 @@ return ( .T. )
 function SetItemDefault( oItem )
 
    WritePProString( "General", "Default" + IIF( oItem:lGraphic, "GRAPHIC", oItem:cType ), ;
-                    oItem:Set( .F., nMeasure ), cDefIni )
+                    oItem:Set( .F., oER:nMeasure ), cDefIni )
 
 return .T.
 
@@ -721,7 +721,7 @@ function GetoVar( i, nArea, cAreaIni, lNew )
    oVar:AddMember( "cShowExpr"  ,, AllTrim( GetPvProfString( "General", "Expressions", "0", cDefIni ) )    )
    oVar:AddMember( "nGesWidth"  ,, VAL( GetPvProfString( "General", "Width", "600", cAreaIni ) )           )
    oVar:AddMember( "nGesHeight" ,, VAL( GetPvProfString( "General", "Height", "300", cAreaIni ) )          )
-   oVar:AddMember( "cPicture"   ,, IIF( nMeasure = 2, "999.99", "99999" )                                  )
+   oVar:AddMember( "cPicture"   ,, IIF( oER:nMeasure = 2, "999.99", "99999" )                                  )
 
 return ( oVar )
 
@@ -736,7 +736,7 @@ function SaveTextItem( oVar, oItem )
    oItem:nTrans  := IIF( oItem:lTrans  , 1, 0 )
    oItem:nShow   := IIF( oItem:lVisible, 1, 0 )
 
-   oVar:cItemDef := oItem:Set( .F., nMeasure )
+   oVar:cItemDef := oItem:Set( .F., oER:nMeasure )
 
    INI oIni FILE oVar:cAreaIni
       SET SECTION "Items" ENTRY AllTrim(STR(oVar:i,5)) TO oVar:cItemDef OF oIni
@@ -936,8 +936,8 @@ function GetImageSize( cFile )
       oImg:LoadImage( IIF( AT( "RES:", UPPER( cFile ) ) <> 0, ;
                            SUBSTR( AllTrim( cFile ), 5 ), NIL ), ;
                       VRD_LF2SF( cFile ) )
-      aSizes := { AllTrim(STR( GetCmInch( oImg:nWidth()  ), 5, IIF( nMeasure = 2, 2, 0 ) )), ;
-                  AllTrim(STR( GetCmInch( oImg:nHeight() ), 5, IIF( nMeasure = 2, 2, 0 ) )) }
+      aSizes := { AllTrim(STR( GetCmInch( oImg:nWidth()  ), 5, IIF( oER:nMeasure = 2, 2, 0 ) )), ;
+                  AllTrim(STR( GetCmInch( oImg:nHeight() ), 5, IIF( oER:nMeasure = 2, 2, 0 ) )) }
       oImg:End()
 
    endif
@@ -953,7 +953,7 @@ function SaveImgItem( oVar, oItem )
    oItem:nBorder := IIF( oItem:lBorder , 1, 0 )
    oItem:nShow   := IIF( oItem:lVisible, 1, 0 )
 
-   oVar:cItemDef := oItem:Set( .F., nMeasure )
+   oVar:cItemDef := oItem:Set( .F., oER:nMeasure )
 
    INI oIni FILE oVar:cAreaIni
       SET SECTION "Items" ENTRY AllTrim(STR(oVar:i,5)) TO oVar:cItemDef OF oIni
@@ -1142,7 +1142,7 @@ function SaveGraItem( oVar, oItem )
    oItem:nStyle := VAL( oVar:cStyle )
    oItem:nTrans := IIF( oItem:lTrans, 1, 0 )
 
-   oVar:cItemDef := oItem:Set( .F., nMeasure )
+   oVar:cItemDef := oItem:Set( .F., oER:nMeasure )
 
    INI oIni FILE oVar:cAreaIni
       SET SECTION "Items" ENTRY AllTrim(STR(oVar:i,5)) TO oVar:cItemDef OF oIni
@@ -1189,7 +1189,7 @@ function BarcodeProperties( i, nArea, cAreaIni, lFromList, lNew )
    oVar:AddMember( "cOrient"     ,, oVar:aOrient[ IIF( oItem:nOrient = 0, 1, oItem:nOrient ) ] )
    oVar:AddMember( "aBitmaps"    ,, { "BCODE_HORI", "BCODE_VERT" }                        )
    oVar:AddMember( "aColors"     ,, GetAllColors()                                        )
-   oVar:AddMember( "cPinPicture" ,, IIF( nMeasure = 2, "99.9999", "999.99" )              )
+   oVar:AddMember( "cPinPicture" ,, IIF( oER:nMeasure = 2, "99.9999", "999.99" )              )
 
    oGenVar:lItemDlg := .T.
 
@@ -1330,7 +1330,7 @@ function SaveBarItem( oVar, oItem )
    oItem:nBCodeType := ASCAN( oVar:aBarcode, oVar:cBarcode )
    oItem:nOrient    := ASCAN( oVar:aOrient, oVar:cOrient )
 
-   oVar:cItemDef := oItem:Set( .F., nMeasure )
+   oVar:cItemDef := oItem:Set( .F., oER:nMeasure )
 
    INI oIni FILE oVar:cAreaIni
       SET SECTION "Items" ENTRY AllTrim(STR(oVar:i,5)) TO oVar:cItemDef OF oIni
@@ -1383,16 +1383,16 @@ function SetItemSize( i, nArea, cAreaIni )
    if nTop + nHeight <= nGesHeight .AND. nLeft + nWidth <= nGesWidth .AND. ;
          nTop >= 0 .AND. nLeft >= 0
 
-      nTop    := GetDivisible( ROUND( nTop   , IIF( nMeasure = 2, 2, 0 ) ), GetCmInch( nYMove ) )
-      nLeft   := GetDivisible( ROUND( nLeft  , IIF( nMeasure = 2, 2, 0 ) ), GetCmInch( nXMove ) )
-      nWidth  := GetDivisible( ROUND( nWidth , IIF( nMeasure = 2, 2, 0 ) ), GetCmInch( nXMove ) )
-      nHeight := GetDivisible( ROUND( nHeight, IIF( nMeasure = 2, 2, 0 ) ), GetCmInch( nYMove ) )
+      nTop    := GetDivisible( ROUND( nTop   , IIF( oER:nMeasure = 2, 2, 0 ) ), GetCmInch( nYMove ) )
+      nLeft   := GetDivisible( ROUND( nLeft  , IIF( oER:nMeasure = 2, 2, 0 ) ), GetCmInch( nXMove ) )
+      nWidth  := GetDivisible( ROUND( nWidth , IIF( oER:nMeasure = 2, 2, 0 ) ), GetCmInch( nXMove ) )
+      nHeight := GetDivisible( ROUND( nHeight, IIF( oER:nMeasure = 2, 2, 0 ) ), GetCmInch( nYMove ) )
 
       cItemDef := SUBSTR( cItemDef, 1, StrAtNum( "|", cItemDef, 6 ) ) + ;
-         AllTrim(STR( nTop, 5, IIF( nMeasure = 2, 2, 0 ) )) + "|" + ;
-         AllTrim(STR( nLeft, 5, IIF( nMeasure = 2, 2, 0 ) )) + "|" + ;
-         AllTrim(STR( nWidth, 5, IIF( nMeasure = 2, 2, 0 ) )) + "|" + ;
-         AllTrim(STR( nHeight, 5, IIF( nMeasure = 2, 2, 0 ) )) + ;
+         AllTrim(STR( nTop, 5, IIF( oER:nMeasure = 2, 2, 0 ) )) + "|" + ;
+         AllTrim(STR( nLeft, 5, IIF( oER:nMeasure = 2, 2, 0 ) )) + "|" + ;
+         AllTrim(STR( nWidth, 5, IIF( oER:nMeasure = 2, 2, 0 ) )) + "|" + ;
+         AllTrim(STR( nHeight, 5, IIF( oER:nMeasure = 2, 2, 0 ) )) + ;
          SUBSTR( cItemDef, StrAtNum( "|", cItemDef, 10 ) )
 
       if IsGraphic( cTyp ) = .T.
@@ -1488,8 +1488,8 @@ function MsgBarItem( nItem, nArea, cAreaIni, nRow, nCol, lResize )
 
       /* FiveTech
       oMsgInfo:SetText( GL("ID") + ": " + cItemID + "  " + ;
-                        GL("Top:")    + " " + AllTrim(STR( GetCmInch( nTop ), 5, IIF( nMeasure = 2, 2, 0 ) )) + "  " + ;
-                        GL("Left:")   + " " + AllTrim(STR( GetCmInch( nLeft), 5, IIF( nMeasure = 2, 2, 0 ) )) + "  " + ;
+                        GL("Top:")    + " " + AllTrim(STR( GetCmInch( nTop ), 5, IIF( oER:nMeasure = 2, 2, 0 ) )) + "  " + ;
+                        GL("Left:")   + " " + AllTrim(STR( GetCmInch( nLeft), 5, IIF( oER:nMeasure = 2, 2, 0 ) )) + "  " + ;
                         GL("Width:")  + " " + AllTrim( cInfoWidth ) + "  " + ;
                         GL("Height:") + " " + AllTrim( cInfoHeight ) )
       */
@@ -1643,7 +1643,7 @@ function NewItem( cTyp, nArea, nTmpCopyArea, nTmpCopyEntry, cTmpItemCopy )
    local cAreaIni   := aAreaIni[nArea]
    local nGesWidth  := VAL( GetPvProfString( "General", "Width", "600", cAreaIni ) )
    local nGesHeight := VAL( GetPvProfString( "General", "Height", "300", cAreaIni ) )
-   local cTop       := IIF( nMeasure = 2, "0.10", "2" )
+   local cTop       := IIF( oER:nMeasure = 2, "0.10", "2" )
    local cLeft      := cTop
 
    FOR i := 400 TO 1000
@@ -1678,38 +1678,38 @@ function NewItem( cTyp, nArea, nTmpCopyArea, nTmpCopyEntry, cTmpItemCopy )
       endif
 
       if nTmpCopyArea = nArea
-         nPlusTop  := IIF( nMeasure = 2, 0.06, 2 )
-         nPlusLeft := IIF( nMeasure = 2, 0.06, 2 )
+         nPlusTop  := IIF( oER:nMeasure = 2, 0.06, 2 )
+         nPlusLeft := IIF( oER:nMeasure = 2, 0.06, 2 )
       endif
 
       cItemDef := SUBSTR( cTmpItemCopy, 1, StrAtNum( "|", cTmpItemCopy, 6 ) ) + ;
-         AllTrim(STR( IIF( nItemTop = 0, oItemInfo:nTop, nItemTop ) + nPlusTop, 5, IIF( nMeasure = 2, 2, 0 ) )) + "|" + ;
-         AllTrim(STR( IIF( nItemLeft = 0, oItemInfo:nLeft, nItemLeft ) + nPlusLeft, 5, IIF( nMeasure = 2, 2, 0 ) )) + ;
+         AllTrim(STR( IIF( nItemTop = 0, oItemInfo:nTop, nItemTop ) + nPlusTop, 5, IIF( oER:nMeasure = 2, 2, 0 ) )) + "|" + ;
+         AllTrim(STR( IIF( nItemLeft = 0, oItemInfo:nLeft, nItemLeft ) + nPlusLeft, 5, IIF( oER:nMeasure = 2, 2, 0 ) )) + ;
          SUBSTR( cTmpItemCopy, StrAtNum( "|", cTmpItemCopy, 8 ) )
 
    ELSEif cTyp = "TEXT"
       cItemDef := "Text||-1|1|1|1|" + cTop + "|" + cLeft + "|" + ;
-                  IIF( nMeasure = 2, "1.00", "30" ) + "|" + ;
-                  IIF( nMeasure = 2, "0.50",  "5" ) + "|" + ;
+                  IIF( oER:nMeasure = 2, "1.00", "30" ) + "|" + ;
+                  IIF( oER:nMeasure = 2, "0.50",  "5" ) + "|" + ;
                   "1|1|2|0|0|0|"
    ELSEif cTyp = "IMAGE"
       cItemDef := "Image||-1|1|1|1|" + cTop + "|" + cLeft + "|" + ;
-                  IIF( nMeasure = 2, "0.60", "20" ) + "|" + ;
-                  IIF( nMeasure = 2, "0.60", "20" ) + "|" + ;
+                  IIF( oER:nMeasure = 2, "0.60", "20" ) + "|" + ;
+                  IIF( oER:nMeasure = 2, "0.60", "20" ) + "|" + ;
                   "|0"
    ELSEif cTyp = "GRAPHIC"
       cItemDef := "Rectangle|" + ;
                   GL("Rectangle") + ;
                   "|-1|1|1|1|" + cTop + "|" + cLeft + "|" + ;
-                  IIF( nMeasure = 2, "0.60", "20" ) + "|" + ;
-                  IIF( nMeasure = 2, "0.30", "10" ) + "|" + ;
+                  IIF( oER:nMeasure = 2, "0.60", "20" ) + "|" + ;
+                  IIF( oER:nMeasure = 2, "0.30", "10" ) + "|" + ;
                   "1|2|1|1|0|0"
    ELSEif cTyp = "BARCODE"
       cItemDef := "Barcode|" + ;
                   "12345678" + ;
                   "|-1|1|1|1|" + cTop + "|" + cLeft + "|" + ;
-                  IIF( nMeasure = 2, "1.70", "60" ) + "|" + ;
-                  IIF( nMeasure = 2, "0.30", "10" ) + "|" + ;
+                  IIF( oER:nMeasure = 2, "1.70", "60" ) + "|" + ;
+                  IIF( oER:nMeasure = 2, "0.30", "10" ) + "|" + ;
                   "1|1|2|1|1|0.3|"
    endif
 
