@@ -10,7 +10,7 @@ MEMVAR lFillWindow, nDeveloper
 MEMVAR nRuler, nRulerTop
 MEMVAR cItemCopy, nCopyEntryNr, nCopyAreaNr, aSelectCopy, aItemCopy, nXMove, nYMove
 MEMVAR cInfoWidth, cInfoHeight, nInfoRow, nInfoCol, aItemPosition, aItemPixelPos
-MEMVAR oClpGeneral, cDefIni, cGeneralIni, nMeasure, cMeasure, oTimer
+MEMVAR oClpGeneral, cDefIni, cGeneralIni, cMeasure, oTimer
 MEMVAR lProfi, oCurDlg, oGenVar,oER
 
 //----------------------------------------------------------------------------//
@@ -928,6 +928,7 @@ function GetImageSize( cFile )
 
    local oImg
    local aSizes := { "--", "--" }
+   LOCAL nDecimals := IIF( oER:nMeasure == 2, 2, 0 )
 
    if FILE( cFile ) .OR. AT( "RES:", UPPER( cFile ) ) <> 0
 
@@ -936,8 +937,8 @@ function GetImageSize( cFile )
       oImg:LoadImage( IIF( AT( "RES:", UPPER( cFile ) ) <> 0, ;
                            SUBSTR( AllTrim( cFile ), 5 ), NIL ), ;
                       VRD_LF2SF( cFile ) )
-      aSizes := { AllTrim(STR( GetCmInch( oImg:nWidth()  ), 5, IIF( oER:nMeasure = 2, 2, 0 ) )), ;
-                  AllTrim(STR( GetCmInch( oImg:nHeight() ), 5, IIF( oER:nMeasure = 2, 2, 0 ) )) }
+      aSizes := { AllTrim(STR( GetCmInch( oImg:nWidth()  ), 5, nDecimals )), ;
+                  AllTrim(STR( GetCmInch( oImg:nHeight() ), 5, nDecimals )) }
       oImg:End()
 
    endif
@@ -1379,20 +1380,21 @@ function SetItemSize( i, nArea, cAreaIni )
    local nGesWidth  := VAL( GetPvProfString( "General", "Width", "600", cAreaIni ) )
    local nGesHeight := VAL( GetPvProfString( "General", "Height", "300", cAreaIni ) )
    local cTyp       := UPPER(AllTrim( GetField( cItemDef, 1 ) ))
+   LOCAL nDecimals := IIF( oER:nMeasure == 2, 2, 0 )
 
    if nTop + nHeight <= nGesHeight .AND. nLeft + nWidth <= nGesWidth .AND. ;
          nTop >= 0 .AND. nLeft >= 0
 
-      nTop    := GetDivisible( ROUND( nTop   , IIF( oER:nMeasure = 2, 2, 0 ) ), GetCmInch( nYMove ) )
-      nLeft   := GetDivisible( ROUND( nLeft  , IIF( oER:nMeasure = 2, 2, 0 ) ), GetCmInch( nXMove ) )
-      nWidth  := GetDivisible( ROUND( nWidth , IIF( oER:nMeasure = 2, 2, 0 ) ), GetCmInch( nXMove ) )
-      nHeight := GetDivisible( ROUND( nHeight, IIF( oER:nMeasure = 2, 2, 0 ) ), GetCmInch( nYMove ) )
+      nTop    := GetDivisible( ROUND( nTop   , nDecimals ), GetCmInch( nYMove ) )
+      nLeft   := GetDivisible( ROUND( nLeft  , nDecimals ), GetCmInch( nXMove ) )
+      nWidth  := GetDivisible( ROUND( nWidth , nDecimals ), GetCmInch( nXMove ) )
+      nHeight := GetDivisible( ROUND( nHeight, nDecimals ), GetCmInch( nYMove ) )
 
       cItemDef := SUBSTR( cItemDef, 1, StrAtNum( "|", cItemDef, 6 ) ) + ;
-         AllTrim(STR( nTop, 5, IIF( oER:nMeasure = 2, 2, 0 ) )) + "|" + ;
-         AllTrim(STR( nLeft, 5, IIF( oER:nMeasure = 2, 2, 0 ) )) + "|" + ;
-         AllTrim(STR( nWidth, 5, IIF( oER:nMeasure = 2, 2, 0 ) )) + "|" + ;
-         AllTrim(STR( nHeight, 5, IIF( oER:nMeasure = 2, 2, 0 ) )) + ;
+         AllTrim(STR( nTop, 5, nDecimals )) + "|" + ;
+         AllTrim(STR( nLeft, 5, nDecimals )) + "|" + ;
+         AllTrim(STR( nWidth, 5, nDecimals )) + "|" + ;
+         AllTrim(STR( nHeight, 5, nDecimals )) + ;
          SUBSTR( cItemDef, StrAtNum( "|", cItemDef, 10 ) )
 
       if IsGraphic( cTyp ) = .T.
