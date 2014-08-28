@@ -18,7 +18,7 @@ MEMVAR aVRDSave, lVRDSave, lFillWindow, nDeveloper, oRulerBmp1, oRulerBmp2
 MEMVAR lBoxDraw, nBoxTop, nBoxLeft, nBoxBottom, nBoxRight, nRuler, nRulerTop
 MEMVAR cItemCopy, nCopyEntryNr, nCopyAreaNr, aSelectCopy, aItemCopy, nXMove, nYMove
 MEMVAR cInfoWidth, cInfoHeight, nInfoRow, nInfoCol, aItemPosition, aItemPixelPos
-MEMVAR oClpGeneral, cDefIni, cDefIniPath, cGeneralIni, nMeasure, cMeasure, lDemo, lBeta, oTimer
+MEMVAR oClpGeneral, cDefIni, cDefIniPath, cGeneralIni, cMeasure, lDemo, lBeta, oTimer
 MEMVAR lProfi, nUndoCount, nRedoCount, nDlgTextCol, nDlgBackCol
 MEMVAR lPersonal, lStandard, oGenVar, oCurDlg
 MEMVAR oER
@@ -346,7 +346,7 @@ function DeclarePublics( cDefFile )
 
    PUBLIC oClpGeneral, oTimer
    PUBLIC cDefIni, cDefIniPath
-   PUBLIC nMeasure, cMeasure
+   PUBLIC cMeasure
    PUBLIC cGeneralIni := ".\vrd.ini"
    PUBLIC lDemo       := .F.
    PUBLIC lBeta       := .F.
@@ -546,10 +546,11 @@ return .T.
 
 function SetGeneralSettings()
 
+   LOCAL aMeasure := { GL("mm"), GL("inch") , GL("Pixel") }
+
    oER:nMeasure := Val( GetPvProfString( "General", "Measure", "1", cDefIni ) )
-   IIF( oER:nMeasure = 1, cMeasure := GL("mm"), )
-   IIF( oER:nMeasure = 2, cMeasure := GL("inch"), )
-   IIF( oER:nMeasure = 3, cMeasure := GL("Pixel"), )
+
+   cMeasure := aMeasure [ oER:nMeasure ]
 
    nDeveloper := Val( GetPvProfString( "General", "DeveloperMode", STR( nDeveloper, 1 ), cDefIni ) )
 
@@ -1572,12 +1573,13 @@ return .T.
 //----------------------------------------------------------------------------//
 
 function MsgBarInfos( nRow, nCol )
+   LOCAL nDecimals := IIF( oER:nMeasure == 2, 2, 0 )
 
    DEFAULT nRow := 0
    DEFAULT nCol := 0
 
-   oMsgInfo:SetText( GL("Row:")    + " " + AllTrim(STR( GetCmInch( nRow - nRulerTop ), 5, IIF( oER:nMeasure = 2, 2, 0 ) ) ) + "    " + ;
-                     GL("Column:") + " " + AllTrim(STR( GetCmInch( nCol - nRuler ), 5, IIF( oER:nMeasure = 2, 2, 0 ) ) ) )
+   oMsgInfo:SetText( GL("Row:")    + " " + AllTrim(STR( GetCmInch( nRow - nRulerTop ), 5, nDecimals ) ) + "    " + ;
+                     GL("Column:") + " " + AllTrim(STR( GetCmInch( nCol - nRuler ), 5, nDecimals ) ) )
 
 return .T.
 
@@ -2273,6 +2275,7 @@ function ReportSettings()
    local aFormat     := GetPaperSizes()
    local nFormat     := Val( GetPvProfString( "General", "PaperSize", "9", cDefIni ) )
    local cFormat     := aFormat[ IIF( nFormat = 0, 9, nFormat ) ]
+   LOCAL nDecimals    := IIF( oER:nMeasure = 2, 2, 0 )
 
    DEFINE DIALOG oDlg NAME "REPORTOPTIONS" TITLE GL("Report Settings")
 
@@ -2325,11 +2328,11 @@ function ReportSettings()
 
       INI oIni FILE cDefIni
          SET SECTION "General" ENTRY "PaperSize"    to AllTrim(STR( ASCAN( aFormat, AllTrim( cFormat ) ), 3 )) OF oIni
-         SET SECTION "General" ENTRY "PaperWidth"   to AllTrim(STR( nWidth , 5, IIF( oER:nMeasure = 2, 2, 0 ) )) OF oIni
-         SET SECTION "General" ENTRY "PaperHeight"  to AllTrim(STR( nHeight, 5, IIF( oER:nMeasure = 2, 2, 0 ) )) OF oIni
-         SET SECTION "General" ENTRY "TopMargin"    to AllTrim(STR( nTop   , 5, IIF( oER:nMeasure = 2, 2, 0 ) )) OF oIni
-         SET SECTION "General" ENTRY "LeftMargin"   to AllTrim(STR( nLeft  , 5, IIF( oER:nMeasure = 2, 2, 0 ) )) OF oIni
-         SET SECTION "General" ENTRY "PageBreak"    to AllTrim(STR( nPageBreak, 5, IIF( oER:nMeasure = 2, 2, 0 ) )) OF oIni
+         SET SECTION "General" ENTRY "PaperWidth"   to AllTrim(STR( nWidth    , 5, nDecimals ) ) OF oIni
+         SET SECTION "General" ENTRY "PaperHeight"  to AllTrim(STR( nHeight   , 5, nDecimals ) ) OF oIni
+         SET SECTION "General" ENTRY "TopMargin"    to AllTrim(STR( nTop      , 5, nDecimals ) ) OF oIni
+         SET SECTION "General" ENTRY "LeftMargin"   to AllTrim(STR( nLeft     , 5, nDecimals ) ) OF oIni
+         SET SECTION "General" ENTRY "PageBreak"    to AllTrim(STR( nPageBreak, 5, nDecimals ) ) OF oIni
          SET SECTION "General" ENTRY "Orientation"  to AllTrim(STR( nOrient, 1 )) OF oIni
          SET SECTION "General" ENTRY "Title"        to AllTrim( cTitle ) OF oIni
          SET SECTION "General" ENTRY "Group"        to AllTrim( cGroup ) OF oIni
@@ -2410,6 +2413,7 @@ function Options()
    local lShowGrid     := oGenVar:lShowGrid
    local lShowReticule := oGenVar:lShowReticule
    local lShowBorder   := oGenVar:lShowBorder
+   LOCAL nDecimals     :=   IIF( oER:nMeasure = 2, 2, 0 )
 
    for i := 1 to 99
       cWert := GetPvProfString( "Languages", AllTrim(STR(i,2)), "", cGeneralIni )
@@ -2475,8 +2479,8 @@ function Options()
       oGenVar:lShowBorder   := lShowBorder
 
       INI oIni FILE cDefIni
-         SET SECTION "General" ENTRY "GridWidth"  to AllTrim(STR( nGridWidth , 5, IIF( oER:nMeasure = 2, 2, 0 ) )) OF oIni
-         SET SECTION "General" ENTRY "GridHeight" to AllTrim(STR( nGridHeight, 5, IIF( oER:nMeasure = 2, 2, 0 ) )) OF oIni
+         SET SECTION "General" ENTRY "GridWidth"  to AllTrim(STR( nGridWidth , 5, nDecimals )) OF oIni
+         SET SECTION "General" ENTRY "GridHeight" to AllTrim(STR( nGridHeight, 5, nDecimals )) OF oIni
          SET SECTION "General" ENTRY "ShowGrid"   to IIF( lShowGrid, "1", "0") OF oIni
       ENDINI
 
@@ -2914,6 +2918,7 @@ function AreaProperties( nArea )
    local cPicture       := IIF( oER:nMeasure = 2, "999.99", "99999" )
    local cAreaTitle     := aWndTitle[ nArea ]
    local cOldAreaText   := MEMOREAD( aAreaIni[ nArea ] )
+   LOCAL nDecimals    := IIF( oER:nMeasure = 2, 2, 0 )
 
    aTmpSource := {}
 
@@ -3002,12 +3007,12 @@ function AreaProperties( nArea )
 
       INI oIni FILE aAreaIni[ nArea ]
          SET SECTION "General" ENTRY "Title"            to AllTrim( cAreaTitle ) OF oIni
-         SET SECTION "General" ENTRY "Top1"             to AllTrim(STR( nTop1  , 5, IIF( oER:nMeasure = 2, 2, 0 ) )) OF oIni
-         SET SECTION "General" ENTRY "Top2"             to AllTrim(STR( nTop2  , 5, IIF( oER:nMeasure = 2, 2, 0 ) )) OF oIni
+         SET SECTION "General" ENTRY "Top1"             to AllTrim(STR( nTop1  , 5, nDecimals )) OF oIni
+         SET SECTION "General" ENTRY "Top2"             to AllTrim(STR( nTop2  , 5, nDecimals )) OF oIni
          SET SECTION "General" ENTRY "TopVariable"      to IIF( lTop = .F., "0", "1") OF oIni
          SET SECTION "General" ENTRY "Condition"        to AllTrim(STR( nCondition, 1 )) OF oIni
-         SET SECTION "General" ENTRY "Width"            to AllTrim(STR( nWidth , 5, IIF( oER:nMeasure = 2, 2, 0 ) )) OF oIni
-         SET SECTION "General" ENTRY "Height"           to AllTrim(STR( nHeight, 5, IIF( oER:nMeasure = 2, 2, 0 ) )) OF oIni
+         SET SECTION "General" ENTRY "Width"            to AllTrim(STR( nWidth , 5, nDecimals )) OF oIni
+         SET SECTION "General" ENTRY "Height"           to AllTrim(STR( nHeight, 5,nDecimals )) OF oIni
          SET SECTION "General" ENTRY "DelEmptySpace"    to IIF( lDelSpace = .F., "0", "1") OF oIni
          SET SECTION "General" ENTRY "BreakBefore"      to IIF( lBreakBefore   = .F., "0", "1") OF oIni
          SET SECTION "General" ENTRY "BreakAfter"       to IIF( lBreakAfter    = .F., "0", "1") OF oIni

@@ -4,7 +4,7 @@ MEMVAR aItems, aFonts, aAreaIni, aWnd, aWndTitle, oBar, oMru
 MEMVAR oCbxArea, aCbxItems, nAktuellItem, aRuler, cLongDefIni, cDefaultPath
 MEMVAR oGenVar
 MEMVAR aVRDSave, lVRDSave, lFillWindow
-MEMVAR cDefIni, cDefIniPath, cGeneralIni,nMeasure, cMeasure, oTimer
+MEMVAR cDefIni, cDefIniPath, cGeneralIni, cMeasure, oTimer
 MEMVAR oMainWnd, nDlgTextCol, nDlgBackCol
 
 //------------------------------------------------------------------------------
@@ -655,6 +655,7 @@ function CreateNewReport( aCheck, cGeneralName, cSourceCode, cReportName, lMakeS
 
    local i, nCol, nRow, nXCol, nXRow, nColStart, oIni, cSource
    local cAreaTmpFile, cDefTmpIni
+   LOCAL nDecimals
 
    //General ini file
    CreateNewFile( cGeneralName )
@@ -705,6 +706,8 @@ function CreateNewReport( aCheck, cGeneralName, cSourceCode, cReportName, lMakeS
 
    ENDINI
 
+   nDecimals := IIF( oER:nMeasure == 2, 2, 0 )
+
    //Area files
    AREAS->(DBGOTOP())
 
@@ -718,10 +721,10 @@ function CreateNewReport( aCheck, cGeneralName, cSourceCode, cReportName, lMakeS
       INI oIni FILE cAreaTmpFile
 
          SET SECTION "General" ENTRY "Title"       TO AREAS->NAME  OF oIni
-         SET SECTION "General" ENTRY "Width"       TO ALLTRIM(STR( AREAS->WIDTH, 5, IIF( oER:nMeasure = 2, 2, 0 ) )) OF oIni
-         SET SECTION "General" ENTRY "Height"      TO ALLTRIM(STR( AREAS->HEIGHT, 5, IIF( oER:nMeasure = 2, 2, 0 ) )) OF oIni
-         SET SECTION "General" ENTRY "Top1"        TO ALLTRIM(STR( AREAS->TOP1, 5, IIF( oER:nMeasure = 2, 2, 0 ) )) OF oIni
-         SET SECTION "General" ENTRY "Top2"        TO ALLTRIM(STR( AREAS->TOP2, 5, IIF( oER:nMeasure = 2, 2, 0 ) )) OF oIni
+         SET SECTION "General" ENTRY "Width"       TO ALLTRIM(STR( AREAS->WIDTH, 5, nDecimals )) OF oIni
+         SET SECTION "General" ENTRY "Height"      TO ALLTRIM(STR( AREAS->HEIGHT, 5, nDecimals )) OF oIni
+         SET SECTION "General" ENTRY "Top1"        TO ALLTRIM(STR( AREAS->TOP1, 5, nDecimals )) OF oIni
+         SET SECTION "General" ENTRY "Top2"        TO ALLTRIM(STR( AREAS->TOP2, 5, nDecimals )) OF oIni
          SET SECTION "General" ENTRY "TopVariable" TO IIF( AREAS->LTOP, "1", "0") OF oIni
          SET SECTION "General" ENTRY "Condition"   TO STR( AREAS->CONDITION, 1 ) OF oIni
 
@@ -744,10 +747,10 @@ function CreateNewReport( aCheck, cGeneralName, cSourceCode, cReportName, lMakeS
             endif
             SET SECTION "Items" ENTRY ALLTRIM(STR(i,3)) ;
                TO "Text|" + ALLTRIM(STR(i,3)) + "| " + ALLTRIM(STR(i,3)) + "|1|1|1|" + ;
-               ALLTRIM(STR( GetCmInch( nXRow ), 5, IIF( oER:nMeasure = 2, 2, 0 ) )) + "|" + ;
-               ALLTRIM(STR( GetCmInch( nXCol ), 5, IIF( oER:nMeasure = 2, 2, 0 ) )) + "|" + ;
-               ALLTRIM(STR( GetCmInch( 50 ), 5, IIF( oER:nMeasure = 2, 2, 0 ) )) + "|" + ;
-               ALLTRIM(STR( GetCmInch( 20 ), 5, IIF( oER:nMeasure = 2, 2, 0 ) )) + "|" + ;
+               ALLTRIM(STR( GetCmInch( nXRow ), 5, nDecimals )) + "|" + ;
+               ALLTRIM(STR( GetCmInch( nXCol ), 5, nDecimals )) + "|" + ;
+               ALLTRIM(STR( GetCmInch( 50 ), 5, nDecimals )) + "|" + ;
+               ALLTRIM(STR( GetCmInch( 20 ), 5, nDecimals )) + "|" + ;
                "1|1|2|0|0|0|" OF oIni
          next
 
@@ -773,10 +776,10 @@ function CreateNewReport( aCheck, cGeneralName, cSourceCode, cReportName, lMakeS
             endif
             SET SECTION "Items" ENTRY ALLTRIM(STR(100+i,3)) ;
                TO "Image|| " + ALLTRIM(STR(100+i,3)) + "|1|1|1|" + ;
-               ALLTRIM(STR( GetCmInch( nXRow ), 5, IIF( oER:nMeasure = 2, 2, 0 ) )) + "|" + ;
-               ALLTRIM(STR( GetCmInch( nXCol ), 5, IIF( oER:nMeasure = 2, 2, 0 ) )) + "|" + ;
-               ALLTRIM(STR( GetCmInch( 50 ), 5, IIF( oER:nMeasure = 2, 2, 0 ) )) + "|" + ;
-               ALLTRIM(STR( GetCmInch( 20 ), 5, IIF( oER:nMeasure = 2, 2, 0 ) )) + "|" + ;
+               ALLTRIM(STR( GetCmInch( nXRow ), 5, nDecimals )) + "|" + ;
+               ALLTRIM(STR( GetCmInch( nXCol ), 5, nDecimals )) + "|" + ;
+               ALLTRIM(STR( GetCmInch( 50 ), 5, nDecimals )) + "|" + ;
+               ALLTRIM(STR( GetCmInch( 20 ), 5, nDecimals )) + "|" + ;
                "|0" OF oIni
          next
 
@@ -802,10 +805,10 @@ function CreateNewReport( aCheck, cGeneralName, cSourceCode, cReportName, lMakeS
             endif
             SET SECTION "Items" ENTRY ALLTRIM(STR(200+i,3)) ;
                TO "LineHorizontal|" + GL("Line horizontal") + "| " + ALLTRIM(STR(200+i,3)) + "|1|1|1|" + ;
-               ALLTRIM(STR( GetCmInch( nXRow ), 5, IIF( oER:nMeasure = 2, 2, 0 ) )) + "|" + ;
-               ALLTRIM(STR( GetCmInch( nXCol ), 5, IIF( oER:nMeasure = 2, 2, 0 ) )) + "|" + ;
-               ALLTRIM(STR( GetCmInch( 50 ), 5, IIF( oER:nMeasure = 2, 2, 0 ) )) + "|" + ;
-               ALLTRIM(STR( GetCmInch( 20 ), 5, IIF( oER:nMeasure = 2, 2, 0 ) )) + "|" + ;
+               ALLTRIM(STR( GetCmInch( nXRow ), 5, nDecimals )) + "|" + ;
+               ALLTRIM(STR( GetCmInch( nXCol ), 5, nDecimals )) + "|" + ;
+               ALLTRIM(STR( GetCmInch( 50 ), 5, nDecimals )) + "|" + ;
+               ALLTRIM(STR( GetCmInch( 20 ), 5, nDecimals )) + "|" + ;
                "1|2|1|1|0|0" OF oIni
          next
 
@@ -831,10 +834,10 @@ function CreateNewReport( aCheck, cGeneralName, cSourceCode, cReportName, lMakeS
             endif
             SET SECTION "Items" ENTRY ALLTRIM(STR(300+i,3)) ;
                TO "Barcode|12345678| " + ALLTRIM(STR(300+i,3)) + "|1|1|1|" + ;
-               ALLTRIM(STR( GetCmInch( nXRow ), 5, IIF( oER:nMeasure = 2, 2, 0 ) )) + "|" + ;
-               ALLTRIM(STR( GetCmInch( nXCol ), 5, IIF( oER:nMeasure = 2, 2, 0 ) )) + "|" + ;
-               ALLTRIM(STR( GetCmInch( 170 ), 5, IIF( oER:nMeasure = 2, 2, 0 ) )) + "|" + ;
-               ALLTRIM(STR( GetCmInch( 20 ), 5, IIF( oER:nMeasure = 2, 2, 0 ) )) + "|" + ;
+               ALLTRIM(STR( GetCmInch( nXRow ), 5, nDecimals )) + "|" + ;
+               ALLTRIM(STR( GetCmInch( nXCol ), 5, nDecimals )) + "|" + ;
+               ALLTRIM(STR( GetCmInch( 170 ), 5, nDecimals )) + "|" + ;
+               ALLTRIM(STR( GetCmInch( 20 ), 5, nDecimals )) + "|" + ;
                "1|1|2|1|1|0.3|" OF oIni
          next
 
