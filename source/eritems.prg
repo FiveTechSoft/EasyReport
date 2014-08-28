@@ -11,7 +11,7 @@ MEMVAR nRuler, nRulerTop
 MEMVAR cItemCopy, nCopyEntryNr, nCopyAreaNr, aSelectCopy, aItemCopy, nXMove, nYMove
 MEMVAR cInfoWidth, cInfoHeight, nInfoRow, nInfoCol, aItemPosition, aItemPixelPos
 MEMVAR oClpGeneral, cDefIni, cGeneralIni, nMeasure, cMeasure, oTimer
-MEMVAR oMainWnd, lProfi, oCurDlg, oGenVar,oER
+MEMVAR lProfi, oCurDlg, oGenVar,oER
 
 //----------------------------------------------------------------------------//
 
@@ -374,7 +374,7 @@ function MultiItemProperties()
    REDEFINE SAY PROMPT GL("Height:") ID 173 OF oDlg
 
    ACTIVATE DIALOG oDlg CENTERED ;
-      ON INIT ( oDlg:Move( 120, oMainWnd:nRight - 240,,, .T. ), ;
+      ON INIT ( oDlg:Move( 120, oEr:oMainWnd:nRight - 240,,, .T. ), ;
                 aGrp[1]:SetText( GL("Position / Size") ), ;
                 aCbx[1]:SetText( GL("Add values") ) )
 
@@ -931,7 +931,7 @@ function GetImageSize( cFile )
 
    if FILE( cFile ) .OR. AT( "RES:", UPPER( cFile ) ) <> 0
 
-      oImg := TImage():New( 0, 0, 0, 0,,,, oMainWnd )
+      oImg := TImage():New( 0, 0, 0, 0,,,, oEr:oMainWnd )
       oImg:Progress(.F.)
       oImg:LoadImage( IIF( AT( "RES:", UPPER( cFile ) ) <> 0, ;
                            SUBSTR( AllTrim( cFile ), 5 ), NIL ), ;
@@ -1804,7 +1804,7 @@ function ShowItem( i, nArea, cAreaIni, aFirst, nElemente, aIniEntries, nIndex )
          IIF( nOrient = 2, lCenter := .T., lCenter := .F. )
          IIF( nOrient = 3, lRight := .T. , lRight := .F. )
 
-         SetBKMode( oMainWnd:hDC, 1 )
+         SetBKMode( oEr:oMainWnd:hDC, 1 )
 
          /*
          aItems[nArea,i] := TSSay():New( nTop, nLeft, ;
@@ -1818,7 +1818,7 @@ function ShowItem( i, nArea, cAreaIni, aFirst, nElemente, aIniEntries, nIndex )
             lCenter, lRight, ( nBorder = 1 .OR. oGenVar:lShowBorder ), .T., ;
             GetColor( nColText ), GetColor( nColPane ), nWidth, nHeight, .F., .T., .F., .F., .F. )
 
-         SetBKMode( oMainWnd:hDC, 0 )
+         SetBKMode( oEr:oMainWnd:hDC, 0 )
 
          /*
          [ <oSay> := ] TSay():New( <nRow>, <nCol>, <{cText}>,;

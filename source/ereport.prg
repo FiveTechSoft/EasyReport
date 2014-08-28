@@ -19,7 +19,7 @@ MEMVAR lBoxDraw, nBoxTop, nBoxLeft, nBoxBottom, nBoxRight, nRuler, nRulerTop
 MEMVAR cItemCopy, nCopyEntryNr, nCopyAreaNr, aSelectCopy, aItemCopy, nXMove, nYMove
 MEMVAR cInfoWidth, cInfoHeight, nInfoRow, nInfoCol, aItemPosition, aItemPixelPos
 MEMVAR oClpGeneral, cDefIni, cDefIniPath, cGeneralIni, nMeasure, cMeasure, lDemo, lBeta, oTimer
-MEMVAR oMainWnd, lProfi, nUndoCount, nRedoCount, nDlgTextCol, nDlgBackCol
+MEMVAR lProfi, nUndoCount, nRedoCount, nDlgTextCol, nDlgBackCol
 MEMVAR lPersonal, lStandard, oGenVar, oCurDlg
 MEMVAR oER
 
@@ -87,27 +87,27 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
    DEFINE BRUSH oBrush RESOURCE "background"
 
    SetDlgGradient( oER:aClrDialogs )
-   
-      
-   DEFINE WINDOW oMainWnd FROM 0, 0 to 50, 200 VSCROLL ;
+
+
+   DEFINE WINDOW oEr:oMainWnd FROM 0, 0 to 50, 200 VSCROLL ;
       TITLE MainCaption() ;
       BRUSH oBrush MDI ;
       ICON oIcon ;
       MENU BuildMenu()
-      
-   DEFINE CLIPBOARD oClpGeneral OF oMainWnd
 
-   SET MESSAGE OF oMainWnd to oGenVar:cRegistInfo CENTERED 2010
+   DEFINE CLIPBOARD oClpGeneral OF oEr:oMainWnd
 
-   DEFINE MSGITEM oMsgInfo OF oMainWnd:oMsgBar SIZE 280
+   SET MESSAGE OF oEr:oMainWnd to oGenVar:cRegistInfo CENTERED 2010
 
-   oMainWnd:oMsgBar:KeybOn()
-   oMainWnd:oWndClient:bMouseWheel = { | nKey, nDelta, nXPos, nYPos | ;
+   DEFINE MSGITEM oMsgInfo OF oEr:oMainWnd:oMsgBar SIZE 280
+
+   oEr:oMainWnd:oMsgBar:KeybOn()
+   oEr:oMainWnd:oWndClient:bMouseWheel = { | nKey, nDelta, nXPos, nYPos | ;
                                   ER_MouseWheel( nKey, nDelta, nXPos, nYPos ) }
 
    BarMenu()
 
-   ACTIVATE WINDOW oMainWnd ;
+   ACTIVATE WINDOW oEr:oMainWnd ;
       ON INIT ( SetMainWnd(), IniMainWindow(), ;
                 IIF( Empty( cDefIni ), OpenFile(), SetScrollBar() ), ;
                 StartMessage(), SetSave( .T. ), ClearUndoRedo() ) ;
@@ -134,9 +134,9 @@ function BarMenu()
 
    local aBtn[3]
    local lPrompt := ( GetSysMetrics( 0 ) > 800 )
-   
-   DEFINE BUTTONBAR oBar OF oMainWnd SIZE 70, 70 2010
-   
+
+   DEFINE BUTTONBAR oBar OF oEr:oMainWnd SIZE 70, 70 2010
+
    // oBar:bClrGrad :=  oER:bClrBar
 
    DEFINE BUTTON RESOURCE "New" ;
@@ -173,13 +173,13 @@ function BarMenu()
       TOOLTIP GL( "Print" ) ;
       ACTION PrintReport() ;
       WHEN .NOT. Empty( cDefIni )
-      
+
    DEFINE BUTTON aBtn[2] RESOURCE "B_UNDO", "B_UNDO", "B_UNDO1" ;
       OF oBar GROUP ;
       PROMPT FWString( "Undo" ) ;
       TOOLTIP STRTRAN( GL("&Undo"), "&" ) ;
       ACTION Undo() ;
-      WHEN .NOT. Empty( cDefIni ) .and. nUndoCount > 0 
+      WHEN .NOT. Empty( cDefIni ) .and. nUndoCount > 0
       // MENU UndoRedoMenu( 1, aBtn[2] ) ;
 
    DEFINE BUTTON aBtn[3] RESOURCE "B_REDO", "B_REDO", "B_REDO1" ;
@@ -209,10 +209,10 @@ function BarMenu()
    if Val( GetPvProfString( "General", "EditAreaProperties", "1", cDefIni ) ) = 1
       MENU oMenuAreas POPUP
       ENDMENU
-   
+
       DEFINE BUTTON oBtnAreas RESOURCE "B_AREA32", "B_AREA32", "B_AREA321" ;
          OF oBar ;
-         PROMPT FWSTring( "Areas" ) ; 
+         PROMPT FWSTring( "Areas" ) ;
          TOOLTIP GL("Area Properties") ;
          ACTION AreaProperties( nAktArea ) ;
          WHEN .NOT. Empty( cDefIni ) ;
@@ -261,7 +261,7 @@ function BarMenu()
       DEFINE BUTTON RESOURCE "B_EXIT" ;
          PROMPT FWString( "Exit" ) ;
          OF oBar GROUP ;
-         ACTION oMainWnd:End() TOOLTIP GL("Exit")
+         ACTION oEr:oMainWnd:End() TOOLTIP GL("Exit")
 
    // endif
 
@@ -275,15 +275,15 @@ return .T.
 #define MK_MBUTTON          0x0010
 
 function ER_MouseWheel( nKey, nDelta, nXPos, nYPos )
-   
+
    local aPoint := { nYPos, nXPos }
-   
-   ScreenToClient( oMainWnd:oWndClient:hWnd, aPoint )
+
+   ScreenToClient( oEr:oMainWnd:oWndClient:hWnd, aPoint )
    lScrollVert  := .T.
-   if IsOverWnd( oMainWnd:oWndClient:hWnd, aPoint[ 1 ], aPoint[ 2 ] )
+   if IsOverWnd( oEr:oMainWnd:oWndClient:hWnd, aPoint[ 1 ], aPoint[ 2 ] )
       if lAnd( nKey, MK_MBUTTON )
          if nDelta > 0
-            ScrollVertical( ,,.T. )        
+            ScrollVertical( ,,.T. )
          else
             ScrollVertical( ,,,.T.,, )
          endif
@@ -325,14 +325,14 @@ return( oMenu )
 
 function StartMessage()
 
-   if lBeta = .T.
+   if lBeta
       BetaVersion()
    else
-      if lDemo = .T.
+      if lDemo
          VRDLogo()
-      elseif lPersonal = .T. .OR. lStandard = .T.
+      elseif lPersonal  .OR. lStandard
          lProfi := .T.
-         if QuietRegCheck() = .F.
+         if !QuietRegCheck()
             VRDMsgPersonal()
          endif
       endif
@@ -344,7 +344,7 @@ return .T.
 
 function DeclarePublics( cDefFile )
 
-   PUBLIC oMainWnd, oClpGeneral, oTimer
+   PUBLIC oClpGeneral, oTimer
    PUBLIC cDefIni, cDefIniPath
    PUBLIC nMeasure, cMeasure
    PUBLIC cGeneralIni := ".\vrd.ini"
@@ -596,30 +596,30 @@ function SetScrollBar()
    local oVScroll
    local nPageZugabe := 392
 
-   if ! Empty( oMainWnd:oWndClient:oVScroll )
-      oMainWnd:oWndClient:oVScroll:SetRange( 0, nTotalHeight / 100 )
+   if ! Empty( oEr:oMainWnd:oWndClient:oVScroll )
+      oEr:oMainWnd:oWndClient:oVScroll:SetRange( 0, nTotalHeight / 100 )
 
-      oMainWnd:oWndClient:oVScroll:bGoUp     = {|| ScrollVertical( .T. ) }
-      oMainWnd:oWndClient:oVScroll:bGoDown   = {|| ScrollVertical( , .T. ) }
-      oMainWnd:oWndClient:oVScroll:bPageUp   = {|| ScrollVertical( ,, .T. ) }
-      oMainWnd:oWndClient:oVScroll:bPageDown = {|| ScrollVertical( ,,, .T. ) }
-      oMainWnd:oWndClient:oVScroll:bPos      = {| nWert | ScrollVertical( ,,,, .T., nWert ) }
-      oMainWnd:oWndClient:oVScroll:nPgStep   = nPageZugabe   //392
+      oEr:oMainWnd:oWndClient:oVScroll:bGoUp     = {|| ScrollVertical( .T. ) }
+      oEr:oMainWnd:oWndClient:oVScroll:bGoDown   = {|| ScrollVertical( , .T. ) }
+      oEr:oMainWnd:oWndClient:oVScroll:bPageUp   = {|| ScrollVertical( ,, .T. ) }
+      oEr:oMainWnd:oWndClient:oVScroll:bPageDown = {|| ScrollVertical( ,,, .T. ) }
+      oEr:oMainWnd:oWndClient:oVScroll:bPos      = {| nWert | ScrollVertical( ,,,, .T., nWert ) }
+      oEr:oMainWnd:oWndClient:oVScroll:nPgStep   = nPageZugabe   //392
 
-      oMainWnd:oWndClient:oVScroll:SetPos( 0 )
+      oEr:oMainWnd:oWndClient:oVScroll:SetPos( 0 )
    endif
 
-   if ! Empty( oMainWnd:oWndClient:oHScroll )
-      oMainWnd:oWndClient:oHScroll:SetRange( 0, nTotalWidth / 100 )
+   if ! Empty( oEr:oMainWnd:oWndClient:oHScroll )
+      oEr:oMainWnd:oWndClient:oHScroll:SetRange( 0, nTotalWidth / 100 )
 
-      oMainWnd:oWndClient:oHScroll:bGoUp     = {|| ScrollHorizont( .T. ) }
-      oMainWnd:oWndClient:oHScroll:bGoDown   = {|| ScrollHorizont( , .T. ) }
-      oMainWnd:oWndClient:oHScroll:bPageUp   = {|| ScrollHorizont( ,, .T. ) }
-      oMainWnd:oWndClient:oHScroll:bPageDown = {|| ScrollHorizont( ,,, .T. ) }
-      oMainWnd:oWndClient:oHScroll:bPos      = {| nWert | ScrollHorizont( ,,,, .T., nWert ) }
-      oMainWnd:oWndClient:oHScroll:nPgStep   = 602
+      oEr:oMainWnd:oWndClient:oHScroll:bGoUp     = {|| ScrollHorizont( .T. ) }
+      oEr:oMainWnd:oWndClient:oHScroll:bGoDown   = {|| ScrollHorizont( , .T. ) }
+      oEr:oMainWnd:oWndClient:oHScroll:bPageUp   = {|| ScrollHorizont( ,, .T. ) }
+      oEr:oMainWnd:oWndClient:oHScroll:bPageDown = {|| ScrollHorizont( ,,, .T. ) }
+      oEr:oMainWnd:oWndClient:oHScroll:bPos      = {| nWert | ScrollHorizont( ,,,, .T., nWert ) }
+      oEr:oMainWnd:oWndClient:oHScroll:nPgStep   = 602
 
-      oMainWnd:oWndClient:oHScroll:SetPos( 0 )
+      oEr:oMainWnd:oWndClient:oHScroll:SetPos( 0 )
    endif
 
 return .T.
@@ -631,7 +631,7 @@ function ScrollVertical( lUp, lDown, lPageUp, lPageDown, lPos, nPosZugabe )
    local i, aFirstWndCoors, nAltWert
    local nZugabe     := 14
    local nPageZugabe := 392
-   local aCliRect    := oMainWnd:GetCliRect()
+   local aCliRect    := oEr:oMainWnd:GetCliRect()
    local lReticule
 
    DEFAULT lUp       := .F.
@@ -670,9 +670,9 @@ function ScrollVertical( lUp, lDown, lPageUp, lPageDown, lPos, nPosZugabe )
    SetReticule( 0, 0 ) // turn off the rulers lines
 
    if lPos = .T.
-      nAltWert := oMainWnd:oWndClient:oVScroll:GetPos()
-      oMainWnd:oWndClient:oVScroll:SetPos( nPosZugabe )
-      nZugabe := -1 * nTotalHeight * ( oMainWnd:oWndClient:oVScroll:GetPos() - nAltWert ) / ( nTotalHeight / 100 )
+      nAltWert := oEr:oMainWnd:oWndClient:oVScroll:GetPos()
+      oEr:oMainWnd:oWndClient:oVScroll:SetPos( nPosZugabe )
+      nZugabe := -1 * nTotalHeight * ( oEr:oMainWnd:oWndClient:oVScroll:GetPos() - nAltWert ) / ( nTotalHeight / 100 )
    endif
 
    for i := 1 to 100
@@ -700,7 +700,7 @@ function ScrollHorizont( lLeft, lRight, lPageLeft, lPageRight, lPos, nPosZugabe 
    local i, aFirstWndCoors, nAltWert
    local nZugabe     := 14
    local nPageZugabe := 602
-   local aCliRect    := oMainWnd:GetCliRect()
+   local aCliRect    := oEr:oMainWnd:GetCliRect()
 
    DEFAULT lLeft      := .F.
    DEFAULT lRight     := .F.
@@ -734,9 +734,9 @@ function ScrollHorizont( lLeft, lRight, lPageLeft, lPageRight, lPos, nPosZugabe 
    endif
 
    if lPos = .T.
-      nAltWert := oMainWnd:oWndClient:oHScroll:GetPos()
-      oMainWnd:oWndClient:oHScroll:SetPos( nPosZugabe )
-      nZugabe := -1 * nTotalWidth * ( oMainWnd:oWndClient:oHScroll:GetPos() - nAltWert ) / 100
+      nAltWert := oEr:oMainWnd:oWndClient:oHScroll:GetPos()
+      oEr:oMainWnd:oWndClient:oHScroll:SetPos( nPosZugabe )
+      nZugabe := -1 * nTotalWidth * ( oEr:oMainWnd:oWndClient:oHScroll:GetPos() - nAltWert ) / 100
    endif
 
 
@@ -761,7 +761,7 @@ return .T.
 function SetMainWnd()
 
    if Val( GetPvProfString( "General", "Maximize", "1", cGeneralIni ) ) = 1
-      oMainWnd:Maximize()
+      oEr:oMainWnd:Maximize()
       SysRefresh()
    endif
 
@@ -796,11 +796,11 @@ function ShowAreasOnBar()
          AADD( aCbxItems, aWndTitle[ n ] )
        endif
     next
-   
+
    if oMenuAreas != nil
       oMenuAreas:End()
    endif
-   
+
    MENU oMenuAreas POPUP
       for n = 1 to Len( aWndTitle )
          if ! Empty( aWndTitle[ n ] )
@@ -810,8 +810,8 @@ function ShowAreasOnBar()
          endif
       next
    ENDMENU
-   
-   oBtnAreas:oPopup = oMenuAreas            
+
+   oBtnAreas:oPopup = oMenuAreas
 
    //Fokus auf das erste Fenster legen
    aWnd[ AScan( aWnd, { |x| x != nil } ) ]:SetFocus()
@@ -872,7 +872,7 @@ function BuildMenu()
             SIZE     Val( GetPvProfString( "General", "MruList"  , "4", cGeneralIni ) )
    SEPARATOR
    MENUITEM GL("&Exit") RESOURCE "B_EXIT_16" ;
-      ACTION oMainWnd:End()
+      ACTION oEr:oMainWnd:End()
    ENDMENU
 
    MENUITEM GL("&Edit")
@@ -1163,7 +1163,7 @@ function GenerateSource( nArea )
 
       if nCopyTo = 1
 
-         OpenClipboard( oMainWnd:hWnd )
+         OpenClipboard( oEr:oMainWnd:hWnd )
          SetClipboardData( 1, cSource )
          CloseClipboard()
 
@@ -1241,19 +1241,19 @@ function ClientWindows()
             nWidth += nRuler + nAreaZugabe2
          endif
 
-         /*  
-         DEFINE WINDOW aWnd[nWnd] MDICHILD OF oMainWnd TITLE cTitle ;
+         /*
+         DEFINE WINDOW aWnd[nWnd] MDICHILD OF oEr:oMainWnd TITLE cTitle ;
             BRUSH oGenVar:oAreaBrush ;
             FROM nTop, 0 to nTop + nHeight + nAreaZugabe, nWidth PIXEL ;
             STYLE nOr( WS_BORDER )
-         */   
-            
+         */
+
          aWnd[ nWnd ] = ER_MdiChild():New( nTop, 0, nTop + nHeight + nAreaZugabe,;
-                            nWidth, cTitle, nOr( WS_BORDER ),, oMainWnd,, .T.,,,,;
+                            nWidth, cTitle, nOr( WS_BORDER ),, oEr:oMainWnd,, .T.,,,,;
                             oGenVar:oAreaBrush, .T. )
-         
-         aWnd[ nWnd ]:nArea = nWnd   
-            
+
+         aWnd[ nWnd ]:nArea = nWnd
+
          aWndTitle[ nWnd ] = cTitle
 
          /*
@@ -1273,7 +1273,7 @@ function ClientWindows()
 
          ACTIVATE WINDOW aWnd[nWnd] VALID .NOT. GETKEYSTATE( VK_ESCAPE )
 
-         oGenVar:lShowReticule = lReticule          
+         oGenVar:lShowReticule = lReticule
 
          nTop += nHeight + nAreaZugabe
 
@@ -1314,16 +1314,16 @@ function FillWindow( nArea, cAreaIni )
 
    @ nRulerTop - nRuler, 20 BITMAP oRulerBmp2 RESOURCE cRuler1 ;
       OF aWnd[ nArea ] PIXEL NOBORDER
-   
+
    @ nRulerTop - nRuler, 0 BITMAP oRulerBmp2 RESOURCE cRuler2 ;
       OF aWnd[ nArea ] PIXEL NOBORDER
 
    // @ nRulerTop-nRuler, 20 SAY aRuler[ nArea, 1 ] PROMPT "" SIZE  1, 20 PIXEL ;
    //    COLORS oGenVar:nClrReticule, oGenVar:nClrReticule OF aWnd[ nArea ]
-   
+
    // @ 20, 0 SAY aRuler[ nArea, 2 ] PROMPT "" SIZE 20,  1 PIXEL ;
    //    COLORS oGenVar:nClrReticule, oGenVar:nClrReticule OF aWnd[ nArea ]
-   
+
    aWnd[ nArea ]:bPainted  = {| hDC, cPS | ZeichneHintergrund( nArea ) }
 
    aWnd[ nArea ]:bGotFocus = { || SetTitleColor( .T. ) }
@@ -1383,11 +1383,11 @@ function SetReticule( nRow, nCol, nArea )
       nColPos := ER_GetPixel( oGenVar:aAreaSizes[ nArea, 1 ] ) + nRuler
    endif
 
-   if lShow 
+   if lShow
       DrawRulerHorzLine( aWnd[ nArea ], nRowPos )
 
       AEval( aWnd, { | oWnd | If( oWnd != nil, DrawRulerVertLine( oWnd, nColPos ),) } )
-   endif   
+   endif
 
 return .T.
 
@@ -1399,8 +1399,8 @@ function DrawRulerHorzLine( oWnd, nRowPos )
 
    if ! Empty( oWnd:aRulerLeftPos )   // Horizontal line position
       InvertRect( hDC, oWnd:aRulerLeftPos )
-   endif   
-   
+   endif
+
    oWnd:aRulerLeftPos = { nRowPos, 0, nRowPos + 1, 20 }
    InvertRect( hDC, oWnd:aRulerLeftPos )
 
@@ -1416,8 +1416,8 @@ function DrawRulerVertLine( oWnd, nColPos )
 
    if ! Empty( oWnd:aRulerTopPos )  // vertical line position
       InvertRect( hDC, oWnd:aRulerTopPos )
-   endif   
-   
+   endif
+
    oWnd:aRulerTopPos = { 17, nColPos, 37, nColPos + 1 }
    InvertRect( hDC, oWnd:aRulerTopPos )
 
@@ -1679,7 +1679,7 @@ function ShowColorChoice( nCurrentClr )
    REDEFINE SAY PROMPT GL("Current:") ID 170 OF oDlg
 
    REDEFINE SAY PROMPT AllTrim(STR( nCurrentClr )) + "." ID 401 OF oDlg
-   
+
  //  REDEFINE SAY PROMPT "" ID 402 OF oDlg COLORS SetColor( aColors[nCurrentClr], nDefClr ), SetColor( aColors[nCurrentClr], nDefClr )
    REDEFINE BTNBMP oSay PROMPT "" ID 402 OF oDlg NOBORDER
    osay:SetColor( SetColor(aColors[nCurrentClr], nDefClr ), SetColor( aColors[nCurrentClr], nDefClr ) )
@@ -1902,35 +1902,35 @@ function FontsAndColors()
    REDEFINE SAY PROMPT GL("Color") ID 175 OF oFld:aDialogs[ i ]
 
    REDEFINE BTNBMP aColorSay[1 ]   ID 401 OF oFld:aDialogs[ i ] NOBORDER
-   REDEFINE BTNBMP aColorSay[2 ]   ID 402 OF oFld:aDialogs[ i ] NOBORDER 
-   REDEFINE BTNBMP aColorSay[3 ]   ID 403 OF oFld:aDialogs[ i ] NOBORDER 
-   REDEFINE BTNBMP aColorSay[4 ]   ID 404 OF oFld:aDialogs[ i ] NOBORDER 
-   REDEFINE BTNBMP aColorSay[5 ]   ID 405 OF oFld:aDialogs[ i ] NOBORDER 
-   REDEFINE BTNBMP aColorSay[6 ]   ID 406 OF oFld:aDialogs[ i ] NOBORDER 
-   REDEFINE BTNBMP aColorSay[7 ]   ID 407 OF oFld:aDialogs[ i ] NOBORDER 
-   REDEFINE BTNBMP aColorSay[8 ]   ID 408 OF oFld:aDialogs[ i ] NOBORDER 
-   REDEFINE BTNBMP aColorSay[9 ]   ID 409 OF oFld:aDialogs[ i ] NOBORDER 
-   REDEFINE BTNBMP aColorSay[10]   ID 410 OF oFld:aDialogs[ i ] NOBORDER 
-   REDEFINE BTNBMP aColorSay[11]   ID 411 OF oFld:aDialogs[ i ] NOBORDER 
-   REDEFINE BTNBMP aColorSay[12]   ID 412 OF oFld:aDialogs[ i ] NOBORDER 
-   REDEFINE BTNBMP aColorSay[13]   ID 413 OF oFld:aDialogs[ i ] NOBORDER 
-   REDEFINE BTNBMP aColorSay[14]   ID 414 OF oFld:aDialogs[ i ] NOBORDER 
-   REDEFINE BTNBMP aColorSay[15]   ID 415 OF oFld:aDialogs[ i ] NOBORDER 
-   REDEFINE BTNBMP aColorSay[16]   ID 416 OF oFld:aDialogs[ i ] NOBORDER 
-   REDEFINE BTNBMP aColorSay[17]   ID 417 OF oFld:aDialogs[ i ] NOBORDER 
-   REDEFINE BTNBMP aColorSay[18]   ID 418 OF oFld:aDialogs[ i ] NOBORDER 
-   REDEFINE BTNBMP aColorSay[19]   ID 419 OF oFld:aDialogs[ i ] NOBORDER 
-   REDEFINE BTNBMP aColorSay[20]   ID 420 OF oFld:aDialogs[ i ] NOBORDER 
-   REDEFINE BTNBMP aColorSay[21]   ID 421 OF oFld:aDialogs[ i ] NOBORDER 
-   REDEFINE BTNBMP aColorSay[22]   ID 422 OF oFld:aDialogs[ i ] NOBORDER 
-   REDEFINE BTNBMP aColorSay[23]   ID 423 OF oFld:aDialogs[ i ] NOBORDER 
-   REDEFINE BTNBMP aColorSay[24]   ID 424 OF oFld:aDialogs[ i ] NOBORDER 
-   REDEFINE BTNBMP aColorSay[25]   ID 425 OF oFld:aDialogs[ i ] NOBORDER 
-   REDEFINE BTNBMP aColorSay[26]   ID 426 OF oFld:aDialogs[ i ] NOBORDER 
-   REDEFINE BTNBMP aColorSay[27]   ID 427 OF oFld:aDialogs[ i ] NOBORDER 
-   REDEFINE BTNBMP aColorSay[28]   ID 428 OF oFld:aDialogs[ i ] NOBORDER 
-   REDEFINE BTNBMP aColorSay[29]   ID 429 OF oFld:aDialogs[ i ] NOBORDER 
-   REDEFINE BTNBMP aColorSay[30]   ID 430 OF oFld:aDialogs[ i ] NOBORDER 
+   REDEFINE BTNBMP aColorSay[2 ]   ID 402 OF oFld:aDialogs[ i ] NOBORDER
+   REDEFINE BTNBMP aColorSay[3 ]   ID 403 OF oFld:aDialogs[ i ] NOBORDER
+   REDEFINE BTNBMP aColorSay[4 ]   ID 404 OF oFld:aDialogs[ i ] NOBORDER
+   REDEFINE BTNBMP aColorSay[5 ]   ID 405 OF oFld:aDialogs[ i ] NOBORDER
+   REDEFINE BTNBMP aColorSay[6 ]   ID 406 OF oFld:aDialogs[ i ] NOBORDER
+   REDEFINE BTNBMP aColorSay[7 ]   ID 407 OF oFld:aDialogs[ i ] NOBORDER
+   REDEFINE BTNBMP aColorSay[8 ]   ID 408 OF oFld:aDialogs[ i ] NOBORDER
+   REDEFINE BTNBMP aColorSay[9 ]   ID 409 OF oFld:aDialogs[ i ] NOBORDER
+   REDEFINE BTNBMP aColorSay[10]   ID 410 OF oFld:aDialogs[ i ] NOBORDER
+   REDEFINE BTNBMP aColorSay[11]   ID 411 OF oFld:aDialogs[ i ] NOBORDER
+   REDEFINE BTNBMP aColorSay[12]   ID 412 OF oFld:aDialogs[ i ] NOBORDER
+   REDEFINE BTNBMP aColorSay[13]   ID 413 OF oFld:aDialogs[ i ] NOBORDER
+   REDEFINE BTNBMP aColorSay[14]   ID 414 OF oFld:aDialogs[ i ] NOBORDER
+   REDEFINE BTNBMP aColorSay[15]   ID 415 OF oFld:aDialogs[ i ] NOBORDER
+   REDEFINE BTNBMP aColorSay[16]   ID 416 OF oFld:aDialogs[ i ] NOBORDER
+   REDEFINE BTNBMP aColorSay[17]   ID 417 OF oFld:aDialogs[ i ] NOBORDER
+   REDEFINE BTNBMP aColorSay[18]   ID 418 OF oFld:aDialogs[ i ] NOBORDER
+   REDEFINE BTNBMP aColorSay[19]   ID 419 OF oFld:aDialogs[ i ] NOBORDER
+   REDEFINE BTNBMP aColorSay[20]   ID 420 OF oFld:aDialogs[ i ] NOBORDER
+   REDEFINE BTNBMP aColorSay[21]   ID 421 OF oFld:aDialogs[ i ] NOBORDER
+   REDEFINE BTNBMP aColorSay[22]   ID 422 OF oFld:aDialogs[ i ] NOBORDER
+   REDEFINE BTNBMP aColorSay[23]   ID 423 OF oFld:aDialogs[ i ] NOBORDER
+   REDEFINE BTNBMP aColorSay[24]   ID 424 OF oFld:aDialogs[ i ] NOBORDER
+   REDEFINE BTNBMP aColorSay[25]   ID 425 OF oFld:aDialogs[ i ] NOBORDER
+   REDEFINE BTNBMP aColorSay[26]   ID 426 OF oFld:aDialogs[ i ] NOBORDER
+   REDEFINE BTNBMP aColorSay[27]   ID 427 OF oFld:aDialogs[ i ] NOBORDER
+   REDEFINE BTNBMP aColorSay[28]   ID 428 OF oFld:aDialogs[ i ] NOBORDER
+   REDEFINE BTNBMP aColorSay[29]   ID 429 OF oFld:aDialogs[ i ] NOBORDER
+   REDEFINE BTNBMP aColorSay[30]   ID 430 OF oFld:aDialogs[ i ] NOBORDER
 
    AEval( aColorSay, { | o, n | o:SetColor( 0,;
       If( Empty( aColors[ n ] ), CLR_WHITE, Val( aColors[ n ] ) ) ) } )
@@ -2108,7 +2108,7 @@ function SelectFont( oSay, oLbx, oGet )
    local nEscapement := aGetFonts[nID,8]
    local nOrient     := aGetFonts[nID,10]
    local nCharSet    := aGetFonts[nID,9]
-   local hDC         := oMainWnd:GetDC()
+   local hDC         := oEr:oMainWnd:GetDC()
 
    if Empty( aFontNames := GetFontNames( hDC ) )
       MsgStop( GL("Error getting font names."), GL("Stop!") )
@@ -2338,7 +2338,7 @@ function ReportSettings()
          SET SECTION "General" ENTRY "Group"        to AllTrim( cGroup ) OF oIni
       ENDINI
 
-      oMainWnd:cTitle := MainCaption()
+      oEr:oMainWnd:cTitle := MainCaption()
 
       SetSave( .F. )
 
@@ -2424,7 +2424,7 @@ function Options()
    if Len( aLanguage ) > 0
       cLanguage    := aLanguage[IIF( nLanguage < 1, 1, nLanguage)]
       cOldLanguage := cLanguage
-   endif   
+   endif
 
    DEFINE DIALOG oDlg NAME "OPTIONS" TITLE GL("Options")
 
@@ -2509,7 +2509,7 @@ function Options()
       oGenVar:nGridWidth  := nGridWidth
       oGenVar:nGridHeight := nGridHeight
 
-      oMainWnd:SetMenu( BuildMenu() )
+      oEr:oMainWnd:SetMenu( BuildMenu() )
 
       SetSave( .F. )
 
@@ -2529,7 +2529,7 @@ return .T.
    oTree := TTreeView():ReDefine( 201, oDlg, 0, , .F. ,"" )
 
    oTree:bLDblClick  = { | nRow, nCol, nKeyFlags | ClickListTree( oTree ) }
-   oTree:bEraseBkGnd = { || nil }  // to properly erase the tree background 
+   oTree:bEraseBkGnd = { || nil }  // to properly erase the tree background
 
    REDEFINE BUTTON PROMPT GL("&OK") ID 101 OF oDlg ACTION oDlg:End()
 
@@ -2538,7 +2538,7 @@ return .T.
 return nil
 
 static Function FillTree( oTree, oDlg )
-   
+
    local lFirstArea    := .T.
    local aIniEntries   := GetIniSection( "Areas", cDefIni )
    local cAreaFilesDir := CheckPath( GetPvProfString( "General", "AreaFilesDir", "", cDefIni ) )
@@ -2577,7 +2577,7 @@ static Function FillTree( oTree, oDlg )
                if aElemente[y,6] <> 0
                   ele:= oTr2:Add( GL("Visible"), aElemente[y,5], aElemente[y,4] )
                   ele:Set( , IF( !GetItemVisible( ele ) , 4  , 3   )    )
-                    
+
                endif
                oTr2:Add( GL("Item Properties"),5 )
 
@@ -2806,7 +2806,7 @@ function ClickListTree( oTree )
          lWert := .T.
       endif
       oItem:Set( , IF( lWert , 4  , 3   )    )
-   
+
       DeleteItem( nItem, nArea, .T., lWert )
 
    elseif cPrompt = GL("Item Properties")
@@ -2821,7 +2821,7 @@ function ClickListTree( oTree )
      endif
 
    endif
-   
+
 return .T.
 
 //----------------------------------------------------------------------------//
@@ -3061,7 +3061,7 @@ function AreaChange( nArea, cAreaTitle, nOldWidth, nWidth, nOldHeight, nHeight )
 
    local i, n
    local oMenuItem
-   
+
    aWndTitle[ nArea ]   := cAreaTitle
    aWnd[ nArea ]:cTitle := cAreaTitle
    oGenVar:aAreaTitle[ nAktArea ]:Refresh()
@@ -3141,16 +3141,16 @@ return .T.
 //function EasyPreview()
 
 //   MsgInfo( "EasyPreview Not linked yet" )
-   
-//return nil   
+
+//return nil
 
 //----------------------------------------------------------------------------//
 
 function TScript()
 
    MsgInfo( "TScript not linked yet" )
-   
-return nil   
+
+return nil
 
 
 //----------------------------------------------------------------------------//
@@ -3173,7 +3173,7 @@ METHOD New() CLASS TEasyReport
 
    ::cGeneralIni = ".\vrd.ini"
    ::cDataPath   = GetCurDir() + "\Datas\"
-   
+
    ::bClrBar =  { | lInvert | If( ! lInvert,;
                                   { { 1, RGB( 255, 255, 255 ), RGB( 229, 233, 238 ) } },;
                                   { { 2/5, RGB( 255, 253, 222 ), RGB( 255, 231, 147 ) },;
@@ -3187,7 +3187,7 @@ METHOD New() CLASS TEasyReport
 
    ::aClrDialogs = { { 1, RGB( 199, 216, 237 ), RGB( 237, 242, 248 ) } }
 
-  //  ::aColorDlg :=  { { 1, RGB( 199, 216, 237 ), RGB( 237, 242, 248 ) } } 
+  //  ::aColorDlg :=  { { 1, RGB( 199, 216, 237 ), RGB( 237, 242, 248 ) } }
 
   //   ::aColorDlg :=  { { 0.60,  nRGB( 221, 227, 233) ,  nRGB( 221, 227, 233 ) }, ;
   //                        { 0.40,nRGB( 221, 227, 233), nRGB( 221, 227, 233) } }
@@ -3204,11 +3204,11 @@ CLASS ER_MdiChild FROM TMdiChild
    DATA   aRulerTopPos
    DATA   aRulerLeftPos
    DATA   nArea
-   
+
    METHOD HandleEvent( nMsg, nWParam, nLParam )
    METHOD MouseLeave( nRow, nCol, nFlags )
    METHOD MouseMove( nRow, nCol, nFlags )
-   
+
 ENDCLASS
 
 //----------------------------------------------------------------------------//
@@ -3216,19 +3216,19 @@ ENDCLASS
 METHOD MouseMove( nRow, nCol, nFlags ) CLASS ER_MdiChild
 
    local uResult := ::Super:MouseMove( nRow, nCol, nFlags )
-   
+
    TrackMouseEvent( ::hWnd, TME_LEAVE )
-   
-return uResult   
-   
+
+return uResult
+
 //----------------------------------------------------------------------------//
 
 METHOD HandleEvent( nMsg, nWParam, nLParam ) CLASS ER_MdiChild
 
    if nMsg == WM_MOUSELEAVE
       return ::MouseLeave( nHiWord( nLParam ), nLoWord( nLParam ), nWParam )
-   endif 
-   
+   endif
+
 return ::Super:HandleEvent( nMsg, nWParam, nLParam )
 
 //----------------------------------------------------------------------------//

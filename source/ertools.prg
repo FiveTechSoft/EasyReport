@@ -7,7 +7,7 @@ MEMVAR cDefaultPath
 MEMVAR nAktArea
 MEMVAR aVRDSave
 MEMVAR oClpGeneral, cDefIni, cGeneralIni, nMeasure, lDemo, lBeta, oTimer
-MEMVAR oMainWnd, lProfi, nUndoCount, nRedoCount, lPersonal, lStandard, oGenVar
+MEMVAR lProfi, nUndoCount, nRedoCount, lPersonal, lStandard, oGenVar
 MEMVAR oER
 
 function GetFreeSystemResources()
@@ -1055,7 +1055,7 @@ function EndMsgLogo( oDlg, aFonts )
 
    //Demo mode: App l�uft nur 3 Minuten
    if lDemo = .T.
-      DEFINE TIMER oTimer INTERVAL 1000 OF oMainWnd ;
+      DEFINE TIMER oTimer INTERVAL 1000 OF oEr:oMainWnd ;
          ACTION ( TimerRunOut( ++nInterval ) )
       ACTIVATE TIMER oTimer
    endif
@@ -1164,8 +1164,8 @@ function VRDMsgPersonal()
       lDemo  := .T.
       lProfi := .T.
       oBar:AEvalWhen()
-      oMainWnd:cTitle := MainCaption()
-      oMainWnd:SetMenu( BuildMenu() )
+      oEr:oMainWnd:cTitle := MainCaption()
+      oEr:oMainWnd:SetMenu( BuildMenu() )
       VRDLogo()
    endif
 
@@ -1431,7 +1431,7 @@ function PrintReport( lPreview, lDeveloper, lPrintDlg, LPrintIDs )
    //      NIL, 1 )
    //   return .T.
  //  ELSE
-      EASYREPORT oVRD NAME cDefIni OF oMainWnd PREVIEW lPreview ;
+      EASYREPORT oVRD NAME cDefIni OF oEr:oMainWnd PREVIEW lPreview ;
                  PRINTDIALOG IIF( lPreview, .F., lPrintDlg ) PRINTIDS NOEXPR
  //  endif
 
@@ -1476,7 +1476,7 @@ function AltPrintReport( lPreview, cPrinter )
    local i, oVRD, cCondition
    local lPrintIDs := IIF( GetPvProfString( "General", "PrintIDs", "0", cDefIni ) = "0", .F., .T. )
 
-   oVRD := VRD():New( cDefIni, lPreview, cPrinter, oMainWnd,, lPrintIDs,, .T. )
+   oVRD := VRD():New( cDefIni, lPreview, cPrinter, oEr:oMainWnd,, lPrintIDs,, .T. )
 
    //erste Seite
    for i := 1 TO LEN( oVRD:aAreaInis )

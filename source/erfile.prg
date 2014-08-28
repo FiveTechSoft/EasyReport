@@ -31,7 +31,7 @@ function OpenFile( cFile )
    // Neustart des Programmes
    if .NOT. EMPTY( cFile ) .AND. oGenVar:lFirstFile = .F.
       oGenVar:cLoadFile := cFile
-      oMainWnd:End()
+      oEr:oMainWnd:End()
       return .T.
    endif
 
@@ -40,7 +40,7 @@ function OpenFile( cFile )
 
       oGenVar:lFirstFile := .F.
 
-      oMainWnd:CloseAll()
+      oEr:oMainWnd:CloseAll()
 
       aItems    := NIL
       aAreaIni  := NIL
@@ -93,11 +93,11 @@ function OpenFile( cFile )
       ClearUndoRedo() // and refresh the bar
 
       cMainTitle      := ALLTRIM( GetPvProfString( "General", "Title", "", cDefIni ) )
-      oMainWnd:cTitle := MainCaption()
+      oEr:oMainWnd:cTitle := MainCaption()
 
       SetScrollBar()
 
-      oMainWnd:SetMenu( BuildMenu() )
+      oEr:oMainWnd:SetMenu( BuildMenu() )
 
       SetSave( .T. )
 
@@ -263,7 +263,7 @@ function AskSaveFiles()
 
    if lVRDSave = .F.
 
-      nSave := MessageBox( oMainWnd:hWnd, ;
+      nSave := MessageBox( oEr:oMainWnd:hWnd, ;
                            GL("Your changes are not saved.") + CRLF + CRLF + ;
                            GL("Save the current report?"), GL("Save"), 35 )
 
@@ -395,7 +395,7 @@ function FileInfos()
          SET SECTION "Infos"   ENTRY "Comment" TO RTRIM( cComment ) OF oIni
       ENDINI
 
-      oMainWnd:cTitle := MainCaption()
+      oEr:oMainWnd:cTitle := MainCaption()
 
       SetSave( .F. )
 

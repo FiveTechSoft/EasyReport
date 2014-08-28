@@ -8,7 +8,7 @@ MEMVAR nAktItem, nAktArea, nSelArea, cAktIni, aSelection, nTotalHeight, nTotalWi
 MEMVAR oGenVar
 MEMVAR lBoxDraw, nBoxTop, nBoxLeft, nBoxBottom, nBoxRight
 MEMVAR cInfoWidth, cInfoHeight
-MEMVAR oMainWnd
+MEMVAR oEr
 
 //------------------------------------------------------------------------------
 
