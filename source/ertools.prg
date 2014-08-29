@@ -2,7 +2,7 @@
 #INCLUDE "VRD.ch"
 #INCLUDE "Mail.ch"
 
-MEMVAR aItems, aFonts, aAreaIni, aWnd, oBar
+MEMVAR aItems, aFonts, aAreaIni, aWnd 
 MEMVAR cDefaultPath
 MEMVAR nAktArea
 MEMVAR aVRDSave
@@ -1163,7 +1163,7 @@ function VRDMsgPersonal()
    if lOK = .F.
       lDemo  := .T.
       lProfi := .T.
-      oBar:AEvalWhen()
+      oEr:oMainWnd:oBar:AEvalWhen()
       oEr:oMainWnd:cTitle := MainCaption()
       oEr:oMainWnd:SetMenu( BuildMenu() )
       VRDLogo()
@@ -1587,7 +1587,7 @@ function Add2Undo( cEntryText, nEntryNr, nAreaNr, cAreaText )
    TMPUNDO->(DBCLOSEAREA())
    SELECT( nSelect )
 
-   oBar:AEvalWhen()
+   oEr:oMainWnd:oBar:AEvalWhen()
 
 return .T.
 
@@ -1668,7 +1668,7 @@ function Undo()
 
    RefreshUndo()
    RefreshRedo()
-   oBar:AEvalWhen()
+   oEr:oMainWnd:oBar:AEvalWhen()
 
    TMPUNDO->(DBCLOSEAREA())
    TMPREDO->(DBCLOSEAREA())
@@ -1752,7 +1752,7 @@ function Redo()
 
    RefreshUndo()
    RefreshRedo()
-   oBar:AEvalWhen()
+   oEr:oMainWnd:oBar:AEvalWhen()
 
    TMPUNDO->(DBCLOSEAREA())
    TMPREDO->(DBCLOSEAREA())
@@ -1813,7 +1813,7 @@ function ClearUndoRedo()
    nUndoCount := 0
    nRedoCount := 0
 
-   oBar:AEvalWhen()
+   oEr:oMainWnd:oBar:AEvalWhen()
 
 return .T.
 

@@ -1,11 +1,11 @@
 #include "FiveWin.ch"
 
-MEMVAR aItems, aFonts, aAreaIni, aWnd, aWndTitle, oBar, oMru
+MEMVAR aItems, aFonts, aAreaIni, aWnd, aWndTitle, oMru
 MEMVAR oCbxArea, aCbxItems, nAktuellItem, aRuler, cLongDefIni, cDefaultPath
 MEMVAR oGenVar
 MEMVAR aVRDSave, lVRDSave, lFillWindow
 MEMVAR cDefIni, cDefIniPath, cGeneralIni, cMeasure, oTimer
-MEMVAR oMainWnd, nDlgTextCol, nDlgBackCol
+MEMVAR nDlgTextCol, nDlgBackCol
 
 //------------------------------------------------------------------------------
 
@@ -414,7 +414,7 @@ function SetSave( lSave )
       lVRDSave := .F.
    endif
 
-   oBar:AEvalWhen()
+   oEr:oMainWnd:oBar:AEvalWhen()
 
 return .T.
 
