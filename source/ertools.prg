@@ -1,4 +1,4 @@
-#INCLUDE "FiveWin.ch"
+﻿#INCLUDE "FiveWin.ch"
 #INCLUDE "VRD.ch"
 #INCLUDE "Mail.ch"
 
@@ -31,7 +31,7 @@ function InsertArea( lBefore, cTitle )
 
    local i, oGet, oDlg, cTmpFile
    local aAreaInis   := {}
-   local lreturn     := .T.
+   local lreturn     := .F.
    local cFile       := SPACE( 200 )
    local aIniEntries := GetIniSection( "Areas", cDefIni )
    local nNewArea    := nAktArea + IIF( lBefore, 0, 1 )
@@ -59,7 +59,7 @@ function InsertArea( lBefore, cTitle )
 
    ACTIVATE DIALOG oDlg CENTERED
 
-   if lreturn = .T.
+   if lreturn 
 
       nNewArea := IIF( nNewArea < 1, 1, nNewArea )
       AINS( aAreaInis, nNewArea )
