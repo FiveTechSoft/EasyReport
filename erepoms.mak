@@ -22,9 +22,7 @@ PRGS = \
 
 C =	\
 .\cfunc.c \
-.\point.c \
-.\setmask.c \
-.\treedraw.c 
+.\setmask.c
 
 .SUFFIXES: .prg .c .obj .rc .res
 
