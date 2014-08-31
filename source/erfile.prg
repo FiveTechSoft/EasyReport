@@ -1,7 +1,7 @@
 #include "FiveWin.ch"
 
 MEMVAR aItems, aFonts, aAreaIni, aWnd, aWndTitle, oMru
-MEMVAR oCbxArea, aCbxItems, nAktuellItem, aRuler, cLongDefIni, cDefaultPath
+MEMVAR oCbxArea, aCbxItems, aRuler, cLongDefIni, cDefaultPath
 MEMVAR oGenVar
 MEMVAR aVRDSave, lVRDSave, lFillWindow
 MEMVAR cDefIni, cDefIniPath, cGeneralIni, cMeasure, oTimer
@@ -188,7 +188,7 @@ function SaveAs( cFile )
       cFile := SUBSTR( cFile, 1, RAT( UPPER(ALLTRIM(cFileExt( cFile ))), UPPER( cFile ) ) - 1 ) + "vrd"
    endif
 
-   if FILE( VRD_LF2SF( cFile ) ) = .T.
+   if FILE( VRD_LF2SF( cFile ) )
       if MsgNoYes( GL("The file already exists.") + CRLF + CRLF + ;
                    GL("Overwrite?"), GL("Save as") ) = .F.
          return( .F. )
@@ -204,7 +204,7 @@ function SaveAs( cFile )
 
    CreateNewFile( cFile )
 
-   if .NOT. EMPTY( cFile )
+   if ! EMPTY( cFile )
 
       cDefIni := VRD_LF2SF( ALLTRIM( cFile ) )
 
@@ -222,7 +222,7 @@ function SaveAs( cFile )
       //Areas abspeichern
       for nArea := 1 TO LEN( aAreaIni )
 
-         if .NOT. EMPTY( aVRDSave[nArea,1] )
+         if ! EMPTY( aVRDSave[nArea,1] )
 
             cAreaFile := SUBSTR( cFile, 1, LEN( cFile )-2 ) + PADL( ALLTRIM( STR( nArea, 2) ), 2, "0" )
             CreateNewFile( cAreaFile )
@@ -262,7 +262,7 @@ function AskSaveFiles()
    local nArea, nSave
    local lreturn := .T.
 
-   if lVRDSave = .F.
+   if ! lVRDSave
 
       nSave := MessageBox( oEr:oMainWnd:hWnd, ;
                            GL("Your changes are not saved.") + CRLF + CRLF + ;
@@ -283,7 +283,7 @@ function AskSaveFiles()
 
    endif
 
-   if .NOT. EMPTY( oGenVar:cLoadFile )
+   if ! EMPTY( oGenVar:cLoadFile )
       ShellExecute( 0, "Open", GetModuleFileName( GetInstance() ), oGenVar:cLoadFile, NIL, 1 )
    endif
 
@@ -386,7 +386,7 @@ function FileInfos()
 
    ACTIVATE DIALOG oDlg CENTER
 
-   if lSave = .T.
+   if lSave
 
       INI oIni FILE cDefIni
          SET SECTION "General" ENTRY "Title"   TO ALLTRIM( cTitle ) OF oIni
@@ -408,7 +408,7 @@ return .T.
 
 function SetSave( lSave )
 
-   if lSave = .T.
+   if lSave
       lVRDSave := .T.
       SetSaveInfos()
    else
@@ -631,7 +631,7 @@ function NewReport()
 
    oFont:End()
 
-   if lCreate = .T.
+   if lCreate
       VRD_MsgRun( GL("Please wait..."), GL("New Report"), ;
          {|| CreateNewReport( aCheck, cGeneralName, cSourceCode, cReportName, lMakeSource, ;
                               nTop, nLeft, nPageBreak, nOrient, aMeasure, cMeasure ) } )
@@ -643,7 +643,7 @@ function NewReport()
    ERASE VRDTMPST.DBF
    ERASE VRDTMP.DBF
 
-   if lCreate = .T.
+   if lCreate
       OpenFile( cGeneralName )
    endif
 

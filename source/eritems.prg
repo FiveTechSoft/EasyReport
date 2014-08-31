@@ -4,7 +4,7 @@
 
 MEMVAR aItems, aFonts, oAppFont, aAreaIni, aWnd, aWndTitle
 MEMVAR oCbxArea, aCbxItems, aRuler
-MEMVAR nAktItem, nAktArea, nSelArea, cAktIni, aSelection
+MEMVAR nAktItem, nAktArea, nSelArea, aSelection
 MEMVAR oMsgInfo
 MEMVAR lFillWindow, nDeveloper
 MEMVAR nRuler, nRulerTop
@@ -124,7 +124,7 @@ function KeyDownAction( nKey, nItem, nArea, cAreaIni )
       endcase
    endif
 
-   if lMove = .T.
+   if lMove
       aItems[nArea,nItem]:Move( nTop + nY, nLeft + nX, nWidth + nRight, nHeight + nBottom, .T. )
       aItems[nArea,nItem]:ShowDots( .T. )
    endif
@@ -149,7 +149,7 @@ function DeleteItem( i, nArea, lFromList, lRemove, lFromUndoRedo )
       return (.F.)
    endif
 
-   if lFromList = .F.
+   if !lFromList
       if MsgYesNo( GL("Remove the current item?"), GL("Select an option") ) = .F.
          return (.F.)
       endif
@@ -158,7 +158,7 @@ function DeleteItem( i, nArea, lFromList, lRemove, lFromUndoRedo )
    cItemDef := AllTrim( GetPvProfString( "Items", AllTrim(STR(i,5)) , "", cAreaIni ) )
    cOldDef  := cItemDef
 
-   if lRemove = .T.
+   if lRemove
       cWert := " 0"
    ELSE
       cWert := " 1"
@@ -172,7 +172,7 @@ function DeleteItem( i, nArea, lFromList, lRemove, lFromUndoRedo )
       SET SECTION "Items" ENTRY AllTrim(STR(i,5)) TO cItemDef OF oIni
    ENDINI
 
-   if lRemove = .T.
+   if lRemove
       aItems[nArea,i]:lDrag := .F.
       aItems[nArea,i]:HideDots()
       aItems[nArea,i]:End()
@@ -181,7 +181,7 @@ function DeleteItem( i, nArea, lFromList, lRemove, lFromUndoRedo )
       aItems[nArea,i]:lDrag := .T.
    endif
 
-   if lFromUndoRedo = .F.
+   if !lFromUndoRedo
       Add2Undo( cOldDef, i, nArea )
    endif
 
@@ -215,7 +215,7 @@ function DeleteAllItems( nTyp )
             nTyp = 3 .AND. IsGraphic( oItem:cType ) = .T. .OR. ;
             nTyp = 4 .AND. oItem:cType = "BARCODE"
 
-            if oItem:lVisible = .T.
+            if oItem:lVisible
                DeleteItem( i, nAktArea, .T., .T. )
             endif
 
@@ -397,7 +397,7 @@ function UpdateItems( nValue, nTyp, lAddValue, aOldValue )
    case nTyp = 4 .AND. nValue = aOldValue[4] ; lStop := .T.
    endcase
 
-   if lStop = .T.
+   if lStop
       return( .T. )
    endif
 
@@ -746,7 +746,7 @@ function SaveTextItem( oVar, oItem )
    IIF( oItem:nOrient = 2, lCenter := .T., lCenter := .F. )
    IIF( oItem:nOrient = 3, lRight  := .T., lRight  := .F. )
 
-   if oItem:lVisible = .T.
+   if oItem:lVisible
 
       aItems[oVar:nArea,oVar:i]:End()
       aItems[oVar:nArea,oVar:i] := ;
@@ -774,13 +774,13 @@ function SaveTextItem( oVar, oItem )
       aItems[oVar:nArea,oVar:i]:End()
    endif
 
-   if oVar:lRemoveItem = .T.
+   if oVar:lRemoveItem
       DelIniEntry( "Items", AllTrim(STR(oVar:i,5)), oVar:cAreaIni )
    endif
 
    SetSave( .F. )
 
-   if oVar:lNew = .T.
+   if oVar:lNew
       Add2Undo( "", oVar:i, oVar:nArea )
    ELSEif oVar:cOldDef <> oVar:cItemDef
       Add2Undo( oVar:cOldDef, oVar:i, oVar:nArea )
@@ -803,13 +803,13 @@ function SaveItemGeneral( oVar, oItem )
       aItems[oVar:nArea,oVar:i]:End()
    endif
 
-   if oVar:lRemoveItem = .T.
+   if oVar:lRemoveItem
       DelIniEntry( "Items", AllTrim(STR(oVar:i,5)), oVar:cAreaIni )
    endif
 
    SetSave( .F. )
 
-   if oVar:lNew = .T.
+   if oVar:lNew
       Add2Undo( "", oVar:i, oVar:nArea )
    ELSEif oVar:cOldDef <> oVar:cItemDef
       Add2Undo( oVar:cOldDef, oVar:i, oVar:nArea )
@@ -1047,6 +1047,7 @@ function GraphicProperties( i, nArea, cAreaIni, lFromList, lNew )
    REDEFINE GET aGet[1] VAR oItem:nColor ID 501 OF oCurDlg PICTURE "9999" SPINNER MIN 1 MAX 30 ;
       ON CHANGE Set2Color( aSay[1], IIF( oItem:nColor > 0, oVar:aColors[oItem:nColor], ""), nDefClr ) ;
       VALID     Set2Color( aSay[1], IIF( oItem:nColor > 0, oVar:aColors[oItem:nColor], ""), nDefClr )
+
    REDEFINE GET aGet[2] VAR oItem:nColFill ID 502 OF oCurDlg PICTURE "9999" SPINNER MIN 1 MAX 30 ;
       ON CHANGE Set2Color( aSay[2], IIF( oItem:nColFill > 0, oVar:aColors[oItem:nColFill], ""), nDefClr ) ;
       VALID     Set2Color( aSay[2], IIF( oItem:nColFill > 0, oVar:aColors[oItem:nColFill], ""), nDefClr ) ;
@@ -1059,6 +1060,7 @@ function GraphicProperties( i, nArea, cAreaIni, lFromList, lNew )
       ACTION ( nColor := ShowColorChoice( oItem:nColor ), ;
                IIF( nColor <> 0, EVAL( {|| oItem:nColor := nColor, aGet[1]:Refresh(), ;
                Set2Color( aSay[1], IIF( oItem:nColor > 0, oVar:aColors[oItem:nColor], ""), nDefClr ) } ), ) )
+
    REDEFINE BTNBMP ID 152 OF oCurDlg NOBORDER RESOURCE "SELECT" TRANSPARENT ;
       ACTION ( nColor := ShowColorChoice( oItem:nColFill ), ;
                IIF( nColor <> 0, EVAL( {|| oItem:nColFill := nColor, aGet[2]:Refresh(), ;
@@ -1073,8 +1075,10 @@ function GraphicProperties( i, nArea, cAreaIni, lFromList, lNew )
 
    REDEFINE BUTTON PROMPT GL("&OK")     ID 101 OF oCurDlg ;
       ACTION ( oGenVar:lDlgSave := .T., oGenVar:lItemDlg := .F., oCurDlg:End() )
+
    REDEFINE BUTTON PROMPT GL("&Cancel") ID 102 OF oCurDlg ;
       ACTION ( oGenVar:lItemDlg := .F., oCurDlg:End() )
+
    REDEFINE BUTTON oBtn PROMPT GL("&Remove Item") ID 103 OF oCurDlg ;
       ACTION ( oVar:lRemoveItem := .T., oItem:lVisible := .F., ;
                oGenVar:lDlgSave := .T., oGenVar:lItemDlg := .F., oCurDlg:End() )

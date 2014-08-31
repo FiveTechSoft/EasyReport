@@ -3,8 +3,8 @@
 #INCLUDE "FiveWin.ch"
 
 MEMVAR aItems, aAreaIni, aWnd
-MEMVAR nAktuellItem, cDefaultPath
-MEMVAR nAktItem, nAktArea, nSelArea, cAktIni, aSelection, nTotalHeight, nTotalWidth
+MEMVAR cDefaultPath
+MEMVAR nAktItem, nAktArea, nSelArea, aSelection, nTotalHeight, nTotalWidth
 MEMVAR oGenVar
 MEMVAR lBoxDraw, nBoxTop, nBoxLeft, nBoxBottom, nBoxRight
 MEMVAR cInfoWidth, cInfoHeight
@@ -22,7 +22,6 @@ FUNCTION SelectItem( nItem, nArea, cAreaIni )
    nAktItem := nItem
    nSelArea := nArea
    nAktArea := nArea
-   cAktIni  := cAreaIni
 
    IF GetKeyState( VK_SHIFT )
       ToggleItemSelection( nItem, nArea )

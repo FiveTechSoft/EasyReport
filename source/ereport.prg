@@ -10,9 +10,9 @@ STATIC aTmpSource
 //Entscheidet ob die Graphikelemente neu gezeichnet werden sollen
 STATIC lDraGraphic := .T.
 
-MEMVAR aItems, aFonts, oAppFont, aAreaIni, aWnd, aWndTitle, oBar, oMru
-MEMVAR oCbxArea, aCbxItems, nAktuellItem, aRuler, cLongDefIni, cDefaultPath
-MEMVAR nAktItem, nAktArea, nSelArea, cAktIni, aSelection, nTotalHeight, nTotalWidth
+MEMVAR aItems, aFonts, oAppFont, aAreaIni, aWnd, aWndTitle, oMru
+MEMVAR oCbxArea, aCbxItems, aRuler, cLongDefIni, cDefaultPath
+MEMVAR nAktItem, nAktArea, nSelArea, aSelection, nTotalHeight, nTotalWidth
 MEMVAR nHinCol1, nHinCol2, nHinCol3, oMsgInfo
 MEMVAR aVRDSave, lVRDSave, lFillWindow, nDeveloper, oRulerBmp1, oRulerBmp2
 MEMVAR lBoxDraw, nBoxTop, nBoxLeft, nBoxBottom, nBoxRight, nRuler, nRulerTop
@@ -131,7 +131,7 @@ return nil
 //----------------------------------------------------------------------------//
 
 function BarMenu()
-
+   LOCAL oBar
    local aBtn[3]
    local lPrompt := ( GetSysMetrics( 0 ) > 800 )
 
@@ -359,7 +359,7 @@ function DeclarePublics( cDefFile )
    endif
 
    PUBLIC aItems, aFonts, oAppFont, aAreaIni, aWnd, aWndTitle, oBar, oMru
-   PUBLIC aCbxItems, nAktuellItem, aRuler, cLongDefIni, cDefaultPath
+   PUBLIC aCbxItems, aRuler, cLongDefIni, cDefaultPath
    PUBLIC oCbxArea := nil
    PUBLIC oCurDlg  := nil
 
@@ -370,7 +370,6 @@ function DeclarePublics( cDefFile )
    PUBLIC nAktItem := 0
    PUBLIC nAktArea := 1
    PUBLIC nSelArea := 0
-   PUBLIC cAktIni
    PUBLIC aSelection := {}
 
    //Standardfarben
