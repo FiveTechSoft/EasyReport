@@ -6,6 +6,7 @@ MEMVAR oGenVar
 MEMVAR aVRDSave, lVRDSave, lFillWindow
 MEMVAR cDefIni, cDefIniPath, cGeneralIni, cMeasure, oTimer
 MEMVAR nDlgTextCol, nDlgBackCol
+MEMVAr oEr
 
 //------------------------------------------------------------------------------
 
