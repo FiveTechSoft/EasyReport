@@ -9,31 +9,6 @@ MEMVAR oClpGeneral, cDefIni, nMeasure, lDemo, lBeta, oTimer
 MEMVAR oMainWnd, lProfi, nUndoCount, nRedoCount, lPersonal, lStandard, oGenVar
 MEMVAR oER
 
-//------------------------------------------------------------------------------
-
-function BetaVersion()
-
-   local oDlg, oFont
-   local nClrBack := RGB( 255, 255, 255 )
-
-   DEFINE FONT oFont  NAME "Ms Sans Serif" SIZE 0, -14
-
-   DEFINE DIALOG oDlg NAME "MSGBETA" COLOR 0, nClrBack
-
-   REDEFINE SAY PROMPT "- BETA VERSION -" ID 204 OF oDlg FONT oFont COLOR 0, nClrBack
-
-   REDEFINE SAY PROMPT "This is a beta version of EasyReport. Please let me" ID 201 OF oDlg FONT oFont COLOR 0, nClrBack
-   REDEFINE SAY PROMPT "know if you have any problems or suggestions."       ID 202 OF oDlg FONT oFont COLOR 0, nClrBack
-
-   REDEFINE BITMAP ID 301 OF oDlg RESOURCE "LOGO"
-
-   REDEFINE BUTTON ID 101 OF oDlg ACTION oDlg:End()
-
-   ACTIVATE DIALOG oDlg CENTER
-
-   oFont:End()
-
-return NIL
 
 //------------------------------------------------------------------------------
 
@@ -254,5 +229,144 @@ function VRDAbout()
 
 return NIL
 
+
+*-- function -----------------------------------------------------------------
+* Name........: EndMsgLogo
+* Beschreibung:
+* Argumente...: None
+* R�ckgabewert: .T.
+* Author......: Timm Sodtalbers
+*-----------------------------------------------------------------------------
+function EndMsgLogo( oDlg, aFonts )
+
+   local nInterval := 0
+
+   oDlg:End()
+   AEVAL( aFonts, {| oFont| oFont:End() } )
+   oTimer:End()
+   SysRefresh()
+   MEMORY(-1)
+
+   //Demo mode: App l�uft nur 3 Minuten
+   if lDemo
+      DEFINE TIMER oTimer INTERVAL 1000 OF oEr:oMainWnd ;
+         ACTION ( TimerRunOut( ++nInterval ) )
+      ACTIVATE TIMER oTimer
+   endif
+
+return .T.
+
+
 //------------------------------------------------------------------------------
 
+function TimerRunOut( nInterval )
+
+   if nInterval = 300
+      MsgStop( "Demo version time run out (5 minutes)!" )
+      oTimer:End()
+      QUIT
+   endif
+
+return .T.
+
+//------------------------------------------------------------------------------
+
+function CheckTimer( nInterval, oSay )
+
+    local lreturn := .F.
+
+    if lDemo
+       oSay:SetText( "Please wait: " + ALLTRIM(STR( 20 - nInterval, 3)) + " Sec." )
+    endif
+
+    if lDemo .AND. nInterval = 20 .OR. lDemo = .F. .AND. nInterval = 3
+      lreturn := .T.
+    endif
+
+return ( lreturn )
+
+//------------------------------------------------------------------------------
+
+function VRDMsgPersonal()
+
+   local oDlg, oFont, oFont2
+   local lOK          := .T. // .F.
+   local lTestVersion := .F.
+   local nClr1        := RGB( 128, 128, 128 )
+   local nClrBack     := RGB( 255, 255, 255 )
+   local nSerial      := GetSerialHD()
+   local cSerial      := IIF( nSerial = 0, "8"+"2"+"2"+"7"+"3"+"6"+"5"+"1", ALLTRIM( STR( ABS( nSerial ), 20 ) ) )
+   local cRegist      := PADR( GetPvProfString( "General", "RegistKey", "", oER:cGeneralIni ), 40 )
+   local cCompany     := PADR( GetPvProfString( "General", "Company"  , "", oER:cGeneralIni ), 100 )
+   local cUser        := PADR( GetPvProfString( "General", "User"     , "", oER:cGeneralIni ), 100 )
+   local cVersion     := IIF( lStandard, "Standard", "Personal" )
+
+   DEFINE FONT oFont  NAME "Ms Sans Serif" SIZE 0, -14
+   DEFINE FONT oFont2 NAME "Ms Sans Serif" SIZE 0, -6
+
+   DEFINE DIALOG oDlg NAME "MSGPERSONAL" ;
+      TITLE "EasyReport " + cVersion COLOR 0, nClrBack
+
+   REDEFINE BITMAP ID 301 OF oDlg RESOURCE "LOGO"
+
+   REDEFINE GET cSerial  ID 401 OF oDlg READONLY MEMO COLOR 0, nClrBack FONT oFont
+   REDEFINE GET cCompany ID 402 OF oDlg COLOR 0, nClrBack FONT oFont
+   REDEFINE GET cUser    ID 403 OF oDlg COLOR 0, nClrBack FONT oFont
+   REDEFINE GET cRegist  ID 404 OF oDlg COLOR 0, nClrBack FONT oFont
+
+   REDEFINE SAY PROMPT "Please send us the serial number, company and" + CRLF + ;
+                       "user name. We will give you the free registration" + CRLF + ;
+                       "key as soon as possible." ;
+      ID 201 OF oDlg COLOR RGB( 0, 0, 128 ), nClrBack //FONT oFont
+
+   REDEFINE SAY PROMPT "Using EasyReport " + cVersion + " the Visual Report Designer will only work on one machine." + CRLF + ;
+                       "With EasyReport Professional you have the possibility to pass the Visual Report" + CRLF + ;
+                       "Designer to your customers without paying anything extra (royalty free)." ;
+      ID 203 OF oDlg COLOR 0, nClrBack
+
+   REDEFINE BUTTON ID 103 OF oDlg ACTION SendRegInfos( cSerial, cCompany, cUser, cVersion ) ;
+      WHEN .NOT. EMPTY( cCompany ) .OR. .NOT. EMPTY( cUser )
+
+   REDEFINE SAY PROMPT "Copyright"        + CRLF + ;
+                       oGenVar:cCopyright + CRLF + ;
+                       "Timm Sodtalbers"  + CRLF + ;
+                       "Sodtalbers+Partner" ;
+      ID 202 OF oDlg COLOR nClr1, nClrBack FONT oFont2
+
+   REDEFINE SAY ID 171 OF oDlg COLOR 0, nClrBack FONT oFont
+   REDEFINE SAY ID 172 OF oDlg COLOR 0, nClrBack FONT oFont
+   REDEFINE SAY ID 173 OF oDlg COLOR 0, nClrBack FONT oFont
+   REDEFINE SAY ID 174 OF oDlg COLOR 0, nClrBack FONT oFont
+
+   REDEFINE BUTTON ID 101 OF oDlg ;
+      ACTION ( lOK := .T. /* := CheckRegist( cSerial, cRegist ) */, oDlg:End() )
+   REDEFINE BUTTON ID 104 OF oDlg ACTION ( lTestVersion := .T., oDlg:End() )
+   REDEFINE BUTTON ID 102 OF oDlg ACTION ;
+      ShellExecute( 0, "Open", "http://www.reportdesigner.info", Nil, Nil, 1 )
+
+   ACTIVATE DIALOG oDlg CENTER
+
+   WritePProString( "General", "Company", ALLTRIM( cCompany ), oER:cGeneralIni )
+   WritePProString( "General", "User"   , ALLTRIM( cUser )   , oER:cGeneralIni )
+
+   if lOK = .F. .AND. lTestVersion = .F.
+      MsgInfo( "The registration key is not valid!" + CRLF + CRLF + ;
+               "EasyReport starts in demo mode." )
+      WritePProString( "General", "RegistKey", "", oER:cGeneralIni )
+   endif
+
+   if lOK = .F.
+      lDemo  := .T.
+      lProfi := .T.
+      oEr:oMainWnd:oBar:AEvalWhen()
+      oEr:oMainWnd:cTitle := MainCaption()
+      oEr:oMainWnd:SetMenu( BuildMenu() )
+      VRDLogo()
+   endif
+
+   oFont:End()
+   oFont2:End()
+
+return ( lOK )
+
+//------------------------------------------------------------------------------

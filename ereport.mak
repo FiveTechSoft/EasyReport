@@ -21,7 +21,6 @@ PRG =        \
 .\eritems2.prg \
 .\erstart.prg  \
 .\ertools.prg  \
-.\oldfunc.prg  \
 #.\fileedit.prg \
 .\epclass.prg  \
 .\epmeta.prg \

@@ -97,7 +97,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
 
    DEFINE CLIPBOARD oClpGeneral OF oEr:oMainWnd
 
-   SET MESSAGE OF oEr:oMainWnd to oGenVar:cRegistInfo CENTERED 2010
+   SET MESSAGE OF oEr:oMainWnd  CENTERED 2010
 
    DEFINE MSGITEM oMsgInfo OF oEr:oMainWnd:oMsgBar SIZE 280
 
@@ -329,16 +329,43 @@ function StartMessage()
       BetaVersion()
    else
       if lDemo
-         VRDLogo()
+        // VRDLogo()
       elseif lPersonal  .OR. lStandard
          lProfi := .T.
-         if !QuietRegCheck()
-            VRDMsgPersonal()
-         endif
+        // if !QuietRegCheck()
+        //    VRDMsgPersonal()
+        //  endif
       endif
   endif
 
 return .T.
+
+//------------------------------------------------------------------------------
+
+function BetaVersion()
+
+   local oDlg, oFont
+   local nClrBack := RGB( 255, 255, 255 )
+
+   DEFINE FONT oFont  NAME "Ms Sans Serif" SIZE 0, -14
+
+   DEFINE DIALOG oDlg NAME "MSGBETA" COLOR 0, nClrBack
+
+   REDEFINE SAY PROMPT "- BETA VERSION -" ID 204 OF oDlg FONT oFont COLOR 0, nClrBack
+
+   REDEFINE SAY PROMPT "This is a beta version of EasyReport. Please let me" ID 201 OF oDlg FONT oFont COLOR 0, nClrBack
+   REDEFINE SAY PROMPT "know if you have any problems or suggestions."       ID 202 OF oDlg FONT oFont COLOR 0, nClrBack
+
+   REDEFINE BITMAP ID 301 OF oDlg RESOURCE "LOGO"
+
+   REDEFINE BUTTON ID 101 OF oDlg ACTION oDlg:End()
+
+   ACTIVATE DIALOG oDlg CENTER
+
+   oFont:End()
+
+return NIL
+
 
 //----------------------------------------------------------------------------//
 
@@ -347,7 +374,6 @@ function DeclarePublics( cDefFile )
    PUBLIC oClpGeneral, oTimer
    PUBLIC cDefIni, cDefIniPath
    PUBLIC cMeasure
-   PUBLIC cGeneralIni := ".\vrd.ini"
    PUBLIC lDemo       := .F.
    PUBLIC lBeta       := .F.
    PUBLIC lProfi      := .T.
@@ -423,9 +449,6 @@ function DeclarePublics( cDefFile )
 
    //Structure-Variable
    PUBLIC oGenVar := TExStruct():New()
-
-   //Version einstellen
-   oGenVar:AddMember( "cRegistInfo",, GetRegistInfos() )
 
    //Voreinstellungen holen
    cDefIni      := VRD_LF2SF( cDefFile )
@@ -1023,12 +1046,8 @@ function BuildMenu()
       MENU
    endif
 
-   if lPersonal = .T. .OR. lStandard = .T.
-      MENUITEM GL("&Registration") ;
-         ACTION VRDMsgPersonal()
-   endif
    MENUITEM GL("&About") ;
-      ACTION VRDAbout()
+      ACTION Msginfo( "easyreport for FW" )
    ENDMENU
 
    ENDMENU
@@ -2535,7 +2554,9 @@ return .T.
 
    ACTIVATE DIALOG oDlg CENTERED ON INIT FillTree( oTree, oDlg )  //ListTrees( oTree )
 
-return nil
+ return nil
+
+//------------------------------------------------------------------------------
 
 static Function FillTree( oTree, oDlg )
 

@@ -1,10 +1,10 @@
 #include "FiveWin.ch"
 
 MEMVAR aItems, aFonts, aAreaIni, aWnd, aWndTitle, oMru
-MEMVAR oCbxArea, aCbxItems, aRuler, cLongDefIni, cDefaultPath
+MEMVAR oCbxArea, aRuler, cLongDefIni, cDefaultPath
 MEMVAR oGenVar
-MEMVAR aVRDSave, lVRDSave, lFillWindow
-MEMVAR cDefIni, cDefIniPath, cMeasure, oTimer
+MEMVAR aVRDSave, lVRDSave
+MEMVAR cDefIni, cDefIniPath, cMeasure
 MEMVAR nDlgTextCol, nDlgBackCol
 MEMVAr oEr
 
@@ -24,20 +24,20 @@ function OpenFile( cFile )
    cLongDefIni := cLongFile
    cFile       := VRD_LF2SF( cLongFile )
 
-   if AT( "[AREAS]", UPPER( MEMOREAD( cFile ) ) ) = 0 .AND. .NOT. EMPTY( cFile )
+   if AT( "[AREAS]", UPPER( MEMOREAD( cFile ) ) ) = 0 .AND. !EMPTY( cFile )
       MsgStop( ALLTRIM( cLongFile ) + CRLF + CRLF + GL("is not a valid file."), GL("Stop!") )
       return( .F. )
    endif
 
    // Neustart des Programmes
-   if .NOT. EMPTY( cFile ) .AND. oGenVar:lFirstFile = .F.
+   if !EMPTY( cFile ) .AND. !oGenVar:lFirstFile
       oGenVar:cLoadFile := cFile
       oEr:oMainWnd:End()
       return .T.
    endif
 
    // Aufruf des neuen Reports im gleichen Frame gibt optische Probleme
-   if .NOT. EMPTY( cFile )
+   if !EMPTY( cFile )
 
       oGenVar:lFirstFile := .F.
 
@@ -166,7 +166,7 @@ function SaveAsFile()
    local cFile := GetFile( GL("Designer Files") + " (*.vrd)|*.vrd|" + ;
                            GL("All Files") + " (*.*)|*.*", GL("Save as"), 1,, .T. )
 
-   if .NOT. EMPTY( cFile )
+   if !EMPTY( cFile )
       VRD_MsgRun( GL("Please wait..."), ;
          STRTRAN( GL("Save &as"), "&", "" ), {|| SaveAs( cFile ) } )
    endif
