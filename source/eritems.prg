@@ -303,7 +303,7 @@ function ItemProperties( i, nArea, lFromList, lNew )
    UnSelectAll()
 
    if oCurDlg <> NIL
-      oGenVar:lDlgSave := .T.
+    //  oGenVar:lDlgSave := .T.  // comentado fix bug 
       oCurDlg:End()
       oCurDlg := NIL
    endif
@@ -655,7 +655,7 @@ function EditSourceCode( nID, cSourceCode, oItem )
 
    ACTIVATE DIALOG oDlg CENTER
 
-   if lSave = .T. .AND. nID <> 0
+   if lSave .AND. nID <> 0
       do case
       case nID =  9  ; oItem:cSource       := cSourceCode
       case nID = 10  ; oItem:cSTop         := cSourceCode
@@ -768,7 +768,7 @@ function SaveTextItem( oVar, oItem )
    // Der Funktionsinhalt muﬂ direkt angeh‰ngt werden.
    //SaveItemGeneral( oVar, oItem )
 
-   if oItem:lVisible = .F. .AND. aItems[oVar:nArea,oVar:i] <> NIL
+   if !oItem:lVisible .AND. aItems[oVar:nArea,oVar:i] <> NIL
       aItems[oVar:nArea,oVar:i]:lDrag := .F.
       aItems[oVar:nArea,oVar:i]:HideDots()
       aItems[oVar:nArea,oVar:i]:End()
@@ -797,7 +797,7 @@ function SaveItemGeneral( oVar, oItem )
    // Immer auch SaveTextItem aktualisieren.
    // Der Funktionsinhalt muﬂ dort direkt angeh‰ngt werden.
 
-   if oItem:lVisible = .F. .AND. aItems[oVar:nArea,oVar:i] <> NIL
+   if !oItem:lVisible .AND. aItems[oVar:nArea,oVar:i] <> NIL
       aItems[oVar:nArea,oVar:i]:lDrag := .F.
       aItems[oVar:nArea,oVar:i]:HideDots()
       aItems[oVar:nArea,oVar:i]:End()
@@ -1476,7 +1476,7 @@ function MsgBarItem( nItem, nArea, cAreaIni, nRow, nCol, lResize )
 
    DEFAULT lResize := .F.
 
-   if lResize = .T. .AND. LEN( aItemPosition ) <> 0
+   if lResize .AND. LEN( aItemPosition ) <> 0
 
       oMsgInfo:SetText( GL("ID") + ": " + cItemID + "  " + ;
                         GL("Top:")    + " " + AllTrim( aItemPosition[1] ) + "  " + ;
@@ -1606,7 +1606,7 @@ function ItemCopy( lCut )
 
       oItemInfo := VRDItem():New( cItemCopy )
 
-      if lCut = .T.
+      if lCut 
          DeleteItem( nAktItem, nAktArea, .T. )
          if oItemInfo:nItemID < 0
             DelIniEntry( "Items", AllTrim(STR(nAktItem,5)), aAreaIni[nAktArea] )
@@ -1723,7 +1723,7 @@ function NewItem( cTyp, nArea, nTmpCopyArea, nTmpCopyEntry, cTmpItemCopy )
 
       cDefault := GetPvProfString( "General", "Default" + cTyp, "", cDefIni )
 
-      if .NOT. EMPTY( cDefault )
+      if !EMPTY( cDefault )
          cItemDef := SUBSTR( cDefault, 1, StrAtNum( "|", cDefault, 2 ) ) + ;
                      SUBSTR( cItemDef, StrAtNum( "|", cItemDef, 2 ) + 1, StrAtNum( "|", cItemDef, 8 ) - StrAtNum( "|", cItemDef, 2 ) ) + ;
                      SUBSTR( cDefault, StrAtNum( "|", cDefault, 8 ) + 1 )
