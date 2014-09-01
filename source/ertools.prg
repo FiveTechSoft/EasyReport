@@ -2,11 +2,11 @@
 #INCLUDE "VRD.ch"
 #INCLUDE "Mail.ch"
 
-MEMVAR aItems, aFonts, aAreaIni, aWnd 
+MEMVAR aItems, aFonts, aAreaIni, aWnd
 MEMVAR cDefaultPath
 MEMVAR nAktArea
 MEMVAR aVRDSave
-MEMVAR oClpGeneral, cDefIni, cGeneralIni, nMeasure, lDemo, lBeta, oTimer
+MEMVAR oClpGeneral, cDefIni, nMeasure, lDemo, lBeta, oTimer
 MEMVAR lProfi, nUndoCount, nRedoCount, lPersonal, lStandard, oGenVar
 MEMVAR oER
 
@@ -59,7 +59,7 @@ function InsertArea( lBefore, cTitle )
 
    ACTIVATE DIALOG oDlg CENTERED
 
-   if lreturn 
+   if lreturn
 
       nNewArea := IIF( nNewArea < 1, 1, nNewArea )
       AINS( aAreaInis, nNewArea )
@@ -610,7 +610,7 @@ return ! Eof()
 *-----------------------------------------------------------------------------
 function GetFile( cFileMask, cTitle, nDefaultMask, cInitDir, lSave, nFlags )
 
-   local cTmpPath := CheckPath( GetPvProfString( "General", "DefaultPath", "", cGeneralIni ) )
+   local cTmpPath := CheckPath( GetPvProfString( "General", "DefaultPath", "", oER:cGeneralIni ) )
 
    if .NOT. EMPTY( cTmpPath )
       cInitDir := cTmpPath
@@ -762,7 +762,7 @@ function MainCaption()
    local creturn    := ""
    local cVersion   := ""
    local cMainTitle := ""
-   local cUserApp   := ALLTRIM( GetPvProfString( "General", "MainAppTitle", "", cGeneralIni ) )
+   local cUserApp   := ALLTRIM( GetPvProfString( "General", "MainAppTitle", "", oER:cGeneralIni ) )
 
    if lBeta = .T.
       cVersion := " - Beta Version"
@@ -1101,9 +1101,9 @@ function VRDMsgPersonal()
    local nClrBack     := RGB( 255, 255, 255 )
    local nSerial      := GetSerialHD()
    local cSerial      := IIF( nSerial = 0, "8"+"2"+"2"+"7"+"3"+"6"+"5"+"1", ALLTRIM( STR( ABS( nSerial ), 20 ) ) )
-   local cRegist      := PADR( GetPvProfString( "General", "RegistKey", "", cGeneralIni ), 40 )
-   local cCompany     := PADR( GetPvProfString( "General", "Company"  , "", cGeneralIni ), 100 )
-   local cUser        := PADR( GetPvProfString( "General", "User"     , "", cGeneralIni ), 100 )
+   local cRegist      := PADR( GetPvProfString( "General", "RegistKey", "", oER:cGeneralIni ), 40 )
+   local cCompany     := PADR( GetPvProfString( "General", "Company"  , "", oER:cGeneralIni ), 100 )
+   local cUser        := PADR( GetPvProfString( "General", "User"     , "", oER:cGeneralIni ), 100 )
    local cVersion     := IIF( lStandard, "Standard", "Personal" )
 
    DEFINE FONT oFont  NAME "Ms Sans Serif" SIZE 0, -14
@@ -1151,13 +1151,13 @@ function VRDMsgPersonal()
 
    ACTIVATE DIALOG oDlg CENTER
 
-   WritePProString( "General", "Company", ALLTRIM( cCompany ), cGeneralIni )
-   WritePProString( "General", "User"   , ALLTRIM( cUser )   , cGeneralIni )
+   WritePProString( "General", "Company", ALLTRIM( cCompany ), oER:cGeneralIni )
+   WritePProString( "General", "User"   , ALLTRIM( cUser )   , oER:cGeneralIni )
 
    if lOK = .F. .AND. lTestVersion = .F.
       MsgInfo( "The registration key is not valid!" + CRLF + CRLF + ;
                "EasyReport starts in demo mode." )
-      WritePProString( "General", "RegistKey", "", cGeneralIni )
+      WritePProString( "General", "RegistKey", "", oER:cGeneralIni )
    endif
 
    if lOK = .F.
@@ -1212,15 +1212,15 @@ function EditLanguage()
              LANGUAGE->LANGUAGE8, ;
              LANGUAGE->LANGUAGE9 ;
          FIELDSIZES 300, 300, 300, 300, 300, 300, 300, 300, 300 ;
-         HEADERS " " + GetPvProfString( "Languages", "1", "Language 1", cGeneralIni ), ;
-                 " " + GetPvProfString( "Languages", "2", "Language 2", cGeneralIni ), ;
-                 " " + GetPvProfString( "Languages", "3", "Language 3", cGeneralIni ), ;
-                 " " + GetPvProfString( "Languages", "4", "Language 4", cGeneralIni ), ;
-                 " " + GetPvProfString( "Languages", "5", "Language 5", cGeneralIni ), ;
-                 " " + GetPvProfString( "Languages", "6", "Language 6", cGeneralIni ), ;
-                 " " + GetPvProfString( "Languages", "7", "Language 7", cGeneralIni ), ;
-                 " " + GetPvProfString( "Languages", "8", "Language 8", cGeneralIni ), ;
-                 " " + GetPvProfString( "Languages", "9", "Language 9", cGeneralIni ) ;
+         HEADERS " " + GetPvProfString( "Languages", "1", "Language 1", oER:cGeneralIni ), ;
+                 " " + GetPvProfString( "Languages", "2", "Language 2", oER:cGeneralIni ), ;
+                 " " + GetPvProfString( "Languages", "3", "Language 3", oER:cGeneralIni ), ;
+                 " " + GetPvProfString( "Languages", "4", "Language 4", oER:cGeneralIni ), ;
+                 " " + GetPvProfString( "Languages", "5", "Language 5", oER:cGeneralIni ), ;
+                 " " + GetPvProfString( "Languages", "6", "Language 6", oER:cGeneralIni ), ;
+                 " " + GetPvProfString( "Languages", "7", "Language 7", oER:cGeneralIni ), ;
+                 " " + GetPvProfString( "Languages", "8", "Language 8", oER:cGeneralIni ), ;
+                 " " + GetPvProfString( "Languages", "9", "Language 9", oER:cGeneralIni ) ;
          ID 301 OF oDlg ;
          ON LEFT DBLCLICK GetLanguage()
 
@@ -1245,15 +1245,15 @@ function GetLanguage()
 
    REDEFINE BUTTON ID 101 OF oDlg ACTION oDlg:End()
 
-   REDEFINE SAY PROMPT GetPvProfString( "Languages", "1", "Language 1", cGeneralIni ) + ":" ID 151 OF oDlg
-   REDEFINE SAY PROMPT GetPvProfString( "Languages", "2", "Language 2", cGeneralIni ) + ":" ID 152 OF oDlg
-   REDEFINE SAY PROMPT GetPvProfString( "Languages", "3", "Language 3", cGeneralIni ) + ":" ID 153 OF oDlg
-   REDEFINE SAY PROMPT GetPvProfString( "Languages", "4", "Language 4", cGeneralIni ) + ":" ID 154 OF oDlg
-   REDEFINE SAY PROMPT GetPvProfString( "Languages", "5", "Language 5", cGeneralIni ) + ":" ID 155 OF oDlg
-   REDEFINE SAY PROMPT GetPvProfString( "Languages", "6", "Language 6", cGeneralIni ) + ":" ID 156 OF oDlg
-   REDEFINE SAY PROMPT GetPvProfString( "Languages", "7", "Language 7", cGeneralIni ) + ":" ID 157 OF oDlg
-   REDEFINE SAY PROMPT GetPvProfString( "Languages", "8", "Language 8", cGeneralIni ) + ":" ID 158 OF oDlg
-   REDEFINE SAY PROMPT GetPvProfString( "Languages", "9", "Language 9", cGeneralIni ) + ":" ID 159 OF oDlg
+   REDEFINE SAY PROMPT GetPvProfString( "Languages", "1", "Language 1", oER:cGeneralIni ) + ":" ID 151 OF oDlg
+   REDEFINE SAY PROMPT GetPvProfString( "Languages", "2", "Language 2", oER:cGeneralIni ) + ":" ID 152 OF oDlg
+   REDEFINE SAY PROMPT GetPvProfString( "Languages", "3", "Language 3", oER:cGeneralIni ) + ":" ID 153 OF oDlg
+   REDEFINE SAY PROMPT GetPvProfString( "Languages", "4", "Language 4", oER:cGeneralIni ) + ":" ID 154 OF oDlg
+   REDEFINE SAY PROMPT GetPvProfString( "Languages", "5", "Language 5", oER:cGeneralIni ) + ":" ID 155 OF oDlg
+   REDEFINE SAY PROMPT GetPvProfString( "Languages", "6", "Language 6", oER:cGeneralIni ) + ":" ID 156 OF oDlg
+   REDEFINE SAY PROMPT GetPvProfString( "Languages", "7", "Language 7", oER:cGeneralIni ) + ":" ID 157 OF oDlg
+   REDEFINE SAY PROMPT GetPvProfString( "Languages", "8", "Language 8", oER:cGeneralIni ) + ":" ID 158 OF oDlg
+   REDEFINE SAY PROMPT GetPvProfString( "Languages", "9", "Language 9", oER:cGeneralIni ) + ":" ID 159 OF oDlg
 
    REDEFINE SAY PROMPT " " + LANGUAGE->LANGUAGE1 ID 201 OF oDlg
 
@@ -1338,7 +1338,7 @@ return ( nCount )
 function GetResDLL()
 
    local cDLLName
-   local nLanguage := VAL( GetPvProfString( "General", "Language", "1", cGeneralIni ) )
+   local nLanguage := VAL( GetPvProfString( "General", "Language", "1", oER:cGeneralIni ) )
 
    if nLanguage < 1
       nLanguage := 1

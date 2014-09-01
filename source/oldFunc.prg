@@ -5,7 +5,7 @@ MEMVAR aItems, aFonts, aAreaIni, aWnd, oBar
 MEMVAR cDefaultPath
 MEMVAR nAktArea
 MEMVAR aVRDSave
-MEMVAR oClpGeneral, cDefIni, cGeneralIni, nMeasure, lDemo, lBeta, oTimer
+MEMVAR oClpGeneral, cDefIni, nMeasure, lDemo, lBeta, oTimer
 MEMVAR oMainWnd, lProfi, nUndoCount, nRedoCount, lPersonal, lStandard, oGenVar
 MEMVAR oER
 
@@ -41,7 +41,7 @@ function QuietRegCheck()
 
    local nSerial := GetSerialHD()
    local cSerial := IIF( nSerial = 0, "8"+"2"+"2"+"7"+"3"+"6"+"5"+"1", ALLTRIM( STR( ABS( nSerial ), 20 ) ) )
-   local cRegist := PADR( GetPvProfString( "General", "RegistKey", "", cGeneralIni ), 40 )
+   local cRegist := PADR( GetPvProfString( "General", "RegistKey", "", oER:cGeneralIni ), 40 )
 
    return CheckRegist( cSerial, cRegist )
 
@@ -52,7 +52,7 @@ function CheckRegist( cSerial, cRegist )
    local lOK := .F.
 
    if ALLTRIM( cRegist ) == GetRegistKey( cSerial )
-      WritePProString( "General", "RegistKey", ALLTRIM( cRegist ) , cGeneralIni )
+      WritePProString( "General", "RegistKey", ALLTRIM( cRegist ) , oER:cGeneralIni )
       lOK := .T.
    endif
 
@@ -199,7 +199,7 @@ return NIL
 function GetLicLanguage()
 
    local cText     := ""
-   local nLanguage := VAL( GetPvProfString( "General", "Language", "1", cGeneralIni ) )
+   local nLanguage := VAL( GetPvProfString( "General", "Language", "1", oER:cGeneralIni ) )
 
    if lBeta = .F.
       if nLanguage = 2

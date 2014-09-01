@@ -18,7 +18,7 @@ MEMVAR aVRDSave, lVRDSave, lFillWindow, nDeveloper, oRulerBmp1, oRulerBmp2
 MEMVAR lBoxDraw, nBoxTop, nBoxLeft, nBoxBottom, nBoxRight, nRuler, nRulerTop
 MEMVAR cItemCopy, nCopyEntryNr, nCopyAreaNr, aSelectCopy, aItemCopy, nXMove, nYMove
 MEMVAR cInfoWidth, cInfoHeight, nInfoRow, nInfoCol, aItemPosition, aItemPixelPos
-MEMVAR oClpGeneral, cDefIni, cDefIniPath, cGeneralIni, cMeasure, lDemo, lBeta, oTimer
+MEMVAR oClpGeneral, cDefIni, cDefIniPath, cMeasure, lDemo, lBeta, oTimer
 MEMVAR lProfi, nUndoCount, nRedoCount, nDlgTextCol, nDlgBackCol
 MEMVAR lPersonal, lStandard, oGenVar, oCurDlg
 MEMVAR oER
@@ -71,7 +71,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
    SET MULTIPLE OFF
    SET DATE FORMAT to "dd.mm.yyyy"
 
-   cDateFormat := LOWER(AllTrim( GetPvProfString( "General", "DateFormat", "", cGeneralIni )))
+   cDateFormat := LOWER(AllTrim( GetPvProfString( "General", "DateFormat", "", oER:cGeneralIni )))
 
    SET DATE FORMAT IIF( Empty( cDateFormat ), "dd.mm.yyyy", cDateFormat )
 
@@ -256,7 +256,7 @@ function BarMenu()
          WHEN .NOT. Empty( cDefIni )
    endif
 
-   // if Val( GetPvProfString( "General", "ShowExitButton", "0", cGeneralIni ) ) = 1
+   // if Val( GetPvProfString( "General", "ShowExitButton", "0", oER:cGeneralIni ) ) = 1
 
       DEFINE BUTTON RESOURCE "B_EXIT" ;
          PROMPT FWString( "Exit" ) ;
@@ -430,7 +430,7 @@ function DeclarePublics( cDefFile )
    //Voreinstellungen holen
    cDefIni      := VRD_LF2SF( cDefFile )
    cLongDefIni  := cDefFile
-   cDefaultPath := CheckPath( GetPvProfString( "General", "DefaultPath", "", cGeneralIni ) )
+   cDefaultPath := CheckPath( GetPvProfString( "General", "DefaultPath", "", oER:cGeneralIni ) )
 
    if AT( "\", cDefIni ) = 0 .and. .NOT. Empty( cDefIni )
       cDefIni := ".\" + cDefIni
@@ -442,12 +442,12 @@ function DeclarePublics( cDefFile )
    oGenVar:AddMember( "cCopyright",, "2000-2004" )
 
    oGenVar:AddMember( "aLanguages",, {} )
-   oGenVar:AddMember( "nLanguage" ,, Val( GetPvProfString( "General", "Language", "1", cGeneralIni ) ) )
+   oGenVar:AddMember( "nLanguage" ,, Val( GetPvProfString( "General", "Language", "1", oER:cGeneralIni ) ) )
 
    //Sprachdatei f�llen
    OpenLanguage()
 
-   nHinCol1 := IniColor( GetPvProfString( "General", "BackgroundColor", "0", cGeneralIni ) )
+   nHinCol1 := IniColor( GetPvProfString( "General", "BackgroundColor", "0", oER:cGeneralIni ) )
    if nHinCol1 = 0
       nHinCol1 := RGB( 255, 255, 225 )
    endif
@@ -461,10 +461,10 @@ function DeclarePublics( cDefFile )
    aRuler       := Array( 100, 2 )
    aFonts       := Array( 20 )
 
-   nDeveloper := Val( GetPvProfString( "General", "DeveloperMode", "0", cGeneralIni ) )
+   nDeveloper := Val( GetPvProfString( "General", "DeveloperMode", "0", oER:cGeneralIni ) )
 
-   oGenVar:AddMember( "nClrReticule" ,, IniColor( GetPvProfString( "General", "ReticuleColor"      , " 50,  50,  50", cGeneralIni ) ) )
-   oGenVar:AddMember( "lShowReticule",, ( GetPvProfString( "General", "ShowReticule", "1", cGeneralIni ) = "1" ) )
+   oGenVar:AddMember( "nClrReticule" ,, IniColor( GetPvProfString( "General", "ReticuleColor"      , " 50,  50,  50", oER:cGeneralIni ) ) )
+   oGenVar:AddMember( "lShowReticule",, ( GetPvProfString( "General", "ShowReticule", "1", oER:cGeneralIni ) = "1" ) )
 
    oGenVar:AddMember( "aDBFile",, {} )
 
@@ -477,11 +477,11 @@ function DeclarePublics( cDefFile )
       SetGeneralSettings()
    endif
 
-   oGenVar:AddMember( "nClrArea"       ,, IniColor( GetPvProfString( "General", "AreaBackColor", "240, 247, 255", cGeneralIni ) ) )
+   oGenVar:AddMember( "nClrArea"       ,, IniColor( GetPvProfString( "General", "AreaBackColor", "240, 247, 255", oER:cGeneralIni ) ) )
 
-   oGenVar:AddMember( "cBrush"   ,, AllTrim( GetPvProfString( "General", "BackgroundBrush", "", cGeneralIni ) ) )
-   oGenVar:AddMember( "cBarBrush",, AllTrim( GetPvProfString( "General", "ButtonbarBrush" , "", cGeneralIni ) ) )
-   oGenVar:AddMember( "cBrushArea"     ,, GetPvProfString( "General", "AreaBackBrush"     , "", cGeneralIni ) )
+   oGenVar:AddMember( "cBrush"   ,, AllTrim( GetPvProfString( "General", "BackgroundBrush", "", oER:cGeneralIni ) ) )
+   oGenVar:AddMember( "cBarBrush",, AllTrim( GetPvProfString( "General", "ButtonbarBrush" , "", oER:cGeneralIni ) ) )
+   oGenVar:AddMember( "cBrushArea"     ,, GetPvProfString( "General", "AreaBackBrush"     , "", oER:cGeneralIni ) )
 
    oGenVar:AddMember( "oBarBrush",, nil )
 
@@ -507,15 +507,15 @@ function DeclarePublics( cDefFile )
      endif
    endif
 
-   oGenVar:AddMember( "nBClrAreaTitle" ,, IniColor( GetPvProfString( "General", "AreaTitleBackColor" , "204, 214, 228", cGeneralIni ) ) )
-   oGenVar:AddMember( "nF1ClrAreaTitle",, IniColor( GetPvProfString( "General", "AreaTitleForeColor1", "111, 111, 111", cGeneralIni ) ) )
-   oGenVar:AddMember( "nF2ClrAreaTitle",, IniColor( GetPvProfString( "General", "AreaTitleForeColor2", " 50,  50,  50", cGeneralIni ) ) )
+   oGenVar:AddMember( "nBClrAreaTitle" ,, IniColor( GetPvProfString( "General", "AreaTitleBackColor" , "204, 214, 228", oER:cGeneralIni ) ) )
+   oGenVar:AddMember( "nF1ClrAreaTitle",, IniColor( GetPvProfString( "General", "AreaTitleForeColor1", "111, 111, 111", oER:cGeneralIni ) ) )
+   oGenVar:AddMember( "nF2ClrAreaTitle",, IniColor( GetPvProfString( "General", "AreaTitleForeColor2", " 50,  50,  50", oER:cGeneralIni ) ) )
 
-   oGenVar:AddMember( "nFocusGetBackClr",, IniColor( GetPvProfString( "General", "FocusGetBackClr", "0", cGeneralIni ) ) )
+   oGenVar:AddMember( "nFocusGetBackClr",, IniColor( GetPvProfString( "General", "FocusGetBackClr", "0", oER:cGeneralIni ) ) )
 
    oGenVar:AddMember( "lSelectItems"   ,, .F. )
 
-   oGenVar:AddMember( "lFixedAreaWidth",, ( GetPvProfString( "General", "AreaWidthFixed", "1", cGeneralIni ) = "1" ) )
+   oGenVar:AddMember( "lFixedAreaWidth",, ( GetPvProfString( "General", "AreaWidthFixed", "1", oER:cGeneralIni ) = "1" ) )
 
    oGenVar:AddMember( "aAreaTitle",, ARRAY( 100 ) )
    oGenVar:AddMember( "aAreaHide" ,, ARRAY( 100 ) )
@@ -529,10 +529,10 @@ function DeclarePublics( cDefFile )
 
    oGenVar:AddMember( "lItemDlg",, .F. )
    oGenVar:AddMember( "lDlgSave",, .F. )
-   oGenVar:AddMember( "nDlgTop" ,, Val( GetPvProfString( "ItemDialog", "Top" , "0", cGeneralIni ) ) )
-   oGenVar:AddMember( "nDlgLeft",, Val( GetPvProfString( "ItemDialog", "Left", "0", cGeneralIni ) ) )
+   oGenVar:AddMember( "nDlgTop" ,, Val( GetPvProfString( "ItemDialog", "Top" , "0", oER:cGeneralIni ) ) )
+   oGenVar:AddMember( "nDlgLeft",, Val( GetPvProfString( "ItemDialog", "Left", "0", oER:cGeneralIni ) ) )
 
-   oGenVar:AddMember( "lShowBorder",, ( GetPvProfString( "General", "ShowTextBorder", "1", cGeneralIni ) = "1" ) )
+   oGenVar:AddMember( "lShowBorder",, ( GetPvProfString( "General", "ShowTextBorder", "1", oER:cGeneralIni ) = "1" ) )
 
    oGenVar:AddMember( "cLoadFile" ,, "" )
    oGenVar:AddMember( "lFirstFile",, .T. )
@@ -581,7 +581,7 @@ function IniMainWindow()
       //Areas anzeigen
       ShowAreasOnBar()
       //Mru erstellen
-      if Val( GetPvProfString( "General", "MruList"  , "4", cGeneralIni ) ) > 0
+      if Val( GetPvProfString( "General", "MruList"  , "4", oER:cGeneralIni ) ) > 0
          oMru:Save( cLongDefIni )
       endif
       CreateBackup()
@@ -760,7 +760,7 @@ return .T.
 
 function SetMainWnd()
 
-   if Val( GetPvProfString( "General", "Maximize", "1", cGeneralIni ) ) = 1
+   if Val( GetPvProfString( "General", "Maximize", "1", oER:cGeneralIni ) ) = 1
       oEr:oMainWnd:Maximize()
       SysRefresh()
    endif
@@ -823,7 +823,7 @@ return .T.
 function BuildMenu()
 
    local oMenu
-   local nMruList := Val( GetPvProfString( "General", "MruList"  , "4", cGeneralIni ) )
+   local nMruList := Val( GetPvProfString( "General", "MruList"  , "4", oER:cGeneralIni ) )
 
    MENU oMenu 2007
 
@@ -866,10 +866,10 @@ function BuildMenu()
          ACTION PrintReport() ;
          WHEN .NOT. Empty( cDefIni )
 
-   MRU oMru FILENAME cGeneralIni ;
+   MRU oMru FILENAME oER:cGeneralIni ;
             SECTION  "MRU" ;
             ACTION   OpenFile( cMruItem ) ;
-            SIZE     Val( GetPvProfString( "General", "MruList"  , "4", cGeneralIni ) )
+            SIZE     Val( GetPvProfString( "General", "MruList"  , "4", oER:cGeneralIni ) )
    SEPARATOR
    MENUITEM GL("&Exit") RESOURCE "B_EXIT_16" ;
       ACTION oEr:oMainWnd:End()
@@ -1011,7 +1011,7 @@ function BuildMenu()
       WHEN .NOT. Empty( cDefIni )
    ENDMENU
 
-   if Val( GetPvProfString( "General", "Help", "1", cGeneralIni ) ) = 1
+   if Val( GetPvProfString( "General", "Help", "1", oER:cGeneralIni ) ) = 1
       MENUITEM GL("&Help")
       MENU
       MENUITEM GL("&Help Topics") + chr(9) + GL("F1") ;
@@ -1071,7 +1071,7 @@ function PopupMenu( nArea, oItem, nRow, nCol, lItem )
    MENUITEM GL("&Report Settings") ACTION ReportSettings()
    MENUITEM GL("&Options")         ACTION Options()
 
-   if Val( GetPvProfString( "General", "Help", "1", cGeneralIni ) ) = 1
+   if Val( GetPvProfString( "General", "Help", "1", oER:cGeneralIni ) ) = 1
       SEPARATOR
       MENUITEM GL("&Help Topics") + CHR(9) + GL("F1") ACTION WinHelp( "VRD.HLP" )
    endif
@@ -1204,8 +1204,8 @@ function ClientWindows()
    aVRDSave := ARRAY( 102, 2 )
    aVRDSave[101, 1 ] := cDefIni
    aVRDSave[101, 2 ] := MEMOREAD( cDefIni )
-   aVRDSave[102, 1 ] := cGeneralIni
-   aVRDSave[102, 2 ] := MEMOREAD( cGeneralIni )
+   aVRDSave[102, 1 ] := oER:cGeneralIni
+   aVRDSave[102, 2 ] := MEMOREAD( oER:cGeneralIni )
 
    for i := 1 to LEN( aIniEntries )
 
@@ -2401,10 +2401,10 @@ function Options()
    local i, oDlg, oIni, cLanguage, cOldLanguage, cWert, aCbx[4], aGrp[2], oRad1
    local lSave         := .F.
    local lInfo         := .F.
-   local nLanguage     := Val( GetPvProfString( "General", "Language"  , "1", cGeneralIni ) )
-   local nMaximize     := Val( GetPvProfString( "General", "Maximize"  , "1", cGeneralIni ) )
+   local nLanguage     := Val( GetPvProfString( "General", "Language"  , "1", oER:cGeneralIni ) )
+   local nMaximize     := Val( GetPvProfString( "General", "Maximize"  , "1", oER:cGeneralIni ) )
    local lMaximize     := IIF( nMaximize = 1, .T., .F. )
-   local nMruList      := Val( GetPvProfString( "General", "MruList"  , "4", cGeneralIni ) )
+   local nMruList      := Val( GetPvProfString( "General", "MruList"  , "4", oER:cGeneralIni ) )
    local aLanguage     := {}
    local cPicture      := IIF( oER:nMeasure = 2, "999.99", "99999" )
    local nGridWidth    := oGenVar:nGridWidth
@@ -2415,7 +2415,7 @@ function Options()
    LOCAL nDecimals     :=   IIF( oER:nMeasure = 2, 2, 0 )
 
    for i := 1 to 99
-      cWert := GetPvProfString( "Languages", AllTrim(STR(i,2)), "", cGeneralIni )
+      cWert := GetPvProfString( "Languages", AllTrim(STR(i,2)), "", oER:cGeneralIni )
       if .NOT. Empty( cWert )
          AADD( aLanguage, cWert )
       endif
@@ -2483,7 +2483,7 @@ function Options()
          SET SECTION "General" ENTRY "ShowGrid"   to IIF( lShowGrid, "1", "0") OF oIni
       ENDINI
 
-      INI oIni FILE cGeneralIni
+      INI oIni FILE oER:cGeneralIni
          SET SECTION "General" ENTRY "MruList"        to AllTrim(STR( nMruList ))       OF oIni
          SET SECTION "General" ENTRY "Maximize"       to IIF( lMaximize    , "1", "0")  OF oIni
          SET SECTION "General" ENTRY "ShowTextBorder" to IIF( lShowBorder  , "1", "0" ) OF oIni

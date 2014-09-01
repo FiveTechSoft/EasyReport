@@ -4,7 +4,7 @@ MEMVAR aItems, aFonts, aAreaIni, aWnd, aWndTitle, oMru
 MEMVAR oCbxArea, aCbxItems, aRuler, cLongDefIni, cDefaultPath
 MEMVAR oGenVar
 MEMVAR aVRDSave, lVRDSave, lFillWindow
-MEMVAR cDefIni, cDefIniPath, cGeneralIni, cMeasure, oTimer
+MEMVAR cDefIni, cDefIniPath, cMeasure, oTimer
 MEMVAR nDlgTextCol, nDlgBackCol
 MEMVAr oEr
 
@@ -102,7 +102,7 @@ function OpenFile( cFile )
 
       SetSave( .T. )
 
-      if VAL( GetPvProfString( "General", "MruList"  , "4", cGeneralIni ) ) > 0
+      if VAL( GetPvProfString( "General", "MruList"  , "4", oER:cGeneralIni ) ) > 0
          oMru:Save( cLongDefIni )
       endif
 
@@ -118,7 +118,7 @@ function CreateBackup()
 
    local nArea
 
-   if VAL( GetPvProfString( "General", "CreateBackup", "0", cGeneralIni ) ) = 1
+   if VAL( GetPvProfString( "General", "CreateBackup", "0", oER:cGeneralIni ) ) = 1
 
       CopyFile( cDefIni, STUFF( cDefIni, RAT( ".", cDefIni ), 1, "_backup." ) )
 
@@ -145,8 +145,8 @@ function SaveFile()
 
    aVRDSave[101,1] := cDefIni
    aVRDSave[101,2] := MEMOREAD( cDefIni )
-   aVRDSave[102,1] := cGeneralIni
-   aVRDSave[102,2] := MEMOREAD( cGeneralIni )
+   aVRDSave[102,1] := oER:cGeneralIni
+   aVRDSave[102,2] := MEMOREAD( oER:cGeneralIni )
 
    for nArea := 1 TO LEN( aAreaIni )
 
@@ -246,7 +246,7 @@ function SaveAs( cFile )
 
       SetSave( .T. )
 
-      if VAL( GetPvProfString( "General", "MruList"  , "4", cGeneralIni ) ) > 0
+      if VAL( GetPvProfString( "General", "MruList"  , "4", oER:cGeneralIni ) ) > 0
          oMru:Save( cLongDefIni )
       endif
 

@@ -10,7 +10,7 @@ MEMVAR lFillWindow, nDeveloper
 MEMVAR nRuler, nRulerTop
 MEMVAR cItemCopy, nCopyEntryNr, nCopyAreaNr, aSelectCopy, aItemCopy, nXMove, nYMove
 MEMVAR cInfoWidth, cInfoHeight, nInfoRow, nInfoCol, aItemPosition, aItemPixelPos
-MEMVAR oClpGeneral, cDefIni, cGeneralIni, cMeasure, oTimer
+MEMVAR oClpGeneral, cDefIni, cMeasure, oTimer
 MEMVAR lProfi, oCurDlg, oGenVar,oER
 
 //----------------------------------------------------------------------------//
@@ -685,8 +685,8 @@ function GetItemDlgPos()
       oGenVar:nDlgLeft > 0 .AND. oGenVar:nDlgLeft <= GetSysMetrics( 0 ) - 80
       oCurDlg:Move( oGenVar:nDlgTop, oGenVar:nDlgLeft,,, .T. )
    ELSE
-      WritePProString( "ItemDialog", "Top" , "0", cGeneralIni )
-      WritePProString( "ItemDialog", "Left", "0", cGeneralIni )
+      WritePProString( "ItemDialog", "Top" , "0", oER:cGeneralIni )
+      WritePProString( "ItemDialog", "Left", "0", oER:cGeneralIni )
    endif
 
 return .T.
@@ -700,8 +700,8 @@ function SetItemDlg()
    oGenVar:nDlgTop  := oRect:nTop
    oGenVar:nDlgLeft := oRect:nLeft
 
-   WritePProString( "ItemDialog", "Top" , AllTrim(STR( oGenVar:nDlgTop , 10 )), cGeneralIni )
-   WritePProString( "ItemDialog", "Left", AllTrim(STR( oGenVar:nDlgLeft, 10 )), cGeneralIni )
+   WritePProString( "ItemDialog", "Top" , AllTrim(STR( oGenVar:nDlgTop , 10 )), oER:cGeneralIni )
+   WritePProString( "ItemDialog", "Left", AllTrim(STR( oGenVar:nDlgLeft, 10 )), oER:cGeneralIni )
 
 return .T.
 
