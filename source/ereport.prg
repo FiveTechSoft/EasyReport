@@ -10,7 +10,7 @@ STATIC aTmpSource
 //Entscheidet ob die Graphikelemente neu gezeichnet werden sollen
 STATIC lDraGraphic := .T.
 
-MEMVAR aItems, aFonts, oAppFont, aAreaIni, aWnd, aWndTitle, oMru
+MEMVAR aItems, aFonts, aAreaIni, aWnd, aWndTitle, oMru
 MEMVAR oCbxArea, aCbxItems, aRuler, cLongDefIni, cDefaultPath
 MEMVAR nAktItem, nAktArea, nSelArea, aSelection, nTotalHeight, nTotalWidth
 MEMVAR nHinCol1, nHinCol2, nHinCol3, oMsgInfo
@@ -18,9 +18,9 @@ MEMVAR aVRDSave, lVRDSave, lFillWindow, nDeveloper, oRulerBmp1, oRulerBmp2
 MEMVAR lBoxDraw, nBoxTop, nBoxLeft, nBoxBottom, nBoxRight, nRuler, nRulerTop
 MEMVAR cItemCopy, nCopyEntryNr, nCopyAreaNr, aSelectCopy, aItemCopy, nXMove, nYMove
 MEMVAR cInfoWidth, cInfoHeight, nInfoRow, nInfoCol, aItemPosition, aItemPixelPos
-MEMVAR oClpGeneral, cDefIni, cDefIniPath, cMeasure, lDemo, lBeta, oTimer
+MEMVAR oClpGeneral, cDefIni, cDefIniPath, cMeasure, lBeta
 MEMVAR lProfi, nUndoCount, nRedoCount, nDlgTextCol, nDlgBackCol
-MEMVAR lPersonal, lStandard, oGenVar, oCurDlg
+MEMVAR lPersonal, oGenVar, oCurDlg
 MEMVAR oER
 
 static oBtnAreas, oMenuAreas, lScrollVert
@@ -80,8 +80,6 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
 
    SET HELPFILE to "VRD.HLP"
 
-   //Fonts definieren
-   DEFINE FONT oAppFont NAME "Arial" SIZE 0, -12
    DEFINE ICON oIcon FILE ".\vrd.ico"
 
    DEFINE BRUSH oBrush RESOURCE "background"
@@ -114,7 +112,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
       VALID AskSaveFiles()
 
    oClpGeneral:End()
-   oAppFont:End()
+   oEr:oAppFont:End()
    oBrush:End()
    oGenVar:oAreaBrush:End()
    oGenVar:oBarBrush:End()
@@ -328,13 +326,8 @@ function StartMessage()
    if lBeta
       BetaVersion()
    else
-      if lDemo
-        // VRDLogo()
-      elseif lPersonal  .OR. lStandard
+      if lPersonal
          lProfi := .T.
-        // if !QuietRegCheck()
-        //    VRDMsgPersonal()
-        //  endif
       endif
   endif
 
@@ -371,20 +364,19 @@ return NIL
 
 function DeclarePublics( cDefFile )
 
-   PUBLIC oClpGeneral, oTimer
+   PUBLIC oClpGeneral
    PUBLIC cDefIni, cDefIniPath
    PUBLIC cMeasure
-   PUBLIC lDemo       := .F.
    PUBLIC lBeta       := .F.
    PUBLIC lProfi      := .T.
    PUBLIC lPersonal   := .F.
-   PUBLIC lStandard   := .F.
 
-   if lPersonal = .T. .OR. lStandard = .T.
+
+   if lPersonal
       lProfi := .T.
    endif
 
-   PUBLIC aItems, aFonts, oAppFont, aAreaIni, aWnd, aWndTitle, oBar, oMru
+   PUBLIC aItems, aFonts, aAreaIni, aWnd, aWndTitle, oBar, oMru
    PUBLIC aCbxItems, aRuler, cLongDefIni, cDefaultPath
    PUBLIC oCbxArea := nil
    PUBLIC oCurDlg  := nil
@@ -453,7 +445,7 @@ function DeclarePublics( cDefFile )
    //Voreinstellungen holen
    cDefIni      := VRD_LF2SF( cDefFile )
    cLongDefIni  := cDefFile
-   cDefaultPath := CheckPath( GetPvProfString( "General", "DefaultPath", "", oER:cGeneralIni ) )
+   cDefaultPath := CheckPath(  oEr:GetGeneralIni( "General", "DefaultPath", "" ) )
 
    if AT( "\", cDefIni ) = 0 .and. .NOT. Empty( cDefIni )
       cDefIni := ".\" + cDefIni
@@ -465,12 +457,13 @@ function DeclarePublics( cDefFile )
    oGenVar:AddMember( "cCopyright",, "2000-2004" )
 
    oGenVar:AddMember( "aLanguages",, {} )
-   oGenVar:AddMember( "nLanguage" ,, Val( GetPvProfString( "General", "Language", "1", oER:cGeneralIni ) ) )
+   oGenVar:AddMember( "nLanguage" ,, Val( oEr:GetGeneralIni(  "General", "Language", "1" ) )  )
+
 
    //Sprachdatei f�llen
    OpenLanguage()
 
-   nHinCol1 := IniColor( GetPvProfString( "General", "BackgroundColor", "0", oER:cGeneralIni ) )
+   nHinCol1 := IniColor(  oEr:GetGeneralIni( "General", "BackgroundColor", "0" ) )
    if nHinCol1 = 0
       nHinCol1 := RGB( 255, 255, 225 )
    endif
@@ -486,8 +479,8 @@ function DeclarePublics( cDefFile )
 
    nDeveloper := Val( GetPvProfString( "General", "DeveloperMode", "0", oER:cGeneralIni ) )
 
-   oGenVar:AddMember( "nClrReticule" ,, IniColor( GetPvProfString( "General", "ReticuleColor"      , " 50,  50,  50", oER:cGeneralIni ) ) )
-   oGenVar:AddMember( "lShowReticule",, ( GetPvProfString( "General", "ShowReticule", "1", oER:cGeneralIni ) = "1" ) )
+   oGenVar:AddMember( "nClrReticule" ,, IniColor(  oEr:GetGeneralIni( "General", "ReticuleColor", " 50,  50,  50" ) ) )
+   oGenVar:AddMember( "lShowReticule",, ( oEr:GetGeneralIni( "General", "ShowReticule", "1" ) = "1" ) )
 
    oGenVar:AddMember( "aDBFile",, {} )
 
@@ -500,11 +493,11 @@ function DeclarePublics( cDefFile )
       SetGeneralSettings()
    endif
 
-   oGenVar:AddMember( "nClrArea"       ,, IniColor( GetPvProfString( "General", "AreaBackColor", "240, 247, 255", oER:cGeneralIni ) ) )
+   oGenVar:AddMember( "nClrArea"  ,, IniColor( oEr:GetGeneralIni( "General", "AreaBackColor", "240, 247, 255" ) ) )
 
-   oGenVar:AddMember( "cBrush"   ,, AllTrim( GetPvProfString( "General", "BackgroundBrush", "", oER:cGeneralIni ) ) )
-   oGenVar:AddMember( "cBarBrush",, AllTrim( GetPvProfString( "General", "ButtonbarBrush" , "", oER:cGeneralIni ) ) )
-   oGenVar:AddMember( "cBrushArea"     ,, GetPvProfString( "General", "AreaBackBrush"     , "", oER:cGeneralIni ) )
+   oGenVar:AddMember( "cBrush"    ,, AllTrim( oEr:GetGeneralIni( "General", "BackgroundBrush", "" ) ) )
+   oGenVar:AddMember( "cBarBrush" ,, AllTrim( oEr:GetGeneralIni( "General", "ButtonbarBrush" , "" ) ) )
+   oGenVar:AddMember( "cBrushArea" ,,  oEr:GetGeneralIni( "General", "AreaBackBrush"     , "" ) )
 
    oGenVar:AddMember( "oBarBrush",, nil )
 
@@ -530,15 +523,15 @@ function DeclarePublics( cDefFile )
      endif
    endif
 
-   oGenVar:AddMember( "nBClrAreaTitle" ,, IniColor( GetPvProfString( "General", "AreaTitleBackColor" , "204, 214, 228", oER:cGeneralIni ) ) )
-   oGenVar:AddMember( "nF1ClrAreaTitle",, IniColor( GetPvProfString( "General", "AreaTitleForeColor1", "111, 111, 111", oER:cGeneralIni ) ) )
-   oGenVar:AddMember( "nF2ClrAreaTitle",, IniColor( GetPvProfString( "General", "AreaTitleForeColor2", " 50,  50,  50", oER:cGeneralIni ) ) )
+   oGenVar:AddMember( "nBClrAreaTitle" ,, IniColor(  oEr:GetGeneralIni( "General", "AreaTitleBackColor" , "204, 214, 228" ) ) )
+   oGenVar:AddMember( "nF1ClrAreaTitle",, IniColor(  oEr:GetGeneralIni( "General", "AreaTitleForeColor1", "111, 111, 111" ) ) )
+   oGenVar:AddMember( "nF2ClrAreaTitle",, IniColor(  oEr:GetGeneralIni( "General", "AreaTitleForeColor2", " 50,  50,  50" ) ) )
 
-   oGenVar:AddMember( "nFocusGetBackClr",, IniColor( GetPvProfString( "General", "FocusGetBackClr", "0", oER:cGeneralIni ) ) )
+   oGenVar:AddMember( "nFocusGetBackClr",, IniColor(  oEr:GetGeneralIni( "General", "FocusGetBackClr", "0" ) ) )
 
    oGenVar:AddMember( "lSelectItems"   ,, .F. )
 
-   oGenVar:AddMember( "lFixedAreaWidth",, ( GetPvProfString( "General", "AreaWidthFixed", "1", oER:cGeneralIni ) = "1" ) )
+   oGenVar:AddMember( "lFixedAreaWidth",, (  oEr:GetGeneralIni( "General", "AreaWidthFixed", "1" ) = "1" ) )
 
    oGenVar:AddMember( "aAreaTitle",, ARRAY( 100 ) )
    oGenVar:AddMember( "aAreaHide" ,, ARRAY( 100 ) )
@@ -1283,16 +1276,6 @@ function ClientWindows()
          aWnd[ nWnd ]:nArea = nWnd
 
          aWndTitle[ nWnd ] = cTitle
-
-         /*
-         if ( lDemo .OR. lBeta ) .and. nWindowNr = 1
-            //Demo-Version
-            @ 44, nDemoWidth - 200 ;
-               SAY "Unregistered " + IIF( lBeta, "Beta", "Demo" ) + " Version" ;
-               OF aWnd[nWnd] PIXEL COLOR RGB( 192, 192, 192 ), RGB( 255, 255, 255 ) ;
-               SIZE 200, 16 RIGHT
-         endif
-         */
 
          lReticule = oGenVar:lShowReticule
          oGenVar:lShowReticule = .F.
@@ -3185,10 +3168,11 @@ CLASS TEasyReport
    DATA cDataPath
    DATA bClrBar, aClrDialogs
    DATA nMeasure
+   DATA oAppFont
 
    METHOD New() CONSTRUCTOR
-   METHOD GetGeneralIni( cSection , cKey, cDefault ) INLINE GetPvProfString( cSection, cKey, cDefault, ::cGeneralIni ) 
-   
+   METHOD GetGeneralIni( cSection , cKey, cDefault ) INLINE GetPvProfString( cSection, cKey, cDefault, ::cGeneralIni )
+
 ENDCLASS
 
 //----------------------------------------------------------------------------//
@@ -3197,6 +3181,7 @@ METHOD New() CLASS TEasyReport
 
    ::cGeneralIni = ".\vrd.ini"
    ::cDataPath   = GetCurDir() + "\Datas\"
+
 
    ::bClrBar =  { | lInvert | If( ! lInvert,;
                                   { { 1, RGB( 255, 255, 255 ), RGB( 229, 233, 238 ) } },;
@@ -3215,6 +3200,9 @@ METHOD New() CLASS TEasyReport
 
   //   ::aColorDlg :=  { { 0.60,  nRGB( 221, 227, 233) ,  nRGB( 221, 227, 233 ) }, ;
   //                        { 0.40,nRGB( 221, 227, 233), nRGB( 221, 227, 233) } }
+
+   DEFINE FONT ::oAppFont NAME "Arial" SIZE 0, -12
+
 
 return Self
 

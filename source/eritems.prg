@@ -2,7 +2,7 @@
 #INCLUDE "Folder.ch"
 #INCLUDE "FiveWin.ch"
 
-MEMVAR aItems, aFonts, oAppFont, aAreaIni, aWnd, aWndTitle
+MEMVAR aItems, aFonts, aAreaIni, aWnd, aWndTitle
 MEMVAR oCbxArea, aCbxItems, aRuler
 MEMVAR nAktItem, nAktArea, nSelArea, aSelection
 MEMVAR oMsgInfo
@@ -10,7 +10,7 @@ MEMVAR lFillWindow, nDeveloper
 MEMVAR nRuler, nRulerTop
 MEMVAR cItemCopy, nCopyEntryNr, nCopyAreaNr, aSelectCopy, aItemCopy, nXMove, nYMove
 MEMVAR cInfoWidth, cInfoHeight, nInfoRow, nInfoCol, aItemPosition, aItemPixelPos
-MEMVAR oClpGeneral, cDefIni, cMeasure, oTimer
+MEMVAR oClpGeneral, cDefIni, cMeasure
 MEMVAR lProfi, oCurDlg, oGenVar,oER
 
 //----------------------------------------------------------------------------//
@@ -303,7 +303,7 @@ function ItemProperties( i, nArea, lFromList, lNew )
    UnSelectAll()
 
    if oCurDlg <> NIL
-    //  oGenVar:lDlgSave := .T.  // comentado fix bug 
+    //  oGenVar:lDlgSave := .T.  // comentado fix bug
       oCurDlg:End()
       oCurDlg := NIL
    endif
@@ -513,17 +513,21 @@ function TextProperties( i, nArea, cAreaIni, lFromList, lNew )
       ACTION ( nColor := ShowColorChoice( oItem:nColText ), ;
                IIF( nColor <> 0, EVAL( {|| oItem:nColText := nColor, aGet[1]:Refresh(), ;
                Set2Color( aSay[1], IIF( oItem:nColText > 0, oVar:aColors[oItem:nColText], ""), nDefClr ) } ), ) )
+
    REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 152 OF oCurDlg ;
       ACTION ( nColor := ShowColorChoice( oItem:nColPane ), ;
                IIF( nColor <> 0, EVAL( {|| oItem:nColPane := nColor, aGet[2]:Refresh(), ;
                Set2Color( aSay[2], IIF( oItem:nColPane > 0, oVar:aColors[oItem:nColPane], ""), nDefClr ) } ), ) )
+
    REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 153 OF oCurDlg ;
       ACTION ( oItem:nFont := ShowFontChoice( oItem:nFont ), aGet[3]:Refresh(), aSay[3]:Refresh() )
 
    REDEFINE BUTTON PROMPT GL("&OK")     ID 101 OF oCurDlg ;
       ACTION ( oGenVar:lDlgSave := .T., oGenVar:lItemDlg := .F., oCurDlg:End() )
+
    REDEFINE BUTTON PROMPT GL("&Cancel") ID 102 OF oCurDlg ;
       ACTION ( oGenVar:lItemDlg := .F., oCurDlg:End() )
+
    REDEFINE BUTTON oBtn PROMPT GL("&Remove Item") ID 103 OF oCurDlg ;
       ACTION ( oVar:lRemoveItem := .T., oItem:lVisible := .F., ;
                oGenVar:lDlgSave := .T., oGenVar:lItemDlg := .F., oCurDlg:End() )
@@ -742,9 +746,9 @@ function SaveTextItem( oVar, oItem )
       SET SECTION "Items" ENTRY AllTrim(STR(oVar:i,5)) TO oVar:cItemDef OF oIni
    ENDINI
 
-   IIF( oItem:nFont = 0, oFont := oAppFont, oFont := aFonts[oItem:nFont] )
-   IIF( oItem:nOrient = 2, lCenter := .T., lCenter := .F. )
-   IIF( oItem:nOrient = 3, lRight  := .T., lRight  := .F. )
+   oFont := IIF( oItem:nFont = 0, oEr:oAppFont, aFonts[oItem:nFont] )
+   lCenter := IIF( oItem:nOrient = 2, .T., .F. )
+   lRight  := IIF( oItem:nOrient = 3,  .T., .F. )
 
    if oItem:lVisible
 
@@ -1457,6 +1461,7 @@ function SetItemSize( i, nArea, cAreaIni )
 
    aItemPosition := { GetField( cItemDef, 7 ), GetField( cItemDef, 8 ), ;
                       GetField( cItemDef, 9 ), GetField( cItemDef, 10 ) }
+
    aItemPixelPos := { ER_GetPixel( VAL( GetField( cItemDef, 7 ) ) ), ;
                       ER_GetPixel( VAL( GetField( cItemDef, 8 ) ) ), ;
                       ER_GetPixel( VAL( GetField( cItemDef, 9 ) ) ), ;
@@ -1606,7 +1611,7 @@ function ItemCopy( lCut )
 
       oItemInfo := VRDItem():New( cItemCopy )
 
-      if lCut 
+      if lCut
          DeleteItem( nAktItem, nAktArea, .T. )
          if oItemInfo:nItemID < 0
             DelIniEntry( "Items", AllTrim(STR(nAktItem,5)), aAreaIni[nAktArea] )
@@ -1806,9 +1811,9 @@ function ShowItem( i, nArea, cAreaIni, aFirst, nElemente, aIniEntries, nIndex )
          nBorder  := VAL( GetField( cItemDef, 15 ) )
          nTrans   := VAL( GetField( cItemDef, 16 ) )
 
-         IIF( nFont = 0, oFont := oAppFont, oFont := aFonts[nFont] )
-         IIF( nOrient = 2, lCenter := .T., lCenter := .F. )
-         IIF( nOrient = 3, lRight := .T. , lRight := .F. )
+         oFont:= IIF( nFont = 0, oEr:oAppFont, aFonts[nFont] )
+         lCenter := IIF( nOrient = 2, .T. , .F. )
+         lRight := IIF( nOrient = 3, .T. , .F. )
 
          SetBKMode( oEr:oMainWnd:hDC, 1 )
 

@@ -6,8 +6,8 @@ MEMVAR aItems, aFonts, aAreaIni, aWnd
 MEMVAR cDefaultPath
 MEMVAR nAktArea
 MEMVAR aVRDSave
-MEMVAR oClpGeneral, cDefIni, nMeasure, lDemo, lBeta, oTimer
-MEMVAR lProfi, nUndoCount, nRedoCount, lPersonal, lStandard, oGenVar
+MEMVAR oClpGeneral, cDefIni, lBeta
+MEMVAR lProfi, nUndoCount, nRedoCount, lPersonal, oGenVar
 MEMVAR oER
 
 function GetFreeSystemResources()
@@ -36,6 +36,7 @@ function InsertArea( lBefore, cTitle )
    local aIniEntries := GetIniSection( "Areas", cDefIni )
    local nNewArea    := nAktArea + IIF( lBefore, 0, 1 )
    local cDir        := CheckPath( GetPvProfString( "General", "AreaFilesDir", "", cDefIni ) )
+   LOCAL nDecimals   := IIF( oER:nMeasure = 2, 2, 0 )
 
    if EMPTY( cDir )
       cDir := cDefaultPath
@@ -76,8 +77,8 @@ function InsertArea( lBefore, cTitle )
       MEMOWRIT( cDir + cFile, ;
          "[General]" + CRLF + ;
          "Title=New Area" + CRLF + ;
-         "Width="  + ALLTRIM(STR( oGenVar:aAreaSizes[nAktArea,1], 5, IIF( oER:nMeasure = 2, 2, 0 ) )) + CRLF + ;
-         "Height=" + ALLTRIM(STR( oGenVar:aAreaSizes[nAktArea,2], 5, IIF( oER:nMeasure = 2, 2, 0 ) )) )
+         "Width="  + ALLTRIM(STR( oGenVar:aAreaSizes[nAktArea,1], 5, nDecimals )) + CRLF + ;
+         "Height=" + ALLTRIM(STR( oGenVar:aAreaSizes[nAktArea,2], 5, nDecimals )) )
 
       OpenFile( cDefIni )
 
@@ -760,15 +761,11 @@ return ( aBarcodes )
 function MainCaption()
 
    local creturn    := ""
-   local cVersion   := ""
    local cMainTitle := ""
    local cUserApp   := ALLTRIM( GetPvProfString( "General", "MainAppTitle", "", oER:cGeneralIni ) )
 
-   if lBeta
-      cVersion := " - Beta Version"
-   ELSEif lDemo
-      cVersion := " - Full version" // " - Unregistered Demo Version" FiveTech
-   endif
+   LOCAL cVersion := if ( lBeta , " - Beta Version" , " - Full version" )
+
 
    if .NOT. EMPTY( cDefIni )
       cMainTitle := ALLTRIM( GetPvProfString( "General", "Title", "", cDefIni ) )
@@ -940,14 +937,8 @@ function Expressions( lTake, cAltText )
 
 return ( creturn )
 
+//------------------------------------------------------------------------------
 
-*-- function -----------------------------------------------------------------
-* Name........: CheckExpression
-* Beschreibung:
-* Argumente...: None
-* R�ckgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function CheckExpression( cText )
 
    local lreturn, xreturn, oScript
