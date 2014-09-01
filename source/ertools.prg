@@ -534,7 +534,7 @@ function GetDivisible( nNr, nDivisor, lPrevious )
    DEFAULT lPrevious := .F.
 
    for i := 1 TO nDivisor
-      if IsDivisible( nNr, nDivisor ) = .T.
+      if IsDivisible( nNr, nDivisor )
          EXIT
       ELSE
          IIF( lPrevious, --nNr, ++nNr )
@@ -549,7 +549,7 @@ function IsDivisible( nNr, nDivisor )
 
    local lreturn := .F.
 
-   if nNr / nDivisor = INT( nNr / nDivisor )
+   if nNr / nDivisor == INT( nNr / nDivisor )
       lreturn := .T.
    endif
 
@@ -598,7 +598,7 @@ function GoBottom()
 
   GO BOTTOM
 
-return ! Eof()
+return !Eof()
 
 
 *-- function -----------------------------------------------------------------
@@ -988,12 +988,13 @@ return .T.
 * R�ckgabewert: .T.
 * Author......: Timm Sodtalbers
 *-----------------------------------------------------------------------------
+/*  no usado
 function DBReplace( cReplFeld, xAusdruck )
 
    REPLACE &cReplFeld with xAusdruck
 
 return .T.
-
+*/
 
 *-- function -----------------------------------------------------------------
 * Name........: CopyToExpress
@@ -1180,7 +1181,7 @@ function GetField( cString, nNr, cSepChar )
 return StrToken( cString, nNr, cSepChar )
 
 //------------------------------------------------------------------------------
-
+/*  no usada
 function StrCount( cText, cString )
 
    local i
@@ -1193,9 +1194,9 @@ function StrCount( cText, cString )
    NEXT
 
 return ( nCount )
-
+ */
 //------------------------------------------------------------------------------
-
+/*   no usada
 function GetResDLL()
 
    local cDLLName
@@ -1214,7 +1215,7 @@ function GetResDLL()
    endif
 
 return ( cDLLName )
-
+ */
 //------------------------------------------------------------------------------
 
 function OpenLanguage()
