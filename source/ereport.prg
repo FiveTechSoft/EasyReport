@@ -3187,7 +3187,8 @@ CLASS TEasyReport
    DATA nMeasure
 
    METHOD New() CONSTRUCTOR
-
+   METHOD GetGeneralIni( cSection , cKey, cDefault ) INLINE GetPvProfString( cSection, cKey, cDefault, ::cGeneralIni ) 
+   
 ENDCLASS
 
 //----------------------------------------------------------------------------//
