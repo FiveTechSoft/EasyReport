@@ -500,12 +500,12 @@ function TextProperties( i, nArea, cAreaIni, lFromList, lNew )
    REDEFINE CHECKBOX aCbx[2] VAR oItem:lTrans  ID 602 OF oCurDlg
 
    REDEFINE BTNBMP aSay[1] PROMPT "" ID 401 OF oCurDlg NOBORDER ;
-   ACTION GetColorBtn( oItem , aSay[1], aGet[1], oVar, nDefClr )
+   ACTION GetColorBtn( @oItem:nColText , aSay[1], aGet[1], oVar, nDefClr )
    aSay[1]:lBoxSelect := .f.
    aSay[1]:SetColor( GetColor( oItem:nColText ), GetColor( oItem:nColText ) )
    
    REDEFINE BTNBMP aSay[2] PROMPT "" ID 402 OF oCurDlg NOBORDER ;
-   ACTION  ACTION GetColorBtn( oItem , aSay[2], aGet[2], oVar, nDefClr )
+   ACTION  ACTION GetColorBtn( @oItem:nColPane , aSay[2], aGet[2], oVar, nDefClr )
    aSay[2]:SetColor(  GetColor( oItem:nColPane ), GetColor( oItem:nColPane ) )
    aSay[2]:lBoxSelect := .f.
     
@@ -514,10 +514,10 @@ function TextProperties( i, nArea, cAreaIni, lFromList, lNew )
       ID 403 OF oCurDlg
 
    REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 151 OF oCurDlg ;
-   ACTION  ACTION GetColorBtn( oItem , aSay[1], aGet[1], oVar, nDefClr )
+   ACTION  ACTION GetColorBtn(  @oItem:nColText, aSay[1], aGet[1], oVar, nDefClr )
    
    REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 152 OF oCurDlg ;
-   ACTION  ACTION GetColorBtn( oItem , aSay[2], aGet[2], oVar, nDefClr )
+   ACTION  ACTION GetColorBtn( @oItem:nColPane, aSay[2], aGet[2], oVar, nDefClr )
     
    REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 153 OF oCurDlg ;
       ACTION ( oItem:nFont := ShowFontChoice( oItem:nFont ), aGet[3]:Refresh(), aSay[3]:Refresh() )
@@ -593,15 +593,15 @@ function TextProperties( i, nArea, cAreaIni, lFromList, lNew )
 return ( .T. )
 
 //----------------------------------------------------------------------------//
-function GetColorBtn( oItem, oSay, oGet, oVar, nDefClr )
-local nColor := ShowColorChoice( oItem:nColPane )
-      IF  nColor <> 0
-         oItem:nColPane := nColor
-         oGet:Refresh()
-         Set2Color( oSay, IIF( oItem:nColPane > 0, oVar:aColors[oItem:nColPane], ""), nDefClr ) 
-      endif       
-Return nil
 
+Function GetColorBtn( cColorItem , oSay, oGet, oVar, nDefClr )
+local nColor := ShowColorChoice( cColorItem )
+      IF  nColor <> 0
+         cColorItem := nColor
+         oGet:Refresh()
+         Set2Color( oSay, IIF( cColorItem > 0, oVar:aColors[cColorItem], ""), nDefClr )
+      endif
+Return nil
 
 //----------------------------------------------------------------------------//
 
@@ -1072,14 +1072,18 @@ function GraphicProperties( i, nArea, cAreaIni, lFromList, lNew )
    REDEFINE SAY aSay[2] PROMPT "" ID 402 OF oCurDlg COLORS GetColor( oItem:nColPane ), GetColor( oItem:nColPane )
 
    REDEFINE BTNBMP ID 151 OF oCurDlg NOBORDER RESOURCE "SELECT" TRANSPARENT ;
-      ACTION ( nColor := ShowColorChoice( oItem:nColor ), ;
-               IIF( nColor <> 0, EVAL( {|| oItem:nColor := nColor, aGet[1]:Refresh(), ;
-               Set2Color( aSay[1], IIF( oItem:nColor > 0, oVar:aColors[oItem:nColor], ""), nDefClr ) } ), ) )
+      ACTION GetColorBtn( @oItem:nColor , aSay[1], aGet[1], oVar, nDefClr )
+      
+    //  ACTION ( nColor := ShowColorChoice( oItem:nColor ), ;
+    //           IIF( nColor <> 0, EVAL( {|| oItem:nColor := nColor, aGet[1]:Refresh(), ;
+    //           Set2Color( aSay[1], IIF( oItem:nColor > 0, oVar:aColors[oItem:nColor], ""), nDefClr ) } ), ) )
 
    REDEFINE BTNBMP ID 152 OF oCurDlg NOBORDER RESOURCE "SELECT" TRANSPARENT ;
-      ACTION ( nColor := ShowColorChoice( oItem:nColFill ), ;
-               IIF( nColor <> 0, EVAL( {|| oItem:nColFill := nColor, aGet[2]:Refresh(), ;
-               Set2Color( aSay[2], IIF( oItem:nColFill > 0, oVar:aColors[oItem:nColFill], ""), nDefClr ) } ), ) )
+    ACTION GetColorBtn( @oItem:nColFill , aSay[2], aGet[2], oVar, nDefClr )
+      
+   //   ACTION ( nColor := ShowColorChoice( oItem:nColFill ), ;
+   //            IIF( nColor <> 0, EVAL( {|| oItem:nColFill := nColor, aGet[2]:Refresh(), ;
+   //            Set2Color( aSay[2], IIF( oItem:nColFill > 0, oVar:aColors[oItem:nColFill], ""), nDefClr ) } ), ) )
 
    REDEFINE CHECKBOX aCbx[2] VAR oItem:lTrans ID 603 OF oCurDlg
 
