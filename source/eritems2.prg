@@ -2,11 +2,13 @@
 #INCLUDE "Folder.ch"
 #INCLUDE "FiveWin.ch"
 
+STATIC  nBoxTop, nBoxLeft, nBoxRight, nBoxBottom
+
 MEMVAR aItems, aAreaIni, aWnd
 MEMVAR cDefaultPath
 MEMVAR nAktItem, nAktArea, nSelArea, aSelection, nTotalHeight, nTotalWidth
 MEMVAR oGenVar
-MEMVAR lBoxDraw, nBoxTop, nBoxLeft, nBoxBottom, nBoxRight
+MEMVAR lBoxDraw
 MEMVAR cInfoWidth, cInfoHeight
 MEMVAR oEr
 

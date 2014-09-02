@@ -10,7 +10,7 @@ MEMVAR lFillWindow, nDeveloper
 MEMVAR nRuler, nRulerTop
 MEMVAR cItemCopy, nCopyEntryNr, nCopyAreaNr, aSelectCopy, aItemCopy, nXMove, nYMove
 MEMVAR cInfoWidth, cInfoHeight, nInfoRow, nInfoCol, aItemPosition, aItemPixelPos
-MEMVAR oClpGeneral, cDefIni, cMeasure
+MEMVAR cDefIni, cMeasure
 MEMVAR lProfi, oCurDlg, oGenVar,oER
 
 //----------------------------------------------------------------------------//
@@ -499,11 +499,28 @@ function TextProperties( i, nArea, cAreaIni, lFromList, lNew )
    REDEFINE CHECKBOX aCbx[1] VAR oItem:lBorder ID 601 OF oCurDlg
    REDEFINE CHECKBOX aCbx[2] VAR oItem:lTrans  ID 602 OF oCurDlg
 
-   REDEFINE BTNBMP aSay[1] PROMPT "" ID 401 OF oCurDlg NOBORDER
-   aSay[1]:SetColor( GetColor( oItem:nColText ), GetColor( oItem:nColText ) )
+   REDEFINE BTNBMP aSay[1] PROMPT "" ID 401 OF oCurDlg NOBORDER ;
+   ACTION GetColorBtn( oItem , aSay[1], aGet[1], oVar, nDefClr )
+   
+ //  ACTION ( nColor := ShowColorChoice( oItem:nColText ), ;
+ //              IIF( nColor <> 0, EVAL( {|| oItem:nColText := nColor, aGet[1]:Refresh(), ;
+ //              Set2Color( aSay[1], IIF( oItem:nColText > 0, oVar:aColors[oItem:nColText], ""), nDefClr ) } ), ) )
 
-   REDEFINE BTNBMP aSay[2] PROMPT "" ID 402 OF oCurDlg NOBORDER
+   aSay[1]:lBoxSelect := .f.
+  // aSay[1]:l2010:= .t.
+  
+   aSay[1]:SetColor( GetColor( oItem:nColText ), GetColor( oItem:nColText ) )
+   
+
+   REDEFINE BTNBMP aSay[2] PROMPT "" ID 402 OF oCurDlg NOBORDER ;
+    ACTION ( nColor := ShowColorChoice( oItem:nColPane ), ;
+               IIF( nColor <> 0, EVAL( {|| oItem:nColPane := nColor, aGet[2]:Refresh(), ;
+               Set2Color( aSay[2], IIF( oItem:nColPane > 0, oVar:aColors[oItem:nColPane], ""), nDefClr ) } ), ) )
+
    aSay[2]:SetColor(  GetColor( oItem:nColPane ), GetColor( oItem:nColPane ) )
+   aSay[2]:lBoxSelect := .f.
+  // aSay[2]:l2010:= .t.
+    
 
    REDEFINE SAY aSay[3] PROMPT ;
       IIF( oItem:nFont > 0, " " + GetCurrentFont( oItem:nFont, GetFonts(), 1 ), "" ) ;
@@ -591,6 +608,17 @@ function TextProperties( i, nArea, cAreaIni, lFromList, lNew )
    oCurDlg:bMoved := {|| SetItemDlg() }
 
 return ( .T. )
+
+//----------------------------------------------------------------------------//
+function GetColorBtn( oItem, oSay, oGet, oVar, nDefClr )
+local nColor := ShowColorChoice( oItem:nColPane )
+      IF  nColor <> 0
+         oItem:nColPane := nColor
+         oGet:Refresh()
+         Set2Color( oSay, IIF( oItem:nColPane > 0, oVar:aColors[oItem:nColPane], ""), nDefClr ) 
+      endif       
+Return nil
+
 
 //----------------------------------------------------------------------------//
 

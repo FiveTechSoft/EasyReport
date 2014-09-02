@@ -6,7 +6,7 @@ MEMVAR aItems, aFonts, aAreaIni, aWnd
 MEMVAR cDefaultPath
 MEMVAR nAktArea
 MEMVAR aVRDSave
-MEMVAR oClpGeneral, cDefIni, lBeta
+MEMVAR cDefIni, lBeta
 MEMVAR lProfi, nUndoCount, nRedoCount, lPersonal, oGenVar
 MEMVAR oER
 
@@ -205,7 +205,6 @@ function GetDBField( oGet, lInsert )
    ACTIVATE DIALOG oDlg CENTERED
 
    if lreturn = .T. .AND. .NOT. EMPTY( cField ) .AND. lInsert = .T.
-      //oClpGeneral:SetText( "[" + ALLTRIM( cDbase ) + ":" + ALLTRIM( cField ) + "]" )
       oGet:Paste( "[" + ALLTRIM( cDbase ) + ":" + ALLTRIM( cField ) + "]" )
    ELSEif lreturn = .T. .AND. .NOT. EMPTY( cField )
       if ALLTRIM( cDbase ) == cGeneral

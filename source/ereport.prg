@@ -14,11 +14,11 @@ MEMVAR aItems, aFonts, aAreaIni, aWnd, aWndTitle, oMru
 MEMVAR oCbxArea, aCbxItems, aRuler, cLongDefIni, cDefaultPath
 MEMVAR nAktItem, nAktArea, nSelArea, aSelection, nTotalHeight, nTotalWidth
 MEMVAR nHinCol1, nHinCol2, nHinCol3, oMsgInfo
-MEMVAR aVRDSave, lVRDSave, lFillWindow, nDeveloper, oRulerBmp1, oRulerBmp2
-MEMVAR lBoxDraw, nBoxTop, nBoxLeft, nBoxBottom, nBoxRight, nRuler, nRulerTop
+MEMVAR aVRDSave, lVRDSave, lFillWindow, nDeveloper
+MEMVAR lBoxDraw, nRuler, nRulerTop
 MEMVAR cItemCopy, nCopyEntryNr, nCopyAreaNr, aSelectCopy, aItemCopy, nXMove, nYMove
 MEMVAR cInfoWidth, cInfoHeight, nInfoRow, nInfoCol, aItemPosition, aItemPixelPos
-MEMVAR oClpGeneral, cDefIni, cDefIniPath, cMeasure, lBeta
+MEMVAR cDefIni, cDefIniPath, cMeasure, lBeta
 MEMVAR lProfi, nUndoCount, nRedoCount, nDlgTextCol, nDlgBackCol
 MEMVAR lPersonal, oGenVar, oCurDlg
 MEMVAR oER
@@ -71,7 +71,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
    SET MULTIPLE OFF
    SET DATE FORMAT to "dd.mm.yyyy"
 
-   cDateFormat := LOWER(AllTrim( GetPvProfString( "General", "DateFormat", "", oER:cGeneralIni )))
+   cDateFormat := LOWER(AllTrim( oEr:GetGeneralIni( "General", "DateFormat", "")) )
 
    SET DATE FORMAT IIF( Empty( cDateFormat ), "dd.mm.yyyy", cDateFormat )
 
@@ -93,8 +93,6 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
       ICON oIcon ;
       MENU BuildMenu()
 
-   DEFINE CLIPBOARD oClpGeneral OF oEr:oMainWnd
-
    SET MESSAGE OF oEr:oMainWnd  CENTERED 2010
 
    DEFINE MSGITEM oMsgInfo OF oEr:oMainWnd:oMsgBar SIZE 280
@@ -111,7 +109,6 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
                 StartMessage(), SetSave( .T. ), ClearUndoRedo() ) ;
       VALID AskSaveFiles()
 
-   oClpGeneral:End()
    oEr:oAppFont:End()
    oBrush:End()
    oGenVar:oAreaBrush:End()
@@ -364,7 +361,6 @@ return NIL
 
 function DeclarePublics( cDefFile )
 
-   PUBLIC oClpGeneral
    PUBLIC cDefIni, cDefIniPath
    PUBLIC cMeasure
    PUBLIC lBeta       := .F.
@@ -397,10 +393,8 @@ function DeclarePublics( cDefFile )
 
    //Selection box
    PUBLIC lBoxDraw := .F.
-   PUBLIC nBoxTop, nBoxLeft, nBoxBottom, nBoxRight
 
    //Ruler anzeigen
-   PUBLIC oRulerBmp1, oRulerBmp2
    PUBLIC nRuler    := 20
    PUBLIC nRulerTop := 37
 
@@ -1306,6 +1300,7 @@ function FillWindow( nArea, cAreaIni )
    local aFirst      := { .F., 0, 0, 0, 0, 0 }
    local nElemente   := 0
    local aIniEntries := GetIniSection( "Items", cAreaIni )
+   LOCAL oRulerBmp2
 
    //Ruler anzeigen
    if oER:nMeasure = 1 ; cRuler1 := "RULER1_MM" ; cRuler2 := "RULER2_MM" ; endif
