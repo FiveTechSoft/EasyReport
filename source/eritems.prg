@@ -501,41 +501,24 @@ function TextProperties( i, nArea, cAreaIni, lFromList, lNew )
 
    REDEFINE BTNBMP aSay[1] PROMPT "" ID 401 OF oCurDlg NOBORDER ;
    ACTION GetColorBtn( oItem , aSay[1], aGet[1], oVar, nDefClr )
-   
- //  ACTION ( nColor := ShowColorChoice( oItem:nColText ), ;
- //              IIF( nColor <> 0, EVAL( {|| oItem:nColText := nColor, aGet[1]:Refresh(), ;
- //              Set2Color( aSay[1], IIF( oItem:nColText > 0, oVar:aColors[oItem:nColText], ""), nDefClr ) } ), ) )
-
    aSay[1]:lBoxSelect := .f.
-  // aSay[1]:l2010:= .t.
-  
    aSay[1]:SetColor( GetColor( oItem:nColText ), GetColor( oItem:nColText ) )
    
-
    REDEFINE BTNBMP aSay[2] PROMPT "" ID 402 OF oCurDlg NOBORDER ;
-    ACTION ( nColor := ShowColorChoice( oItem:nColPane ), ;
-               IIF( nColor <> 0, EVAL( {|| oItem:nColPane := nColor, aGet[2]:Refresh(), ;
-               Set2Color( aSay[2], IIF( oItem:nColPane > 0, oVar:aColors[oItem:nColPane], ""), nDefClr ) } ), ) )
-
+   ACTION  ACTION GetColorBtn( oItem , aSay[2], aGet[2], oVar, nDefClr )
    aSay[2]:SetColor(  GetColor( oItem:nColPane ), GetColor( oItem:nColPane ) )
    aSay[2]:lBoxSelect := .f.
-  // aSay[2]:l2010:= .t.
     
-
    REDEFINE SAY aSay[3] PROMPT ;
       IIF( oItem:nFont > 0, " " + GetCurrentFont( oItem:nFont, GetFonts(), 1 ), "" ) ;
       ID 403 OF oCurDlg
 
    REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 151 OF oCurDlg ;
-      ACTION ( nColor := ShowColorChoice( oItem:nColText ), ;
-               IIF( nColor <> 0, EVAL( {|| oItem:nColText := nColor, aGet[1]:Refresh(), ;
-               Set2Color( aSay[1], IIF( oItem:nColText > 0, oVar:aColors[oItem:nColText], ""), nDefClr ) } ), ) )
-
+   ACTION  ACTION GetColorBtn( oItem , aSay[1], aGet[1], oVar, nDefClr )
+   
    REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 152 OF oCurDlg ;
-      ACTION ( nColor := ShowColorChoice( oItem:nColPane ), ;
-               IIF( nColor <> 0, EVAL( {|| oItem:nColPane := nColor, aGet[2]:Refresh(), ;
-               Set2Color( aSay[2], IIF( oItem:nColPane > 0, oVar:aColors[oItem:nColPane], ""), nDefClr ) } ), ) )
-
+   ACTION  ACTION GetColorBtn( oItem , aSay[2], aGet[2], oVar, nDefClr )
+    
    REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 153 OF oCurDlg ;
       ACTION ( oItem:nFont := ShowFontChoice( oItem:nFont ), aGet[3]:Refresh(), aSay[3]:Refresh() )
 
