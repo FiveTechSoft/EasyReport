@@ -276,6 +276,33 @@ function ER_MouseWheel( nKey, nDelta, nXPos, nYPos )
    ScreenToClient( oEr:oMainWnd:oWndClient:hWnd, aPoint )
    lScrollVert  := .T.
    if IsOverWnd( oEr:oMainWnd:oWndClient:hWnd, aPoint[ 1 ], aPoint[ 2 ] )
+  
+      if lAnd( nKey, MK_MBUTTON )
+         if nDelta > 0
+            ScrollV(-4, .t.)
+         else
+            ScrollV(4,,.t.)
+         endif
+      else
+         if nDelta > 0
+            ScrollV( - WheelScroll() , .T.,, .T. )
+         else
+            ScrollV( WheelScroll() ,,.T.,.T. )
+         endif
+      endif
+
+   endif
+
+return .T.
+
+/*
+function ER_MouseWheel( nKey, nDelta, nXPos, nYPos )
+
+   local aPoint := { nYPos, nXPos }
+
+   ScreenToClient( oEr:oMainWnd:oWndClient:hWnd, aPoint )
+   lScrollVert  := .T.
+   if IsOverWnd( oEr:oMainWnd:oWndClient:hWnd, aPoint[ 1 ], aPoint[ 2 ] )
       if lAnd( nKey, MK_MBUTTON )
          if nDelta > 0
             ScrollVertical( ,,.T. )
@@ -292,7 +319,7 @@ function ER_MouseWheel( nKey, nDelta, nXPos, nYPos )
    endif
 
 return .T.
-
+*/
 //----------------------------------------------------------------------------//
 
 function PreviewMenu( oBtn )
@@ -601,6 +628,45 @@ return .T.
 
 //----------------------------------------------------------------------------//
 
+ function SetScrollBar()
+
+   //local oVScroll
+   local nPageZugabe //:= 392/100
+   local oWnd        := oEr:oMainWnd:oWndClient
+
+   if !Empty( oWnd:oVScroll )
+  
+      oWnd:oVScroll := ER_ScrollBar():WinNew(0,100,10,.T., oWnd )
+
+      oWnd:oVScroll:bGoUp     = { ||  ScrollV(-1 )  }
+      oWnd:oVScroll:bGoDown   = { || ScrollV(1) }
+      oWnd:oVScroll:bPageUp   = { ||  ScrollV(-4)  }
+      oWnd:oVScroll:bPageDown = { || ScrollV(4 ) }
+      oWnd:oVScroll:bPos      = { | nWert | ScrollV(nWert )  }
+      oWnd:oVScroll:nPgStep   = 10
+
+      oWnd:oVScroll:SetPos( 0 )
+
+ ENDIF
+
+   if ! Empty( oWnd:oHScroll )
+      nPageZugabe := 602/100
+      oWnd:oHScroll:SetRange( 0, nTotalWidth / 100 )
+
+      oWnd:oHScroll:bGoUp     = {|| ScrollHorizont( .T. ) }
+      oWnd:oHScroll:bGoDown   = {|| ScrollHorizont( , .T. ) }
+      oWnd:oHScroll:bPageUp   = {|| ScrollHorizont( ,, .T. ) }
+      oWnd:oHScroll:bPageDown = {|| ScrollHorizont( ,,, .T. ) }
+      oWnd:oHScroll:bPos      = {| nWert | ScrollHorizont( ,,,, .T., nWert/100 ) }
+      oWnd:oHScroll:nPgStep   = nPageZugabe  //602
+
+      oWnd:oHScroll:SetPos( 0 )
+   endif
+
+
+return .T.
+
+/*
 function SetScrollBar()
 
    local oVScroll
@@ -631,6 +697,67 @@ function SetScrollBar()
 
       oEr:oMainWnd:oWndClient:oHScroll:SetPos( 0 )
    endif
+
+return .T.
+*/
+
+//----------------------------------------------------------------------------//
+
+function ScrollV( nPosZugabe, lUp, lDown, lPos )
+   local i, aFirstWndCoors, nAltWert
+    local nZugabe     := 14
+   local nPageZugabe := 392
+   local aCliRect    := oEr:oMainWnd:GetCliRect()
+   local lReticule
+   LOCAL oVScroll := oEr:oMainWnd:oWndClient:oVScroll
+
+   DEFAULT lUp       := .F.
+   DEFAULT lDown     := .F.
+   DEFAULT lPos      := .F.
+
+   UnSelectAll()
+
+    for i := 1 to 100
+      if aWnd[ i ] <> nil
+         aFirstWndCoors := GetCoors( aWnd[ i ]:hWnd )
+         EXIT
+      endif
+   next
+
+   if lUp
+      if aFirstWndCoors[ 1 ] = 0
+         nZugabe := 0
+      elseif aFirstWndCoors[ 1 ] + IIF( lUp, nZugabe, nPageZugabe ) >= 0
+         nZugabe     := -1 * aFirstWndCoors[ 1 ]
+         nPageZugabe := -1 * aFirstWndCoors[ 1 ]
+      endif
+   endif
+
+   if lDown
+      if aFirstWndCoors[ 1 ] + (nTotalHeight) <= aCliRect[3] - 80
+         nZugabe     := 0
+         nPageZugabe := 0
+      endif
+   endif
+
+
+   lReticule = oGenVar:lShowReticule
+   oGenVar:lShowReticule = .F.
+   SetReticule( 0, 0 ) // turn off the rulers lines
+
+
+   nAltWert := IF ( lPos, oVScroll:GetPos(), oVScroll:nPrevPos )
+
+   oVScroll:SetPos( nPosZugabe )
+   nZugabe := nTotalHeight * ( oVScroll:GetPos() - nAltWert ) / ( (nTotalHeight) / 100 )
+
+   for i := 1 to 100
+      if aWnd[ i ] <> nil
+         aWnd[ i ]:Move( aWnd[ i ]:nTop - Int(nZugabe/10), aWnd[ i ]:nLeft, 0, 0, .T. )
+      endif
+   next
+
+   oGenVar:lShowReticule = lReticule
 
 return .T.
 
@@ -3248,3 +3375,22 @@ return nil
 
 
 //----------------------------------------------------------------------------//
+
+define SB_HORZ         0
+#define SB_VERT         1
+#define SB_CTL          2
+
+
+CLASS ER_ScrollBar FROM  TScrollBar
+
+   DATA   nPrevPos
+
+   METHOD SetPos( nPos ) INLINE ;
+                 ::nPrevPos:= ::GetPos() ,;
+                 SetScrollPos( if( ::lIsChild, ::oWnd:hWnd, ::hWnd ),;
+                 If( ::lIsChild, If( ::lVertical, SB_VERT, SB_HORZ ), SB_CTL ),;
+                 nPos, ::lReDraw )
+
+ENDCLASS
+
+
