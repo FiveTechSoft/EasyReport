@@ -505,13 +505,13 @@ function CreateNewFile( cFile )
 return .T.
 
 //------------------------------------------------------------------------------
-
+/*  ya existe en fwh
 function CopyFile( cSource, cTarget )
 
    COPY FILE ( cSource ) TO ( cTarget )
 
 return .T.
-
+*/
 //------------------------------------------------------------------------------
 
 function GetSysFont()

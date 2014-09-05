@@ -17,7 +17,7 @@ MEMVAR nHinCol1, nHinCol2, nHinCol3, oMsgInfo
 MEMVAR aVRDSave, lVRDSave, lFillWindow, nDeveloper
 MEMVAR lBoxDraw, nRuler, nRulerTop
 MEMVAR cItemCopy, nCopyEntryNr, nCopyAreaNr, aSelectCopy, aItemCopy, nXMove, nYMove
-MEMVAR cInfoWidth, cInfoHeight, nInfoRow, nInfoCol, aItemPosition, aItemPixelPos
+MEMVAR cInfoWidth, cInfoHeight, nInfoRow, nInfoCol, aItemPixelPos
 MEMVAR cDefIni, cDefIniPath, cMeasure, lBeta
 MEMVAR lProfi, nUndoCount, nRedoCount, nDlgTextCol, nDlgBackCol
 MEMVAR lPersonal, oGenVar, oCurDlg
@@ -422,7 +422,7 @@ function DeclarePublics( cDefFile )
 
    //Msgbar mit Elementgr��e aktualisieren wenn ein Element bewegt wird
    PUBLIC cInfoWidth, cInfoHeight, nInfoRow, nInfoCol
-   PUBLIC aItemPosition := {}
+  
    PUBLIC aItemPixelPos := {}
 
    //Undo/Redo

@@ -9,9 +9,11 @@ MEMVAR oMsgInfo
 MEMVAR lFillWindow, nDeveloper
 MEMVAR nRuler, nRulerTop
 MEMVAR cItemCopy, nCopyEntryNr, nCopyAreaNr, aSelectCopy, aItemCopy, nXMove, nYMove
-MEMVAR cInfoWidth, cInfoHeight, nInfoRow, nInfoCol, aItemPosition, aItemPixelPos
+MEMVAR cInfoWidth, cInfoHeight, nInfoRow, nInfoCol, aItemPixelPos
 MEMVAR cDefIni, cMeasure
 MEMVAR lProfi, oCurDlg, oGenVar,oER
+
+STATIC aItemPosition
 
 //----------------------------------------------------------------------------//
 
@@ -204,7 +206,7 @@ function DeleteAllItems( nTyp )
 
       cDef := AllTrim( GetPvProfString( "Items", AllTrim(STR(i,5)) , "", aAreaIni[nAktArea] ) )
 
-      if .NOT. EMPTY( cDef )
+      if !EMPTY( cDef )
 
          oItem := VRDItem():New( cDef )
 
