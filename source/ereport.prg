@@ -3376,7 +3376,7 @@ return nil
 
 //----------------------------------------------------------------------------//
 
-define SB_HORZ         0
+#define SB_HORZ         0
 #define SB_VERT         1
 #define SB_CTL          2
 
