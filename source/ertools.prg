@@ -455,7 +455,7 @@ function DelDBase( oGet1, oGet2 )
 return NIL
 
 //-----------------------------------------------------------------------------//
-
+/*
 function VRD_MsgRun( cCaption, cTitle, bAction )
 
    local oDlg, nWidth, oFont
@@ -484,15 +484,10 @@ function VRD_MsgRun( cCaption, cTitle, bAction )
       ON PAINT oDlg:Say( 1, 0, xPadC( oDlg:cMsg, nWidth ) )
 
 return NIL
+*/
 
+//------------------------------------------------------------------------------
 
-*-- function -----------------------------------------------------------------
-* Name........: CreateNewFile
-* Beschreibung:
-* Argumente...: None
-* R�ckgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function CreateNewFile( cFile )
 
    local cTmpFile := cTempFile() + ".TMP"
@@ -512,19 +507,6 @@ function CopyFile( cSource, cTarget )
 
 return .T.
 */
-//------------------------------------------------------------------------------
-
-function GetSysFont()
-
-   do case
-   case !IsWinNt() .and. !IsWin95()              // Win 3.1
-      return "System"
-   case IsWin2000()     // Win2000
-      return "Ms Sans Serif" //"SysTahoma"
-   endcase
-
-return "Ms Sans Serif"                           // Resto (Win NT, 95, 98)
-
 //------------------------------------------------------------------------------
 
 function GetDivisible( nNr, nDivisor, lPrevious )
@@ -610,9 +592,9 @@ return !Eof()
 *-----------------------------------------------------------------------------
 function GetFile( cFileMask, cTitle, nDefaultMask, cInitDir, lSave, nFlags )
 
-   local cTmpPath := CheckPath( GetPvProfString( "General", "DefaultPath", "", oER:cGeneralIni ) )
+   local cTmpPath := CheckPath( oER:GetGeneralIni( "General", "DefaultPath", "" ) )
 
-   if .NOT. EMPTY( cTmpPath )
+   if !EMPTY( cTmpPath )
       cInitDir := cTmpPath
    endif
 
@@ -749,32 +731,19 @@ function GetBarCodes()
 
 return ( aBarcodes )
 
+//------------------------------------------------------------------------------
 
-*-- function -----------------------------------------------------------------
-* Name........: MainCaption
-* Beschreibung:
-* Argumente...: None
-* R�ckgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function MainCaption()
 
-   local creturn    := ""
-   local cMainTitle := ""
    local cUserApp   := ALLTRIM( oER:GetGeneralIni( "General", "MainAppTitle", "" ) )
+   LOCAL cVersion := IIF ( lBeta , " - Beta Version" , " - Full version" )
+   LOCAL cMainTitle := IIf(  !EMPTY( oER:cDefIni ), ALLTRIM( oER:GetDefIni( "General", "Title", "" ) ), "" )
 
-   LOCAL cVersion := if ( lBeta , " - Beta Version" , " - Full version" )
-
-
-   if !EMPTY( oER:cDefIni )
-      cMainTitle := ALLTRIM( oER:GetDefIni( "General", "Title", "" ) )
-   endif
-
-   creturn := IIF( EMPTY( cUserApp ), "EasyReport", cUserApp ) + ;
+   LOCAL cReturn := IIF( EMPTY( cUserApp ), "EasyReport", cUserApp ) + ;
               cVersion + ;
               IIF( EMPTY(cMainTitle), "", " - " + cMainTitle )
 
-return ( creturn )
+return ( cReturn )
 
 
 *-- function -----------------------------------------------------------------

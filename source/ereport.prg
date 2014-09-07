@@ -18,7 +18,7 @@ MEMVAR aVRDSave, lVRDSave, lFillWindow, nDeveloper
 MEMVAR lBoxDraw, nRuler, nRulerTop
 MEMVAR cItemCopy, nCopyEntryNr, nCopyAreaNr, aSelectCopy, aItemCopy, nXMove, nYMove
 MEMVAR cInfoWidth, cInfoHeight, nInfoRow, nInfoCol, aItemPixelPos
-MEMVAR cDefIniPath, cMeasure, lBeta
+MEMVAR cDefIniPath, lBeta
 MEMVAR lProfi, nUndoCount, nRedoCount, nDlgTextCol, nDlgBackCol
 MEMVAR lPersonal, oGenVar, oCurDlg
 MEMVAR oER
@@ -389,7 +389,6 @@ return NIL
 function DeclarePublics( cDefFile )
 
    PUBLIC cDefIniPath
-   PUBLIC cMeasure
    PUBLIC lBeta       := .F.
    PUBLIC lProfi      := .T.
    PUBLIC lPersonal   := .F.
@@ -586,7 +585,7 @@ function SetGeneralSettings()
 
    oER:nMeasure := Val( oEr:GetDefIni( "General", "Measure", "1" ) )
 
-   cMeasure := aMeasure [ oER:nMeasure ]
+   oER:cMeasure := aMeasure [ oER:nMeasure ]
 
    nDeveloper := Val( oEr:GetDefIni( "General", "DeveloperMode", STR( nDeveloper, 1 )  ) )
 
@@ -2423,11 +2422,11 @@ function ReportSettings()
 
    REDEFINE RADIO oRad1 VAR nOrient ID 601, 602 OF oDlg
 
-   REDEFINE SAY PROMPT cMeasure ID 151 OF oDlg
-   REDEFINE SAY PROMPT cMeasure ID 152 OF oDlg
-   REDEFINE SAY PROMPT cMeasure ID 153 OF oDlg
-   REDEFINE SAY PROMPT cMeasure ID 154 OF oDlg
-   REDEFINE SAY PROMPT cMeasure ID 155 OF oDlg
+   REDEFINE SAY PROMPT oER:cMeasure ID 151 OF oDlg
+   REDEFINE SAY PROMPT oER:cMeasure ID 152 OF oDlg
+   REDEFINE SAY PROMPT oER:cMeasure ID 153 OF oDlg
+   REDEFINE SAY PROMPT oER:cMeasure ID 154 OF oDlg
+   REDEFINE SAY PROMPT oER:cMeasure ID 155 OF oDlg
 
    REDEFINE GET cTitle ID 501 OF oDlg
    REDEFINE GET cGroup ID 502 OF oDlg
@@ -2576,8 +2575,8 @@ function Options()
 
    REDEFINE CHECKBOX aCbx[2] VAR lShowGrid ID 303 OF oDlg
 
-   REDEFINE SAY PROMPT cMeasure ID 120 OF oDlg
-   REDEFINE SAY PROMPT cMeasure ID 121 OF oDlg
+   REDEFINE SAY PROMPT oER:cMeasure ID 120 OF oDlg
+   REDEFINE SAY PROMPT oER:cMeasure ID 121 OF oDlg
 
    REDEFINE SAY PROMPT GL("Language:")        ID 170 OF oDlg
    REDEFINE SAY PROMPT GL("Width:")           ID 171 OF oDlg
@@ -3093,10 +3092,10 @@ function AreaProperties( nArea )
    SetAreaFormulaBtn( 20, 11, oDlg )
    SetAreaFormulaBtn( 21, 12, oDlg )
 
-   REDEFINE SAY PROMPT cMeasure ID 121 OF oDlg
-   REDEFINE SAY PROMPT cMeasure ID 122 OF oDlg
-   REDEFINE SAY PROMPT cMeasure ID 123 OF oDlg
-   REDEFINE SAY PROMPT cMeasure ID 124 OF oDlg
+   REDEFINE SAY PROMPT oER:cMeasure ID 121 OF oDlg
+   REDEFINE SAY PROMPT oER:cMeasure ID 122 OF oDlg
+   REDEFINE SAY PROMPT oER:cMeasure ID 123 OF oDlg
+   REDEFINE SAY PROMPT oER:cMeasure ID 124 OF oDlg
 
    REDEFINE BUTTON PROMPT GL("&OK")     ID 101 OF oDlg ACTION ( lSave := .T., oDlg:End() )
    REDEFINE BUTTON PROMPT GL("&Cancel") ID 102 OF oDlg ACTION oDlg:End()
@@ -3294,14 +3293,13 @@ CLASS TEasyReport
    DATA cDefIni
    DATA cDataPath
    DATA bClrBar, aClrDialogs
-   DATA nMeasure
+   DATA nMeasure, cMeasure
    DATA oAppFont
 
    METHOD New() CONSTRUCTOR
    METHOD GetGeneralIni( cSection , cKey, cDefault ) INLINE GetPvProfString( cSection, cKey, cDefault, ::cGeneralIni )
    METHOD GetDefIni( cSection , cKey, cDefault ) INLINE GetPvProfString( cSection, cKey, cDefault, ::cDefIni )
    METHOD GetColor( nNr ) INLINE  Val( GetPvProfString(  "Colors", AllTrim(STR( nNr, 5 )), "", ::cDefIni ) )
-
 
 ENDCLASS
 

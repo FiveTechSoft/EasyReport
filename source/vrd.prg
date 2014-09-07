@@ -315,13 +315,9 @@ METHOD New( cReportName, lPreview, cPrinter, oWnd, lModal, lPrintIDs, lNoPrint, 
       DEFINE FONT oInfoFont  NAME "MS SANS SERIF" SIZE 0,-14 BOLD
       DEFINE FONT oInfo2Font NAME "MS SANS SERIF" SIZE 0,-8
 
-    //  #IFDEF __XPP__
-     //    DEFINE DIALOG ::oInfoDlg FROM 0,0 TO 104, 300 PIXEL TITLE cDlgTitle ;
-    //        STYLE nOr( DS_MODALFRAME, WS_POPUP )
-    //  #ELSE
-         DEFINE DIALOG ::oInfoDlg FROM 0,0 TO 86, 300 PIXEL ;
+      DEFINE DIALOG ::oInfoDlg FROM 0,0 TO 86, 300 PIXEL ;
             STYLE nOr( DS_MODALFRAME, WS_POPUP )
-    //  #ENDIF
+
 
       @ 10, 0 SAY aSay[1] PROMPT aPrompt[1] OF ::oInfoDlg SIZE 300, 20 PIXEL //FONT oInfo2Font
       @  4, 8 SAY aSay[2] PROMPT aPrompt[2] OF ::oInfoDlg SIZE 300, 10 PIXEL //FONT oInfoFont
@@ -2862,8 +2858,6 @@ FUNCTION VRD_LF2SF( cFile )
 RETURN NIL
 
 #IFNDEF __HARBOUR__
-#IFNDEF __XPP__
-
 
 *-- FUNCTION -----------------------------------------------------------------
 * Name........: VRD_LPN2SPN
@@ -2933,17 +2927,11 @@ FUNCTION VRD_LFN2SFN( cSpec )
 RETURN if(empty(psz(oWin32:cAltName)),psz(oWin32:cFileName),psz(oWin32:cAltName))
 
 
-*-- FUNCTION -----------------------------------------------------------------
-*         Name: psz
-*  Description: Truncate a zero-terminated string to a proper size
-*    Arguments: cZString - string containing zeroes
-* Return Value: cString  - string without zeroes
-*-----------------------------------------------------------------------------
-FUNCTION psz(c)
+//------------------------------------------------------------------------------
+
+STATIC FUNCTION psz(c)
 RETURN substr(c,1,at(chr(0),c)-1)
 
-
-#ENDIF
 #ENDIF
 
 //------------------------------------------------------------------------------

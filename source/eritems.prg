@@ -10,7 +10,6 @@ MEMVAR lFillWindow, nDeveloper
 MEMVAR nRuler, nRulerTop
 MEMVAR cItemCopy, nCopyEntryNr, nCopyAreaNr, aSelectCopy, aItemCopy, nXMove, nYMove
 MEMVAR cInfoWidth, cInfoHeight, nInfoRow, nInfoCol, aItemPixelPos
-MEMVAR cMeasure
 MEMVAR lProfi, oCurDlg, oGenVar,oER
 
 STATIC aItemPosition
@@ -568,10 +567,10 @@ function TextProperties( i, nArea, cAreaIni, lFromList, lNew )
    REDEFINE SAY PROMPT GL("Background color:") ID 177 OF oCurDlg
    REDEFINE SAY PROMPT GL("Font") +":"         ID 178 OF oCurDlg
 
-   REDEFINE SAY PROMPT cMeasure ID 181 OF oCurDlg
-   REDEFINE SAY PROMPT cMeasure ID 182 OF oCurDlg
-   REDEFINE SAY PROMPT cMeasure ID 183 OF oCurDlg
-   REDEFINE SAY PROMPT cMeasure ID 184 OF oCurDlg
+   REDEFINE SAY PROMPT oER:cMeasure ID 181 OF oCurDlg
+   REDEFINE SAY PROMPT oER:cMeasure ID 182 OF oCurDlg
+   REDEFINE SAY PROMPT oER:cMeasure ID 183 OF oCurDlg
+   REDEFINE SAY PROMPT oER:cMeasure ID 184 OF oCurDlg
 
    ACTIVATE DIALOG oCurDlg CENTERED ; // NOMODAL ;
       ON INIT ( GetItemDlgPos(), ;
@@ -884,12 +883,12 @@ function ImageProperties( i, nArea, cAreaIni, lFromList, lNew )
    REDEFINE SAY aSizeSay[1] PROMPT aSize[1] ID 321 OF oCurDlg
    REDEFINE SAY aSizeSay[2] PROMPT aSize[2] ID 322 OF oCurDlg
 
-   REDEFINE SAY PROMPT cMeasure ID 120 OF oCurDlg
-   REDEFINE SAY PROMPT cMeasure ID 121 OF oCurDlg
-   REDEFINE SAY PROMPT cMeasure ID 122 OF oCurDlg
-   REDEFINE SAY PROMPT cMeasure ID 123 OF oCurDlg
-   REDEFINE SAY PROMPT cMeasure ID 125 OF oCurDlg
-   REDEFINE SAY PROMPT cMeasure ID 126 OF oCurDlg
+   REDEFINE SAY PROMPT oER:cMeasure ID 120 OF oCurDlg
+   REDEFINE SAY PROMPT oER:cMeasure ID 121 OF oCurDlg
+   REDEFINE SAY PROMPT oER:cMeasure ID 122 OF oCurDlg
+   REDEFINE SAY PROMPT oER:cMeasure ID 123 OF oCurDlg
+   REDEFINE SAY PROMPT oER:cMeasure ID 125 OF oCurDlg
+   REDEFINE SAY PROMPT oER:cMeasure ID 126 OF oCurDlg
 
    REDEFINE BUTTON PROMPT GL("&OK")     ID 101 OF oCurDlg ;
       ACTION ( oGenVar:lDlgSave := .T., oGenVar:lItemDlg := .F., oCurDlg:End() )
@@ -1044,10 +1043,10 @@ function GraphicProperties( i, nArea, cAreaIni, lFromList, lNew )
       SPINNER MIN 0.01 MAX oVar:nGesHeight - oItem:nTop ;
       VALID oItem:nHeight > 0 .AND. oItem:nTop + oItem:nHeight <= oVar:nGesHeight
 
-   REDEFINE SAY PROMPT cMeasure ID 120 OF oCurDlg
-   REDEFINE SAY PROMPT cMeasure ID 121 OF oCurDlg
-   REDEFINE SAY PROMPT cMeasure ID 122 OF oCurDlg
-   REDEFINE SAY PROMPT cMeasure ID 123 OF oCurDlg
+   REDEFINE SAY PROMPT oER:cMeasure ID 120 OF oCurDlg
+   REDEFINE SAY PROMPT oER:cMeasure ID 121 OF oCurDlg
+   REDEFINE SAY PROMPT oER:cMeasure ID 122 OF oCurDlg
+   REDEFINE SAY PROMPT oER:cMeasure ID 123 OF oCurDlg
 
    REDEFINE CHECKBOX aCbx[1] VAR oItem:lVisible ID 305 OF oCurDlg WHEN oItem:nDelete <> 0
 
@@ -1135,8 +1134,8 @@ function GraphicProperties( i, nArea, cAreaIni, lFromList, lNew )
    REDEFINE SAY PROMPT GL("Type:")       ID 177 OF oCurDlg
    REDEFINE SAY PROMPT ;
       GL("Please note: The special styles will only work with pen size 1.") ID 178 OF oCurDlg
-   REDEFINE SAY PROMPT cMeasure ID 180 OF oCurDlg
-   REDEFINE SAY PROMPT cMeasure ID 181 OF oCurDlg
+   REDEFINE SAY PROMPT oER:cMeasure ID 180 OF oCurDlg
+   REDEFINE SAY PROMPT oER:cMeasure ID 181 OF oCurDlg
    REDEFINE SAY PROMPT GL("Width:")      ID 182 OF oCurDlg
    REDEFINE SAY PROMPT GL("Height:")     ID 183 OF oCurDlg
    REDEFINE SAY PROMPT GL("Rounded Corners") + ":" ID 184 OF oCurDlg
@@ -1323,11 +1322,11 @@ function BarcodeProperties( i, nArea, cAreaIni, lFromList, lNew )
    REDEFINE SAY PROMPT GL("Alignment:")        ID 178 OF oCurDlg
    REDEFINE SAY PROMPT GL("Pin width:")        ID 179 OF oCurDlg
 
-   REDEFINE SAY PROMPT cMeasure ID 181 OF oCurDlg
-   REDEFINE SAY PROMPT cMeasure ID 182 OF oCurDlg
-   REDEFINE SAY PROMPT cMeasure ID 183 OF oCurDlg
-   REDEFINE SAY PROMPT cMeasure ID 184 OF oCurDlg
-   REDEFINE SAY PROMPT cMeasure ID 185 OF oCurDlg
+   REDEFINE SAY PROMPT oER:cMeasure ID 181 OF oCurDlg
+   REDEFINE SAY PROMPT oER:cMeasure ID 182 OF oCurDlg
+   REDEFINE SAY PROMPT oER:cMeasure ID 183 OF oCurDlg
+   REDEFINE SAY PROMPT oER:cMeasure ID 184 OF oCurDlg
+   REDEFINE SAY PROMPT oER:cMeasure ID 185 OF oCurDlg
 
    ACTIVATE DIALOG oCurDlg CENTERED ; // NOMODAL ;
       ON INIT ( GetItemDlgPos(), ;

@@ -4,7 +4,7 @@ MEMVAR aItems, aFonts, aAreaIni, aWnd, aWndTitle, oMru
 MEMVAR oCbxArea, aRuler, cLongDefIni, cDefaultPath
 MEMVAR oGenVar
 MEMVAR aVRDSave, lVRDSave
-MEMVAR cDefIniPath, cMeasure
+MEMVAR cDefIniPath
 MEMVAR nDlgTextCol, nDlgBackCol
 MEMVAr oEr
 
@@ -167,7 +167,7 @@ function SaveAsFile()
                            GL("All Files") + " (*.*)|*.*", GL("Save as"), 1,, .T. )
 
    if !EMPTY( cFile )
-      VRD_MsgRun( GL("Please wait..."), ;
+      MsgRun( GL("Please wait..."), ;
          STRTRAN( GL("Save &as"), "&", "" ), {|| SaveAs( cFile ) } )
    endif
 
@@ -632,7 +632,7 @@ function NewReport()
    oFont:End()
 
    if lCreate
-      VRD_MsgRun( GL("Please wait..."), GL("New Report"), ;
+      MsgRun( GL("Please wait..."), GL("New Report"), ;
          {|| CreateNewReport( aCheck, cGeneralName, cSourceCode, cReportName, lMakeSource, ;
                               nTop, nLeft, nPageBreak, nOrient, aMeasure, cMeasure ) } )
    endif
