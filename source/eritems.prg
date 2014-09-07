@@ -3,14 +3,14 @@
 #INCLUDE "FiveWin.ch"
 
 MEMVAR aItems, aFonts, aAreaIni, aWnd, aWndTitle
-MEMVAR oCbxArea, aCbxItems, aRuler
+MEMVAR oCbxArea, aCbxItems
 MEMVAR nAktItem, nAktArea, nSelArea, aSelection
 MEMVAR oMsgInfo
 MEMVAR lFillWindow, nDeveloper
 MEMVAR nRuler, nRulerTop
 MEMVAR cItemCopy, nCopyEntryNr, nCopyAreaNr, aSelectCopy, aItemCopy, nXMove, nYMove
 MEMVAR cInfoWidth, cInfoHeight, nInfoRow, nInfoCol, aItemPixelPos
-MEMVAR cDefIni, cMeasure
+MEMVAR cMeasure
 MEMVAR lProfi, oCurDlg, oGenVar,oER
 
 STATIC aItemPosition
@@ -505,22 +505,22 @@ function TextProperties( i, nArea, cAreaIni, lFromList, lNew )
    ACTION GetColorBtn( @oItem:nColText , aSay[1], aGet[1], oVar, nDefClr )
    aSay[1]:lBoxSelect := .f.
    aSay[1]:SetColor( GetColor( oItem:nColText ), GetColor( oItem:nColText ) )
-   
+
    REDEFINE BTNBMP aSay[2] PROMPT "" ID 402 OF oCurDlg NOBORDER ;
      ACTION GetColorBtn( @oItem:nColPane , aSay[2], aGet[2], oVar, nDefClr )
      aSay[2]:SetColor(  GetColor( oItem:nColPane ), GetColor( oItem:nColPane ) )
      aSay[2]:lBoxSelect := .f.
-    
+
    REDEFINE SAY aSay[3] PROMPT ;
       IIF( oItem:nFont > 0, " " + GetCurrentFont( oItem:nFont, GetFonts(), 1 ), "" ) ;
       ID 403 OF oCurDlg
 
    REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 151 OF oCurDlg ;
       ACTION GetColorBtn(  @oItem:nColText, aSay[1], aGet[1], oVar, nDefClr )
-   
+
    REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 152 OF oCurDlg ;
       ACTION GetColorBtn( @oItem:nColPane, aSay[2], aGet[2], oVar, nDefClr )
-    
+
    REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 153 OF oCurDlg ;
       ACTION ( oItem:nFont := ShowFontChoice( oItem:nFont ), aGet[3]:Refresh(), aSay[3]:Refresh() )
 
@@ -610,7 +610,7 @@ Return nil
 function SetItemDefault( oItem )
 
    WritePProString( "General", "Default" + IIF( oItem:lGraphic, "GRAPHIC", oItem:cType ), ;
-                    oItem:Set( .F., oER:nMeasure ), cDefIni )
+                    oItem:Set( .F., oER:nMeasure ), oER:cDefIni )
 
 return .T.
 
@@ -735,7 +735,7 @@ function GetoVar( i, nArea, cAreaIni, lNew )
    oVar:AddMember( "cOldDef"    ,, oVar:cItemDef                                                           )
    oVar:AddMember( "lNew"       ,, lNew                                                                    )
    oVar:AddMember( "lRemoveItem",, .F.                                                                     )
-   oVar:AddMember( "cShowExpr"  ,, AllTrim( GetPvProfString( "General", "Expressions", "0", cDefIni ) )    )
+   oVar:AddMember( "cShowExpr"  ,, AllTrim( GetPvProfString( "General", "Expressions", "0", oER:cDefIni ) )    )
    oVar:AddMember( "nGesWidth"  ,, VAL( GetPvProfString( "General", "Width", "600", cAreaIni ) )           )
    oVar:AddMember( "nGesHeight" ,, VAL( GetPvProfString( "General", "Height", "300", cAreaIni ) )          )
    oVar:AddMember( "cPicture"   ,, IIF( oER:nMeasure = 2, "999.99", "99999" )                                  )
@@ -1075,14 +1075,14 @@ function GraphicProperties( i, nArea, cAreaIni, lFromList, lNew )
 
    REDEFINE BTNBMP ID 151 OF oCurDlg NOBORDER RESOURCE "SELECT" TRANSPARENT ;
       ACTION GetColorBtn( @oItem:nColor , aSay[1], aGet[1], oVar, nDefClr )
-      
+
     //  ACTION ( nColor := ShowColorChoice( oItem:nColor ), ;
     //           IIF( nColor <> 0, EVAL( {|| oItem:nColor := nColor, aGet[1]:Refresh(), ;
     //           Set2Color( aSay[1], IIF( oItem:nColor > 0, oVar:aColors[oItem:nColor], ""), nDefClr ) } ), ) )
 
    REDEFINE BTNBMP ID 152 OF oCurDlg NOBORDER RESOURCE "SELECT" TRANSPARENT ;
     ACTION GetColorBtn( @oItem:nColFill , aSay[2], aGet[2], oVar, nDefClr )
-      
+
    //   ACTION ( nColor := ShowColorChoice( oItem:nColFill ), ;
    //            IIF( nColor <> 0, EVAL( {|| oItem:nColFill := nColor, aGet[2]:Refresh(), ;
    //            Set2Color( aSay[2], IIF( oItem:nColFill > 0, oVar:aColors[oItem:nColFill], ""), nDefClr ) } ), ) )
@@ -1743,7 +1743,7 @@ function NewItem( cTyp, nArea, nTmpCopyArea, nTmpCopyEntry, cTmpItemCopy )
 
    if cTyp <> "COPY"
 
-      cDefault := GetPvProfString( "General", "Default" + cTyp, "", cDefIni )
+      cDefault := GetPvProfString( "General", "Default" + cTyp, "", oER:cDefIni )
 
       if !EMPTY( cDefault )
          cItemDef := SUBSTR( cDefault, 1, StrAtNum( "|", cDefault, 2 ) ) + ;

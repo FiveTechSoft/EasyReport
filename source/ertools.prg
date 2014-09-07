@@ -2,11 +2,11 @@
 #INCLUDE "VRD.ch"
 #INCLUDE "Mail.ch"
 
-MEMVAR aItems, aFonts, aAreaIni, aWnd
+MEMVAR aItems, aAreaIni, aWnd
 MEMVAR cDefaultPath
 MEMVAR nAktArea
 MEMVAR aVRDSave
-MEMVAR cDefIni, lBeta
+MEMVAR lBeta
 MEMVAR lProfi, nUndoCount, nRedoCount, lPersonal, oGenVar
 MEMVAR oER
 
@@ -33,9 +33,9 @@ function InsertArea( lBefore, cTitle )
    local aAreaInis   := {}
    local lreturn     := .F.
    local cFile       := SPACE( 200 )
-   local aIniEntries := GetIniSection( "Areas", cDefIni )
+   local aIniEntries := GetIniSection( "Areas", oER:cDefIni )
    local nNewArea    := nAktArea + IIF( lBefore, 0, 1 )
-   local cDir        := CheckPath( GetPvProfString( "General", "AreaFilesDir", "", cDefIni ) )
+   local cDir        := CheckPath( GetPvProfString( "General", "AreaFilesDir", "", oER:cDefIni ) )
    LOCAL nDecimals   := IIF( oER:nMeasure = 2, 2, 0 )
 
    if EMPTY( cDir )
@@ -66,11 +66,11 @@ function InsertArea( lBefore, cTitle )
       AINS( aAreaInis, nNewArea )
       aAreaInis[nNewArea] := cFile
 
-      DelIniSection( "Areas", cDefIni )
+      DelIniSection( "Areas", oER:cDefIni )
 
       for i := 1 TO LEN( aAreaInis )
          if .NOT. EMPTY( aAreaInis[i] )
-            WritePProString( "Areas", ALLTRIM(STR( i, 3 )), ALLTRIM( aAreaInis[i] ), cDefIni )
+            WritePProString( "Areas", ALLTRIM(STR( i, 3 )), ALLTRIM( aAreaInis[i] ), oER:cDefIni )
          endif
       NEXT
 
@@ -80,7 +80,7 @@ function InsertArea( lBefore, cTitle )
          "Width="  + ALLTRIM(STR( oGenVar:aAreaSizes[nAktArea,1], 5, nDecimals )) + CRLF + ;
          "Height=" + ALLTRIM(STR( oGenVar:aAreaSizes[nAktArea,2], 5, nDecimals )) )
 
-      OpenFile( cDefIni )
+      OpenFile( oER:cDefIni )
 
       aWnd[nNewArea]:SetFocus()
 
@@ -97,9 +97,9 @@ function DeleteArea()
    if MsgNoYes( GL("Do you really want to delete this area?"), GL("Select an option") ) = .T.
 
       DelFile( aVRDSave[nAktArea,1] )
-      DelIniEntry( "Areas", ALLTRIM(STR( nAktArea, 5 )), cDefIni )
+      DelIniEntry( "Areas", ALLTRIM(STR( nAktArea, 5 )), oER:cDefIni )
 
-      OpenFile( cDefIni )
+      OpenFile( oER:cDefIni )
 
    endif
 
@@ -130,12 +130,12 @@ return ( nColor )
 function GetDBField( oGet, lInsert )
 
    local oDlg, oLbx1, oLbx2, i, cDbase, cField, oBtn, aTemp, cGeneral, cUser
-   local nShowExpr  := VAL( GetPvProfString( "General", "Expressions", "0", cDefIni ) )
-   local nShowDBase := VAL( GetPvProfString( "General", "EditDatabases", "1", cDefIni ) )
-   local cGenExpr   := ALLTRIM( oEr:cDataPath + GetPvProfString( "General", "GeneralExpressions", "", cDefIni ) )  // change CDefaultPath
-   local cUserExpr  := ALLTRIM( oEr:cDataPath + GetPvProfString( "General", "UserExpressions", "", cDefIni ) )      // change CDefaultPath
-  // local cGenExpr   := ALLTRIM( cDefaultPath + GetPvProfString( "General", "GeneralExpressions", "", cDefIni ) )
-  // local cUserExpr  := ALLTRIM( cDefaultPath + GetPvProfString( "General", "UserExpressions", "", cDefIni ) )
+   local nShowExpr  := VAL( GetPvProfString( "General", "Expressions", "0", oER:cDefIni ) )
+   local nShowDBase := VAL( GetPvProfString( "General", "EditDatabases", "1", oER:cDefIni ) )
+   local cGenExpr   := ALLTRIM( oEr:cDataPath + GetPvProfString( "General", "GeneralExpressions", "", oER:cDefIni ) )  // change CDefaultPath
+   local cUserExpr  := ALLTRIM( oEr:cDataPath + GetPvProfString( "General", "UserExpressions", "", oER:cDefIni ) )      // change CDefaultPath
+  // local cGenExpr   := ALLTRIM( cDefaultPath + GetPvProfString( "General", "GeneralExpressions", "", oER:cDefIni ) )
+  // local cUserExpr  := ALLTRIM( cDefaultPath + GetPvProfString( "General", "UserExpressions", "", oER:cDefIni ) )
    local nLen       := LEN( oGenVar:aDBFile )
    local aDbase     := {}
    local lOK        := .T.
@@ -244,8 +244,8 @@ return ( aTemp )
 
 function CreateDbfsExpressions()
 
-  local cGenExpr   := ALLTRIM( oEr:cDataPath + GetPvProfString( "General", "GeneralExpressions", "", cDefIni ) )
-  local cUserExpr  := ALLTRIM( oEr:cDataPath + GetPvProfString( "General", "UserExpressions", "", cDefIni ) )
+  local cGenExpr   := ALLTRIM( oEr:cDataPath + GetPvProfString( "General", "GeneralExpressions", "", oER:cDefIni ) )
+  local cUserExpr  := ALLTRIM( oEr:cDataPath + GetPvProfString( "General", "UserExpressions", "", oER:cDefIni ) )
 
  local aGeneral := {;
                     { "NAME"      , "C",    60,    0 },;
@@ -277,7 +277,7 @@ function OpenDatabases()
 
    local i, x, cEntry, cDbase, aFields, cFilter, cFieldNames, cFieldPos
    local nSelect     := SELECT()
-   local cSeparator  := GetPvProfString( "Databases", "Separator" , ";", cDefIni )
+   local cSeparator  := GetPvProfString( "Databases", "Separator" , ";", oER:cDefIni )
 
    CreateDbfsExpressions()
 
@@ -285,7 +285,7 @@ function OpenDatabases()
 
    for i := 1 TO 12
 
-      cEntry      := GetPvProfString( "Databases", ALLTRIM(STR( i, 3 )), "", cDefIni )
+      cEntry      := GetPvProfString( "Databases", ALLTRIM(STR( i, 3 )), "", oER:cDefIni )
       cDbase      := ALLTRIM( GetField( cEntry, 1 ) )
       cFilter     := ""
       cFieldNames := ""
@@ -345,7 +345,7 @@ function SaveDatabases()
                        ALLTRIM( x[2] ) + "|" + ;
                        ALLTRIM( x[4] ) + "|" + ;
                        ALLTRIM( x[5] ) + "|" + ;
-                       ALLTRIM( x[6] ), cDefIni ) } )
+                       ALLTRIM( x[6] ), oER:cDefIni ) } )
 
 return .T.
 
@@ -766,8 +766,8 @@ function MainCaption()
    LOCAL cVersion := if ( lBeta , " - Beta Version" , " - Full version" )
 
 
-   if .NOT. EMPTY( cDefIni )
-      cMainTitle := ALLTRIM( GetPvProfString( "General", "Title", "", cDefIni ) )
+   if .NOT. EMPTY( oER:cDefIni )
+      cMainTitle := ALLTRIM( GetPvProfString( "General", "Title", "", oER:cDefIni ) )
    endif
 
    creturn := IIF( EMPTY( cUserApp ), "EasyReport", cUserApp ) + ;
@@ -789,11 +789,11 @@ function Expressions( lTake, cAltText )
    local i, oDlg, oFld, oBrw, oBrw2, oBrw3, oFont, creturn, oSay1, nTyp, oGet1
    local oBtn1, aBtn[3], aGet[5], cName
    local nAltSel    := SELECT()
-   local nShowExpr  := VAL( GetPvProfString( "General", "Expressions", "0", cDefIni ) )
-   local cGenExpr   := ALLTRIM( oEr:cDataPath + GetPvProfString( "General", "GeneralExpressions", "General.dbf", cDefIni ) )
-   local cUserExpr  := ALLTRIM( oEr:cDataPath + GetPvProfString( "General", "UserExpressions", "User.dbf", cDefIni ) )
- //  local cGenExpr   := ALLTRIM( cDefaultPath + GetPvProfString( "General", "GeneralExpressions", "", cDefIni ) )
- //  local cUserExpr  := ALLTRIM( cDefaultPath + GetPvProfString( "General", "UserExpressions", "", cDefIni ) )
+   local nShowExpr  := VAL( GetPvProfString( "General", "Expressions", "0", oER:cDefIni ) )
+   local cGenExpr   := ALLTRIM( oEr:cDataPath + GetPvProfString( "General", "GeneralExpressions", "General.dbf", oER:cDefIni ) )
+   local cUserExpr  := ALLTRIM( oEr:cDataPath + GetPvProfString( "General", "UserExpressions", "User.dbf", oER:cDefIni ) )
+ //  local cGenExpr   := ALLTRIM( cDefaultPath + GetPvProfString( "General", "GeneralExpressions", "", oER:cDefIni ) )
+ //  local cUserExpr  := ALLTRIM( cDefaultPath + GetPvProfString( "General", "UserExpressions", "", oER:cDefIni ) )
    local aUndo      := {}
    local cErrorFile := ""
    //local aRDD      := { "DBFNTX", "COMIX", "DBFCDX" }
@@ -1263,7 +1263,7 @@ return ( STRTRAN(ALLTRIM( cText ), "_", " " ) )
 function PrintReport( lPreview, lDeveloper, lPrintDlg, LPrintIDs )
 
    local i, oVRD, cCondition
-   //local lPrintIDs := IIF( GetPvProfString( "General", "PrintIDs", "0", cDefIni ) = "0", .F., .T. )
+   //local lPrintIDs := IIF( GetPvProfString( "General", "PrintIDs", "0", oER:cDefIni ) = "0", .F., .T. )
 
    DEFAULT lPrintIDs := .F.
 
@@ -1277,13 +1277,13 @@ function PrintReport( lPreview, lDeveloper, lPrintDlg, LPrintIDs )
  //  if lDeveloper = .F.
  //     ShellExecute( 0, "Open", ;
  //        "ERSTART.EXE", ;
- //        "-File=" + ALLTRIM( cDefIni ) + ;
+ //        "-File=" + ALLTRIM( oER:cDefIni ) + ;
   //       IIF( lPreview, " -PREVIEW", " -PRINTDIALOG" ) + ;
    //      "-CHECK", ;
    //      NIL, 1 )
    //   return .T.
  //  ELSE
-      EASYREPORT oVRD NAME cDefIni OF oEr:oMainWnd PREVIEW lPreview ;
+      EASYREPORT oVRD NAME oER:cDefIni OF oEr:oMainWnd PREVIEW lPreview ;
                  PRINTDIALOG IIF( lPreview, .F., lPrintDlg ) PRINTIDS NOEXPR
  //  endif
 
@@ -1326,9 +1326,9 @@ return .T.
 function AltPrintReport( lPreview, cPrinter )
 
    local i, oVRD, cCondition
-   local lPrintIDs := IIF( GetPvProfString( "General", "PrintIDs", "0", cDefIni ) = "0", .F., .T. )
+   local lPrintIDs := IIF( GetPvProfString( "General", "PrintIDs", "0", oER:cDefIni ) = "0", .F., .T. )
 
-   oVRD := VRD():New( cDefIni, lPreview, cPrinter, oEr:oMainWnd,, lPrintIDs,, .T. )
+   oVRD := VRD():New( oER:cDefIni, lPreview, cPrinter, oEr:oMainWnd,, lPrintIDs,, .T. )
 
    //erste Seite
    for i := 1 TO LEN( oVRD:aAreaInis )

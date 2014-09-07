@@ -4,7 +4,7 @@ MEMVAR aItems, aFonts, aAreaIni, aWnd, aWndTitle, oMru
 MEMVAR oCbxArea, aRuler, cLongDefIni, cDefaultPath
 MEMVAR oGenVar
 MEMVAR aVRDSave, lVRDSave
-MEMVAR cDefIni, cDefIniPath, cMeasure
+MEMVAR cDefIniPath, cMeasure
 MEMVAR nDlgTextCol, nDlgBackCol
 MEMVAr oEr
 
@@ -67,12 +67,12 @@ function OpenFile( cFile )
 
       SysRefresh()
 
-      cDefIni := cFile
-      if AT( "\", cDefIni ) = 0
-         cDefIni := ".\" + cDefIni
+      oER:cDefIni := cFile
+      if AT( "\", oER:cDefIni ) = 0
+         oER:cDefIni := ".\" + oER:cDefIni
       endif
 
-      cDefIniPath := CheckPath( cFilePath( cDefIni ) )
+      cDefIniPath := CheckPath( cFilePath( oER:cDefIni ) )
 
       SetGeneralSettings()
 
@@ -93,7 +93,7 @@ function OpenFile( cFile )
 
       ClearUndoRedo() // and refresh the bar
 
-      cMainTitle      := ALLTRIM( GetPvProfString( "General", "Title", "", cDefIni ) )
+      cMainTitle      := ALLTRIM( GetPvProfString( "General", "Title", "", oER:cDefIni ) )
       oEr:oMainWnd:cTitle := MainCaption()
 
       SetScrollBar()
@@ -120,7 +120,7 @@ function CreateBackup()
 
    if VAL( GetPvProfString( "General", "CreateBackup", "0", oER:cGeneralIni ) ) = 1
 
-      CopyFile( cDefIni, STUFF( cDefIni, RAT( ".", cDefIni ), 1, "_backup." ) )
+      CopyFile( oER:cDefIni, STUFF( oER:cDefIni, RAT( ".", oER:cDefIni ), 1, "_backup." ) )
 
       for nArea := 1 TO LEN( aAreaIni )
 
@@ -143,8 +143,8 @@ function SaveFile()
 
    aVRDSave := ARRAY( 102, 2 )
 
-   aVRDSave[101,1] := cDefIni
-   aVRDSave[101,2] := MEMOREAD( cDefIni )
+   aVRDSave[101,1] := oER:cDefIni
+   aVRDSave[101,2] := MEMOREAD( oER:cDefIni )
    aVRDSave[102,1] := oER:cGeneralIni
    aVRDSave[102,2] := MEMOREAD( oER:cGeneralIni )
 
@@ -206,18 +206,18 @@ function SaveAs( cFile )
 
    if ! EMPTY( cFile )
 
-      cDefIni := VRD_LF2SF( ALLTRIM( cFile ) )
+      oER:cDefIni := VRD_LF2SF( ALLTRIM( cFile ) )
 
-      if AT( "\", cDefIni ) = 0
-         cDefIni := ".\" + cDefIni
+      if AT( "\", oER:cDefIni ) = 0
+         oER:cDefIni := ".\" + oER:cDefIni
       endif
 
-      aVRDSave[101,1] := cDefIni
+      aVRDSave[101,1] := oER:cDefIni
       MEMOWRIT( aVRDSave[101,1], aVRDSave[101,2] )
       MEMOWRIT( aVRDSave[102,1], aVRDSave[102,2] )
 
       //Alte Areas löschen
-      DelIniSection( "Areas", cDefIni )
+      DelIniSection( "Areas", oER:cDefIni )
 
       //Areas abspeichern
       for nArea := 1 TO LEN( aAreaIni )
@@ -228,19 +228,19 @@ function SaveAs( cFile )
             CreateNewFile( cAreaFile )
 
             aVRDSave[nArea,1] := VRD_LF2SF( cAreaFile )
-            //aVRDSave[nArea,1] := SUBSTR( cDefIni, 1, LEN( cDefIni )-2 ) + ;
+            //aVRDSave[nArea,1] := SUBSTR( oER:cDefIni, 1, LEN( oER:cDefIni )-2 ) + ;
             //                  PADL( ALLTRIM( STR( nArea, 2) ), 2, "0" )
             MEMOWRIT( aVRDSave[nArea,1], aVRDSave[nArea,2] )
 
             aAreaIni[nArea] := aVRDSave[nArea,1]
 
             //Areas in General Ini File ablegen
-            WritePProString( "Areas", ALLTRIM(STR( nArea, 3)), cFileName( cAreaFile ), cDefIni )
+            WritePProString( "Areas", ALLTRIM(STR( nArea, 3)), cFileName( cAreaFile ), oER:cDefIni )
 
          endif
 
          //Areapfad speichern
-         WritePProString( "General", "AreaFilesDir", cFilePath( cDefIni ), cDefIni )
+         WritePProString( "General", "AreaFilesDir", cFilePath( oER:cDefIni ), oER:cDefIni )
 
       next
 
@@ -296,9 +296,9 @@ function FileInfos()
    local i, oDlg, oBrw, cAreaDef, aFileInfo, oFld, nWnd, oIni, cLastSave
    local lSave        := .F.
    local aFiles       := { { GL("General"), ALLTRIM( cLongDefIni ) } }
-   local cTitle       := PADR( GetPvProfString( "General", "Title", "", cDefIni ), 80 )
-   local cGroup       := PADR( GetPvProfString( "General", "Group", "", cDefIni ), 80 )
-   local aIniEntries  := GetIniSection( "Infos", cDefIni )
+   local cTitle       := PADR( GetPvProfString( "General", "Title", "", oER:cDefIni ), 80 )
+   local cGroup       := PADR( GetPvProfString( "General", "Group", "", oER:cDefIni ), 80 )
+   local aIniEntries  := GetIniSection( "Infos", oER:cDefIni )
    local cAuthor      := PADR( GetIniEntry( aIniEntries, "Author" ), 100 )
    local cCompany     := PADR( GetIniEntry( aIniEntries, "Company" ), 100 )
    local cComment     := PADR( GetIniEntry( aIniEntries, "Comment" ), 200 )
@@ -307,7 +307,7 @@ function FileInfos()
    local cRevision    := GetIniEntry( aIniEntries, "Revision", "0" )
    local nNrItems     := 0
    local nNrAreas     := 0
-   local aAreaEntries := GetIniSection( "Areas", cDefIni )
+   local aAreaEntries := GetIniSection( "Areas", oER:cDefIni )
 
    if EMPTY( cSaveDate )
       cLastSave := "-"
@@ -388,7 +388,7 @@ function FileInfos()
 
    if lSave
 
-      INI oIni FILE cDefIni
+      INI oIni FILE oER:cDefIni
          SET SECTION "General" ENTRY "Title"   TO ALLTRIM( cTitle ) OF oIni
          SET SECTION "General" ENTRY "Group"   TO ALLTRIM( cGroup ) OF oIni
          SET SECTION "Infos"   ENTRY "Author"  TO RTRIM( cAuthor )  OF oIni
@@ -425,9 +425,9 @@ function SetSaveInfos()
 
    local oIni
 
-   INI oIni FILE cDefIni
+   INI oIni FILE oER:cDefIni
       SET SECTION "Infos" ENTRY "Revision" TO ;
-         ALLTRIM(STR( VAL( GetPvProfString( "Infos", "Revision", "0", cDefIni ) ) + 1, 5 )) OF oIni
+         ALLTRIM(STR( VAL( GetPvProfString( "Infos", "Revision", "0", oER:cDefIni ) ) + 1, 5 )) OF oIni
       SET SECTION "Infos" ENTRY "SaveDate" TO ALLTRIM( DTOC( DATE() ) ) OF oIni
       SET SECTION "Infos" ENTRY "SaveTime" TO TIME() OF oIni
    ENDINI
