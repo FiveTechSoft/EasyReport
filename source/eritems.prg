@@ -735,7 +735,7 @@ function GetoVar( i, nArea, cAreaIni, lNew )
    oVar:AddMember( "cOldDef"    ,, oVar:cItemDef                                                           )
    oVar:AddMember( "lNew"       ,, lNew                                                                    )
    oVar:AddMember( "lRemoveItem",, .F.                                                                     )
-   oVar:AddMember( "cShowExpr"  ,, AllTrim( GetPvProfString( "General", "Expressions", "0", oER:cDefIni ) )    )
+   oVar:AddMember( "cShowExpr"  ,, AllTrim( oER:GetDefIni( "General", "Expressions", "0" ) )    )
    oVar:AddMember( "nGesWidth"  ,, VAL( GetPvProfString( "General", "Width", "600", cAreaIni ) )           )
    oVar:AddMember( "nGesHeight" ,, VAL( GetPvProfString( "General", "Height", "300", cAreaIni ) )          )
    oVar:AddMember( "cPicture"   ,, IIF( oER:nMeasure = 2, "999.99", "99999" )                                  )
@@ -1200,7 +1200,7 @@ function SaveGraItem( oVar, oItem )
 
 return .T.
 
-//----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------/
 
 function BarcodeProperties( i, nArea, cAreaIni, lFromList, lNew )
 
@@ -1743,7 +1743,7 @@ function NewItem( cTyp, nArea, nTmpCopyArea, nTmpCopyEntry, cTmpItemCopy )
 
    if cTyp <> "COPY"
 
-      cDefault := GetPvProfString( "General", "Default" + cTyp, "", oER:cDefIni )
+      cDefault := oER:GetDefIni( "General", "Default" + cTyp, "" )
 
       if !EMPTY( cDefault )
          cItemDef := SUBSTR( cDefault, 1, StrAtNum( "|", cDefault, 2 ) ) + ;

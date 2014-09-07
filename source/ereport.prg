@@ -192,7 +192,7 @@ function BarMenu()
       ACTION Itemlist() ;
       WHEN .NOT. Empty( oER:cDefIni )
 
-   if Val( GetPvProfString( "General", "EditSetting", "1", oER:cDefIni ) ) = 1
+   if Val( oEr:GetDefIni( "General", "EditSetting", "1" ) ) = 1
       DEFINE BUTTON RESOURCE "B_FONTCOLOR32", "B_FONTCOLOR32", "B_FONTCOLOR321"  ;
          OF oBar ;
          PROMPT FWString( "Fonts" ) ;
@@ -201,7 +201,7 @@ function BarMenu()
          WHEN .NOT. Empty( oER:cDefIni )
    endif
 
-   if Val( GetPvProfString( "General", "EditAreaProperties", "1", oER:cDefIni ) ) = 1
+   if Val( oEr:GetDefIni( "General", "EditAreaProperties", "1" ) ) = 1
       MENU oMenuAreas POPUP
       ENDMENU
 
@@ -221,7 +221,7 @@ function BarMenu()
       ACTION IIF( LEN( aSelection ) <> 0, MultiItemProperties(), ItemProperties( nAktItem, nAktArea ) ) ;
       WHEN .NOT. Empty( oER:cDefIni )
 
-   if Val( GetPvProfString( "General", "InsertMode", "1", oER:cDefIni ) ) = 1
+   if Val( oEr:GetDefIni( "General", "InsertMode", "1" ) ) = 1
       DEFINE BUTTON RESOURCE "B_TEXT32", "B_TEXT32", "B_TEXT321" ;
          OF oBar GROUP ;
          PROMPT FWString( "&Text" ) ;
@@ -388,7 +388,7 @@ return NIL
 
 function DeclarePublics( cDefFile )
 
-   PUBLIC cDefIni, cDefIniPath
+   PUBLIC cDefIniPath
    PUBLIC cMeasure
    PUBLIC lBeta       := .F.
    PUBLIC lProfi      := .T.
@@ -566,10 +566,10 @@ function DeclarePublics( cDefFile )
 
    oGenVar:AddMember( "lItemDlg",, .F. )
    oGenVar:AddMember( "lDlgSave",, .F. )
-   oGenVar:AddMember( "nDlgTop" ,, Val( GetPvProfString( "ItemDialog", "Top" , "0", oER:cGeneralIni ) ) )
-   oGenVar:AddMember( "nDlgLeft",, Val( GetPvProfString( "ItemDialog", "Left", "0", oER:cGeneralIni ) ) )
+   oGenVar:AddMember( "nDlgTop" ,, Val( oEr:GetGeneralIni( "ItemDialog", "Top" , "0") ) )
+   oGenVar:AddMember( "nDlgLeft",, Val( oEr:GetGeneralIni( "ItemDialog", "Left", "0" ) ) )
 
-   oGenVar:AddMember( "lShowBorder",, ( GetPvProfString( "General", "ShowTextBorder", "1", oER:cGeneralIni ) = "1" ) )
+   oGenVar:AddMember( "lShowBorder",, ( oEr:GetGeneralIni( "General", "ShowTextBorder", "1" ) = "1" ) )
 
    oGenVar:AddMember( "cLoadFile" ,, "" )
    oGenVar:AddMember( "lFirstFile",, .T. )
@@ -584,16 +584,16 @@ function SetGeneralSettings()
 
    LOCAL aMeasure := { GL("mm"), GL("inch") , GL("Pixel") }
 
-   oER:nMeasure := Val( GetPvProfString( "General", "Measure", "1", oER:cDefIni ) )
+   oER:nMeasure := Val( oEr:GetDefIni( "General", "Measure", "1" ) )
 
    cMeasure := aMeasure [ oER:nMeasure ]
 
-   nDeveloper := Val( GetPvProfString( "General", "DeveloperMode", STR( nDeveloper, 1 ), oER:cDefIni ) )
+   nDeveloper := Val( oEr:GetDefIni( "General", "DeveloperMode", STR( nDeveloper, 1 )  ) )
 
-   oGenVar:lStandalone := ( GetPvProfString( "General", "Standalone"   , "0", oER:cDefIni ) = "1" )
-   oGenVar:lShowGrid   := ( GetPvProfString( "General", "ShowGrid"     , "0", oER:cDefIni ) = "1" )
-   oGenVar:nGridWidth  := Val( GetPvProfString( "General", "GridWidth" , "1", oER:cDefIni ) )
-   oGenVar:nGridHeight := Val( GetPvProfString( "General", "GridHeight", "1", oER:cDefIni ) )
+   oGenVar:lStandalone := ( oEr:GetDefIni( "General", "Standalone"   , "0" ) = "1" )
+   oGenVar:lShowGrid   := ( oEr:GetDefIni( "General", "ShowGrid"     , "0" ) = "1" )
+   oGenVar:nGridWidth  := Val( oEr:GetDefIni( "General", "GridWidth" , "1" ) )
+   oGenVar:nGridHeight := Val( oEr:GetDefIni( "General", "GridHeight", "1" ) )
    nXMove := ER_GetPixel( oGenVar:nGridWidth )
    nYMove := ER_GetPixel( oGenVar:nGridHeight )
 
@@ -987,7 +987,7 @@ function BuildMenu()
       WHEN .NOT. Empty( oER:cDefIni )
 
    SEPARATOR
-   if Val( GetPvProfString( "General", "Standalone", "0", oER:cDefIni ) ) = 1
+   if Val( oEr:GetDefIni( "General", "Standalone", "0" ) ) = 1
       MENUITEM GL("Pre&view") + chr(9) + GL("Ctrl+P") RESOURCE "B_PREVIEW" ;
          ACCELERATOR ACC_CONTROL, ASC( GL("P") ) ;
          ACTION PrintReport( .T. ) ;
@@ -1038,8 +1038,8 @@ function BuildMenu()
       WHEN .NOT. Empty( oER:cDefIni ) .and. .NOT. Empty( cItemCopy )
    SEPARATOR
 
-   if Val( GetPvProfString( "General", "InsertAreas", "1", oER:cDefIni ) ) <> 1
-      if Val( GetPvProfString( "General", "EditAreaProperties", "1", oER:cDefIni ) ) = 1
+   if Val( oEr:GetDefIni( "General", "InsertAreas", "1" ) ) <> 1
+      if Val( oEr:GetDefIni( "General", "EditAreaProperties", "1" ) ) = 1
          MENUITEM GL("&Area Properties") + chr(9) + GL("Ctrl+A") RESOURCE "B_AREA" ;
             ACTION AreaProperties( nAktArea ) ;
             ACCELERATOR ACC_CONTROL, ASC( GL("A") ) ;
@@ -1066,7 +1066,7 @@ function BuildMenu()
       ENDMENU
    ENDMENU
 
-   if Val( GetPvProfString( "General", "InsertMode", "1", oER:cDefIni ) ) = 1
+   if Val( oEr:GetDefIni( "General", "InsertMode", "1" ) ) = 1
 
       MENUITEM GL("&Items")
       MENU
@@ -1093,7 +1093,7 @@ function BuildMenu()
          WHEN .NOT. Empty( oER:cDefIni )
       ENDMENU
 
-      if Val( GetPvProfString( "General", "InsertAreas", "1", oER:cDefIni ) ) = 1
+      if Val( oEr:GetDefIni( "General", "InsertAreas", "1" ) ) = 1
       MENUITEM GL("&Areas")
       MENU
       MENUITEM GL("Insert Area &before") ACTION InsertArea( .T., STRTRAN( GL("Insert Area &before"), "&" ) )
@@ -1101,11 +1101,11 @@ function BuildMenu()
       SEPARATOR
       MENUITEM GL("&Delete current Area") ACTION DeleteArea()
       SEPARATOR
-      if Val( GetPvProfString( "General", "EditAreaProperties", "1", oER:cDefIni ) ) = 1
+      if Val( oEr:GetDefIni( "General", "EditAreaProperties", "1" ) ) = 1
          MENUITEM GL("&Area Properties") + chr(9) + GL("Ctrl+A") RESOURCE "B_AREA" ;
             ACTION AreaProperties( nAktArea ) ;
             ACCELERATOR ACC_CONTROL, ASC( GL("A") ) ;
-            WHEN .NOT. Empty( oER:cDefIni )
+            WHEN !Empty( oER:cDefIni )
       endif
       ENDMENU
       endif
@@ -1117,38 +1117,38 @@ function BuildMenu()
    MENUITEM GL("Area and Item &List") + chr(9) + GL("Ctrl+L") RESOURCE "B_ITEMLIST" ;
       ACTION Itemlist() ;
       ACCELERATOR ACC_CONTROL, ASC( GL("L") ) ;
-      WHEN .NOT. Empty( oER:cDefIni )
-   if Val( GetPvProfString( "General", "EditProperties", "1", oER:cDefIni ) ) = 1
+      WHEN !Empty( oER:cDefIni )
+   if Val( oEr:GetDefIni( "General", "EditProperties", "1" ) ) = 1
       MENUITEM GL("&Fonts and Colors") + chr(9) + GL("Ctrl+F") RESOURCE "B_FONTCOLOR" ;
          ACTION FontsAndColors() ;
          ACCELERATOR ACC_CONTROL, ASC( GL("F") ) ;
-         WHEN .NOT. Empty( oER:cDefIni )
+         WHEN !Empty( oER:cDefIni )
    endif
    SEPARATOR
-   if Val( GetPvProfString( "General", "Expressions", "0", oER:cDefIni ) ) > 0
+   if Val( oEr:GetDefIni( "General", "Expressions", "0" ) ) > 0
       MENUITEM GL("&Expressions") ;
          ACTION Expressions() ;
-         WHEN .NOT. Empty( oER:cDefIni )
+         WHEN !Empty( oER:cDefIni )
    endif
-   if Val( GetPvProfString( "General", "EditDatabases", "1", oER:cDefIni ) ) > 0
+   if Val( oEr:GetDefIni( "General", "EditDatabases", "1" ) ) > 0
       MENUITEM GL("&Databases") ;
          ACTION Databases() ;
-         WHEN .NOT. Empty( oER:cDefIni )
+         WHEN !Empty( oER:cDefIni )
    endif
    MENUITEM GL("&Report Settings") ;
       ACTION ReportSettings() ;
-      WHEN .NOT. Empty( oER:cDefIni )
+      WHEN !Empty( oER:cDefIni )
    SEPARATOR
-   if Val( GetPvProfString( "General", "EditLanguage", "0", oER:cDefIni ) ) = 1
+   if Val( oEr:GetDefIni( "General", "EditLanguage", "0" ) ) = 1
       MENUITEM GL("Edit &Language") ;
          ACTION EditLanguage()
    endif
    MENUITEM GL("&Options") ;
       ACTION Options() ;
-      WHEN .NOT. Empty( oER:cDefIni )
+      WHEN !Empty( oER:cDefIni )
    ENDMENU
 
-   if Val( GetPvProfString( "General", "Help", "1", oER:cGeneralIni ) ) = 1
+   if Val( oEr:GetDefIni( "General", "Help", "1" ) ) = 1
       MENUITEM GL("&Help")
       MENU
       MENUITEM GL("&Help Topics") + chr(9) + GL("F1") ;
@@ -1266,7 +1266,7 @@ function GenerateSource( nArea )
 
    if lGenerate = .T.
 
-      cAreaDef := GetPvProfString( "Areas", AllTrim(STR(nArea,5)) , "", oER:cDefIni )
+      cAreaDef := oEr:GetDefIni( "Areas", AllTrim(STR(nArea,5)) , "" )
       cAreaDef := VRD_LF2SF( AllTrim( cAreaDef ) )
 
       cAreaTitle := AllTrim( GetPvProfString( "General", "Title" , "", aAreaIni[ nArea ] ) )
@@ -1330,7 +1330,7 @@ function ClientWindows()
    local nTop          := 0
    local nWindowNr     := 0
    local aIniEntries   := GetIniSection( "Areas", oER:cDefIni )
-   local cAreaFilesDir := CheckPath( GetPvProfString( "General", "AreaFilesDir", "", oER:cDefIni ) )
+   local cAreaFilesDir := CheckPath( oEr:GetDefIni( "General", "AreaFilesDir", "" ) )
    local lReticule
 
    //Sichern
@@ -1963,7 +1963,7 @@ return .T.
 
 function GetColor( nNr )
 
-return Val( GetPvProfString( "Colors", AllTrim(STR( nNr, 5 )) , "", oER:cDefIni ) )
+return Val( oEr:GetDefIni( "Colors", AllTrim(STR( nNr, 5 )) , "" ) )
 
 //----------------------------------------------------------------------------//
 
@@ -1973,7 +1973,7 @@ function GetAllColors()
    local aColors := {}
 
    for i := 1 to 30
-      AADD( aColors, PADR( GetPvProfString( "Colors", AllTrim(STR( i, 5 )) , "", oER:cDefIni ), 15 ) )
+      AADD( aColors, PADR( oEr:GetDefIni( "Colors", AllTrim(STR( i, 5 )) , "" ), 15 ) )
    next
 
 return ( aColors )
@@ -2348,7 +2348,7 @@ function GetFonts()
 
    for i := 1 to 20
 
-      cFontDef := AllTrim( GetPvProfString( "Fonts", AllTrim(STR(i,3)) , "", oER:cDefIni ) )
+      cFontDef := AllTrim( oEr:GetDefIni( "Fonts", AllTrim(STR(i,3)) , "" ) )
 
       if .NOT. Empty( cFontDef )
 
@@ -2390,17 +2390,17 @@ function ReportSettings()
 
    local i, oDlg, oIni, aGrp[2], oRad1, aGet[ 1 ]
    local lSave       := .F.
-   local nWidth      := Val( GetPvProfString( "General", "PaperWidth" , "", oER:cDefIni ) )
-   local nHeight     := Val( GetPvProfString( "General", "PaperHeight", "", oER:cDefIni ) )
-   local nTop        := Val( GetPvProfString( "General", "TopMargin" , "20", oER:cDefIni ) )
-   local nLeft       := Val( GetPvProfString( "General", "LeftMargin", "20", oER:cDefIni ) )
-   local nPageBreak  := Val( GetPvProfString( "General", "PageBreak", "240", oER:cDefIni ) )
-   local nOrient     := Val( GetPvProfString( "General", "Orientation", "1", oER:cDefIni ) )
-   local cTitle      := PADR( GetPvProfString( "General", "Title", "", oER:cDefIni ), 80 )
-   local cGroup      := PADR( GetPvProfString( "General", "Group", "", oER:cDefIni ), 80 )
+   local nWidth      := Val( oEr:GetDefIni( "General", "PaperWidth" , "" ) )
+   local nHeight     := Val( oEr:GetDefIni( "General", "PaperHeight", "" ) )
+   local nTop        := Val( oEr:GetDefIni( "General", "TopMargin" , "20" ) )
+   local nLeft       := Val( oEr:GetDefIni( "General", "LeftMargin", "20" ) )
+   local nPageBreak  := Val( oEr:GetDefIni( "General", "PageBreak", "240" ) )
+   local nOrient     := Val( oEr:GetDefIni( "General", "Orientation", "1" ) )
+   local cTitle      := PADR( oEr:GetDefIni( "General", "Title", "" ), 80 )
+   local cGroup      := PADR( oEr:GetDefIni( "General", "Group", "" ), 80 )
    local cPicture    := IIF( oER:nMeasure = 2, "999.99", "99999" )
    local aFormat     := GetPaperSizes()
-   local nFormat     := Val( GetPvProfString( "General", "PaperSize", "9", oER:cDefIni ) )
+   local nFormat     := Val( oEr:GetDefIni( "General", "PaperSize", "9" ) )
    local cFormat     := aFormat[ IIF( nFormat = 0, 9, nFormat ) ]
    LOCAL nDecimals    := IIF( oER:nMeasure = 2, 2, 0 )
 
@@ -2671,7 +2671,7 @@ static Function FillTree( oTree, oDlg )
 
    local lFirstArea    := .T.
    local aIniEntries   := GetIniSection( "Areas", oER:cDefIni )
-   local cAreaFilesDir := CheckPath( GetPvProfString( "General", "AreaFilesDir", "", oER:cDefIni ) )
+   local cAreaFilesDir := CheckPath( oEr:GetDefIni( "General", "AreaFilesDir", "" ) )
    local oTr1
    local aTr:= {}
    local i, y, oTr2, cItemDef, aElemente, nEntry, cTitle
@@ -2798,7 +2798,7 @@ function ListTrees( oTree )
    local nClose        := 1
    local nOpen         := 2
    local aIniEntries   := GetIniSection( "Areas", oER:cDefIni )
-   local cAreaFilesDir := CheckPath( GetPvProfString( "General", "AreaFilesDir", "", oER:cDefIni ) )
+   local cAreaFilesDir := CheckPath( oEr:GetDefIni( "General", "AreaFilesDir", "" ) )
 
    oTr1 := oTree:GetRoot()
 
@@ -3299,6 +3299,8 @@ CLASS TEasyReport
 
    METHOD New() CONSTRUCTOR
    METHOD GetGeneralIni( cSection , cKey, cDefault ) INLINE GetPvProfString( cSection, cKey, cDefault, ::cGeneralIni )
+   METHOD GetDefIni( cSection , cKey, cDefault ) INLINE GetPvProfString( cSection, cKey, cDefault, ::cDefIni )
+
 
 ENDCLASS
 

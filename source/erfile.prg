@@ -93,7 +93,7 @@ function OpenFile( cFile )
 
       ClearUndoRedo() // and refresh the bar
 
-      cMainTitle      := ALLTRIM( GetPvProfString( "General", "Title", "", oER:cDefIni ) )
+      cMainTitle      := ALLTRIM( oer:GetDefIni( "General", "Title", "" ) )
       oEr:oMainWnd:cTitle := MainCaption()
 
       SetScrollBar()
@@ -118,7 +118,7 @@ function CreateBackup()
 
    local nArea
 
-   if VAL( GetPvProfString( "General", "CreateBackup", "0", oER:cGeneralIni ) ) = 1
+   if VAL( oEr:GetGeneralIni( "General", "CreateBackup", "0" ) ) == 1
 
       CopyFile( oER:cDefIni, STUFF( oER:cDefIni, RAT( ".", oER:cDefIni ), 1, "_backup." ) )
 
@@ -296,8 +296,8 @@ function FileInfos()
    local i, oDlg, oBrw, cAreaDef, aFileInfo, oFld, nWnd, oIni, cLastSave
    local lSave        := .F.
    local aFiles       := { { GL("General"), ALLTRIM( cLongDefIni ) } }
-   local cTitle       := PADR( GetPvProfString( "General", "Title", "", oER:cDefIni ), 80 )
-   local cGroup       := PADR( GetPvProfString( "General", "Group", "", oER:cDefIni ), 80 )
+   local cTitle       := PADR( oEr:GetDefIni( "General", "Title", "" ), 80 )
+   local cGroup       := PADR( oEr:GetDefIni( "General", "Group", "" ), 80 )
    local aIniEntries  := GetIniSection( "Infos", oER:cDefIni )
    local cAuthor      := PADR( GetIniEntry( aIniEntries, "Author" ), 100 )
    local cCompany     := PADR( GetIniEntry( aIniEntries, "Company" ), 100 )
@@ -427,7 +427,7 @@ function SetSaveInfos()
 
    INI oIni FILE oER:cDefIni
       SET SECTION "Infos" ENTRY "Revision" TO ;
-         ALLTRIM(STR( VAL( GetPvProfString( "Infos", "Revision", "0", oER:cDefIni ) ) + 1, 5 )) OF oIni
+         ALLTRIM(STR( VAL( oEr:GetDefIni( "Infos", "Revision", "0" ) ) + 1, 5 )) OF oIni
       SET SECTION "Infos" ENTRY "SaveDate" TO ALLTRIM( DTOC( DATE() ) ) OF oIni
       SET SECTION "Infos" ENTRY "SaveTime" TO TIME() OF oIni
    ENDINI
