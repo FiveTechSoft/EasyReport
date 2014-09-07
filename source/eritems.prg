@@ -159,11 +159,7 @@ function DeleteItem( i, nArea, lFromList, lRemove, lFromUndoRedo )
    cItemDef := AllTrim( GetPvProfString( "Items", AllTrim(STR(i,5)) , "", cAreaIni ) )
    cOldDef  := cItemDef
 
-   if lRemove
-      cWert := " 0"
-   ELSE
-      cWert := " 1"
-   endif
+   cWert:= IIf( lRemove , " 0", " 1" )
 
    cItemDef := SUBSTR( cItemDef, 1, StrAtNum( "|", cItemDef, 3 ) ) + " " + ;
                cWert + ;
@@ -326,11 +322,11 @@ function ItemProperties( i, nArea, lFromList, lNew )
 
    cName := AllTrim( GetField( cItemDef, 2 ) )
 
-   if UPPER( cTyp ) = "IMAGE" .AND. EMPTY( cName ) = .T.
-      cName := AllTrim(STR(i,5)) + ". " + AllTrim( GetField( cItemDef, 11 ) )
-   ELSE
-      cName := AllTrim(STR(i,5)) + ". " + cName
-   endif
+   if UPPER( cTyp ) == "IMAGE" .AND. EMPTY( cName )
+      cName := AllTrim( GetField( cItemDef, 11 ) )
+   ENDIF
+   cName := AllTrim(STR(i,5)) + ". " + cName
+
 
    Memory(-1)
    SysRefresh()
@@ -391,6 +387,12 @@ function UpdateItems( nValue, nTyp, lAddValue, aOldValue )
    local lStop     := .F.
    local nPixValue := ER_GetPixel( nValue )
 
+   if nValue == aOldValue[ nTyp ]
+       RETURN .T.
+   endif
+
+   /*
+
    do case
    case nTyp = 1 .AND. nValue = aOldValue[1] ; lStop := .T.
    case nTyp = 2 .AND. nValue = aOldValue[2] ; lStop := .T.
@@ -401,6 +403,8 @@ function UpdateItems( nValue, nTyp, lAddValue, aOldValue )
    if lStop
       return( .T. )
    endif
+
+    */
 
    UnSelectAll( .F. )
 
@@ -810,14 +814,21 @@ return ( .T. )
 
 function SaveItemGeneral( oVar, oItem )
 
-   // Immer auch SaveTextItem aktualisieren.
-   // Der Funktionsinhalt muﬂ dort direkt angeh‰ngt werden.
+   LOCAL xItem := aItems[oVar:nArea,oVar:i]
 
+   if !oItem:lVisible .AND. !Empty( xItem )
+      xItem:lDrag := .F.
+      xItem:HideDots()
+      xItem:End()
+   endif
+
+  /*
    if !oItem:lVisible .AND. aItems[oVar:nArea,oVar:i] <> NIL
       aItems[oVar:nArea,oVar:i]:lDrag := .F.
       aItems[oVar:nArea,oVar:i]:HideDots()
       aItems[oVar:nArea,oVar:i]:End()
    endif
+  */
 
    if oVar:lRemoveItem
       DelIniEntry( "Items", AllTrim(STR(oVar:i,5)), oVar:cAreaIni )
@@ -925,8 +936,8 @@ function ImageProperties( i, nArea, cAreaIni, lFromList, lNew )
    ACTIVATE DIALOG oCurDlg CENTERED ; //NOMODAL ;
       ON INIT ( GetItemDlgPos(), ;
                 IIF( nDeveloper = 0, ( aGet[3]:Hide(), aSay[1]:Hide(), aGet[2]:nWidth( 328 ) ), ), ;
-                IIF( lFromList = .T. .OR. oItem:nItemID > 0, aBtn[1]:Hide(), ), ;
-                IIF( oVar:cShowExpr = "0" .OR. lProfi = .F., aBtn[3]:Hide(), ), ;
+                IIF( lFromList .OR. oItem:nItemID > 0, aBtn[1]:Hide(), ), ;
+                IIF( oVar:cShowExpr = "0" .OR. !lProfi, aBtn[3]:Hide(), ), ;
                 aGrp[1]:SetText( GL("Image") ), ;
                 aGrp[2]:SetText( GL("Position / Size") ), ;
                 oCbx1:SetText( GL("Border") ), ;
@@ -1361,8 +1372,8 @@ function SaveBarItem( oVar, oItem )
       SET SECTION "Items" ENTRY AllTrim(STR(oVar:i,5)) TO oVar:cItemDef OF oIni
    ENDINI
 
-   IIF( oItem:nOrient = 2, lCenter := .T., lCenter := .F. )
-   IIF( oItem:nOrient = 3, lRight  := .T., lRight  := .F. )
+   lCenter := IIF( oItem:nOrient == 2, .T., .F. )
+   lRight  := IIF( oItem:nOrient == 3, .T., .F. )
 
    if oItem:nShow = 1
 
@@ -1421,7 +1432,7 @@ function SetItemSize( i, nArea, cAreaIni )
          AllTrim(STR( nHeight, 5, nDecimals )) + ;
          SUBSTR( cItemDef, StrAtNum( "|", cItemDef, 10 ) )
 
-      if IsGraphic( cTyp ) = .T.
+      if IsGraphic( cTyp )
 
          nColor     := VAL( GetField( cItemDef, 11 ) )
          nColFill   := VAL( GetField( cItemDef, 12 ) )
@@ -1459,7 +1470,7 @@ function SetItemSize( i, nArea, cAreaIni )
          VAL( GetField( cItemDef, 9  ) ) <> VAL( GetField( cOldDef, 9  ) ) .OR. ;
          VAL( GetField( cItemDef, 10 ) ) <> VAL( GetField( cOldDef, 10 ) )
 
-         if lFillWindow = .F.
+         if !lFillWindow
             Add2Undo( cOldDef, i, nArea )
             SetSave( .F. )
          endif
