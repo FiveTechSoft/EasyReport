@@ -1389,11 +1389,16 @@ function ClientWindows()
             FROM nTop, 0 to nTop + nHeight + nAreaZugabe, nWidth PIXEL ;
             STYLE nOr( WS_BORDER )
          */
-
+         /*  
          aWnd[ nWnd ] = ER_MdiChild():New( nTop, 0, nTop + nHeight + nAreaZugabe,;
                             nWidth, cTitle, nOr( WS_BORDER ),, oEr:oMainWnd,, .T.,,,,;
                             oGenVar:oAreaBrush, .T. )
-
+       */
+       
+        aWnd[ nWnd ] = ER_MdiChild():New( nTop, 0, nHeight + nAreaZugabe,;
+                            nWidth, cTitle, nOr( WS_BORDER ),, oEr:oMainWnd,, .T.,,,,;
+                            oGenVar:oAreaBrush, .T. )
+                            
          aWnd[ nWnd ]:nArea = nWnd
 
          aWndTitle[ nWnd ] = cTitle
