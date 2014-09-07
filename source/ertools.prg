@@ -35,7 +35,7 @@ function InsertArea( lBefore, cTitle )
    local cFile       := SPACE( 200 )
    local aIniEntries := GetIniSection( "Areas", oER:cDefIni )
    local nNewArea    := nAktArea + IIF( lBefore, 0, 1 )
-   local cDir        := CheckPath( GetPvProfString( "General", "AreaFilesDir", "", oER:cDefIni ) )
+   local cDir        := CheckPath( oER:GetDefIni( "General", "AreaFilesDir", "" ) )
    LOCAL nDecimals   := IIF( oER:nMeasure = 2, 2, 0 )
 
    if EMPTY( cDir )
@@ -130,10 +130,10 @@ return ( nColor )
 function GetDBField( oGet, lInsert )
 
    local oDlg, oLbx1, oLbx2, i, cDbase, cField, oBtn, aTemp, cGeneral, cUser
-   local nShowExpr  := VAL( GetPvProfString( "General", "Expressions", "0", oER:cDefIni ) )
-   local nShowDBase := VAL( GetPvProfString( "General", "EditDatabases", "1", oER:cDefIni ) )
-   local cGenExpr   := ALLTRIM( oEr:cDataPath + GetPvProfString( "General", "GeneralExpressions", "", oER:cDefIni ) )  // change CDefaultPath
-   local cUserExpr  := ALLTRIM( oEr:cDataPath + GetPvProfString( "General", "UserExpressions", "", oER:cDefIni ) )      // change CDefaultPath
+   local nShowExpr  := VAL( oER:GetDefIni( "General", "Expressions", "0" ) )
+   local nShowDBase := VAL( oER:GetDefIni( "General", "EditDatabases", "1" ) )
+   local cGenExpr   := ALLTRIM( oEr:cDataPath + oER:GetDefIni( "General", "GeneralExpressions", "" ) )  // change CDefaultPath
+   local cUserExpr  := ALLTRIM( oEr:cDataPath + oER:GetDefIni( "General", "UserExpressions", "" ) )      // change CDefaultPath
   // local cGenExpr   := ALLTRIM( cDefaultPath + GetPvProfString( "General", "GeneralExpressions", "", oER:cDefIni ) )
   // local cUserExpr  := ALLTRIM( cDefaultPath + GetPvProfString( "General", "UserExpressions", "", oER:cDefIni ) )
    local nLen       := LEN( oGenVar:aDBFile )
@@ -244,8 +244,8 @@ return ( aTemp )
 
 function CreateDbfsExpressions()
 
-  local cGenExpr   := ALLTRIM( oEr:cDataPath + GetPvProfString( "General", "GeneralExpressions", "", oER:cDefIni ) )
-  local cUserExpr  := ALLTRIM( oEr:cDataPath + GetPvProfString( "General", "UserExpressions", "", oER:cDefIni ) )
+  local cGenExpr   := ALLTRIM( oEr:cDataPath + oER:GetDefIni( "General", "GeneralExpressions", "" ) )
+  local cUserExpr  := ALLTRIM( oEr:cDataPath + oER:GetDefIni( "General", "UserExpressions", "" ) )
 
  local aGeneral := {;
                     { "NAME"      , "C",    60,    0 },;
@@ -277,7 +277,7 @@ function OpenDatabases()
 
    local i, x, cEntry, cDbase, aFields, cFilter, cFieldNames, cFieldPos
    local nSelect     := SELECT()
-   local cSeparator  := GetPvProfString( "Databases", "Separator" , ";", oER:cDefIni )
+   local cSeparator  := oER:GetDefIni( "Databases", "Separator" , ";" )
 
    CreateDbfsExpressions()
 
@@ -285,7 +285,7 @@ function OpenDatabases()
 
    for i := 1 TO 12
 
-      cEntry      := GetPvProfString( "Databases", ALLTRIM(STR( i, 3 )), "", oER:cDefIni )
+      cEntry      := oER:GetDefIni( "Databases", ALLTRIM(STR( i, 3 )), "" )
       cDbase      := ALLTRIM( GetField( cEntry, 1 ) )
       cFilter     := ""
       cFieldNames := ""
@@ -761,13 +761,13 @@ function MainCaption()
 
    local creturn    := ""
    local cMainTitle := ""
-   local cUserApp   := ALLTRIM( GetPvProfString( "General", "MainAppTitle", "", oER:cGeneralIni ) )
+   local cUserApp   := ALLTRIM( oER:GetGeneralIni( "General", "MainAppTitle", "" ) )
 
    LOCAL cVersion := if ( lBeta , " - Beta Version" , " - Full version" )
 
 
-   if .NOT. EMPTY( oER:cDefIni )
-      cMainTitle := ALLTRIM( GetPvProfString( "General", "Title", "", oER:cDefIni ) )
+   if !EMPTY( oER:cDefIni )
+      cMainTitle := ALLTRIM( oER:GetDefIni( "General", "Title", "" ) )
    endif
 
    creturn := IIF( EMPTY( cUserApp ), "EasyReport", cUserApp ) + ;
@@ -789,9 +789,9 @@ function Expressions( lTake, cAltText )
    local i, oDlg, oFld, oBrw, oBrw2, oBrw3, oFont, creturn, oSay1, nTyp, oGet1
    local oBtn1, aBtn[3], aGet[5], cName
    local nAltSel    := SELECT()
-   local nShowExpr  := VAL( GetPvProfString( "General", "Expressions", "0", oER:cDefIni ) )
-   local cGenExpr   := ALLTRIM( oEr:cDataPath + GetPvProfString( "General", "GeneralExpressions", "General.dbf", oER:cDefIni ) )
-   local cUserExpr  := ALLTRIM( oEr:cDataPath + GetPvProfString( "General", "UserExpressions", "User.dbf", oER:cDefIni ) )
+   local nShowExpr  := VAL( oER:GetDefIni( "General", "Expressions", "0" ) )
+   local cGenExpr   := ALLTRIM( oEr:cDataPath + oER:GetDefIni( "General", "GeneralExpressions", "General.dbf" ) )
+   local cUserExpr  := ALLTRIM( oEr:cDataPath + oER:GetDefIni( "General", "UserExpressions", "User.dbf") )
  //  local cGenExpr   := ALLTRIM( cDefaultPath + GetPvProfString( "General", "GeneralExpressions", "", oER:cDefIni ) )
  //  local cUserExpr  := ALLTRIM( cDefaultPath + GetPvProfString( "General", "UserExpressions", "", oER:cDefIni ) )
    local aUndo      := {}
@@ -1064,15 +1064,15 @@ function EditLanguage()
              LANGUAGE->LANGUAGE8, ;
              LANGUAGE->LANGUAGE9 ;
          FIELDSIZES 300, 300, 300, 300, 300, 300, 300, 300, 300 ;
-         HEADERS " " + GetPvProfString( "Languages", "1", "Language 1", oER:cGeneralIni ), ;
-                 " " + GetPvProfString( "Languages", "2", "Language 2", oER:cGeneralIni ), ;
-                 " " + GetPvProfString( "Languages", "3", "Language 3", oER:cGeneralIni ), ;
-                 " " + GetPvProfString( "Languages", "4", "Language 4", oER:cGeneralIni ), ;
-                 " " + GetPvProfString( "Languages", "5", "Language 5", oER:cGeneralIni ), ;
-                 " " + GetPvProfString( "Languages", "6", "Language 6", oER:cGeneralIni ), ;
-                 " " + GetPvProfString( "Languages", "7", "Language 7", oER:cGeneralIni ), ;
-                 " " + GetPvProfString( "Languages", "8", "Language 8", oER:cGeneralIni ), ;
-                 " " + GetPvProfString( "Languages", "9", "Language 9", oER:cGeneralIni ) ;
+         HEADERS " " + oER:GetGeneralIni( "Languages", "1", "Language 1" ), ;
+                 " " + oER:GetGeneralIni( "Languages", "2", "Language 2" ), ;
+                 " " + oER:GetGeneralIni( "Languages", "3", "Language 3" ), ;
+                 " " + oER:GetGeneralIni( "Languages", "4", "Language 4" ), ;
+                 " " + oER:GetGeneralIni( "Languages", "5", "Language 5" ), ;
+                 " " + oER:GetGeneralIni( "Languages", "6", "Language 6" ), ;
+                 " " + oER:GetGeneralIni( "Languages", "7", "Language 7" ), ;
+                 " " + oER:GetGeneralIni( "Languages", "8", "Language 8" ), ;
+                 " " + oER:GetGeneralIni( "Languages", "9", "Language 9" ) ;
          ID 301 OF oDlg ;
          ON LEFT DBLCLICK GetLanguage()
 
@@ -1097,15 +1097,15 @@ function GetLanguage()
 
    REDEFINE BUTTON ID 101 OF oDlg ACTION oDlg:End()
 
-   REDEFINE SAY PROMPT GetPvProfString( "Languages", "1", "Language 1", oER:cGeneralIni ) + ":" ID 151 OF oDlg
-   REDEFINE SAY PROMPT GetPvProfString( "Languages", "2", "Language 2", oER:cGeneralIni ) + ":" ID 152 OF oDlg
-   REDEFINE SAY PROMPT GetPvProfString( "Languages", "3", "Language 3", oER:cGeneralIni ) + ":" ID 153 OF oDlg
-   REDEFINE SAY PROMPT GetPvProfString( "Languages", "4", "Language 4", oER:cGeneralIni ) + ":" ID 154 OF oDlg
-   REDEFINE SAY PROMPT GetPvProfString( "Languages", "5", "Language 5", oER:cGeneralIni ) + ":" ID 155 OF oDlg
-   REDEFINE SAY PROMPT GetPvProfString( "Languages", "6", "Language 6", oER:cGeneralIni ) + ":" ID 156 OF oDlg
-   REDEFINE SAY PROMPT GetPvProfString( "Languages", "7", "Language 7", oER:cGeneralIni ) + ":" ID 157 OF oDlg
-   REDEFINE SAY PROMPT GetPvProfString( "Languages", "8", "Language 8", oER:cGeneralIni ) + ":" ID 158 OF oDlg
-   REDEFINE SAY PROMPT GetPvProfString( "Languages", "9", "Language 9", oER:cGeneralIni ) + ":" ID 159 OF oDlg
+   REDEFINE SAY PROMPT oER:GetGeneralIni( "Languages", "1", "Language 1" ) + ":" ID 151 OF oDlg
+   REDEFINE SAY PROMPT oER:GetGeneralIni( "Languages", "2", "Language 2" ) + ":" ID 152 OF oDlg
+   REDEFINE SAY PROMPT oER:GetGeneralIni( "Languages", "3", "Language 3" ) + ":" ID 153 OF oDlg
+   REDEFINE SAY PROMPT oER:GetGeneralIni( "Languages", "4", "Language 4" ) + ":" ID 154 OF oDlg
+   REDEFINE SAY PROMPT oER:GetGeneralIni( "Languages", "5", "Language 5" ) + ":" ID 155 OF oDlg
+   REDEFINE SAY PROMPT oER:GetGeneralIni( "Languages", "6", "Language 6" ) + ":" ID 156 OF oDlg
+   REDEFINE SAY PROMPT oER:GetGeneralIni( "Languages", "7", "Language 7" ) + ":" ID 157 OF oDlg
+   REDEFINE SAY PROMPT oER:GetGeneralIni( "Languages", "8", "Language 8" ) + ":" ID 158 OF oDlg
+   REDEFINE SAY PROMPT oER:GetGeneralIni( "Languages", "9", "Language 9" ) + ":" ID 159 OF oDlg
 
    REDEFINE SAY PROMPT " " + LANGUAGE->LANGUAGE1 ID 201 OF oDlg
 
@@ -1170,6 +1170,8 @@ function GetField( cString, nNr, cSepChar )
 
 return StrToken( cString, nNr, cSepChar )
 
+
+
 //------------------------------------------------------------------------------
 /*  no usada
 function StrCount( cText, cString )
@@ -1212,7 +1214,7 @@ function OpenLanguage()
 
    USE LANGUAGE.DBF
 
-   DO WHILE .NOT. LANGUAGE->(EOF())
+   DO WHILE !LANGUAGE->(EOF())
 
       AADD( oGenVar:aLanguages, { LANGUAGE->LANGUAGE1, LANGUAGE->LANGUAGE2, ;
                                   LANGUAGE->LANGUAGE3, LANGUAGE->LANGUAGE4, ;
@@ -1326,7 +1328,7 @@ return .T.
 function AltPrintReport( lPreview, cPrinter )
 
    local i, oVRD, cCondition
-   local lPrintIDs := IIF( GetPvProfString( "General", "PrintIDs", "0", oER:cDefIni ) = "0", .F., .T. )
+   local lPrintIDs := IIF( oER:GetDefIni( "General", "PrintIDs", "0" ) = "0", .F., .T. )
 
    oVRD := VRD():New( oER:cDefIni, lPreview, cPrinter, oEr:oMainWnd,, lPrintIDs,, .T. )
 

@@ -504,11 +504,11 @@ function TextProperties( i, nArea, cAreaIni, lFromList, lNew )
    REDEFINE BTNBMP aSay[1] PROMPT "" ID 401 OF oCurDlg NOBORDER ;
    ACTION GetColorBtn( @oItem:nColText , aSay[1], aGet[1], oVar, nDefClr )
    aSay[1]:lBoxSelect := .f.
-   aSay[1]:SetColor( GetColor( oItem:nColText ), GetColor( oItem:nColText ) )
+   aSay[1]:SetColor( oER:GetColor( oItem:nColText ), oER:GetColor( oItem:nColText ) )
 
    REDEFINE BTNBMP aSay[2] PROMPT "" ID 402 OF oCurDlg NOBORDER ;
      ACTION GetColorBtn( @oItem:nColPane , aSay[2], aGet[2], oVar, nDefClr )
-     aSay[2]:SetColor(  GetColor( oItem:nColPane ), GetColor( oItem:nColPane ) )
+     aSay[2]:SetColor(  oER:GetColor( oItem:nColPane ), oER:GetColor( oItem:nColPane ) )
      aSay[2]:lBoxSelect := .f.
 
    REDEFINE SAY aSay[3] PROMPT ;
@@ -770,7 +770,7 @@ function SaveTextItem( oVar, oItem )
          TSay():New( nRulerTop + ER_GetPixel( oItem:nTop ), nRuler + ER_GetPixel( oItem:nLeft ), ;
                      {|| oItem:cText }, aWnd[oVar:nArea],, ;
                      oFont, lCenter, lRight, ( oItem:lBorder .OR. oGenVar:lShowBorder ), ;
-                     .T., GetColor( oItem:nColText ), GetColor( oItem:nColPane ), ;
+                     .T., oER:GetColor( oItem:nColText ), oER:GetColor( oItem:nColPane ), ;
                      ER_GetPixel( oItem:nWidth ), ER_GetPixel( oItem:nHeight ), ;
                      .F., .T., .F., .F., .F. )
 
@@ -1070,8 +1070,8 @@ function GraphicProperties( i, nArea, cAreaIni, lFromList, lNew )
       VALID     Set2Color( aSay[2], IIF( oItem:nColFill > 0, oVar:aColors[oItem:nColFill], ""), nDefClr ) ;
       WHEN oItem:lTrans = .F.
 
-   REDEFINE SAY aSay[1] PROMPT "" ID 401 OF oCurDlg COLORS GetColor( oItem:nColText ), GetColor( oItem:nColText )
-   REDEFINE SAY aSay[2] PROMPT "" ID 402 OF oCurDlg COLORS GetColor( oItem:nColPane ), GetColor( oItem:nColPane )
+   REDEFINE SAY aSay[1] PROMPT "" ID 401 OF oCurDlg COLORS oER:GetColor( oItem:nColText ), oER:GetColor( oItem:nColText )
+   REDEFINE SAY aSay[2] PROMPT "" ID 402 OF oCurDlg COLORS oER:GetColor( oItem:nColPane ), oER:GetColor( oItem:nColPane )
 
    REDEFINE BTNBMP ID 151 OF oCurDlg NOBORDER RESOURCE "SELECT" TRANSPARENT ;
       ACTION GetColorBtn( @oItem:nColor , aSay[1], aGet[1], oVar, nDefClr )
@@ -1186,7 +1186,7 @@ function SaveGraItem( oVar, oItem )
       aItems[oVar:nArea,oVar:i]:bPainted = {| hDC, cPS | ;
          DrawGraphic( hDC, AllTrim(UPPER( oItem:cType )), ;
                       ER_GetPixel( oItem:nWidth ), ER_GetPixel( oItem:nHeight ), ;
-                      GetColor( oItem:nColor ), GetColor( oItem:nColFill ), ;
+                      oER:GetColor( oItem:nColor ), oER:GetColor( oItem:nColFill ), ;
                       oItem:nStyle, oItem:nPenWidth, ;
                       ER_GetPixel( oItem:nRndWidth ), ER_GetPixel( oItem:nRndHeight ) ) }
 
@@ -1268,8 +1268,8 @@ function BarcodeProperties( i, nArea, cAreaIni, lFromList, lNew )
       VALID     Set2Color( aSay[2], IIF( oItem:nColPane > 0, oVar:aColors[oItem:nColPane], ""), nDefClr ) ;
       WHEN oItem:lTrans = .F.
 
-   REDEFINE SAY aSay[1] PROMPT "" ID 401 OF oCurDlg COLORS GetColor( oItem:nColText ), GetColor( oItem:nColText )
-   REDEFINE SAY aSay[2] PROMPT "" ID 402 OF oCurDlg COLORS GetColor( oItem:nColPane ), GetColor( oItem:nColPane )
+   REDEFINE SAY aSay[1] PROMPT "" ID 401 OF oCurDlg COLORS oER:GetColor( oItem:nColText ), oER:GetColor( oItem:nColText )
+   REDEFINE SAY aSay[2] PROMPT "" ID 402 OF oCurDlg COLORS oER:GetColor( oItem:nColPane ), oER:GetColor( oItem:nColPane )
 
    REDEFINE BUTTON ID 151 OF oCurDlg ;
       ACTION ( nColor := ShowColorChoice( oItem:nColText ), ;
@@ -1377,7 +1377,7 @@ function SaveBarItem( oVar, oItem )
          aItems[oVar:nArea,oVar:i]:bPainted = {| hDC, cPS | ;
             DrawBarcode( hDC, AllTrim( oItem:cText ), 0, 0, ;
                          ER_GetPixel( oItem:nWidth ), ER_GetPixel( oItem:nHeight ), ;
-                         oItem:nBCodeType, GetColor( oItem:nColText ), GetColor( oItem:nColPane ), ;
+                         oItem:nBCodeType, oER:GetColor( oItem:nColText ), oER:GetColor( oItem:nColPane ), ;
                          oItem:nOrient, oItem:lTrans, ER_GetPixel( oItem:nPinWidth ) ) }
 
       aItems[oVar:nArea,oVar:i]:lDrag := .T.
@@ -1434,7 +1434,7 @@ function SetItemSize( i, nArea, cAreaIni )
          aItems[nArea,i]:bPainted = {| hDC, cPS | ;
             DrawGraphic( hDC, cTyp, ;
             ER_GetPixel( nWidth ), ER_GetPixel( nHeight ), ;
-            GetColor( nColor ), GetColor( nColFill ), ;
+            oER:GetColor( nColor ), oER:GetColor( nColFill ), ;
             nStyle, nPenWidth, ER_GetPixel( nRndWidth ), ER_GetPixel( nRndHeight ) ) }
 
       ELSEif UPPER( cTyp ) = "BARCODE"
@@ -1445,7 +1445,7 @@ function SetItemSize( i, nArea, cAreaIni )
             DrawBarcode( hDC, oItem:cText, 0, 0, ;
             ER_GetPixel( nWidth ), ER_GetPixel( nHeight ), ;
             oItem:nBCodeType, ;
-            GetColor( oItem:nColText ), GetColor( oItem:nColPane ), ;
+            oER:GetColor( oItem:nColText ), oER:GetColor( oItem:nColPane ), ;
             oItem:nOrient, IIF( oItem:nTrans = 1, .T., .F. ), ;
             ER_GetPixel( oItem:nPinWidth ) ) }
 
@@ -1844,7 +1844,7 @@ function ShowItem( i, nArea, cAreaIni, aFirst, nElemente, aIniEntries, nIndex )
          aItems[nArea,i] := TSay():New( nTop, nLeft, ;
             {|| cName }, aWnd[nArea], , oFont, ;
             lCenter, lRight, ( nBorder = 1 .OR. oGenVar:lShowBorder ), .T., ;
-            GetColor( nColText ), GetColor( nColPane ), nWidth, nHeight, .F., .T., .F., .F., .F. )
+            oER:GetColor( nColText ), oER:GetColor( nColPane ), nWidth, nHeight, .F., .T., .F., .F., .F. )
 
          SetBKMode( oEr:oMainWnd:hDC, 0 )
 
@@ -1888,7 +1888,7 @@ function ShowItem( i, nArea, cAreaIni, aFirst, nElemente, aIniEntries, nIndex )
          aItems[nArea,i]:lTransparent := .T.
 
          aItems[nArea,i]:bPainted = {| hDC, cPS | ;
-            DrawGraphic( hDC, cTyp, nWidth, nHeight, GetColor( nColor ), GetColor( nColFill ), ;
+            DrawGraphic( hDC, cTyp, nWidth, nHeight, oER:GetColor( nColor ), oER:GetColor( nColFill ), ;
                          nStyle, nPenWidth, nRndWidth, nRndHeight ) }
 
       ELSEif cTyp = "BARCODE" .AND. lProfi = .T.
@@ -1905,8 +1905,8 @@ function ShowItem( i, nArea, cAreaIni, aFirst, nElemente, aIniEntries, nIndex )
          aItems[nArea,i]:lTransparent := .T.
 
          aItems[nArea,i]:bPainted = {| hDC, cPS | ;
-            DrawBarcode( hDC, cName, 0, 0, nWidth, nHeight, nBarCode, GetColor( nColText ), ;
-                         GetColor( nColPane ), nOrient, lTrans, nPinWidth ) }
+            DrawBarcode( hDC, cName, 0, 0, nWidth, nHeight, nBarCode, oER:GetColor( nColText ), ;
+                         oER:GetColor( nColPane ), nOrient, lTrans, nPinWidth ) }
 
       endif
 
