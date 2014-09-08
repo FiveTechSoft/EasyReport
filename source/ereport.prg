@@ -16,7 +16,7 @@ MEMVAR oCbxArea, aCbxItems, aRuler, cLongDefIni, cDefaultPath
 MEMVAR nAktItem, nAktArea, nSelArea, aSelection, nTotalHeight, nTotalWidth
 MEMVAR nHinCol1, nHinCol2, nHinCol3, oMsgInfo
 MEMVAR aVRDSave, lVRDSave, lFillWindow, nDeveloper
-MEMVAR lBoxDraw, nRuler, nRulerTop
+MEMVAR lBoxDraw  //, nRuler, nRulerTop
 MEMVAR cItemCopy, nCopyEntryNr, nCopyAreaNr, aSelectCopy, aItemCopy, nXMove, nYMove
 MEMVAR cInfoWidth, cInfoHeight, nInfoRow, nInfoCol, aItemPixelPos
 MEMVAR cDefIniPath, lBeta
@@ -451,8 +451,8 @@ function DeclarePublics( cDefFile )
    PUBLIC lBoxDraw := .F.
 
    //Ruler anzeigen
-   oER:nRuler  := 20
-   PUBLIC nRulerTop := 37
+   //PUBLIC oEr:nRuler    := 20
+   //PUBLIC oEr:nRulerTop := 37
 
    //Infos in MsgBar
    PUBLIC oMsgInfo
@@ -492,6 +492,14 @@ function DeclarePublics( cDefFile )
    //Structure-Variable
    PUBLIC oGenVar := TExStruct():New()
 
+
+
+
+
+   //Ruler anzeigen
+   oEr:nRuler         := 20
+   oEr:nRulerTop      := 37
+
    //Voreinstellungen holen
    oER:cDefIni      := VRD_LF2SF( cDefFile )
    cLongDefIni  := cDefFile
@@ -506,7 +514,7 @@ function DeclarePublics( cDefFile )
    cDefIniPath := CheckPath( cFilePath( oER:cDefIni ) )
 
    oGenVar:AddMember( "cRelease"  ,, "2.1.1" )
-   oGenVar:AddMember( "cCopyright",, "2000-2004" )
+   oGenVar:AddMember( "cCopyright",, "2000-2014" )
 
    oGenVar:AddMember( "aLanguages",, {} )
    oGenVar:AddMember( "nLanguage" ,, Val( oEr:GetGeneralIni(  "General", "Language", "1" ) )  )
@@ -1484,7 +1492,7 @@ function FillWindow( nArea, cAreaIni )
    if oER:nMeasure = 2 ; cRuler1 := "RULER1_IN" ; cRuler2 := "RULER2_IN" ; endif
    if oER:nMeasure = 3 ; cRuler1 := "RULER1_PI" ; cRuler2 := "RULER2_PI" ; endif
 
-   @ 0, 0 SAY " " SIZE 1200, nRulerTop-oER:nRuler PIXEL ;
+   @ 0, 0 SAY " " SIZE 1200, oEr:nRulerTop-oEr:nRuler PIXEL ;
       COLORS 0, oGenVar:nBClrAreaTitle OF aWnd[ nArea ]
 
    @ 2,  3 BTNBMP RESOURCE "AREAMINMAX" SIZE 12,12 ACTION  nAktArea:= nArea, AreaHide( nAktArea )
@@ -1492,13 +1500,13 @@ function FillWindow( nArea, cAreaIni )
 
    @ 2, 29 SAY oGenVar:aAreaTitle[ nArea ] ;
       PROMPT " " + AllTrim( GetPvProfString( "General", "Title" , "", cAreaIni ) ) ;
-      SIZE 400, nRulerTop-oER:nRuler-2 PIXEL FONT oGenVar:aAppFonts[ 1 ] ;
+      SIZE 400, oEr:nRulerTop-oEr:nRuler-2 PIXEL FONT oGenVar:aAppFonts[ 1 ] ;
       COLORS oGenVar:nF1ClrAreaTitle, oGenVar:nBClrAreaTitle OF aWnd[ nArea ]
 
-   @ nRulerTop - oER:nRuler, 20 BITMAP oRulerBmp2 RESOURCE cRuler1 ;
+   @ oEr:nRulerTop - oEr:nRuler, 20 BITMAP oRulerBmp2 RESOURCE cRuler1 ;
       OF aWnd[ nArea ] PIXEL NOBORDER
 
-   @ nRulerTop - oER:nRuler, 0 BITMAP oRulerBmp2 RESOURCE cRuler2 ;
+   @ oEr:nRulerTop - oEr:nRuler, 0 BITMAP oRulerBmp2 RESOURCE cRuler2 ;
       OF aWnd[ nArea ] PIXEL NOBORDER
 
     oRulerBmp2:bLClicked = { |nRow,nCol,nFlags| nAktArea := aWnd[ nArea ]:nArea }
@@ -1560,16 +1568,16 @@ function SetReticule( nRow, nCol, nArea )
    local lShow   := ( oGenVar:lShowReticule == .T. .and. ;
                       oGenVar:lSelectItems == .F. )
 
-   if nRow <= nRulerTop
-      nRowPos := nRulerTop
-   elseif nRow >= ER_GetPixel( oGenVar:aAreaSizes[ nArea, 2 ] ) + nRulerTop
-      nRowPos := ER_GetPixel( oGenVar:aAreaSizes[ nArea, 2 ] ) + nRulerTop
+   if nRow <= oEr:nRulerTop
+      nRowPos := oEr:nRulerTop
+   elseif nRow >= ER_GetPixel( oGenVar:aAreaSizes[ nArea, 2 ] ) + oEr:nRulerTop
+      nRowPos := ER_GetPixel( oGenVar:aAreaSizes[ nArea, 2 ] ) + oEr:nRulerTop
    endif
 
-   if nCol <= oER:nRuler
-      nColPos := oER:nRuler
-   elseif nCol >= ER_GetPixel( oGenVar:aAreaSizes[ nArea, 1 ] ) + oER:nRuler
-      nColPos := ER_GetPixel( oGenVar:aAreaSizes[ nArea, 1 ] ) + oER:nRuler
+   if nCol <= oEr:nRuler
+      nColPos := oEr:nRuler
+   elseif nCol >= ER_GetPixel( oGenVar:aAreaSizes[ nArea, 1 ] ) + oEr:nRuler
+      nColPos := ER_GetPixel( oGenVar:aAreaSizes[ nArea, 1 ] ) + oEr:nRuler
    endif
 
    if lShow
@@ -1635,13 +1643,13 @@ function ZeichneHintergrund( nArea )
 
    //Hintergrund
    Rectangle( aWnd[ nArea ]:hDC, ;
-              nRulerTop, oER:nRuler, nRulerTop + nHeight + 1, oER:nRuler + nWidth + 1 )
+              oEr:nRulerTop, oEr:nRuler, oEr:nRulerTop + nHeight + 1, oEr:nRuler + nWidth + 1 )
 
    //Grid zeichnen
    if oGenVar:lShowGrid
       ShowGrid( aWnd[ nArea ]:hDC, aWnd[ nArea ]:cPS, ;
                 ER_GetPixel( oGenVar:nGridWidth ), ER_GetPixel( oGenVar:nGridHeight ), ;
-                nWidth, nHeight, nRulerTop, oER:nRuler )
+                nWidth, nHeight, oEr:nRulerTop, oEr:nRuler )
    endif
 
 return .T.
@@ -1757,8 +1765,8 @@ function MsgBarInfos( nRow, nCol )
    DEFAULT nRow := 0
    DEFAULT nCol := 0
 
-   oMsgInfo:SetText( GL("Row:")    + " " + AllTrim(STR( GetCmInch( nRow - nRulerTop ), 5, nDecimals ) ) + "    " + ;
-                     GL("Column:") + " " + AllTrim(STR( GetCmInch( nCol - oER:nRuler ), 5, nDecimals ) ) )
+   oMsgInfo:SetText( GL("Row:")    + " " + AllTrim(STR( GetCmInch( nRow - oEr:nRulerTop ), 5, nDecimals ) ) + "    " + ;
+                     GL("Column:") + " " + AllTrim(STR( GetCmInch( nCol - oEr:nRuler ), 5, nDecimals ) ) )
 
 return .T.
 
@@ -2697,6 +2705,7 @@ function Options()
 
 return .T.
 
+//------------------------------------------------------------------------------//
 
 
 function ItemList( oPDlg )
@@ -3364,6 +3373,7 @@ CLASS TEasyReport
    DATA oAppFont
    DATA lShowPanel
    DATA nRuler
+   DATA nRulerTop
 
    METHOD New() CONSTRUCTOR
    METHOD GetGeneralIni( cSection , cKey, cDefault ) INLINE GetPvProfString( cSection, cKey, cDefault, ::cGeneralIni )
