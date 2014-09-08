@@ -1,4 +1,4 @@
-#include "FiveWin.ch"
+﻿#include "FiveWin.ch"
 #include "splitter.ch"
 
 //Areazugabe
@@ -13,7 +13,7 @@ STATIC lDraGraphic := .T.
 
 MEMVAR aItems, aFonts, aAreaIni, aWnd, aWndTitle, oMru
 MEMVAR oCbxArea, aCbxItems, aRuler, cLongDefIni, cDefaultPath
-MEMVAR nAktItem, nAktArea, nSelArea, aSelection, nTotalHeight, nTotalWidth
+MEMVAR nAktItem, nAktArea, nSelArea, aSelection //, nTotalHeight, nTotalWidth
 MEMVAR nHinCol1, nHinCol2, nHinCol3, oMsgInfo
 MEMVAR aVRDSave, lVRDSave, lFillWindow, nDeveloper
 MEMVAR lBoxDraw  //, nRuler, nRulerTop
@@ -434,7 +434,8 @@ function DeclarePublics( cDefFile )
    PUBLIC oCurDlg  := nil
 
    //Gesamth�he und Breite
-   PUBLIC nTotalHeight, nTotalWidth
+   //PUBLIC nTotalHeight := 0
+   //PUBLIC nTotalWidth  := 0
 
    //gerade gew�hlte(s) Element, Bereich, ini-Datei, multiple Selection
    PUBLIC nAktItem := 0
@@ -496,6 +497,9 @@ function DeclarePublics( cDefFile )
 
 
 
+   oEr:nTotalHeight   := 0
+   oEr:nTotalWidth    := 0
+   
    //Ruler anzeigen
    oEr:nRuler         := 20
    oEr:nRulerTop      := 37
@@ -691,7 +695,7 @@ return .T.
 
    if ! Empty( oWnd:oHScroll )
       nPageZugabe := 602/100
-      oWnd:oHScroll:SetRange( 0, nTotalWidth / 100 )
+      oWnd:oHScroll:SetRange( 0, oEr:nTotalWidth / 100 )
 
       oWnd:oHScroll:bGoUp     = {|| ScrollHorizont( .T. ) }
       oWnd:oHScroll:bGoDown   = {|| ScrollHorizont( , .T. ) }
@@ -713,7 +717,7 @@ function SetScrollBar()
    local nPageZugabe := 392
 
    if ! Empty( oEr:oMainWnd:oWndClient:oVScroll )
-      oEr:oMainWnd:oWndClient:oVScroll:SetRange( 0, nTotalHeight / 100 )
+      oEr:oMainWnd:oWndClient:oVScroll:SetRange( 0, oEr:nTotalHeight / 100 )
 
       oEr:oMainWnd:oWndClient:oVScroll:bGoUp     = {|| ScrollVertical( .T. ) }
       oEr:oMainWnd:oWndClient:oVScroll:bGoDown   = {|| ScrollVertical( , .T. ) }
@@ -726,7 +730,7 @@ function SetScrollBar()
    endif
 
    if ! Empty( oEr:oMainWnd:oWndClient:oHScroll )
-      oEr:oMainWnd:oWndClient:oHScroll:SetRange( 0, nTotalWidth / 100 )
+      oEr:oMainWnd:oWndClient:oHScroll:SetRange( 0, oEr:nTotalWidth / 100 )
 
       oEr:oMainWnd:oWndClient:oHScroll:bGoUp     = {|| ScrollHorizont( .T. ) }
       oEr:oMainWnd:oWndClient:oHScroll:bGoDown   = {|| ScrollHorizont( , .T. ) }
@@ -774,7 +778,7 @@ function ScrollV( nPosZugabe, lUp, lDown, lPos )
    endif
 
    if lDown
-      if aFirstWndCoors[ 1 ] + (nTotalHeight) <= aCliRect[3] - 80
+      if aFirstWndCoors[ 1 ] + (oEr:nTotalHeight) <= aCliRect[3] - 80
          nZugabe     := 0
          nPageZugabe := 0
       endif
@@ -789,7 +793,7 @@ function ScrollV( nPosZugabe, lUp, lDown, lPos )
    nAltWert := IF ( lPos, oVScroll:GetPos(), oVScroll:nPrevPos )
 
    oVScroll:SetPos( nPosZugabe )
-   nZugabe := nTotalHeight * ( oVScroll:GetPos() - nAltWert ) / ( (nTotalHeight) / 100 )
+   nZugabe := oEr:nTotalHeight * ( oVScroll:GetPos() - nAltWert ) / ( (oEr:nTotalHeight) / 100 )
 
    for i := 1 to 100
       if aWnd[ i ] <> nil
@@ -836,7 +840,7 @@ function ScrollVertical( lUp, lDown, lPageUp, lPageDown, lPos, nPosZugabe )
    endif
 
    if lDown = .T. .OR. lPageDown = .T.
-      if aFirstWndCoors[ 1 ] + nTotalHeight <= aCliRect[3] - 80
+      if aFirstWndCoors[ 1 ] + oEr:nTotalHeight <= aCliRect[3] - 80
          nZugabe     := 0
          nPageZugabe := 0
       endif
@@ -847,10 +851,7 @@ function ScrollVertical( lUp, lDown, lPageUp, lPageDown, lPos, nPosZugabe )
    SetReticule( 0, 0 ) // turn off the rulers lines
 
    if lPos = .T.
-      nAltWert := oEr:oMainWnd:oWndClient:oVScroll:GetPos()
-      oEr:oMainWnd:oWndClient:oVScroll:SetPos( nPosZugabe )
-      nZugabe := -1 * nTotalHeight * ( oEr:oMainWnd:oWndClient:oVScroll:GetPos() - nAltWert ) / ( nTotalHeight / 100 )
-   endif
+   nZugabe := oEr:nTotalHeight * ( oVScroll:GetPos() - nAltWert ) / ( (oEr:nTotalHeight) / 100 )
 
    for i := 1 to 100
       if aWnd[ i ] <> nil
@@ -904,7 +905,7 @@ function ScrollHorizont( lLeft, lRight, lPageLeft, lPageRight, lPos, nPosZugabe 
    endif
 
    if lRight = .T. .OR. lPageRight = .T.
-      if aFirstWndCoors[2] + nTotalWidth <= aCliRect[4] - 40
+      if aFirstWndCoors[2] + oEr:nTotalWidth <= aCliRect[4] - 40
          nZugabe     := 0
          nPageZugabe := 0
       endif
@@ -913,7 +914,7 @@ function ScrollHorizont( lLeft, lRight, lPageLeft, lPageRight, lPos, nPosZugabe 
    if lPos = .T.
       nAltWert := oEr:oMainWnd:oWndClient:oHScroll:GetPos()
       oEr:oMainWnd:oWndClient:oHScroll:SetPos( nPosZugabe )
-      nZugabe := -1 * nTotalWidth * ( oEr:oMainWnd:oWndClient:oHScroll:GetPos() - nAltWert ) / 100
+      nZugabe := -1 * oEr:nTotalWidth * ( oEr:oMainWnd:oWndClient:oHScroll:GetPos() - nAltWert ) / 100
    endif
 
 
@@ -1465,9 +1466,8 @@ function ClientWindows()
 
    next
 
-
-   nTotalHeight := nTop
-   nTotalWidth  := nWidth
+   oEr:nTotalHeight := nTop 
+   oEr:nTotalWidth  := nWidth
 
    IF oER:lShowPanel
       ItemList( aPnels[1] )
@@ -2729,7 +2729,7 @@ function ItemList( oPDlg )
       ACTIVATE DIALOG oDlg CENTERED ON INIT FillTree( oTree, oDlg )  //ListTrees( oTree )
    else
 
-      oTree := TTreeView():New( 0, 0, oPDlg, 0, , .T., .F., 262, 680 ,"",, )
+      oTree := TTreeView():New( 0, 0, oPDlg, 0, , .T., .F., oPDlg:nWidth - 2, oPDlg:nHeight - 2 ,"",, )
 
       oTree:bLDblClick  = { | nRow, nCol, nKeyFlags | ClickListTree( oTree ) }
       oTree:bEraseBkGnd = { || nil }  // to properly erase the tree background
@@ -3299,7 +3299,7 @@ function AreaChange( nArea, cAreaTitle, nOldWidth, nWidth, nOldHeight, nHeight )
 
       aWnd[ nArea ]:Move( aWnd[ nArea ]:nTop, aWnd[ nArea ]:nLeft, ;
          IIF( oGenVar:lFixedAreaWidth, 1200, ER_GetPixel( nWidth ) + oER:nRuler + nAreaZugabe2 ), ;
-         IIF( oGenVar:aAreaHide[ nArea ], nRulerTop, ER_GetPixel( nHeight ) + nAreaZugabe ), .T. )
+         IIF( oGenVar:aAreaHide[ nArea ], oEr:nRulerTop, ER_GetPixel( nHeight ) + nAreaZugabe ), .T. )
 
       for i := nArea+1 to 100
          if aWnd[ i ] <> nil
@@ -3307,8 +3307,8 @@ function AreaChange( nArea, cAreaTitle, nOldWidth, nWidth, nOldHeight, nHeight )
                aWnd[ i ]:nLeft,,, .T. )
          endif
       next
-
-      nTotalHeight += ER_GetPixel( nHeight - nOldHeight )
+      
+      oEr:nTotalHeight += ER_GetPixel( nHeight - nOldHeight )
 
    endif
 
@@ -3338,7 +3338,7 @@ function AreaHide( nArea )
       endif
    next
 
-   nTotalHeight += nDifferenz
+   oEr:nTotalHeight += nDifferenz
 
 return .T.
 
@@ -3368,12 +3368,16 @@ CLASS TEasyReport
    DATA cGeneralIni
    DATA cDefIni
    DATA cDataPath
-   DATA bClrBar, aClrDialogs
-   DATA nMeasure, cMeasure
+   DATA bClrBar
+   DATA aClrDialogs
+   DATA nMeasure
+   DATA cMeasure
    DATA oAppFont
    DATA lShowPanel
    DATA nRuler
    DATA nRulerTop
+   DATA nTotalHeight
+   DATA nTotalWidth
 
    METHOD New() CONSTRUCTOR
    METHOD GetGeneralIni( cSection , cKey, cDefault ) INLINE GetPvProfString( cSection, cKey, cDefault, ::cGeneralIni )
