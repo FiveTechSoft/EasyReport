@@ -1,5 +1,4 @@
 ﻿#include "FiveWin.ch"
-#include "splitter.ch"
 
 //Areazugabe
 STATIC nAreaZugabe  := 42
@@ -25,7 +24,6 @@ MEMVAR lPersonal, oGenVar, oCurDlg
 MEMVAR oER
 
 static oBtnAreas, oMenuAreas, lScrollVert
-Static aPnels
 
 //----------------------------------------------------------------------------//
 
@@ -112,28 +110,18 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
 
    BarMenu()
 
-   AAdd( aPnels, nil )
-   // Esto
+  
    IF oER:lShowPanel
 
-      aPnels[Len(aPnels)] := TPanel():New( 34, 0, nAltoSpl, 262, oEr:oMainWnd )
-      oEr:oMainWnd:oLeft  := aPnels[Len(aPnels)]
-
-
-       @ 34, 262 SPLITTER oSpl ;
-             VERTICAL ;               // PREVIOUS CONTROLS aPnels[1];
-             SIZE 0, 00 ; // nAltoSpl ;
-             PIXEL ;
-             OF oEr:oMainWnd
-
-
-      // SetParent( oSpl:hWnd, oEr:oMainWnd:hWnd )
+      oER:oTree := TTreeView():New( 0, 2,  oPanel , 0, , .T., .F., 268 , oEr:oMainWnd:nHeight - 155 ,"",, )
+      oEr:oMainWnd:oLeft  :=   oER:oTree
+      oER:oTree:Hide()
 
    ENDIF
 
    ACTIVATE WINDOW oEr:oMainWnd ;
       MAXIMIZED ;
-      ON RESIZE oSpl:Adjust() ;
+      ON RESIZE if(!Empty(oER:oTree),oER:oTree:refresh(.t.), ) ;
       ON INIT ( SetMainWnd(), IniMainWindow(), ;
                 IIF( Empty( oER:cDefIni ), OpenFile(), SetScrollBar() ), ;
                 StartMessage(), SetSave( .T. ), ClearUndoRedo() ) ;
@@ -1470,7 +1458,7 @@ function ClientWindows()
    oEr:nTotalWidth  := nWidth
 
    IF oER:lShowPanel
-      ItemList( aPnels[1] )
+      ItemList()
    ENDIF
 
 return .T.
@@ -2708,14 +2696,15 @@ return .T.
 //------------------------------------------------------------------------------//
 
 
-function ItemList( oPDlg )
+function ItemList( )
 
    local oTree
    local oImageList, oBmp1, oBmp2
    local lDlg   := .T.
    LOCAL oDlg
 
-   if empty( oPDlg )
+    IF !oEr:lShowPanel
+    
        DEFINE DIALOG oDlg RESOURCE "Itemlist" TITLE GL("Item List")
 
       oTree := TTreeView():ReDefine( 201, oDlg, 0, , .F. ,"" )
@@ -2727,15 +2716,13 @@ function ItemList( oPDlg )
       REDEFINE BUTTON PROMPT GL("&OK") ID 101 OF oDlg ACTION oDlg:End()
 
       ACTIVATE DIALOG oDlg CENTERED ON INIT FillTree( oTree, oDlg )  //ListTrees( oTree )
+      
    else
 
-      oTree := TTreeView():New( 0, 0, oPDlg, 0, , .T., .F., oPDlg:nWidth - 2, oPDlg:nHeight - 2 ,"",, )
-
-      oTree:bLDblClick  = { | nRow, nCol, nKeyFlags | ClickListTree( oTree ) }
-      oTree:bEraseBkGnd = { || nil }  // to properly erase the tree background
-
-      FillTree( oTree, oPDlg )
-
+     oEr:oTree:bLDblClick  = { | nRow, nCol, nKeyFlags | ClickListTree( oEr:oTree ) }
+     FillTree( oEr:oTree,oEr:oMainWnd )
+     oEr:oTree:show()
+    
    endif
 
  return nil
@@ -3378,6 +3365,7 @@ CLASS TEasyReport
    DATA nRulerTop
    DATA nTotalHeight
    DATA nTotalWidth
+   DATA oTree
 
    METHOD New() CONSTRUCTOR
    METHOD GetGeneralIni( cSection , cKey, cDefault ) INLINE GetPvProfString( cSection, cKey, cDefault, ::cGeneralIni )
