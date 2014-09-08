@@ -19,11 +19,8 @@ PRG =        \
 .\erfile.prg   \
 .\eritems.prg  \
 .\eritems2.prg \
-.\erstart.prg  \
 .\ertools.prg  \
 #.\fileedit.prg \
-.\epclass.prg  \
-.\epmeta.prg \
 .\vrd.prg      \
 .\vrdbcode.prg \
 .\vrditem.prg  
