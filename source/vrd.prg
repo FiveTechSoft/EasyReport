@@ -10,16 +10,13 @@
     ==================================================================
 */
 
-#IFDEF __XPP__
-   #INCLUDE "VRDXPP.ch"
-   #INCLUDE "VRD.ch"
-#ELSE
+
    #INCLUDE "FiveWin.ch"
    #INCLUDE "Struct.ch"
    #INCLUDE "VRD.ch"
    REQUEST DBFNTX
    //REQUEST DBFCDX
-#ENDIF
+
 
 #DEFINE AREASOURCE_TOP1            1
 #DEFINE AREASOURCE_TOP2            2
@@ -245,18 +242,7 @@ METHOD New( cReportName, lPreview, cPrinter, oWnd, lModal, lPrintIDs, lNoPrint, 
       ::lPreview := .T.
    ENDIF
 
- //  #IFDEF __XPP__
- //     hTmpWnd := ::oTmpWnd:getHWND()
- //     //Otherwise pictures can not be printed under Xbase++
- //     ::oTmpWnd := NIL
- //     DEFINE WINDOW oTmpWnd
- //     SetWndApp( oTmpWnd:hWnd )
- //     SetForegroundWindow( oTmpWnd:hWnd )
-  //    EnableWindow( hTmpWnd, 0 )
- //     oTmpWnd:Hide()
- //  #ENDIF
-
-   IF lPrintDialog
+    IF lPrintDialog
       IF !::PrintDialog()
          ::lDialogCancel := .T.
          ::CloseDatabases()
@@ -580,10 +566,6 @@ METHOD End( lPrintArea ) CLASS VRD
 
    SYSREFRESH()
 
- //  #IFDEF __XPP__
- //     EnableWindow( hTmpWnd, 1 )
- //     SetForegroundWindow( hTmpWnd )
- //  #ENDIF
 
 RETURN ( oInfo )
 
@@ -2103,11 +2085,6 @@ METHOD PrintDialog() CLASS VRD
 
    ACTIVATE DIALOG oDlg CENTERED
 
- //  #IFDEF __XPP__
- //     EnableWindow( hTmpWnd, 1 )
- //     SetForegroundWindow( hTmpWnd )
- //  #ENDIF
-
    IF lPrint = .T.
       ::cPrinter := cPrinter
    ENDIF
@@ -2847,12 +2824,7 @@ FUNCTION VRD_LF2SF( cFile )
       RETURN( VRD_GetFullPath( AllTrim( cFile ) ) )
       //RETURN( cFile )
    #ELSE
-      #IFDEF __XPP__
-         RETURN( VRD_GetFullPath( AllTrim( cFile ) ) )
-         //RETURN( cFile )
-      #ELSE
-         RETURN IIF( EMPTY( cFile ), "", VRD_LPN2SPN( VRD_GetFullPath( ALLTRIM( cFile ) ) ) )
-      #ENDIF
+      RETURN IIF( EMPTY( cFile ), "", VRD_LPN2SPN( VRD_GetFullPath( ALLTRIM( cFile ) ) ) )
    #ENDIF
 
 RETURN NIL
@@ -3001,17 +2973,8 @@ RETURN cReturn
 //------------------------------------------------------------------------------
 
 FUNCTION VRD_DefaultPrinter()
-
-//#IFDEF __XPP__
-/// !!! Antonio muﬂ PrnGetName in FW++ einbauen
-//RETURN VRD_GetRegistry( HKEY_CURRENT_CONFIG, ;
-//                        "System\CurrentControlSet\Control\Print\Printers", ;
-//                        "Default" )
-//#ELSE
-
 RETURN PrnGetName()
 
-//#ENDIF
 */
 
 *-- FUNCTION -----------------------------------------------------------------
@@ -3119,17 +3082,13 @@ FUNCTION VRD_NewStructure()
 
    LOCAL oStruct
 
- //  #IFDEF __XPP__
- //     oStruct := TStruct():New() // !!! Hier muﬂ TExStruct einbaut werden
- //  #ELSE
       #IFDEF USE_TEXSTRUC
          oStruct := TExStruc():New()
       #ELSE
          oStruct := TExStruct():New()
       #ENDIF
 
-  // #ENDIF
-
+  
 RETURN oStruct
 
 
@@ -3175,115 +3134,6 @@ FUNCTION vrd_ERStart( cRptFile, lPreview ) // FiveTech
 RETURN ( NIL )
 
 
-#IFDEF __XPP__
-
-#define  DLL_STDCALL             32
-
-// DLLFUNCTION command
-#command  DLLFUNCTION <Func>([<x,...>]) ;
-                USING <sys:CDECL,OSAPI,STDCALL,SYSTEM> ;
-                 FROM <(Dll)> ;
-       => ;
-             FUNCTION <Func>([<x>]);;
-                LOCAL nDll:=DllLoad(<(Dll)>);;
-                LOCAL xRet:=DllCall(nDll,__Sys(<sys>),<(Func)>[,<x>]);;
-                      DllUnLoad(nDll);;
-               RETURN xRet
-
-#xtrans __Sys( CDECL )     =>   DLL_CDECL
-#xtrans __Sys( OSAPI )     =>   DLL_OSAPI
-#xtrans __Sys( STDCALL )   =>   DLL_STDCALL
-#xtrans __Sys( SYSTEM )    =>   DLL_SYSTEM
-
-#xcommand FUNCTION <Func>([<x1,...>] @ [<x2,...>]) ;
-       => FUNCTION <Func>([<x1>][<x2>])
-
-FUNCTION ApiFindFst( lpFilename, cWin32DataInfo )
-RETURN   FindFirstFileA( lpFilename, @cWin32DataInfo )
-
-DLLFUNCTION FindFirstFileA( lpFilename, @cWin32DataInfo ) USING STDCALL FROM KERNEL32.DLL
-
-FUNCTION apiFindCls( nHandle )
-RETURN   FindClose( nHandle )
-
-DLLFUNCTION FindClose( nHandle ) USING STDCALL FROM KERNEL32.DLL
-
-// FUNCTION GetPPSection( cSection, cData, nSize, cFile )
-// RETURN   GetPrivateProfileSectionA( cSection, @cData, nSize, cFile )
-
-DLLFUNCTION GetPrivateProfileSectionA( cSection, @cData, nSize, cFile ) ;
-            USING STDCALL FROM KERNEL32.DLL
-
-FUNCTION GetPvProfString( cSection, cData, cDefault, cFile )
-RETURN   GETPVPROFS( cSection, cData, cDefault, cFile )
-
-FUNCTION FullPathName( lpszFile, cchPath, lpszPath, nFilePos )
-RETURN   GetFullPathNameA( lpszFile, cchPath, lpszPath, @nFilePos )
-
-DLLFUNCTION GetFullPathNameA( lpszFile, cchPath, lpszPath, @nFilePos ) ;
-            USING STDCALL FROM KERNEL32.DLL
-
-FUNCTION DelFile( cFileName )
-RETURN   DeleteFileA( cFileName )
-
-DLLFUNCTION DeleteFileA( cFileName ) USING STDCALL FROM KERNEL32.DLL
-
-FUNCTION GetProfString( cSection )
-
-   LOCAL nBuffer :=  32000
-   LOCAL cBuffer := Space( nBuffer )
-   GetProfileSectionA( cSection, @cBuffer, nBuffer )
-
-RETURN cBuffer
-
-DLLFUNCTION GetProfileSectionA( cSection, @cBuffer, nSize ) USING STDCALL FROM KERNEL32.DLL
-
-FUNCTION WritePProString( cSection, cEntry, cValue, cFile )
-RETURN   WritePrivateProfileStringA( cSection, cEntry, cValue, cFile )
-
-DLLFUNCTION WritePrivateProfileStringA( cSection, cEntry, cValue, cFile ) USING STDCALL FROM KERNEL32.DLL
-
-DLLFUNCTION RoundRect( hDC, nLeft, nTop, nRight, nBottom, nWidth, nHeight ) ;
-            USING STDCALL FROM GDI32.DLL
-
-DLLFUNCTION SetTextJustification( hDC, nExtraSpace, nBreakChars ) USING STDCALL FROM GDI32.DLL
-
-DLLFUNCTION CreateSolidBrush( nColor ) USING STDCALL FROM GDI32.DLL
-
-DLLFUNCTION CreatePen( nPenStyle, nWidth, nColor ) USING STDCALL FROM GDI32.DLL
-
-DLLFUNCTION SelectObject( hDC, hObject ) USING STDCALL FROM GDI32.DLL
-
-DLLFUNCTION DeleteObject( hObject ) USING STDCALL FROM GDI32.DLL
-
-DLLFUNCTION RegOpenKeyExA( nHkeyClass, cKeyName, nReserved, nAccess, @nKeyHandle ) ;
-            USING STDCALL FROM ADVAPI32.DLL
-
-DLLFUNCTION RegQueryValueExA( nKeyHandle, cEntry, nReserved, @nType, @cName, @nSize ) ;
-            USING STDCALL FROM ADVAPI32.DLL
-
-DLLFUNCTION RegCloseKey( nKeyHandle ) USING STDCALL FROM ADVAPI32.DLL
-
-DLLFUNCTION BringWindowToTop( hWnd )    USING STDCALL FROM USER32.DLL
-DLLFUNCTION SetFocus( hWnd )            USING STDCALL FROM USER32.DLL
-DLLFUNCTION SetForegroundWindow( hWnd ) USING STDCALL FROM USER32.DLL
-DLLFUNCTION SetCapture( hWnd )          USING STDCALL FROM USER32.DLL
-DLLFUNCTION ReleaseCapture()            USING STDCALL FROM USER32.DLL
-DLLFUNCTION EnableWindow( hWnd, cEnable )         USING STDCALL FROM USER32.DLL
-DLLFUNCTION SetParent( hWndChild, hWndNewParent ) USING STDCALL FROM USER32.DLL
-
-DLLFUNCTION GetStockObject( nIndex )    USING STDCALL FROM GDI32.DLL
-
-EXIT PROCEDURE CloseTmpWnd()
-
-   IF oTmpWnd <> nil
-     oTmpWnd:End()
-   ENDIF
-
-RETURN
-
-#ELSE
-
 DLL32 Function apiFindFst(lpFilename AS LPSTR, @cWin32DataInfo AS LPSTR) AS LONG PASCAL ;
    FROM "FindFirstFileA" LIB "KERNEL32.DLL"
 
@@ -3327,4 +3177,3 @@ DLL32 FUNCTION RegQueryValueExA( nhKey      AS LONG   , ;
 
 DLL32 FUNCTION RegCloseKey( nhKey AS LONG ) AS LONG PASCAL LIB "ADVAPI32.DLL"
 
-#ENDIF
