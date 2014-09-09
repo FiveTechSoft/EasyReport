@@ -8,9 +8,11 @@ MEMVAR aItems, aAreaIni, aWnd
 MEMVAR cDefaultPath
 MEMVAR nAktItem, nAktArea, nSelArea, aSelection //, nTotalHeight, nTotalWidth
 MEMVAR oGenVar
-MEMVAR lBoxDraw
+//MEMVAR lBoxDraw
 MEMVAR cInfoWidth, cInfoHeight
 MEMVAR oEr
+
+STATIC lBoxDraw
 
 //------------------------------------------------------------------------------
 
