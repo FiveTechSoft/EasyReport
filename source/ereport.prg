@@ -36,9 +36,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
    local nAltoSpl := 680
 
 
-   aPnels   := {}
-
-   lChDir( cFilePath( GetModuleFileName( GetInstance() ) ) )
+  lChDir( cFilePath( GetModuleFileName( GetInstance() ) ) )
 
    if P1  <> nil ; cDefFile += P1  + " " ; endif
    if P2  <> nil ; cDefFile += P2  + " " ; endif
@@ -59,9 +57,9 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
 
    cDefFile := STRTRAN( AllTrim( cDefFile ), '"' )
 
-   EP_TidyUp()
-   EP_LinkedToApp()
-   EP_SetPath( ".\" )
+//   EP_TidyUp()
+ //  EP_LinkedToApp()
+ //  EP_SetPath( ".\" )
 
    //Einf�ge-Modus einschalten
    ReadInsert( .T. )
@@ -110,10 +108,10 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
 
    BarMenu()
 
-  
+
    IF oER:lShowPanel
 
-      oER:oTree := TTreeView():New( 0, 2,  oPanel , 0, , .T., .F., 268 , oEr:oMainWnd:nHeight - 155 ,"",, )
+      oER:oTree := TTreeView():New( 0, 2, oEr:oMainWnd , 0, , .T., .F., 268 , oEr:oMainWnd:nHeight - 155 ,"",, )
       oEr:oMainWnd:oLeft  :=   oER:oTree
       oER:oTree:Hide()
 
@@ -487,7 +485,7 @@ function DeclarePublics( cDefFile )
 
    oEr:nTotalHeight   := 0
    oEr:nTotalWidth    := 0
-   
+
    //Ruler anzeigen
    oEr:nRuler         := 20
    oEr:nRulerTop      := 37
@@ -801,6 +799,7 @@ function ScrollVertical( lUp, lDown, lPageUp, lPageDown, lPos, nPosZugabe )
    local nZugabe     := 14
    local nPageZugabe := 392
    local aCliRect    := oEr:oMainWnd:GetCliRect()
+   LOCAL oVScroll := oEr:oMainWnd:oWndClient:oVScroll
    local lReticule
 
    DEFAULT lUp       := .F.
@@ -839,7 +838,8 @@ function ScrollVertical( lUp, lDown, lPageUp, lPageDown, lPos, nPosZugabe )
    SetReticule( 0, 0 ) // turn off the rulers lines
 
    if lPos = .T.
-   nZugabe := oEr:nTotalHeight * ( oVScroll:GetPos() - nAltWert ) / ( (oEr:nTotalHeight) / 100 )
+       nZugabe := oEr:nTotalHeight * ( oVScroll:GetPos() - nAltWert ) / ( (oEr:nTotalHeight) / 100 )
+   ENDIF
 
    for i := 1 to 100
       if aWnd[ i ] <> nil
@@ -1412,7 +1412,7 @@ function ClientWindows()
             nWidth += oEr:nRuler + nAreaZugabe2
             nDemoWidth := Max( nDemoWidth, nWidth )
 
-            aWnd[ nWnd ] = ER_MdiChild():New( nTop, oEr:oMainWnd:oWndClient:nLeft  + 2 , nHeight + nAreaZugabe,;
+            aWnd[ nWnd ] = ER_MdiChild():New( nTop, oEr:oMainWnd:oWndClient:nLeft  + 4 , nHeight + nAreaZugabe,;
                             nDemoWidth, cTitle, nOr( WS_BORDER ),, oEr:oMainWnd,, .F.,,,,;
                             oGenVar:oAreaBrush, .T., .F. ,,, , , , , 1 )
 
@@ -1454,7 +1454,7 @@ function ClientWindows()
 
    next
 
-   oEr:nTotalHeight := nTop 
+   oEr:nTotalHeight := nTop
    oEr:nTotalWidth  := nWidth
 
    IF oER:lShowPanel
@@ -1499,7 +1499,7 @@ function FillWindow( nArea, cAreaIni )
 
     oRulerBmp2:bLClicked = { |nRow,nCol,nFlags| nAktArea := aWnd[ nArea ]:nArea }
 
-   // @ nRulerTop-oER:nRuler, 20 SAY aRuler[ nArea, 1 ] PROMPT "" SIZE  1, 20 PIXEL ;
+   // @ oEr:nRulerTop-oER:nRuler, 20 SAY aRuler[ nArea, 1 ] PROMPT "" SIZE  1, 20 PIXEL ;
    //    COLORS oGenVar:nClrReticule, oGenVar:nClrReticule OF aWnd[ nArea ]
 
    // @ 20, 0 SAY aRuler[ nArea, 2 ] PROMPT "" SIZE 20,  1 PIXEL ;
@@ -2704,7 +2704,7 @@ function ItemList( )
    LOCAL oDlg
 
     IF !oEr:lShowPanel
-    
+
        DEFINE DIALOG oDlg RESOURCE "Itemlist" TITLE GL("Item List")
 
       oTree := TTreeView():ReDefine( 201, oDlg, 0, , .F. ,"" )
@@ -2716,13 +2716,13 @@ function ItemList( )
       REDEFINE BUTTON PROMPT GL("&OK") ID 101 OF oDlg ACTION oDlg:End()
 
       ACTIVATE DIALOG oDlg CENTERED ON INIT FillTree( oTree, oDlg )  //ListTrees( oTree )
-      
+
    else
 
      oEr:oTree:bLDblClick  = { | nRow, nCol, nKeyFlags | ClickListTree( oEr:oTree ) }
      FillTree( oEr:oTree,oEr:oMainWnd )
      oEr:oTree:show()
-    
+
    endif
 
  return nil
@@ -3111,6 +3111,7 @@ function AreaProperties( nArea )
    local cOldAreaText   := MEMOREAD( aAreaIni[ nArea ] )
    LOCAL nDecimals    := IIF( oER:nMeasure = 2, 2, 0 )
 
+
    aTmpSource := {}
 
    for i := 1 to 13
@@ -3294,7 +3295,7 @@ function AreaChange( nArea, cAreaTitle, nOldWidth, nWidth, nOldHeight, nHeight )
                aWnd[ i ]:nLeft,,, .T. )
          endif
       next
-      
+
       oEr:nTotalHeight += ER_GetPixel( nHeight - nOldHeight )
 
    endif
@@ -3457,8 +3458,7 @@ return nil
 #define SB_VERT         1
 #define SB_CTL          2
 
-
-CLASS ER_ScrollBar FROM  TScrollBar
+CLASS ER_ScrollBar FROM TScrollBar
 
    DATA   nPrevPos
 
