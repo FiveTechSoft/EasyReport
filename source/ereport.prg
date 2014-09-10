@@ -15,7 +15,6 @@ MEMVAR oCbxArea, aCbxItems, aRuler, cLongDefIni, cDefaultPath
 MEMVAR nAktItem, nAktArea, nSelArea, aSelection //, nTotalHeight, nTotalWidth
 MEMVAR nHinCol1, nHinCol2, nHinCol3, oMsgInfo
 MEMVAR aVRDSave, lVRDSave, lFillWindow, nDeveloper
-//MEMVAR lBoxDraw  //, nRuler, nRulerTop
 MEMVAR cItemCopy, nCopyEntryNr, nCopyAreaNr, aSelectCopy, aItemCopy, nXMove, nYMove
 MEMVAR cInfoWidth, cInfoHeight, nInfoRow, nInfoCol, aItemPixelPos
 MEMVAR cDefIniPath, lBeta
