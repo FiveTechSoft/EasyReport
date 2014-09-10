@@ -111,8 +111,10 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
 
    IF oER:lShowPanel
 
-      oER:oTree := TTreeView():New( 0, 2, oEr:oMainWnd , 0, , .T., .F., 268 , oEr:oMainWnd:nHeight - 155 ,"",, )
+      oER:oTree := TTreeView():New( 0, 2, oEr:oMainWnd , 0, , .T., .F., 230 , oEr:oMainWnd:nHeight - 155 ,"",, )
       oEr:oMainWnd:oLeft  :=   oER:oTree
+      oEr:oTree:SetColor( ,  oEr:nClrPaneTree )
+      oEr:oTree:l3DLook := .T.
       oER:oTree:Hide()
 
    ENDIF
@@ -3366,7 +3368,7 @@ CLASS TEasyReport
    DATA nRulerTop
    DATA nTotalHeight
    DATA nTotalWidth
-   DATA oTree
+   DATA oTree, nClrPaneTree
 
    METHOD New() CONSTRUCTOR
    METHOD GetGeneralIni( cSection , cKey, cDefault ) INLINE GetPvProfString( cSection, cKey, cDefault, ::cGeneralIni )
@@ -3381,7 +3383,11 @@ METHOD New() CLASS TEasyReport
 
    ::cGeneralIni = ".\vrd.ini"
    ::cDataPath   = GetCurDir() + "\Datas\"
+
   // ::lShowPanel := .T.
+
+   ::nClrPaneTree:= RGB( 229, 233, 238)
+
 
    ::bClrBar =  { | lInvert | If( ! lInvert,;
                                   { { 1, RGB( 255, 255, 255 ), RGB( 229, 233, 238 ) } },;
@@ -3469,4 +3475,3 @@ CLASS ER_ScrollBar FROM TScrollBar
                  nPos, ::lReDraw )
 
 ENDCLASS
-
