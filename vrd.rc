@@ -57,13 +57,12 @@ LANGUAGE 7, SUBLANG_DEFAULT
 B_AREA32           BITMAP         ".\bitmaps\areas.bmp"
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_AREA321          BITMAP         ".\bitmaps\areas1.bmp"
-
-LANGUAGE 7, SUBLANG_DEFAULT
 B_AREA             BITMAP         ".\bitmaps\bitmap9.bmp"
+
 
 LANGUAGE 7, SUBLANG_DEFAULT
 B_AREA2            BITMAP         ".\bitmaps\bitmap10.bmp"
+
 
 LANGUAGE 7, SUBLANG_DEFAULT
 B_AREA3            BITMAP         ".\bitmaps\bitmap11.bmp"
@@ -77,23 +76,25 @@ B_BARCODE          BITMAP         ".\bitmaps\bitmap12.bmp"
 LANGUAGE 7, SUBLANG_DEFAULT
 B_BARCODE2         BITMAP         ".\bitmaps\bitmap13.bmp"
 
+
 LANGUAGE 7, SUBLANG_DEFAULT
 B_BARCODE3         BITMAP         ".\bitmaps\bitmap14.bmp"
 
+
 LANGUAGE 7, SUBLANG_DEFAULT
 B_DEL              BITMAP         ".\bitmaps\bitmap15.bmp"
+
 
 LANGUAGE 7, SUBLANG_DEFAULT
 B_EDIT32           BITMAP         ".\bitmaps\properties.bmp"
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_EDIT321          BITMAP         ".\bitmaps\properties1.bmp"
-
-LANGUAGE 7, SUBLANG_DEFAULT
 B_EDIT             BITMAP         ".\bitmaps\bitmap16.bmp"
+
 
 LANGUAGE 7, SUBLANG_DEFAULT
 B_EDIT2            BITMAP         ".\bitmaps\bitmap17.bmp"
+
 
 LANGUAGE 7, SUBLANG_DEFAULT
 B_EDIT3            BITMAP         ".\bitmaps\bitmap18.bmp"
@@ -114,9 +115,6 @@ LANGUAGE 7, SUBLANG_DEFAULT
 B_FONTCOLOR32      BITMAP         ".\bitmaps\fontcolor.bmp"
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_FONTCOLOR321     BITMAP         ".\bitmaps\fontcolor1.bmp"
-
-LANGUAGE 7, SUBLANG_DEFAULT
 B_FONTCOLOR        BITMAP         ".\bitmaps\bitmap21.bmp"
 
 
@@ -130,9 +128,6 @@ B_FONTCOLOR3       BITMAP         ".\bitmaps\bitmap23.bmp"
 
 LANGUAGE 7, SUBLANG_DEFAULT
 B_GRAPHIC32        BITMAP         ".\bitmaps\graphic.bmp"
-
-LANGUAGE 7, SUBLANG_DEFAULT
-B_GRAPHIC321       BITMAP         ".\bitmaps\graphic1.bmp"
 
 LANGUAGE 7, SUBLANG_DEFAULT
 B_GRAPHIC          BITMAP         ".\bitmaps\bitmap24.bmp"
@@ -149,45 +144,43 @@ LANGUAGE 7, SUBLANG_DEFAULT
 B_IMAGE32          BITMAP         ".\bitmaps\image.bmp"
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_IMAGE321         BITMAP         ".\bitmaps\image1.bmp"
-
-LANGUAGE 7, SUBLANG_DEFAULT
 B_IMAGE            BITMAP         ".\bitmaps\bitmap27.bmp"
+
 
 LANGUAGE 7, SUBLANG_DEFAULT
 B_IMAGE2           BITMAP         ".\bitmaps\bitmap28.bmp"
 
+
 LANGUAGE 7, SUBLANG_DEFAULT
 B_IMAGE3           BITMAP         ".\bitmaps\bitmap29.bmp"
+
 
 LANGUAGE 7, SUBLANG_DEFAULT
 B_ITEMLIST32       BITMAP         ".\bitmaps\itemlist.bmp"
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_ITEMLIST321      BITMAP         ".\bitmaps\itemlist1.bmp"
-
-LANGUAGE 7, SUBLANG_DEFAULT
 B_ITEMLIST         BITMAP         ".\bitmaps\bitmap30.bmp"
+
 
 LANGUAGE 7, SUBLANG_DEFAULT
 B_ITEMLIST2        BITMAP         ".\bitmaps\bitmap31.bmp"
 
+
 LANGUAGE 7, SUBLANG_DEFAULT
 B_ITEMLIST3        BITMAP         ".\bitmaps\bitmap32.bmp"
+
 
 LANGUAGE 7, SUBLANG_DEFAULT
 B_LIST             BITMAP         ".\bitmaps\bitmap33.bmp"
 
+
 LANGUAGE 7, SUBLANG_DEFAULT
 B_LIST2            BITMAP         ".\bitmaps\bitmap34.bmp"
 
-CHECKON BITMAP ".\bitmaps\checkon.bmp"
 
 LANGUAGE 7, SUBLANG_DEFAULT
 B_LIST3            BITMAP         ".\bitmaps\bitmap35.bmp"
 
-LANGUAGE 7, SUBLANG_DEFAULT
-New                BITMAP         ".\bitmaps\new.bmp"
 
 LANGUAGE 7, SUBLANG_DEFAULT
 B_OPEN             BITMAP         ".\bitmaps\open.bmp"
@@ -207,38 +200,35 @@ B_OPEN3            BITMAP         ".\bitmaps\bitmap38.bmp"
 LANGUAGE 7, SUBLANG_DEFAULT
 B_PREVIEW          BITMAP         ".\bitmaps\preview.bmp"
 
-LANGUAGE 7, SUBLANG_DEFAULT
-B_PREVIEW1         BITMAP         ".\bitmaps\preview1.bmp"
 
 LANGUAGE 7, SUBLANG_DEFAULT
 B_PREVIEW2         BITMAP         ".\bitmaps\bitmap40.bmp"
 
+
 LANGUAGE 7, SUBLANG_DEFAULT
 B_PREVIEW3         BITMAP         ".\bitmaps\bitmap41.bmp"
+
 
 LANGUAGE 7, SUBLANG_DEFAULT
 B_PRINT            BITMAP         ".\bitmaps\bitmap42.bmp"
 
-LANGUAGE 7, SUBLANG_DEFAULT
-B_REDO             BITMAP         ".\bitmaps\redo.bmp"
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_REDO1            BITMAP         ".\bitmaps\redo1.bmp"
+B_REDO             BITMAP         ".\\bitmaps\\redo.bmp"
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_REDO_16          BITMAP         ".\bitmaps\redo16x16.bmp"
+B_REDO_16          BITMAP         ".\\bitmaps\\redo16x16.bmp"
 
 LANGUAGE 7, SUBLANG_DEFAULT
 B_REDO2            BITMAP         ".\bitmaps\bitmap44.bmp"
 
+
 LANGUAGE 7, SUBLANG_DEFAULT
 B_REDO3            BITMAP         ".\bitmaps\bitmap45.bmp"
 
-LANGUAGE 7, SUBLANG_DEFAULT
-B_SAVE             BITMAP         ".\bitmaps\save.bmp"
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_SAVE1            BITMAP         ".\bitmaps\save1.bmp"
+B_SAVE             BITMAP         ".\bitmaps\save.bmp"
 
 LANGUAGE 7, SUBLANG_DEFAULT
 B_SAVE_16          BITMAP         ".\bitmaps\save16x16.bmp"
@@ -246,17 +236,10 @@ B_SAVE_16          BITMAP         ".\bitmaps\save16x16.bmp"
 LANGUAGE 7, SUBLANG_DEFAULT
 B_SAVE2            BITMAP         ".\bitmaps\bitmap47.bmp"
 
+
 LANGUAGE 7, SUBLANG_DEFAULT
 B_SAVE3            BITMAP         ".\bitmaps\bitmap48.bmp"
 
-LANGUAGE 7, SUBLANG_DEFAULT
-print              BITMAP         ".\bitmaps\print.bmp"
-
-LANGUAGE 7, SUBLANG_DEFAULT
-print1             BITMAP         ".\bitmaps\print1.bmp"
-
-LANGUAGE 7, SUBLANG_DEFAULT
-print16            BITMAP         ".\bitmaps\print16.bmp"
 
 LANGUAGE 7, SUBLANG_DEFAULT
 B_SOURCE_NO        BITMAP         ".\bitmaps\bitmap49.bmp"
@@ -285,22 +268,19 @@ LANGUAGE 7, SUBLANG_DEFAULT
 B_TEXT32           BITMAP         ".\bitmaps\text.bmp"
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_TEXT321          BITMAP         ".\bitmaps\text1.bmp"
-
-LANGUAGE 7, SUBLANG_DEFAULT
 B_TEXT             BITMAP         ".\bitmaps\bitmap55.bmp"
+
 
 LANGUAGE 7, SUBLANG_DEFAULT
 B_TEXT2            BITMAP         ".\bitmaps\bitmap56.bmp"
 
+
 LANGUAGE 7, SUBLANG_DEFAULT
 B_TEXT3            BITMAP         ".\bitmaps\bitmap57.bmp"
 
-LANGUAGE 7, SUBLANG_DEFAULT
-B_UNDO             BITMAP         ".\bitmaps\undo.bmp"
 
 LANGUAGE 7, SUBLANG_DEFAULT
-B_UNDO1            BITMAP         ".\bitmaps\undo1.bmp"
+B_UNDO             BITMAP         ".\bitmaps\undo.bmp"
 
 LANGUAGE 7, SUBLANG_DEFAULT
 B_UNDO_16          BITMAP         ".\bitmaps\undo16x16.bmp"
@@ -308,59 +288,78 @@ B_UNDO_16          BITMAP         ".\bitmaps\undo16x16.bmp"
 LANGUAGE 7, SUBLANG_DEFAULT
 B_UNDO2            BITMAP         ".\bitmaps\bitmap59.bmp"
 
+
 LANGUAGE 7, SUBLANG_DEFAULT
 B_UNDO3            BITMAP         ".\bitmaps\bitmap60.bmp"
+
 
 LANGUAGE 7, SUBLANG_DEFAULT
 BARBRUSH5          BITMAP         ".\bitmaps\bitmap61.bmp"
 
+
 LANGUAGE 7, SUBLANG_DEFAULT
 BCODE_HORI         BITMAP         ".\bitmaps\bitmap62.bmp"
+
 
 LANGUAGE 7, SUBLANG_DEFAULT
 BCODE_VERT         BITMAP         ".\bitmaps\bitmap63.bmp"
 
+
 LANGUAGE 7, SUBLANG_DEFAULT
 BRUSH1             BITMAP         ".\bitmaps\bitmap64.bmp"
+
 
 LANGUAGE 7, SUBLANG_DEFAULT
 BRUSH2             BITMAP         ".\bitmaps\bitmap65.bmp"
 
+
 LANGUAGE 7, SUBLANG_DEFAULT
 BRUSH3             BITMAP         ".\bitmaps\bitmap66.bmp"
+
 
 LANGUAGE 7, SUBLANG_DEFAULT
 BRUSH4             BITMAP         ".\bitmaps\bitmap67.bmp"
 
+
 LANGUAGE 7, SUBLANG_DEFAULT
 CHECKED            BITMAP         ".\bitmaps\bitmap68.bmp"
+
 
 LANGUAGE 7, SUBLANG_DEFAULT
 ELLIPSE            BITMAP         ".\bitmaps\bitmap69.bmp"
 
+
 LANGUAGE 7, SUBLANG_DEFAULT
 EP_BOTTOM          BITMAP         ".\bitmaps\bitmap70.bmp"
+
 
 LANGUAGE 7, SUBLANG_DEFAULT
 EP_BRUSH1          BITMAP         ".\bitmaps\bitmap71.bmp"
 
+
 LANGUAGE 7, SUBLANG_DEFAULT
 EP_BRUSH2          BITMAP         ".\bitmaps\bitmap72.bmp"
+
 
 LANGUAGE 7, SUBLANG_DEFAULT
 EP_BRUSH3          BITMAP         ".\bitmaps\bitmap73.bmp"
 
+
 LANGUAGE 7, SUBLANG_DEFAULT
 EP_BRUSH4          BITMAP         ".\bitmaps\bitmap74.bmp"
+
 
 LANGUAGE 0, SUBLANG_NEUTRAL
 EP_COPY            BITMAP         ".\bitmaps\bitmap75.bmp"
 
+
 LANGUAGE 7, SUBLANG_DEFAULT
 EP_DEL             BITMAP         ".\bitmaps\bitmap76.bmp"
 
+
 LANGUAGE 7, SUBLANG_DEFAULT
 EP_EIGHT_PAGES3    BITMAP         ".\bitmaps\bitmap77.bmp"
+
 
 LANGUAGE 7, SUBLANG_DEFAULT
 EP_EMAIL           BITMAP         ".\bitmaps\bitmap78.bmp"
@@ -461,104 +460,139 @@ GRAPHIC            BITMAP         ".\bitmaps\bitmap101.bmp"
 LANGUAGE 7, SUBLANG_DEFAULT
 LINEDOWN           BITMAP         ".\bitmaps\bitmap102.bmp"
 
+
 LANGUAGE 7, SUBLANG_DEFAULT
 LINEHORI           BITMAP         ".\bitmaps\bitmap103.bmp"
+
 
 LANGUAGE 7, SUBLANG_DEFAULT
 LINEUP             BITMAP         ".\bitmaps\bitmap104.bmp"
 
+
 LANGUAGE 7, SUBLANG_DEFAULT
 LINEVERT           BITMAP         ".\bitmaps\bitmap105.bmp"
+
 
 LANGUAGE 7, SUBLANG_DEFAULT
 LOGO               BITMAP         ".\bitmaps\bitmap106.bmp"
 
+
 LANGUAGE 7, SUBLANG_DEFAULT
 RECTANGLE          BITMAP         ".\bitmaps\bitmap107.bmp"
+
 
 LANGUAGE 7, SUBLANG_DEFAULT
 RULER1_IN          BITMAP         ".\bitmaps\bitmap108.bmp"
 
+
 LANGUAGE 7, SUBLANG_DEFAULT
 RULER1_MM          BITMAP         ".\bitmaps\bitmap109.bmp"
+
 
 LANGUAGE 7, SUBLANG_DEFAULT
 RULER1_PI          BITMAP         ".\bitmaps\bitmap110.bmp"
 
+
 LANGUAGE 7, SUBLANG_DEFAULT
 RULER2_IN          BITMAP         ".\bitmaps\bitmap111.bmp"
+
 
 LANGUAGE 7, SUBLANG_DEFAULT
 RULER2_MM          BITMAP         ".\bitmaps\bitmap112.bmp"
 
+
 LANGUAGE 7, SUBLANG_DEFAULT
 RULER2_PI          BITMAP         ".\bitmaps\bitmap113.bmp"
+
 
 LANGUAGE 7, SUBLANG_DEFAULT
 SELECT             BITMAP         ".\bitmaps\bitmap114.bmp"
 
+
 LANGUAGE 7, SUBLANG_DEFAULT
 SELECT1            BITMAP         ".\bitmaps\bitmap115.bmp"
+
 
 LANGUAGE 7, SUBLANG_DEFAULT
 SELECT2            BITMAP         ".\bitmaps\bitmap116.bmp"
 
+
 LANGUAGE 7, SUBLANG_DEFAULT
 SELECT4            BITMAP         ".\bitmaps\bitmap117.bmp"
+
 
 LANGUAGE 7, SUBLANG_DEFAULT
 STYLE1             BITMAP         ".\bitmaps\bitmap118.bmp"
 
+
 LANGUAGE 7, SUBLANG_DEFAULT
 STYLE2             BITMAP         ".\bitmaps\bitmap119.bmp"
+
 
 LANGUAGE 7, SUBLANG_DEFAULT
 STYLE3             BITMAP         ".\bitmaps\bitmap120.bmp"
 
+
 LANGUAGE 7, SUBLANG_DEFAULT
 STYLE4             BITMAP         ".\bitmaps\bitmap121.bmp"
+
 
 LANGUAGE 7, SUBLANG_DEFAULT
 STYLE5             BITMAP         ".\bitmaps\bitmap122.bmp"
 
+
 LANGUAGE 7, SUBLANG_DEFAULT
 TITLEAERAS         BITMAP         ".\bitmaps\bitmap123.bmp"
+
 
 LANGUAGE 7, SUBLANG_DEFAULT
 TITLEAERAS1        BITMAP         ".\bitmaps\bitmap124.bmp"
 
+
 LANGUAGE 7, SUBLANG_DEFAULT
 TREEGRAPH1         BITMAP         ".\bitmaps\bitmap125.bmp"
+
 
 LANGUAGE 7, SUBLANG_DEFAULT
 TREEGRAPH2         BITMAP         ".\bitmaps\bitmap126.bmp"
 
+
 LANGUAGE 7, SUBLANG_DEFAULT
 TREEGRAPH3         BITMAP         ".\bitmaps\bitmap127.bmp"
+
 
 LANGUAGE 7, SUBLANG_DEFAULT
 TREEGRAPH4         BITMAP         ".\bitmaps\bitmap128.bmp"
 
+
 LANGUAGE 7, SUBLANG_DEFAULT
 TREEGRAPH5         BITMAP         ".\bitmaps\bitmap129.bmp"
+
 
 LANGUAGE 7, SUBLANG_DEFAULT
 TREEGRAPH6         BITMAP         ".\bitmaps\bitmap130.bmp"
 
+
 LANGUAGE 7, SUBLANG_DEFAULT
 TYP_BARCODE        BITMAP         ".\bitmaps\bitmap131.bmp"
+
 
 LANGUAGE 7, SUBLANG_DEFAULT
 TYP_GRAPHIC        BITMAP         ".\bitmaps\bitmap132.bmp"
 
+
 LANGUAGE 7, SUBLANG_DEFAULT
 TYP_IMAGE          BITMAP         ".\bitmaps\bitmap133.bmp"
+
 
 LANGUAGE 7, SUBLANG_DEFAULT
 TYP_TEXT           BITMAP         ".\bitmaps\bitmap134.bmp"
 
+
 LANGUAGE 7, SUBLANG_DEFAULT
 UNCHECKED          BITMAP         ".\bitmaps\bitmap135.bmp"
+
+
 
 //
 // Dialog resources
@@ -807,7 +841,7 @@ CAPTION "Language Database"
 FONT 8, "MS Sans Serif"
 {
     PUSHBUTTON      "&OK", 101, 324, 202, 66, 14, 0, WS_EX_LEFT
-    CONTROL         "", 301, "TxBrowse", 0x50B10000, 4, 4, 386, 194, 0x00000000
+    CONTROL         "", 301, "TWBrowse", 0x50B10000, 4, 4, 386, 194, 0x00000000
     CTEXT           "Please restart the programm to activate the changes.", 170, 4, 204, 238, 10, NOT WS_GROUP | SS_CENTER | SS_SUNKEN, WS_EX_LEFT
 }
 
@@ -1280,17 +1314,17 @@ FONT 8, "MS Sans Serif"
     RTEXT           "8.", 65535, 4, 118, 14, 8, NOT WS_GROUP | SS_RIGHT, WS_EX_LEFT
     RTEXT           "9.", 65535, 4, 132, 14, 8, NOT WS_GROUP | SS_RIGHT, WS_EX_LEFT
     RTEXT           "1.", 65535, 4, 20, 14, 8, NOT WS_GROUP | SS_RIGHT, WS_EX_LEFT
-    LTEXT           "", 401, 22, 18, 22, 12, NOT WS_GROUP | SS_LEFT | SS_SUNKEN, WS_EX_LEFT
-    LTEXT           "", 402, 22, 32, 22, 12, NOT WS_GROUP | SS_LEFT | SS_SUNKEN, WS_EX_LEFT
-    LTEXT           "", 403, 22, 46, 22, 12, NOT WS_GROUP | SS_LEFT | SS_SUNKEN, WS_EX_LEFT
-    LTEXT           "", 404, 22, 60, 22, 12, NOT WS_GROUP | SS_LEFT | SS_SUNKEN, WS_EX_LEFT
-    LTEXT           "", 405, 22, 74, 22, 12, NOT WS_GROUP | SS_LEFT | SS_SUNKEN, WS_EX_LEFT
-    LTEXT           "", 406, 22, 88, 22, 12, NOT WS_GROUP | SS_LEFT | SS_SUNKEN, WS_EX_LEFT
-    LTEXT           "", 407, 22, 102, 22, 12, NOT WS_GROUP | SS_LEFT | SS_SUNKEN, WS_EX_LEFT
-    LTEXT           "", 408, 22, 116, 22, 12, NOT WS_GROUP | SS_LEFT | SS_SUNKEN, WS_EX_LEFT
-    LTEXT           "", 409, 22, 130, 22, 12, NOT WS_GROUP | SS_LEFT | SS_SUNKEN, WS_EX_LEFT
-    LTEXT           "", 410, 22, 144, 22, 12, NOT WS_GROUP | SS_LEFT | SS_SUNKEN, WS_EX_LEFT
-    CTEXT           "", 173, 136, 4, 86, 10, NOT WS_GROUP | SS_CENTER | SS_SUNKEN, WS_EX_LEFT
+    LTEXT           "Color", 401, 22, 18, 22, 12, NOT WS_GROUP | SS_LEFT | SS_SUNKEN, WS_EX_LEFT
+    LTEXT           "Color", 402, 22, 32, 22, 12, NOT WS_GROUP | SS_LEFT | SS_SUNKEN, WS_EX_LEFT
+    LTEXT           "Color", 403, 22, 46, 22, 12, NOT WS_GROUP | SS_LEFT | SS_SUNKEN, WS_EX_LEFT
+    LTEXT           "Color", 404, 22, 60, 22, 12, NOT WS_GROUP | SS_LEFT | SS_SUNKEN, WS_EX_LEFT
+    LTEXT           "Color", 405, 22, 74, 22, 12, NOT WS_GROUP | SS_LEFT | SS_SUNKEN, WS_EX_LEFT
+    LTEXT           "Color", 406, 22, 88, 22, 12, NOT WS_GROUP | SS_LEFT | SS_SUNKEN, WS_EX_LEFT
+    LTEXT           "Color", 407, 22, 102, 22, 12, NOT WS_GROUP | SS_LEFT | SS_SUNKEN, WS_EX_LEFT
+    LTEXT           "Color", 408, 22, 116, 22, 12, NOT WS_GROUP | SS_LEFT | SS_SUNKEN, WS_EX_LEFT
+    LTEXT           "Color", 409, 22, 130, 22, 12, NOT WS_GROUP | SS_LEFT | SS_SUNKEN, WS_EX_LEFT
+    LTEXT           "Color", 410, 22, 144, 22, 12, NOT WS_GROUP | SS_LEFT | SS_SUNKEN, WS_EX_LEFT
+    CTEXT           "Color", 173, 136, 4, 86, 10, NOT WS_GROUP | SS_CENTER | SS_SUNKEN, WS_EX_LEFT
     CTEXT           "Nr.", 172, 120, 4, 16, 10, NOT WS_GROUP | SS_CENTER | SS_SUNKEN, WS_EX_LEFT
     RTEXT           "20.", 65535, 118, 146, 14, 8, NOT WS_GROUP | SS_RIGHT, WS_EX_LEFT
     RTEXT           "12.", 65535, 118, 34, 14, 8, NOT WS_GROUP | SS_RIGHT, WS_EX_LEFT
@@ -1302,16 +1336,16 @@ FONT 8, "MS Sans Serif"
     RTEXT           "18.", 65535, 118, 118, 14, 8, NOT WS_GROUP | SS_RIGHT, WS_EX_LEFT
     RTEXT           "19.", 65535, 118, 132, 14, 8, NOT WS_GROUP | SS_RIGHT, WS_EX_LEFT
     RTEXT           "11.", 65535, 118, 20, 14, 8, NOT WS_GROUP | SS_RIGHT, WS_EX_LEFT
-    LTEXT           "", 411, 136, 18, 22, 12, NOT WS_GROUP | SS_LEFT | SS_SUNKEN, WS_EX_LEFT
-    LTEXT           "", 412, 136, 32, 22, 12, NOT WS_GROUP | SS_LEFT | SS_SUNKEN, WS_EX_LEFT
-    LTEXT           "", 413, 136, 46, 22, 12, NOT WS_GROUP | SS_LEFT | SS_SUNKEN, WS_EX_LEFT
-    LTEXT           "", 414, 136, 60, 22, 12, NOT WS_GROUP | SS_LEFT | SS_SUNKEN, WS_EX_LEFT
-    LTEXT           "", 415, 136, 74, 22, 12, NOT WS_GROUP | SS_LEFT | SS_SUNKEN, WS_EX_LEFT
-    LTEXT           "", 416, 136, 88, 22, 12, NOT WS_GROUP | SS_LEFT | SS_SUNKEN, WS_EX_LEFT
-    LTEXT           "", 417, 136, 102, 22, 12, NOT WS_GROUP | SS_LEFT | SS_SUNKEN, WS_EX_LEFT
-    LTEXT           "", 418, 136, 116, 22, 12, NOT WS_GROUP | SS_LEFT | SS_SUNKEN, WS_EX_LEFT
-    LTEXT           "", 419, 136, 130, 22, 12, NOT WS_GROUP | SS_LEFT | SS_SUNKEN, WS_EX_LEFT
-    LTEXT           "", 420, 136, 144, 22, 12, NOT WS_GROUP | SS_LEFT | SS_SUNKEN, WS_EX_LEFT
+    LTEXT           "Color", 411, 136, 18, 22, 12, NOT WS_GROUP | SS_LEFT | SS_SUNKEN, WS_EX_LEFT
+    LTEXT           "Color", 412, 136, 32, 22, 12, NOT WS_GROUP | SS_LEFT | SS_SUNKEN, WS_EX_LEFT
+    LTEXT           "Color", 413, 136, 46, 22, 12, NOT WS_GROUP | SS_LEFT | SS_SUNKEN, WS_EX_LEFT
+    LTEXT           "Color", 414, 136, 60, 22, 12, NOT WS_GROUP | SS_LEFT | SS_SUNKEN, WS_EX_LEFT
+    LTEXT           "Color", 415, 136, 74, 22, 12, NOT WS_GROUP | SS_LEFT | SS_SUNKEN, WS_EX_LEFT
+    LTEXT           "Color", 416, 136, 88, 22, 12, NOT WS_GROUP | SS_LEFT | SS_SUNKEN, WS_EX_LEFT
+    LTEXT           "Color", 417, 136, 102, 22, 12, NOT WS_GROUP | SS_LEFT | SS_SUNKEN, WS_EX_LEFT
+    LTEXT           "Color", 418, 136, 116, 22, 12, NOT WS_GROUP | SS_LEFT | SS_SUNKEN, WS_EX_LEFT
+    LTEXT           "Color", 419, 136, 130, 22, 12, NOT WS_GROUP | SS_LEFT | SS_SUNKEN, WS_EX_LEFT
+    LTEXT           "Color", 420, 136, 144, 22, 12, NOT WS_GROUP | SS_LEFT | SS_SUNKEN, WS_EX_LEFT
     RTEXT           "30.", 65535, 232, 146, 14, 8, NOT WS_GROUP | SS_RIGHT, WS_EX_LEFT
     RTEXT           "22.", 65535, 232, 34, 14, 8, NOT WS_GROUP | SS_RIGHT, WS_EX_LEFT
     RTEXT           "23.", 65535, 232, 48, 14, 8, NOT WS_GROUP | SS_RIGHT, WS_EX_LEFT
@@ -1322,24 +1356,24 @@ FONT 8, "MS Sans Serif"
     RTEXT           "28.", 65535, 232, 118, 14, 8, NOT WS_GROUP | SS_RIGHT, WS_EX_LEFT
     RTEXT           "29.", 65535, 232, 132, 14, 8, NOT WS_GROUP | SS_RIGHT, WS_EX_LEFT
     RTEXT           "21.", 65535, 232, 20, 14, 8, NOT WS_GROUP | SS_RIGHT, WS_EX_LEFT
-    LTEXT           "", 421, 250, 18, 22, 12, NOT WS_GROUP | SS_LEFT | SS_SUNKEN, WS_EX_LEFT
-    LTEXT           "", 422, 250, 32, 22, 12, NOT WS_GROUP | SS_LEFT | SS_SUNKEN, WS_EX_LEFT
-    LTEXT           "", 423, 250, 46, 22, 12, NOT WS_GROUP | SS_LEFT | SS_SUNKEN, WS_EX_LEFT
-    LTEXT           "", 424, 250, 60, 22, 12, NOT WS_GROUP | SS_LEFT | SS_SUNKEN, WS_EX_LEFT
-    LTEXT           "", 425, 250, 74, 22, 12, NOT WS_GROUP | SS_LEFT | SS_SUNKEN, WS_EX_LEFT
-    LTEXT           "", 426, 250, 88, 22, 12, NOT WS_GROUP | SS_LEFT | SS_SUNKEN, WS_EX_LEFT
-    LTEXT           "", 427, 250, 102, 22, 12, NOT WS_GROUP | SS_LEFT | SS_SUNKEN, WS_EX_LEFT
-    LTEXT           "", 428, 250, 116, 22, 12, NOT WS_GROUP | SS_LEFT | SS_SUNKEN, WS_EX_LEFT
-    LTEXT           "", 429, 250, 130, 22, 12, NOT WS_GROUP | SS_LEFT | SS_SUNKEN, WS_EX_LEFT
-    LTEXT           "", 430, 250, 144, 22, 12, NOT WS_GROUP | SS_LEFT | SS_SUNKEN, WS_EX_LEFT
-    CTEXT           "", 175, 250, 4, 86, 10, NOT WS_GROUP | SS_CENTER | SS_SUNKEN, WS_EX_LEFT
+    LTEXT           "Color", 421, 250, 18, 22, 12, NOT WS_GROUP | SS_LEFT | SS_SUNKEN, WS_EX_LEFT
+    LTEXT           "Color", 422, 250, 32, 22, 12, NOT WS_GROUP | SS_LEFT | SS_SUNKEN, WS_EX_LEFT
+    LTEXT           "Color", 423, 250, 46, 22, 12, NOT WS_GROUP | SS_LEFT | SS_SUNKEN, WS_EX_LEFT
+    LTEXT           "Color", 424, 250, 60, 22, 12, NOT WS_GROUP | SS_LEFT | SS_SUNKEN, WS_EX_LEFT
+    LTEXT           "Color", 425, 250, 74, 22, 12, NOT WS_GROUP | SS_LEFT | SS_SUNKEN, WS_EX_LEFT
+    LTEXT           "Color", 426, 250, 88, 22, 12, NOT WS_GROUP | SS_LEFT | SS_SUNKEN, WS_EX_LEFT
+    LTEXT           "Color", 427, 250, 102, 22, 12, NOT WS_GROUP | SS_LEFT | SS_SUNKEN, WS_EX_LEFT
+    LTEXT           "Color", 428, 250, 116, 22, 12, NOT WS_GROUP | SS_LEFT | SS_SUNKEN, WS_EX_LEFT
+    LTEXT           "Color", 429, 250, 130, 22, 12, NOT WS_GROUP | SS_LEFT | SS_SUNKEN, WS_EX_LEFT
+    LTEXT           "Color", 430, 250, 144, 22, 12, NOT WS_GROUP | SS_LEFT | SS_SUNKEN, WS_EX_LEFT
+    CTEXT           "Color", 175, 250, 4, 86, 10, NOT WS_GROUP | SS_CENTER | SS_SUNKEN, WS_EX_LEFT
     CTEXT           "Nr.", 174, 234, 4, 16, 10, NOT WS_GROUP | SS_CENTER | SS_SUNKEN, WS_EX_LEFT
 }
 
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-FontsAndColors DIALOG 7, 5, 354, 202
+GENERALSETTINGS DIALOG 7, 5, 354, 202
 STYLE DS_3DLOOK | DS_MODALFRAME | DS_SETFONT | WS_CAPTION | WS_POPUP | WS_SYSMENU
 CAPTION "Fonts and Colors"
 FONT 8, "MS Sans Serif"
@@ -1808,18 +1842,10 @@ FONT 6, "MS Sans Serif"
     RTEXT           "10.0", 321, 216, 106, 26, 10, NOT WS_GROUP | SS_RIGHT, WS_EX_LEFT
 }
 
-ITEMLIST DIALOG DISCARDABLE 24, 6, 273, 258
-STYLE WS_POPUP|DS_MODALFRAME|DS_3DLOOK|WS_CAPTION|WS_SYSMENU|WS_VISIBLE
-CAPTION "Item List"
-FONT 8, "MS Sans Serif"
-{
-   CONTROL "", 201, "SysTreeView32", WS_BORDER | TVS_HASBUTTONS|TVS_HASLINES|TVS_LINESATROOT|TVS_NOTOOLTIPS, 5, 5, 262, 227
-   CONTROL "&OK", 101, "Button", WS_TABSTOP, 109, 238, 50, 14
-}
 
 
 LANGUAGE 7, SUBLANG_DEFAULT
-ITEMLIST2 DIALOG 24, 6, 273, 258
+ITEMLIST DIALOG 24, 6, 273, 258
 STYLE DS_3DLOOK | DS_MODALFRAME | DS_SETFONT | WS_CAPTION | WS_VISIBLE | WS_POPUP | WS_SYSMENU
 CAPTION "Item List"
 FONT 8, "MS Sans Serif"
@@ -2111,6 +2137,7 @@ FONT 6, "MS Sans Serif"
     LTEXT           "Entries", 180, 154, 38, 28, 8, NOT WS_GROUP | SS_LEFT, WS_EX_LEFT
     PUSHBUTTON      "Clear List", 204, 184, 36, 50, 12, BS_CENTER, WS_EX_LEFT
     AUTOCHECKBOX    "Show reticule", 206, 16, 68, 156, 12, 0, WS_EX_LEFT
+    AUTOCHECKBOX    "Show Tree panel", 308, 124, 116, 104, 12, WS_EX_LEFT
 }
 
 
@@ -2322,8 +2349,8 @@ FONT 6, "MS Sans Serif"
     PUSHBUTTON      "", 19, 94, 180, 14, 12, BS_CENTER, WS_EX_LEFT
     PUSHBUTTON      "", 111, 6, 206, 14, 14, BS_CENTER, WS_EX_LEFT
     PUSHBUTTON      "&Remove Item", 103, 22, 206, 70, 14, BS_CENTER, WS_EX_LEFT
-    PUSHBUTTON      "Color", 401, 80, 146, 34, 12, WS_EX_STATICEDGE, WS_EX_LEFT 
-    PUSHBUTTON      "Color", 402, 80, 162, 34, 12, NOT WS_GROUP | SS_LEFT | SS_SUNKEN, WS_EX_LEFT
+    LTEXT           "Color", 401, 80, 146, 34, 12, NOT WS_GROUP | SS_LEFT | SS_SUNKEN, WS_EX_LEFT
+    LTEXT           "Color", 402, 80, 162, 34, 12, NOT WS_GROUP | SS_LEFT | SS_SUNKEN, WS_EX_LEFT
     RTEXT           "Top:", 170, 12, 58, 40, 10, NOT WS_GROUP | SS_RIGHT, WS_EX_LEFT
     RTEXT           "Left:", 171, 14, 72, 38, 10, NOT WS_GROUP | SS_RIGHT, WS_EX_LEFT
     RTEXT           "Width:", 172, 8, 88, 43, 10, NOT WS_GROUP | SS_RIGHT, WS_EX_LEFT

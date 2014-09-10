@@ -2575,7 +2575,7 @@ return ( aSizes )
 
 function Options()
 
-   local i, oDlg, oIni, cLanguage, cOldLanguage, cWert, aCbx[4], aGrp[2], oRad1
+   local i, oDlg, oIni, cLanguage, cOldLanguage, cWert, aCbx[5], aGrp[2], oRad1
    local lSave         := .F.
    local lInfo         := .F.
    local nLanguage     := Val( GetPvProfString( "General", "Language"  , "1", oER:cGeneralIni ) )
@@ -2589,6 +2589,7 @@ function Options()
    local lShowGrid     := oGenVar:lShowGrid
    local lShowReticule := oGenVar:lShowReticule
    local lShowBorder   := oGenVar:lShowBorder
+   LOCAL lShowPanel  := ( oEr:GetGeneralIni( "General", "ShowPanel", "1" ) = "1" )
    LOCAL nDecimals     :=   IIF( oER:nMeasure = 2, 2, 0 )
 
    for i := 1 to 99
@@ -2624,6 +2625,7 @@ function Options()
    REDEFINE GET nGridHeight ID 302 OF oDlg PICTURE cPicture SPINNER MIN 0.01 VALID nGridHeight > 0
 
    REDEFINE CHECKBOX aCbx[2] VAR lShowGrid ID 303 OF oDlg
+   REDEFINE CHECKBOX aCbx[5] VAR lShowPanel ID 308 OF oDlg
 
    REDEFINE SAY PROMPT oER:cMeasure ID 120 OF oDlg
    REDEFINE SAY PROMPT oER:cMeasure ID 121 OF oDlg
@@ -2665,7 +2667,7 @@ function Options()
          SET SECTION "General" ENTRY "Maximize"       to IIF( lMaximize    , "1", "0")  OF oIni
          SET SECTION "General" ENTRY "ShowTextBorder" to IIF( lShowBorder  , "1", "0" ) OF oIni
          SET SECTION "General" ENTRY "ShowReticule"   to IIF( lShowReticule, "1", "0" ) OF oIni
-
+         SET SECTION "General" ENTRY "ShowPanel"      to IIF( lShowPanel, "1", "0" ) OF oIni
          if cLanguage <> cOldLanguage
             SET SECTION "General" ENTRY "Language" to ;
                AllTrim(STR(ASCAN( aLanguage, cLanguage ), 2)) OF oIni
