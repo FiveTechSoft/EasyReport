@@ -1190,8 +1190,7 @@ function BuildMenu()
          ACTION EditLanguage()
    endif
    MENUITEM GL("&Options") ;
-      ACTION Options() ;
-      WHEN !Empty( oER:cDefIni )
+      ACTION Options() // ; WHEN !Empty( oER:cDefIni )
    ENDMENU
 
    if Val( oEr:GetDefIni( "General", "Help", "1" ) ) = 1
@@ -2638,10 +2637,12 @@ function Options()
 
    REDEFINE CHECKBOX aCbx[4] VAR lShowReticule ID 206 OF oDlg
 
-   REDEFINE GET nGridWidth  ID 301 OF oDlg PICTURE cPicture SPINNER MIN 0.01 VALID nGridWidth > 0
-   REDEFINE GET nGridHeight ID 302 OF oDlg PICTURE cPicture SPINNER MIN 0.01 VALID nGridHeight > 0
+   REDEFINE GET nGridWidth  ID 301 OF oDlg PICTURE cPicture SPINNER MIN 0.01 VALID nGridWidth > 0   WHEN !Empty( oER:cDefIni )
+   REDEFINE GET nGridHeight ID 302 OF oDlg PICTURE cPicture SPINNER MIN 0.01 VALID nGridHeight > 0  WHEN !Empty( oER:cDefIni )
 
-   REDEFINE CHECKBOX aCbx[2] VAR lShowGrid ID 303 OF oDlg
+
+   REDEFINE CHECKBOX aCbx[2] VAR lShowGrid ID 303 OF oDlg  WHEN !Empty( oER:cDefIni )
+
    REDEFINE CHECKBOX aCbx[5] VAR lShowPanel ID 308 OF oDlg
 
    REDEFINE SAY PROMPT oER:cMeasure ID 120 OF oDlg
@@ -2673,11 +2674,15 @@ function Options()
       oGenVar:lShowReticule := lShowReticule
       oGenVar:lShowBorder   := lShowBorder
 
+      IF !Empty( oER:cDefIni )
+
       INI oIni FILE oER:cDefIni
          SET SECTION "General" ENTRY "GridWidth"  to AllTrim(STR( nGridWidth , 5, nDecimals )) OF oIni
          SET SECTION "General" ENTRY "GridHeight" to AllTrim(STR( nGridHeight, 5, nDecimals )) OF oIni
          SET SECTION "General" ENTRY "ShowGrid"   to IIF( lShowGrid, "1", "0") OF oIni
       ENDINI
+
+      endif
 
       INI oIni FILE oER:cGeneralIni
          SET SECTION "General" ENTRY "MruList"        to AllTrim(STR( nMruList ))       OF oIni
@@ -2685,7 +2690,7 @@ function Options()
          SET SECTION "General" ENTRY "ShowTextBorder" to IIF( lShowBorder  , "1", "0" ) OF oIni
          SET SECTION "General" ENTRY "ShowReticule"   to IIF( lShowReticule, "1", "0" ) OF oIni
          SET SECTION "General" ENTRY "ShowPanel"      to IIF( lShowPanel, "1", "0" ) OF oIni
-         msginfo(cLanguage)
+
          if cLanguage <> cOldLanguage
             SET SECTION "General" ENTRY "Language" to ;
                AllTrim(STR(ASCAN( aLanguage, cLanguage ), 2)) OF oIni
@@ -2709,13 +2714,13 @@ function Options()
       oEr:oMainWnd:SetMenu( BuildMenu() )
 
     //  SetSave( .F. )
-   //   SaveGeneralPreferences()
+
 
       SetSave( .T. )
+      msgInfo("el programa se reiniciara para que los cambios tengan efecto")
       oEr:oMainWnd:END()
       oER:lReexec  := .t.
 
-      //  SaveGeneralPreferences()
 
    endif
 
