@@ -118,6 +118,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
 
    ENDIF
 
+
    ACTIVATE WINDOW oEr:oMainWnd ;
       MAXIMIZED ;
       ON RESIZE if(!Empty(oER:oTree),oER:oTree:refresh(.t.), ) ;
@@ -137,6 +138,11 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
    CloseUndo()
 
    lChDir( cOldDir )
+
+   IF oER:lReexec
+
+        ShellExecute( 0, "Open", "ereport.exe" )
+   endif
 
 return nil
 
@@ -404,6 +410,7 @@ return NIL
 //----------------------------------------------------------------------------//
 
 function DeclarePublics( cDefFile )
+   local oIni
 
    PUBLIC cDefIniPath
    PUBLIC lBeta       := .F.
@@ -480,10 +487,6 @@ function DeclarePublics( cDefFile )
    //Structure-Variable
    PUBLIC oGenVar := TExStruct():New()
 
-
-
-
-
    oEr:nTotalHeight   := 0
    oEr:nTotalWidth    := 0
 
@@ -492,13 +495,26 @@ function DeclarePublics( cDefFile )
    oEr:nRulerTop      := 37
 
    //Voreinstellungen holen
+
+   IF  Empty(oEr:GetGeneralIni(  "Languages", "1" ) )
+       INI oIni FILE oER:cGeneralIni
+         SET SECTION "Languages" ENTRY "1" TO "English" OF oIni
+         SET SECTION "Languages" ENTRY "2" to "German"  OF oIni
+         SET SECTION "Languages" ENTRY "3" to "Italian" OF oIni
+         SET SECTION "Languages" ENTRY "4" to "Spanish" OF oIni
+         SET SECTION "Languages" ENTRY "5" to "Portuguese" OF oIni
+         SET SECTION "Languages" ENTRY "6" to "Portuguese Brazilian" OF oIni
+         SET SECTION "Languages" ENTRY "7" to "French" OF oIni
+       ENDINI
+   endif
+
    oER:cDefIni      := VRD_LF2SF( cDefFile )
    cLongDefIni  := cDefFile
    cDefaultPath := CheckPath(  oEr:GetGeneralIni( "General", "DefaultPath", "" ) )
 
    oEr:lShowPanel  := ( oEr:GetGeneralIni( "General", "ShowPanel", "1" ) = "1")
 
-   if AT( "\", oER:cDefIni ) = 0 .and. .NOT. Empty( oER:cDefIni )
+   if AT( "\", oER:cDefIni ) = 0 .and. !Empty( oER:cDefIni )
       oER:cDefIni := ".\" + oER:cDefIni
    endif
 
@@ -541,7 +557,7 @@ function DeclarePublics( cDefFile )
    oGenVar:AddMember( "nGridHeight",, 1   )
 
    if !Empty( oER:cDefIni )
-      SetGeneralSettings()
+
    endif
 
    oGenVar:AddMember( "nClrArea"  ,, IniColor( oEr:GetGeneralIni( "General", "AreaBackColor", "240, 247, 255" ) ) )
@@ -1195,6 +1211,7 @@ function BuildMenu()
    ENDMENU
 
    ENDMENU
+
 
 return( oMenu )
 
@@ -2668,6 +2685,7 @@ function Options()
          SET SECTION "General" ENTRY "ShowTextBorder" to IIF( lShowBorder  , "1", "0" ) OF oIni
          SET SECTION "General" ENTRY "ShowReticule"   to IIF( lShowReticule, "1", "0" ) OF oIni
          SET SECTION "General" ENTRY "ShowPanel"      to IIF( lShowPanel, "1", "0" ) OF oIni
+         msginfo(cLanguage)
          if cLanguage <> cOldLanguage
             SET SECTION "General" ENTRY "Language" to ;
                AllTrim(STR(ASCAN( aLanguage, cLanguage ), 2)) OF oIni
@@ -2690,7 +2708,14 @@ function Options()
 
       oEr:oMainWnd:SetMenu( BuildMenu() )
 
-      SetSave( .F. )
+    //  SetSave( .F. )
+   //   SaveGeneralPreferences()
+
+      SetSave( .T. )
+      oEr:oMainWnd:END()
+      oER:lReexec  := .t.
+
+      //  SaveGeneralPreferences()
 
    endif
 
@@ -3370,6 +3395,7 @@ CLASS TEasyReport
    DATA nTotalHeight
    DATA nTotalWidth
    DATA oTree, nClrPaneTree
+   DATA lReexec
 
    METHOD New() CONSTRUCTOR
    METHOD GetGeneralIni( cSection , cKey, cDefault ) INLINE GetPvProfString( cSection, cKey, cDefault, ::cGeneralIni )
@@ -3384,6 +3410,7 @@ METHOD New() CLASS TEasyReport
 
    ::cGeneralIni = ".\vrd.ini"
    ::cDataPath   = GetCurDir() + "\Datas\"
+   ::lReExec := .f.
 
   // ::lShowPanel := .T.
 
