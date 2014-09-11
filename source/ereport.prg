@@ -1194,8 +1194,9 @@ function BuildMenu()
       MENUITEM GL("Edit &Language") ;
          ACTION EditLanguage()
    endif
-   MENUITEM GL("&Options") ;
-      ACTION Options() // ; WHEN !Empty( oER:cDefIni )
+   MENUITEM GL("&Grid Settings") ;
+      ACTION SetGrid() ; // Options()  ;
+      WHEN !Empty( oER:cDefIni )
    ENDMENU
 
    if Val( oEr:GetDefIni( "General", "Help", "1" ) ) = 1
@@ -1253,7 +1254,8 @@ function PopupMenu( nArea, oItem, nRow, nCol, lItem )
    SEPARATOR
 
    MENUITEM GL("&Report Settings") ACTION ReportSettings()
-   MENUITEM GL("&Options")         ACTION Options()
+   MENUITEM GL("Grid Setting")         ACTION SetGrid()  //Options()
+   MENUITEM GL("Preferences")         ACTION oEr:SetGeneralPreferences()
 
    if Val( oEr:GetGeneralIni( "General", "Help", "1" ) ) = 1
       SEPARATOR
@@ -2594,6 +2596,7 @@ return ( aSizes )
 
 //----------------------------------------------------------------------------//
 
+/*
 function Options()
 
    local i, oDlg, oIni, cLanguage, cOldLanguage, cWert, aCbx[5], aGrp[2], oRad1
@@ -2730,6 +2733,104 @@ function Options()
    endif
 
 return .T.
+*/
+
+//------------------------------------------------------------------------------
+
+function SetGrid()
+
+   local i, oDlg, oIni, cLanguage, cOldLanguage, cWert, aCbx[5], aGrp[2], oRad1
+   local lSave         := .F.
+   local lInfo         := .F.
+   local nLanguage     := Val( GetPvProfString( "General", "Language"  , "1", oER:cGeneralIni ) )
+   local nMaximize     := Val( GetPvProfString( "General", "Maximize"  , "1", oER:cGeneralIni ) )
+   local lMaximize     := IIF( nMaximize = 1, .T., .F. )
+   local nMruList      := Val( GetPvProfString( "General", "MruList"  , "4", oER:cGeneralIni ) )
+   local aLanguage     := {}
+   local cPicture      := IIF( oER:nMeasure = 2, "999.99", "99999" )
+   local nGridWidth    := oGenVar:nGridWidth
+   local nGridHeight   := oGenVar:nGridHeight
+   local lShowGrid     := oGenVar:lShowGrid
+   local lShowReticule := oGenVar:lShowReticule
+   local lShowBorder   := oGenVar:lShowBorder
+   LOCAL lShowPanel  := ( oEr:GetGeneralIni( "General", "ShowPanel", "1" ) = "1" )
+   LOCAL nDecimals     :=   IIF( oER:nMeasure = 2, 2, 0 )
+
+   for i := 1 to 99
+      cWert := GetPvProfString( "Languages", AllTrim(STR(i,2)), "", oER:cGeneralIni )
+      if .NOT. Empty( cWert )
+         AADD( aLanguage, cWert )
+      endif
+   next
+
+   if Len( aLanguage ) > 0
+      cLanguage    := aLanguage[IIF( nLanguage < 1, 1, nLanguage)]
+      cOldLanguage := cLanguage
+   endif
+
+   DEFINE DIALOG oDlg NAME "OPTIONS" TITLE GL("Options")
+
+   REDEFINE BUTTON PROMPT GL("&OK")     ID 101 OF oDlg ACTION ( lSave := .T., oDlg:End() )
+   REDEFINE BUTTON PROMPT GL("&Cancel") ID 102 OF oDlg ACTION oDlg:End()
+
+   REDEFINE BUTTON PROMPT GL("Clear list") ID 204 OF oDlg ACTION oMru:Clear()
+
+
+   REDEFINE GET nGridWidth  ID 301 OF oDlg PICTURE cPicture SPINNER MIN 0.01 VALID nGridWidth > 0   WHEN !Empty( oER:cDefIni )
+   REDEFINE GET nGridHeight ID 302 OF oDlg PICTURE cPicture SPINNER MIN 0.01 VALID nGridHeight > 0  WHEN !Empty( oER:cDefIni )
+
+
+   REDEFINE CHECKBOX aCbx[2] VAR lShowGrid ID 303 OF oDlg  WHEN !Empty( oER:cDefIni )
+
+
+   REDEFINE SAY PROMPT oER:cMeasure ID 120 OF oDlg
+   REDEFINE SAY PROMPT oER:cMeasure ID 121 OF oDlg
+
+   REDEFINE SAY PROMPT GL("Width:")           ID 171 OF oDlg
+   REDEFINE SAY PROMPT GL("Height:")          ID 172 OF oDlg
+
+
+   ACTIVATE DIALOG oDlg CENTERED ;
+      ON INIT ( aCbx[2]:SetText( GL("Show grid") ) )
+
+
+   if lSave = .T.
+
+      oGenVar:nGridWidth    := nGridWidth
+      oGenVar:nGridHeight   := nGridHeight
+      oGenVar:lShowGrid     := lShowGrid
+
+      IF !Empty( oER:cDefIni )
+
+      INI oIni FILE oER:cDefIni
+         SET SECTION "General" ENTRY "GridWidth"  to AllTrim(STR( nGridWidth , 5, nDecimals )) OF oIni
+         SET SECTION "General" ENTRY "GridHeight" to AllTrim(STR( nGridHeight, 5, nDecimals )) OF oIni
+         SET SECTION "General" ENTRY "ShowGrid"   to IIF( lShowGrid, "1", "0") OF oIni
+      ENDINI
+
+      endif
+
+      for i := 1 to 100
+         if aWnd[ i ] <> nil
+            aWnd[ i ]:Refresh()
+         endif
+      next
+
+      SetGridSize( ER_GetPixel( nGridWidth ), ER_GetPixel( nGridHeight ) )
+      nXMove := ER_GetPixel( nGridWidth )
+      nYMove := ER_GetPixel( nGridHeight )
+
+      oGenVar:nGridWidth  := nGridWidth
+      oGenVar:nGridHeight := nGridHeight
+
+    //  SetSave( .F. )
+
+      SetSave( .T. )
+
+   endif
+
+return .T.
+
 
 //------------------------------------------------------------------------------
 
@@ -3377,6 +3478,26 @@ return .T.
 
 //------------------------------------------------------------------------------
 
+Function DlgStatusBar(oDlg, nHeight, nCorrec , lColor )
+   local nDlgHeight:= oDlg:nHeight
+   local acolor:={ { 0.40, nRGB( 200, 200, 200 ), nRGB( 184, 184, 184 ) },;
+                                    { 0.60, nRGB( 184, 184, 184 ), nRGB( 150, 150, 150 ) } }
+DEFAULT  nHeight := 72
+DEFAULT nCorrec:= 0
+DEFAULT lColor := .F.
+
+  nDlgHeight:= nDlgHeight+ncorrec
+IF lColor
+   GradienTfill(oDlg:hDC,nDlgHeight-( nHeight-2 ),0,nDlgHeight-20,oDlg:nWidth, aColor ,.t.)
+   WndBoxIn( oDlg:hDc,nDlgHeight-( nHeight-1 ),0,nDlgHeight-( nHeight ),oDlg:nWidth )
+ELSE
+   WndBoxIn( oDlg:hDc,nDlgHeight -( nHeight-1 ),4,nDlgHeight-( nHeight ),oDlg:nWidth - 10 )
+endif
+
+Return Nil
+
+//------------------------------------------------------------------------------
+
 FUNCTION DlgBarTitle( oWnd, cTitle, cBmp ,nHeight )
    LOCAL oFont
    LOCAL oTitle
@@ -3543,7 +3664,9 @@ METHOD SetGeneralPreferences() CLASS TEasyReport
    ACTIVATE DIALOG oDlg CENTERED ;
       ON INIT ( aCbx[ 1 ]:SetText( GL("Maximize window at start") ), ;
                 aCbx[3]:SetText( GL("Show always text border") ), ;
-                aCbx[4]:SetText( GL("Show reticule")  ) ,DlgBarTitle( oDlg, GL("Preferences"), "B_EDIT32",44 )  )
+                aCbx[4]:SetText( GL("Show reticule")  ) ,;
+                DlgBarTitle( oDlg, GL("Preferences"), "B_EDIT32",44 ) ) ;
+      ON PAINT  DlgStatusBar(oDlg, 68,, .t. )
 
    if lSave = .T.
 
