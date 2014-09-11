@@ -34,7 +34,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
    local cDefFile := ""
    local oSpl
    local nAltoSpl := 680
-
+   LOCAL oFld
 
   lChDir( cFilePath( GetModuleFileName( GetInstance() ) ) )
 
@@ -111,11 +111,17 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
 
    IF oER:lShowPanel
 
-      oER:oTree := TTreeView():New( 0, 2, oEr:oMainWnd , 0, , .T., .F., 230 , oEr:oMainWnd:nHeight - 155 ,"",, )
-      oEr:oMainWnd:oLeft  :=   oER:oTree
+      @ 0.5, 1 FOLDER oER:oFld PROMPT "&Items", "&Grid Setup", "&Databases" ;
+      OF oEr:oMainWnd SIZE 230, 90
+
+       oEr:oMainWnd:oLeft  :=  oER:oFld
+
+      oER:oTree := TTreeView():New( 0, 2, oER:oFld:aDialogs[1] , 0, , .T., .F., 230 , oEr:oMainWnd:nHeight - 155 ,"",, )
+     // oEr:oMainWnd:oLeft  :=   oER:oTree
       oEr:oTree:SetColor( ,  oEr:nClrPaneTree )
       oEr:oTree:l3DLook := .T.
-      oER:oTree:Hide()
+      oER:oFld:aDialogs[1]:SetControl( oEr:oTree )
+      oER:oFld:Hide()
 
    ENDIF
 
@@ -2839,8 +2845,8 @@ function ItemList( )
 
      oEr:oTree:bLDblClick  = { | nRow, nCol, nKeyFlags | ClickListTree( oEr:oTree ) }
      FillTree( oEr:oTree,oEr:oMainWnd )
-     oEr:oTree:show()
-
+   //  oEr:oTree:show()
+     oEr:oFld:show()
    endif
 
  return nil
@@ -3591,7 +3597,7 @@ CLASS TEasyReport
    DATA nRulerTop
    DATA nTotalHeight
    DATA nTotalWidth
-   DATA oTree, nClrPaneTree
+   DATA oTree, nClrPaneTree ,oFld
    DATA lReexec
 
    METHOD New() CONSTRUCTOR
