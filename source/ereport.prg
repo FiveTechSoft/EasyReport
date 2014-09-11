@@ -1,4 +1,5 @@
-﻿#include "FiveWin.ch"
+#include "FiveWin.ch"
+#include "ttitle.ch"
 
 //Areazugabe
 STATIC nAreaZugabe  := 42
@@ -3374,6 +3375,43 @@ return .T.
 
 //return nil
 
+//------------------------------------------------------------------------------
+
+FUNCTION DlgBarTitle( oWnd, cTitle, cBmp ,nHeight )
+   LOCAL oFont
+   LOCAL oTitle
+   LOCAL nColText := 180
+   LOCAL nRowImg  := 16
+
+   DEFAULT cTitle  := ""
+   DEFAULT nHeight := 48
+
+   IF nHeight < 48
+      nColText := 60
+      nRowImg  := 12
+      DEFINE FONT oFont NAME "Arial" size 10, 30
+   ELSE
+      DEFINE FONT oFont NAME "Arial" size 12, 30
+   endif
+
+    @ -1, -1  TITLE oTitle size oWnd:nWidth+1, nHeight+1 of oWnd SHADOWSIZE 0
+
+    @  nRowImg,  10  TITLEIMG  OF oTitle BITMAP cBmp  SIZE 30, 30 REFLEX ;
+       TRANSPARENT
+
+    @  nRowImg-2 ,  nColText TITLETEXT OF oTitle TEXT cTitle COLOR CLR_BLACK FONT oFont
+
+    oTitle:aGrdBack := { { 1, RGB( 255, 255, 255 ), RGB( 229, 233, 238 )  } }
+    oTitle:nShadowIntensity = 0
+    oTitle:nShadow = 0
+    oTitle:nClrLine1 := nrgb(0,0,0)
+    oTitle:nClrLine2 := RGB( 229, 233, 238 )
+    oWnd:oTop:= oTitle
+
+
+RETURN oTitle
+
+
 //----------------------------------------------------------------------------//
 
 function TScript()
@@ -3453,7 +3491,7 @@ METHOD New() CLASS TEasyReport
 
 METHOD SetGeneralPreferences() CLASS TEasyReport
 
-   local i, oDlg, oIni, cLanguage, cOldLanguage, cWert, aCbx[5], aGrp[2], oRad1
+   local i, oDlg, oIni, cLanguage, cOldLanguage, cWert, aCbx[5], oRad1
    local lSave         := .F.
    local lInfo         := .F.
    local nLanguage     := Val( ::GetGeneralIni( "General", "Language"  , "1" ) )
@@ -3478,7 +3516,7 @@ METHOD SetGeneralPreferences() CLASS TEasyReport
       cOldLanguage := cLanguage
    endif
 
-   DEFINE DIALOG oDlg NAME "GENERALPREFERENCES" TITLE GL("Options")
+   DEFINE DIALOG oDlg NAME "GENERALPREFERENCES" TITLE GL("Preferences")
 
    REDEFINE BUTTON PROMPT GL("&OK")     ID 101 OF oDlg ACTION ( lSave := .T., oDlg:End() )
    REDEFINE BUTTON PROMPT GL("&Cancel") ID 102 OF oDlg ACTION oDlg:End()
@@ -3497,23 +3535,15 @@ METHOD SetGeneralPreferences() CLASS TEasyReport
 
    REDEFINE CHECKBOX aCbx[5] VAR lShowPanel ID 308 OF oDlg
 
-   REDEFINE SAY PROMPT oER:cMeasure ID 120 OF oDlg
-   REDEFINE SAY PROMPT oER:cMeasure ID 121 OF oDlg
-
    REDEFINE SAY PROMPT GL("Language:")        ID 170 OF oDlg
    REDEFINE SAY PROMPT GL("Entries")          ID 180 OF oDlg
 
    REDEFINE SAY PROMPT " " + GL("List of most recently used files") + ":" ID 179 OF oDlg
 
-   REDEFINE GROUP aGrp[ 1 ] ID 190 OF oDlg
-   REDEFINE GROUP aGrp[2] ID 191 OF oDlg
-
    ACTIVATE DIALOG oDlg CENTERED ;
       ON INIT ( aCbx[ 1 ]:SetText( GL("Maximize window at start") ), ;
                 aCbx[3]:SetText( GL("Show always text border") ), ;
-                aCbx[4]:SetText( GL("Show reticule") ), ;
-                aGrp[ 1 ]:SetText( GL("General") ), ;
-                aGrp[2]:SetText( GL("Grid") ) )
+                aCbx[4]:SetText( GL("Show reticule")  ) ,DlgBarTitle( oDlg, GL("Preferences"), "B_EDIT32",44 )  )
 
    if lSave = .T.
 
