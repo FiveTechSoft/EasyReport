@@ -1009,7 +1009,6 @@ function BuildMenu()
    local nMruList := Val( GetPvProfString( "General", "MruList"  , "4", oER:cGeneralIni ) )
 
    MENU oMenu 2007
-
    MENUITEM GL("&File")
    MENU
    if nDeveloper = 1
@@ -1028,6 +1027,10 @@ function BuildMenu()
       ACTION SaveAsFile() ;
       WHEN !Empty( oER:cDefIni )
    SEPARATOR
+   SEPARATOR
+      MENUITEM GL("&Preferences") ;
+          ACTION oEr:SetGeneralPreferences()
+
    MENUITEM GL("&File Informations") ;
       ACTION FileInfos() ;
       WHEN !Empty( oER:cDefIni )
@@ -1138,6 +1141,7 @@ function BuildMenu()
          ACCELERATOR ACC_CONTROL, ASC( GL("I") ) ;
          WHEN !Empty( oER:cDefIni )
       ENDMENU
+
 
       if Val( oEr:GetDefIni( "General", "InsertAreas", "1" ) ) = 1
       MENUITEM GL("&Areas")
@@ -2726,8 +2730,7 @@ function Options()
 
 return .T.
 
-//------------------------------------------------------------------------------//
-
+//------------------------------------------------------------------------------
 
 function ItemList( )
 
@@ -3406,6 +3409,7 @@ CLASS TEasyReport
    METHOD GetGeneralIni( cSection , cKey, cDefault ) INLINE GetPvProfString( cSection, cKey, cDefault, ::cGeneralIni )
    METHOD GetDefIni( cSection , cKey, cDefault ) INLINE GetPvProfString( cSection, cKey, cDefault, ::cDefIni )
    METHOD GetColor( nNr ) INLINE  Val( GetPvProfString(  "Colors", AllTrim(STR( nNr, 5 )), "", ::cDefIni ) )
+   METHOD SetGeneralPreferences()
 
 ENDCLASS
 
@@ -3443,7 +3447,113 @@ METHOD New() CLASS TEasyReport
    DEFINE FONT ::oAppFont NAME "Arial" SIZE 0, -12
 
 
-return Self
+ return Self
+
+//------------------------------------------------------------------------------
+
+METHOD SetGeneralPreferences() CLASS TEasyReport
+
+   local i, oDlg, oIni, cLanguage, cOldLanguage, cWert, aCbx[5], aGrp[2], oRad1
+   local lSave         := .F.
+   local lInfo         := .F.
+   local nLanguage     := Val( ::GetGeneralIni( "General", "Language"  , "1" ) )
+   local lMaximize     := IIf ( Val( ::GetGeneralIni( "General", "Maximize"  , "1" ) ) == 1 , .T., .F. )
+   local nMruList      := Val( ::GetGeneralIni( "General", "MruList"  , "4" ) )
+   local aLanguage     := {}
+   local lShowReticule := oGenVar:lShowReticule
+   local lShowBorder   := oGenVar:lShowBorder
+   LOCAL lShowPanel  := ( ::GetGeneralIni( "General", "ShowPanel", "1" ) = "1" )
+   local cPicture      := IIF( ::nMeasure = 2, "999.99", "99999" )
+   LOCAL nDecimals     :=   IIF( ::nMeasure = 2, 2, 0 )
+
+   for i := 1 to 99
+      cWert := ::GetGeneralIni( "Languages", AllTrim(STR(i,2)), "" )
+      if .NOT. Empty( cWert )
+         AADD( aLanguage, cWert )
+      endif
+   next
+
+   if Len( aLanguage ) > 0
+      cLanguage    := aLanguage[IIF( nLanguage < 1, 1, nLanguage)]
+      cOldLanguage := cLanguage
+   endif
+
+   DEFINE DIALOG oDlg NAME "GENERALPREFERENCES" TITLE GL("Options")
+
+   REDEFINE BUTTON PROMPT GL("&OK")     ID 101 OF oDlg ACTION ( lSave := .T., oDlg:End() )
+   REDEFINE BUTTON PROMPT GL("&Cancel") ID 102 OF oDlg ACTION oDlg:End()
+
+   REDEFINE COMBOBOX cLanguage ITEMS aLanguage ID 201 OF oDlg
+   REDEFINE CHECKBOX aCbx[ 1 ] VAR lMaximize ID 202 OF oDlg
+   REDEFINE GET nMruList  ID 203 OF oDlg PICTURE "99" SPINNER MIN 0 VALID nMruList >= 0
+   REDEFINE BUTTON PROMPT GL("Clear list") ID 204 OF oDlg ACTION oMru:Clear()
+
+   REDEFINE CHECKBOX aCbx[3] VAR lShowBorder ID 205 OF oDlg ;
+      ON CHANGE IIF( lInfo = .F., ;
+                     ( MsgInfo( GL("Please restart the programm to activate the changes."), ;
+                                GL("Information") ), lInfo := .T. ), )
+
+   REDEFINE CHECKBOX aCbx[4] VAR lShowReticule ID 206 OF oDlg
+
+   REDEFINE CHECKBOX aCbx[5] VAR lShowPanel ID 308 OF oDlg
+
+   REDEFINE SAY PROMPT oER:cMeasure ID 120 OF oDlg
+   REDEFINE SAY PROMPT oER:cMeasure ID 121 OF oDlg
+
+   REDEFINE SAY PROMPT GL("Language:")        ID 170 OF oDlg
+   REDEFINE SAY PROMPT GL("Entries")          ID 180 OF oDlg
+
+   REDEFINE SAY PROMPT " " + GL("List of most recently used files") + ":" ID 179 OF oDlg
+
+   REDEFINE GROUP aGrp[ 1 ] ID 190 OF oDlg
+   REDEFINE GROUP aGrp[2] ID 191 OF oDlg
+
+   ACTIVATE DIALOG oDlg CENTERED ;
+      ON INIT ( aCbx[ 1 ]:SetText( GL("Maximize window at start") ), ;
+                aCbx[3]:SetText( GL("Show always text border") ), ;
+                aCbx[4]:SetText( GL("Show reticule") ), ;
+                aGrp[ 1 ]:SetText( GL("General") ), ;
+                aGrp[2]:SetText( GL("Grid") ) )
+
+   if lSave = .T.
+
+      oGenVar:lShowReticule := lShowReticule
+      oGenVar:lShowBorder   := lShowBorder
+
+      INI oIni FILE oER:cGeneralIni
+         SET SECTION "General" ENTRY "MruList"        to AllTrim(STR( nMruList ))       OF oIni
+         SET SECTION "General" ENTRY "Maximize"       to IIF( lMaximize    , "1", "0")  OF oIni
+         SET SECTION "General" ENTRY "ShowTextBorder" to IIF( lShowBorder  , "1", "0" ) OF oIni
+         SET SECTION "General" ENTRY "ShowReticule"   to IIF( lShowReticule, "1", "0" ) OF oIni
+         SET SECTION "General" ENTRY "ShowPanel"      to IIF( lShowPanel, "1", "0" ) OF oIni
+
+         if cLanguage <> cOldLanguage
+            SET SECTION "General" ENTRY "Language" to ;
+               AllTrim(STR(ASCAN( aLanguage, cLanguage ), 2)) OF oIni
+         endif
+
+      ENDINI
+
+      for i := 1 to 100
+         if aWnd[ i ] <> nil
+            aWnd[ i ]:Refresh()
+         endif
+      next
+
+      oEr:oMainWnd:SetMenu( BuildMenu() )
+
+    //  SetSave( .F. )
+
+
+      SetSave( .T. )
+      msgInfo("el programa se reiniciara para que los cambios tengan efecto")
+      oEr:oMainWnd:END()
+      oER:lReexec  := .t.
+
+
+   endif
+
+return .T.
 
 //------------------------------------------------------------------------------
 
