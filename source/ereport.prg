@@ -2739,49 +2739,28 @@ return .T.
 
 function SetGrid()
 
-   local i, oDlg, oIni, cLanguage, cOldLanguage, cWert, aCbx[5], aGrp[2], oRad1
+   local i, oDlg, oIni, oCbx, oRad1
    local lSave         := .F.
    local lInfo         := .F.
-   local nLanguage     := Val( GetPvProfString( "General", "Language"  , "1", oER:cGeneralIni ) )
-   local nMaximize     := Val( GetPvProfString( "General", "Maximize"  , "1", oER:cGeneralIni ) )
-   local lMaximize     := IIF( nMaximize = 1, .T., .F. )
-   local nMruList      := Val( GetPvProfString( "General", "MruList"  , "4", oER:cGeneralIni ) )
    local aLanguage     := {}
    local cPicture      := IIF( oER:nMeasure = 2, "999.99", "99999" )
    local nGridWidth    := oGenVar:nGridWidth
    local nGridHeight   := oGenVar:nGridHeight
    local lShowGrid     := oGenVar:lShowGrid
-   local lShowReticule := oGenVar:lShowReticule
-   local lShowBorder   := oGenVar:lShowBorder
-   LOCAL lShowPanel  := ( oEr:GetGeneralIni( "General", "ShowPanel", "1" ) = "1" )
    LOCAL nDecimals     :=   IIF( oER:nMeasure = 2, 2, 0 )
 
-   for i := 1 to 99
-      cWert := GetPvProfString( "Languages", AllTrim(STR(i,2)), "", oER:cGeneralIni )
-      if .NOT. Empty( cWert )
-         AADD( aLanguage, cWert )
-      endif
-   next
 
-   if Len( aLanguage ) > 0
-      cLanguage    := aLanguage[IIF( nLanguage < 1, 1, nLanguage)]
-      cOldLanguage := cLanguage
-   endif
-
-   DEFINE DIALOG oDlg NAME "OPTIONS" TITLE GL("Options")
+   DEFINE DIALOG oDlg NAME "GRIDSETUP" TITLE GL("Grid Setup")
 
    REDEFINE BUTTON PROMPT GL("&OK")     ID 101 OF oDlg ACTION ( lSave := .T., oDlg:End() )
    REDEFINE BUTTON PROMPT GL("&Cancel") ID 102 OF oDlg ACTION oDlg:End()
 
-   REDEFINE BUTTON PROMPT GL("Clear list") ID 204 OF oDlg ACTION oMru:Clear()
+
+   REDEFINE GET nGridWidth  ID 301 OF oDlg PICTURE cPicture SPINNER MIN 0.01 VALID nGridWidth  > 0
+   REDEFINE GET nGridHeight ID 302 OF oDlg PICTURE cPicture SPINNER MIN 0.01 VALID nGridHeight > 0
 
 
-   REDEFINE GET nGridWidth  ID 301 OF oDlg PICTURE cPicture SPINNER MIN 0.01 VALID nGridWidth > 0   WHEN !Empty( oER:cDefIni )
-   REDEFINE GET nGridHeight ID 302 OF oDlg PICTURE cPicture SPINNER MIN 0.01 VALID nGridHeight > 0  WHEN !Empty( oER:cDefIni )
-
-
-   REDEFINE CHECKBOX aCbx[2] VAR lShowGrid ID 303 OF oDlg  WHEN !Empty( oER:cDefIni )
-
+   REDEFINE CHECKBOX oCbx VAR lShowGrid ID 303 OF oDlg
 
    REDEFINE SAY PROMPT oER:cMeasure ID 120 OF oDlg
    REDEFINE SAY PROMPT oER:cMeasure ID 121 OF oDlg
@@ -2789,9 +2768,10 @@ function SetGrid()
    REDEFINE SAY PROMPT GL("Width:")           ID 171 OF oDlg
    REDEFINE SAY PROMPT GL("Height:")          ID 172 OF oDlg
 
-
    ACTIVATE DIALOG oDlg CENTERED ;
-      ON INIT ( aCbx[2]:SetText( GL("Show grid") ) )
+      ON INIT ( oCbx:SetText( GL("Show grid") )  ,;
+                DlgBarTitle( oDlg, GL("Grid Setup"), "B_EDIT32",44 ) ) ;
+      ON PAINT  DlgStatusBar(oDlg, 68,, .t. )
 
 
    if lSave = .T.
@@ -3531,6 +3511,56 @@ FUNCTION DlgBarTitle( oWnd, cTitle, cBmp ,nHeight )
 
 
 RETURN oTitle
+//------------------------------------------------------------------------------
+
+FUNCTION DlgRoundRun( cValue, cBmp, bProcess )
+   LOCAL oFont
+   LOCAL oDlg, oSay, oBmp
+
+   DEFAULT cValue := "Process"
+
+  DEFINE Font oFont name "Verdana" size 0,-15 BOLD
+
+  DEFINE DIALOG oDlg FROM 5,10 TO 14, 70 TITLE cValue ;
+      STYLE nOR( WS_POPUP, DS_SYSMODAL )  ;
+      FONT oFont COLOR 0, RGB(0,0,0)
+
+      oDlg:nOpacity:= 180
+
+  @  2 , 12 SAY oSay PROMPT cValue SIZE 165,14 OF oDlg FONT oFont TRANSPARENT COLOR CLR_WHITE
+
+  @ 3, 3  BITMAP obmp RESNAME cBmp SIZE 65,65 OF oDlg pixel NOBORDER
+
+  oDlg:bStart := { || RoundCorners( oDlg , 20 ), oDlg:Show(), oBmp:display(),Eval( bProcess, oDlg ), oDlg:End() }
+
+  ACTIVATE DIALOG oDlg CENTERED
+
+  oFont:end()
+
+//------------------------------------------------------------------------------
+
+function RoundCorners( oDlg, nRounder )
+
+   local aRect, hRgn
+   LOCAL lresult
+   aRect       := GetClientRect( oDlg:hWnd )
+   hRgn        := CreateRoundRectRgn( aRect, nRounder, nRounder )
+   lresult:= SetWindowRgn( oDlg:hWnd, hRgn )
+   DeleteObject( hRgn )
+
+return nil
+
+#pragma BEGINDUMP
+
+#include <hbapi.h>
+#include <Windows.h>
+
+HB_FUNC( SETWINDOWRGN )
+{
+  hb_retnl( SetWindowRgn( ( HWND ) hb_parnl( 1 ), ( HRGN ) hb_parnl( 2 ), TRUE ) );
+}
+
+#pragma ENDDUMP
 
 
 //----------------------------------------------------------------------------//
