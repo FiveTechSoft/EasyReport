@@ -111,9 +111,15 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
 
    IF oER:lShowPanel
 
-      @ 0.5, 1 FOLDER oER:oFld ;
+      @ 0.5, 1 FOLDEREX oER:oFld ;
       PROMPT GL("&Report Settings"), GL("&Grid Setup"), GL("&Items"), GL("&Databases"), GL("&Expressions") ;
-      OF oEr:oMainWnd SIZE 342, GetSysMetrics( 1 ) - 136 OPTION 3
+      OF oEr:oMainWnd SIZE 342, GetSysMetrics( 1 ) - 136 ;
+      OPTION 3 ;
+      BITMAPS { "B_EDIT", "B_EDIT2", "B_GRAPHIC", "B_AREA", "B_AREA" } ;
+      PIXEL ;
+      SEPARATOR 0
+      //oER:oFld:SetFont(  )
+      //oER:oFld:lMultiline := .T.
       
       oEr:oFld:SetColor(  , oEr:nClrPaneTree )
       oEr:oMainWnd:oLeft  :=  oER:oFld
