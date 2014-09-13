@@ -8,6 +8,7 @@ MEMVAR cDefIniPath
 MEMVAR nDlgTextCol, nDlgBackCol
 MEMVAr oEr
 
+
 //------------------------------------------------------------------------------
 
 function OpenFile( cFile )
@@ -96,7 +97,7 @@ function OpenFile( cFile )
       cMainTitle      := ALLTRIM( oer:GetDefIni( "General", "Title", "" ) )
       oEr:oMainWnd:cTitle := MainCaption()
 
-      SetScrollBar()
+      oER:SetScrollBar()
 
       oEr:oMainWnd:SetMenu( BuildMenu() )
 
