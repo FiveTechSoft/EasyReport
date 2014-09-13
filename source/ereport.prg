@@ -91,6 +91,10 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
    SetDlgGradient( oER:aClrDialogs )
 
 
+   if !ValidVersionFwh( 10, 8 )
+      oER:lShowPanel := .F.
+   endif
+
    DEFINE WINDOW oEr:oMainWnd VSCROLL ; //FROM 0, 0 to 50, 200 VSCROLL ;
       TITLE MainCaption() ;
       BRUSH oBrush MDI ;
@@ -115,7 +119,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
       PROMPT GL("&Report Settings"), GL("&Grid Setup"), GL("&Items"), GL("&Databases"), GL("&Expressions") ;
       OF oEr:oMainWnd SIZE 342, GetSysMetrics( 1 ) - 136 ;
       OPTION 3 ;
-      BITMAPS { "B_EDIT", "B_EDIT2", "B_GRAPHIC", "B_EDIT16", "B_AREA" } ;
+      BITMAPS { "B_EDIT16", "B_EDIT", "B_EDIT2", "B_GRAPHIC", "B_AREA" } ;
       PIXEL ;
       SEPARATOR 0
       //oER:oFld:SetFont(  )
@@ -304,6 +308,31 @@ function BarMenu()
    oBar:bRClicked := {|| nil }
 
 return .T.
+
+//----------------------------------------------------------------------------//
+
+Function ValidVersionFwh( nVersion1, nVersion2 )
+Local lVersion   := .T.
+
+   if GetFwVersion()[ 1 ] < nVersion1
+      lVersion := .F.
+   else
+      if GetFwVersion()[ 1 ] = nVersion1 
+         if GetFwVersion()[ 2 ] < nVersion2
+            lVersion := .F.
+         endif
+      endif
+   endif
+
+Return lVersion
+
+//----------------------------------------------------------------------------//
+
+Function GetFwVersion()
+Local aVersion := Array( 2 )
+      aVersion[ 1 ] := Val( Substr( FWVERSION, 5, 2 ) )
+      aVersion[ 2 ] := Val( Right( FWVERSION, 2 ) )
+Return aVersion 
 
 //----------------------------------------------------------------------------//
 
