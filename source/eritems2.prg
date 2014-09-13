@@ -99,7 +99,7 @@ FUNCTION SelectAllItems( lCurArea )
 
    UnSelectAll()
 
-   FOR y := 1 TO IIF( lCurArea, 1, 100 )
+   FOR y := 1 TO IIF( lCurArea, 1, Len( aWnd ) )
 
       IF aWnd[y] <> NIL
 
@@ -133,7 +133,7 @@ FUNCTION InvertSelection( lCurArea )
 
    DEFAULT lCurArea := .F.
 
-   FOR y := 1 TO IIF( lCurArea, 1, 100 )
+   FOR y := 1 TO IIF( lCurArea, 1, Len( aWnd ) )
 
       IF aWnd[y] <> NIL
 

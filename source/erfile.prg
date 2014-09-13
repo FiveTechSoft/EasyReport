@@ -51,11 +51,11 @@ function OpenFile( cFile )
       MEMORY(-1)
       SYSREFRESH()
 
-      aItems    := Array( 100, 1000 )
-      aAreaIni  := Array( 100 )
-      aWnd      := Array( 100 )
-      aWndTitle := Array( 100 )
-      aRuler    := Array( 100, 2 )
+      aWnd      := Array( oER:nTotAreas )
+      aItems    := Array( Len( aWnd ), 1000 )
+      aAreaIni  := Array( Len( aWnd ) )
+      aWndTitle := Array( Len( aWnd ) )
+      aRuler    := Array( Len( aWnd ), 2 )
 
       //Fontobjekte beenden
       for i := 1 TO 20
@@ -195,7 +195,7 @@ function SaveAs( cFile )
       else
          cAltDefIni := VRD_LF2SF( ALLTRIM( cFile ) )
          IIF( AT( "\", cAltDefIni ) = 0, cAltDefIni := ".\" + cAltDefIni, )
-         for i := 1 TO 100
+         for i := 1 TO Len( aWnd )
             DelFile( VRD_LF2SF( ALLTRIM( GetPvProfString( "Areas", ALLTRIM(STR(i,5)) , "", cAltDefIni ) ) ) )
          next
          DelFile( cAltDefIni )
@@ -326,7 +326,7 @@ function FileInfos()
    next
 
    AEval( aWnd, {|x| IIF( x <> NIL, ++nNrAreas, ) } )
-   for i := 1 TO 100
+   for i := 1 TO Len( aWnd )
       if aItems[i] <> NIL
          AEval( aItems[i], {|x| IIF( x <> NIL, ++nNrItems, ) } )
       endif

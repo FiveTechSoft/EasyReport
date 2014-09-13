@@ -112,9 +112,10 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
    IF oER:lShowPanel
 
       @ 0.5, 1 FOLDER oER:oFld PROMPT "&Items", "&Grid Setup", "&Databases" ;
-      OF oEr:oMainWnd SIZE 230, 90
-       oEr:oFld:SetColor(  , oEr:nClrPaneTree )
-       oEr:oMainWnd:oLeft  :=  oER:oFld
+      OF oEr:oMainWnd SIZE 342, 90
+      
+      oEr:oFld:SetColor(  , oEr:nClrPaneTree )
+      oEr:oMainWnd:oLeft  :=  oER:oFld
 
       oER:oTree := TTreeView():New( 0, 2, oER:oFld:aDialogs[1] , 0, , .T., .F., 230 , oEr:oMainWnd:nHeight - 155 ,"",, )
      // oEr:oMainWnd:oLeft  :=   oER:oTree
@@ -131,7 +132,8 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
       ON RESIZE if(!Empty(oER:oTree),oER:oTree:refresh(.t.), ) ;
       ON INIT ( SetMainWnd(), IniMainWindow(), ;
                 IIF( Empty( oER:cDefIni ), OpenFile(), SetScrollBar() ), ;
-                StartMessage(), SetSave( .T. ), ClearUndoRedo() ) ;
+                StartMessage(), SetSave( .T. ), ClearUndoRedo(),;
+                oEr:oMainWnd:SetFocus() ) ;
       VALID ( AEVal( aWnd, { |o| if( o <> nil, o:End(), ) } ), AskSaveFiles() )
 
    oEr:oAppFont:End()
@@ -544,11 +546,11 @@ function DeclarePublics( cDefFile )
 
    nHinCol2     := RGB( 0, 128, 255 )
    nHinCol3     := RGB( 255, 255, 255 )
-   aItems       := Array( 100, 1000 )
-   aAreaIni     := Array( 100 )
-   aWnd         := Array( 100 )
-   aWndTitle    := Array( 100 )
-   aRuler       := Array( 100, 2 )
+   aWnd         := Array( oER:nTotAreas )
+   aWndTitle    := Array( Len( aWnd ) )
+   aItems       := Array( Len( aWnd ), 1000 )
+   aAreaIni     := Array( Len( aWnd ) )
+   aRuler       := Array( Len( aWnd ), 2 )
    aFonts       := Array( 20 )
 
    nDeveloper := Val( oEr:GetGeneralIni( "General", "DeveloperMode", "0" ) )
@@ -607,9 +609,9 @@ function DeclarePublics( cDefFile )
 
    oGenVar:AddMember( "lFixedAreaWidth",, (  oEr:GetGeneralIni( "General", "AreaWidthFixed", "1" ) = "1" ) )
 
-   oGenVar:AddMember( "aAreaTitle",, ARRAY( 100 ) )
-   oGenVar:AddMember( "aAreaHide" ,, ARRAY( 100 ) )
-   oGenVar:AddMember( "aAreaSizes",, ARRAY( 100, 2 ) )
+   oGenVar:AddMember( "aAreaTitle",, ARRAY( Len( aWnd ) ) )
+   oGenVar:AddMember( "aAreaHide" ,, ARRAY( Len( aWnd ) ) )
+   oGenVar:AddMember( "aAreaSizes",, ARRAY( Len( aWnd ), 2 ) )
    AFILL( oGenVar:aAreaHide, .F. )
 
    oGenVar:AddMember( "aAppFonts",, ARRAY(2) )
@@ -771,7 +773,7 @@ function ScrollV( nPosZugabe, lUp, lDown, lPos )
 
    UnSelectAll()
 
-    for i := 1 to 100
+    for i := 1 to Len( aWnd )
       if aWnd[ i ] <> nil
          aFirstWndCoors := GetCoors( aWnd[ i ]:hWnd )
          EXIT
@@ -805,7 +807,7 @@ function ScrollV( nPosZugabe, lUp, lDown, lPos )
    oVScroll:SetPos( nPosZugabe )
    nZugabe := oEr:nTotalHeight * ( oVScroll:GetPos() - nAltWert ) / ( (oEr:nTotalHeight) / 100 )
 
-   for i := 1 to 100
+   for i := 1 to Len( aWnd )
       if aWnd[ i ] <> nil
          aWnd[ i ]:Move( aWnd[ i ]:nTop - Int(nZugabe/10), aWnd[ i ]:nLeft, 0, 0, .T. )
       endif
@@ -834,7 +836,7 @@ function ScrollVertical( lUp, lDown, lPageUp, lPageDown, lPos, nPosZugabe )
 
    UnSelectAll()
 
-   for i := 1 to 100
+   for i := 1 to Len( aWnd )
       if aWnd[ i ] <> nil
          aFirstWndCoors := GetCoors( aWnd[ i ]:hWnd )
          EXIT
@@ -865,7 +867,7 @@ function ScrollVertical( lUp, lDown, lPageUp, lPageDown, lPos, nPosZugabe )
        nZugabe := oEr:nTotalHeight * ( oVScroll:GetPos() - nAltWert ) / ( (oEr:nTotalHeight) / 100 )
    ENDIF
 
-   for i := 1 to 100
+   for i := 1 to Len( aWnd )
       if aWnd[ i ] <> nil
          if lUp = .T. .OR. lPos = .T.
             aWnd[ i ]:Move( aWnd[ i ]:nTop + nZugabe, aWnd[ i ]:nLeft, 0, 0, .T. )
@@ -900,7 +902,7 @@ function ScrollHorizont( lLeft, lRight, lPageLeft, lPageRight, lPos, nPosZugabe 
 
    UnSelectAll()
 
-   for i := 1 to 100
+   for i := 1 to Len( aWnd )
       if aWnd[ i ] <> nil
          aFirstWndCoors := GetCoors( aWnd[ i ]:hWnd )
          EXIT
@@ -930,7 +932,7 @@ function ScrollHorizont( lLeft, lRight, lPageLeft, lPageRight, lPos, nPosZugabe 
    endif
 
 
-   for i := 1 to 100
+   for i := 1 to Len( aWnd )
       if aWnd[ i ] <> nil
          if lLeft = .T. .OR. lPos = .T.
             aWnd[ i ]:Move( aWnd[ i ]:nTop, aWnd[ i ]:nLeft + nZugabe , 0, 0, .T. )
@@ -964,7 +966,7 @@ function SetWinNull()
    local i
    local nAltPos := aWnd[nAktArea]:nTop
 
-   for i := 1 to 100
+   for i := 1 to Len( aWnd )
       if aWnd[ i ] <> nil
          aWnd[ i ]:Move( aWnd[ i ]:nTop - nAltPos, aWnd[ i ]:nLeft, 0, 0, .T. )
       endif
@@ -1033,7 +1035,7 @@ function BuildMenu()
    MENUITEM GL("Save &as") ;
       ACTION SaveAsFile() ;
       WHEN !Empty( oER:cDefIni )
-   SEPARATOR
+   //SEPARATOR
    SEPARATOR
       MENUITEM GL("&Preferences") ;
           ACTION oEr:SetGeneralPreferences()
@@ -1442,7 +1444,7 @@ function ClientWindows()
             nWidth += oEr:nRuler + nAreaZugabe2
             nDemoWidth := Max( nDemoWidth, nWidth )
 
-            aWnd[ nWnd ] = ER_MdiChild():New( nTop, oEr:oMainWnd:oWndClient:nLeft  + 4 , nHeight + nAreaZugabe,;
+            aWnd[ nWnd ] = ER_MdiChild():New( nTop, oEr:oMainWnd:oWndClient:nLeft + 1 , nHeight + nAreaZugabe,;
                             nDemoWidth, cTitle, nOr( WS_BORDER ),, oEr:oMainWnd,, .F.,,,,;
                             oGenVar:oAreaBrush, .T., .F. ,,, , , , , 1 )
 
@@ -2383,7 +2385,7 @@ function SelectFont( oSay, oLbx, oGet )
       PreviewRefresh( oSay, oLbx, oGet )
 
       //Alle Elemente aktualisieren
-      for i := 1 to 100
+      for i := 1 to Len( aWnd )
 
          if aWnd[ i ] <> nil
 
@@ -2712,7 +2714,7 @@ function Options()
 
       ENDINI
 
-      for i := 1 to 100
+      for i := 1 to Len( aWnd )
          if aWnd[ i ] <> nil
             aWnd[ i ]:Refresh()
          endif
@@ -2796,7 +2798,7 @@ function SetGrid()
 
       endif
 
-      for i := 1 to 100
+      for i := 1 to Len( aWnd )
          if aWnd[ i ] <> nil
             aWnd[ i ]:Refresh()
          endif
@@ -3399,7 +3401,7 @@ function AreaChange( nArea, cAreaTitle, nOldWidth, nWidth, nOldHeight, nHeight )
 
    if nOldWidth <> nWidth
 
-      for i := 1 to 100
+      for i := 1 to Len( aWnd )
          if aWnd[ i ] <> nil
             aWnd[ i ]:Refresh()
          endif
@@ -3413,7 +3415,7 @@ function AreaChange( nArea, cAreaTitle, nOldWidth, nWidth, nOldHeight, nHeight )
          IIF( oGenVar:lFixedAreaWidth, 1200, ER_GetPixel( nWidth ) + oER:nRuler + nAreaZugabe2 ), ;
          IIF( oGenVar:aAreaHide[ nArea ], oEr:nRulerTop, ER_GetPixel( nHeight ) + nAreaZugabe ), .T. )
 
-      for i := nArea+1 to 100
+      for i := nArea+1 to Len( aWnd )
          if aWnd[ i ] <> nil
             aWnd[ i ]:Move( aWnd[ i ]:nTop + ER_GetPixel( nHeight - nOldHeight ), ;
                aWnd[ i ]:nLeft,,, .T. )
@@ -3444,7 +3446,7 @@ function AreaHide( nArea )
       IIF( oGenVar:lFixedAreaWidth, 1200, ER_GetPixel( nWidth ) + oER:nRuler + nAreaZugabe2 ), ;
       IIF( oGenVar:aAreaHide[nAktArea], 18, ER_GetPixel( nAreaHeight ) + nAreaZugabe ), .T. )
 
-   for i := nArea+1 to 100
+   for i := nArea+1 to Len( aWnd )
       if aWnd[ i ] <> nil
          aWnd[ i ]:Move( aWnd[ i ]:nTop + nDifferenz, aWnd[ i ]:nLeft,,, .T. )
       endif
@@ -3546,8 +3548,11 @@ CLASS TEasyReport
    DATA nRulerTop
    DATA nTotalHeight
    DATA nTotalWidth
-   DATA oTree, nClrPaneTree ,oFld
+   DATA oTree
+   DATA nClrPaneTree
+   DATA oFld
    DATA lReexec
+   DATA nTotAreas
 
    METHOD New() CONSTRUCTOR
    METHOD GetGeneralIni( cSection , cKey, cDefault ) INLINE GetPvProfString( cSection, cKey, cDefault, ::cGeneralIni )
@@ -3566,6 +3571,8 @@ METHOD New() CLASS TEasyReport
    ::lReExec := .f.
 
   // ::lShowPanel := .T.
+
+   ::nTotAreas  := 100
 
    ::nClrPaneTree:= RGB( 229, 233, 238)
 
@@ -3672,7 +3679,7 @@ METHOD SetGeneralPreferences() CLASS TEasyReport
 
       ENDINI
 
-      for i := 1 to 100
+      for i := 1 to Len( aWnd )
          if aWnd[ i ] <> nil
             aWnd[ i ]:Refresh()
          endif
