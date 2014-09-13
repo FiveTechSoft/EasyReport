@@ -1839,9 +1839,10 @@ function MsgBarInfos( nRow, nCol, nArea )
 
    nTotRow += nRow - ( oEr:nRulerTop ) * nArea
 
-   oMsgInfo:SetText( GL("Row:")    + " " + AllTrim( Str( GetCmInch( nTotRow ), 5, nDecimals ) ) + " / " + ;
-                     AllTrim(STR( GetCmInch( nRow - oEr:nRulerTop ), 5, nDecimals ) ) + "    " + ;
-                     GL("Column:") + " " + AllTrim(STR( GetCmInch( nCol - oEr:nRuler ), 5, nDecimals ) ) )
+   oMsgInfo:SetText( GL("Row:")    + " [ " + AllTrim( Str( GetCmInch( nTotRow ), 5, nDecimals ) ) + " ] / " + ;
+                     if( GetCmInch( nRow - oEr:nRulerTop ) < 0, AllTrim( Str( 0, 5, nDecimals ) ) ,;
+                     AllTrim( Str( GetCmInch( nRow - oEr:nRulerTop ), 5, nDecimals ) ) ) + "    " + ;
+                     GL("Column:") + " " + AllTrim( Str( GetCmInch( nCol - oEr:nRuler ), 5, nDecimals ) ) )
 
 return .T.
 
