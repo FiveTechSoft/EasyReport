@@ -15,7 +15,7 @@ MEMVAR aItems, aFonts, aAreaIni, aWnd, aWndTitle, oMru
 MEMVAR oCbxArea, aCbxItems, aRuler, cLongDefIni, cDefaultPath
 MEMVAR nAktItem, nAktArea, nSelArea, aSelection //, nTotalHeight, nTotalWidth
 MEMVAR nHinCol1, nHinCol2, nHinCol3, oMsgInfo
-MEMVAR aVRDSave, lVRDSave, lFillWindow, nDeveloper
+MEMVAR aVRDSave, lVRDSave, nDeveloper          //, lFillWindow
 MEMVAR cItemCopy, nCopyEntryNr, nCopyAreaNr, aSelectCopy, aItemCopy, nXMove, nYMove
 MEMVAR cInfoWidth, cInfoHeight, nInfoRow, nInfoCol, aItemPixelPos
 MEMVAR cDefIniPath, lBeta
@@ -121,7 +121,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
       PROMPT GL("&Report Settings"), GL("&Grid Setup"), GL("&Items"), GL("&Databases"), GL("&Expressions") ;
       OF oEr:oMainWnd SIZE 342, GetSysMetrics( 1 ) - 136 ;
       OPTION 3 ;
-      BITMAPS { "B_EDIT16", "B_GRAPHIC", "B_AREA", "B_EDIT", "B_EDIT2" } ;
+      BITMAPS { "B_EDIT16", "B_GRAPHIC", "B_ITEMLIST16", "B_AREA", "B_EDIT2" } ;
       PIXEL ;
       SEPARATOR 0
       //oER:oFld:SetFont(  )
@@ -494,8 +494,8 @@ function DeclarePublics( cDefFile )
    //PUBLIC lBoxDraw := .F.
 
    //Ruler anzeigen
-   //PUBLIC oEr:nRuler    := 20
-   //PUBLIC oEr:nRulerTop := 37
+   //PUBLIC nRuler    := 20
+   //PUBLIC nRulerTop := 37
 
    //Infos in MsgBar
    PUBLIC oMsgInfo
@@ -503,7 +503,7 @@ function DeclarePublics( cDefFile )
    //Sichern
    PUBLIC aVRDSave[102, 2 ]
    PUBLIC lVRDSave    := .T.
-   PUBLIC lFillWindow := .F.
+   //PUBLIC lFillWindow := .F.
 
    //cut, copy and paste
    PUBLIC cItemCopy    := ""
@@ -520,7 +520,10 @@ function DeclarePublics( cDefFile )
    PUBLIC nYMove := 0
 
    //Msgbar mit Elementgr��e aktualisieren wenn ein Element bewegt wird
-   PUBLIC cInfoWidth, cInfoHeight, nInfoRow, nInfoCol
+   PUBLIC cInfoWidth
+   PUBLIC cInfoHeight
+   PUBLIC nInfoRow
+   PUBLIC nInfoCol
 
    PUBLIC aItemPixelPos := {}
 
@@ -926,7 +929,7 @@ function ScrollVertical( lUp, lDown, lPageUp, lPageDown, lPos, nPosZugabe )
 return .T.
 */
 //----------------------------------------------------------------------------//
-
+/*
 function ScrollHorizont( lLeft, lRight, lPageLeft, lPageRight, lPos, nPosZugabe )
 
    local i, aFirstWndCoors, nAltWert
@@ -987,7 +990,7 @@ function ScrollHorizont( lLeft, lRight, lPageLeft, lPageRight, lPos, nPosZugabe 
    next
 
 return .T.
-
+*/
 //----------------------------------------------------------------------------//
 
 function SetMainWnd()
@@ -1512,7 +1515,7 @@ function ClientWindows()
          lReticule = oGenVar:lShowReticule
          oGenVar:lShowReticule = .F.
 
-         FillWindow( nWnd, aAreaIni[nWnd] )
+         oER:FillWindow( nWnd, aAreaIni[nWnd] )
 
          ACTIVATE WINDOW aWnd[ nWnd ] ;
          VALID !GETKEYSTATE( VK_ESCAPE )
@@ -1537,7 +1540,7 @@ return .T.
 
 
 //----------------------------------------------------------------------------//
-
+/*
 function FillWindow( nArea, cAreaIni )
 
    local i, cRuler1, cRuler2, aWerte, nEntry, nTmpCol
@@ -1619,7 +1622,7 @@ function FillWindow( nArea, cAreaIni )
    SysRefresh()
 
 return .T.
-
+*/
 //----------------------------------------------------------------------------//
 
 function SetReticule( nRow, nCol, nArea )
@@ -3594,6 +3597,7 @@ CLASS TEasyReport
    DATA oFld
    DATA lReexec
    DATA nTotAreas
+   DATA lFillWindow
 
    METHOD New() CONSTRUCTOR
    METHOD GetGeneralIni( cSection , cKey, cDefault ) INLINE GetPvProfString( cSection, cKey, cDefault, ::cGeneralIni )
@@ -3602,6 +3606,8 @@ CLASS TEasyReport
    METHOD SetGeneralPreferences()
    METHOD SetScrollBar()
    METHOD ScrollV( nPosZugabe, lUp, lDown, lPos )
+   METHOD ScrollH( lLeft, lRight, lPageLeft, lPageRight, lPos, nPosZugabe )
+   METHOD FillWindow( nArea, cAreaIni )
 
 ENDCLASS
 
@@ -3609,13 +3615,15 @@ ENDCLASS
 
 METHOD New() CLASS TEasyReport
 
-   ::cGeneralIni = ".\vrd.ini"
-   ::cDataPath   = GetCurDir() + "\Datas\"
-   ::lReExec := .f.
+   ::cGeneralIni  := ".\vrd.ini"
+   ::cDataPath    := GetCurDir() + "\Datas\"
+   ::lReExec      := .F.
 
   // ::lShowPanel := .T.
 
-   ::nTotAreas  := 100
+   ::nTotAreas    := 100
+
+   ::lFillWindow  := .F.
 
    ::nClrPaneTree:= RGB( 229, 233, 238)
 
@@ -3770,11 +3778,11 @@ METHOD SetScrollBar() CLASS TEasyReport
       nPageZugabe := 602/100
       oWnd:oHScroll:SetRange( 0, oEr:nTotalWidth / 100 )
 
-      oWnd:oHScroll:bGoUp     = {|| ScrollHorizont( .T. ) }
-      oWnd:oHScroll:bGoDown   = {|| ScrollHorizont( , .T. ) }
-      oWnd:oHScroll:bPageUp   = {|| ScrollHorizont( ,, .T. ) }
-      oWnd:oHScroll:bPageDown = {|| ScrollHorizont( ,,, .T. ) }
-      oWnd:oHScroll:bPos      = {| nWert | ScrollHorizont( ,,,, .T., nWert/100 ) }
+      oWnd:oHScroll:bGoUp     = {|| ::ScrollH( .T. ) }
+      oWnd:oHScroll:bGoDown   = {|| ::ScrollH( , .T. ) }
+      oWnd:oHScroll:bPageUp   = {|| ::ScrollH( ,, .T. ) }
+      oWnd:oHScroll:bPageDown = {|| ::ScrollH( ,,, .T. ) }
+      oWnd:oHScroll:bPos      = {| nWert | ::ScrollH( ,,,, .T., nWert/100 ) }
       oWnd:oHScroll:nPgStep   = nPageZugabe  //602
 
       oWnd:oHScroll:SetPos( 0 )
@@ -3842,6 +3850,164 @@ METHOD ScrollV( nPosZugabe, lUp, lDown, lPos ) CLASS TEasyReport
    next
 
    oGenVar:lShowReticule = lReticule
+
+return .T.
+
+//----------------------------------------------------------------------------//
+
+METHOD ScrollH( lLeft, lRight, lPageLeft, lPageRight, lPos, nPosZugabe ) CLASS TEasyReport
+
+   local i
+   local aFirstWndCoors
+   local nAltWert
+   local nZugabe     := 14
+   local nPageZugabe := 602
+   local aCliRect    := ::oMainWnd:GetCliRect()
+
+   DEFAULT lLeft      := .F.
+   DEFAULT lRight     := .F.
+   DEFAULT lPageLeft  := .F.
+   DEFAULT lPageRight := .F.
+   DEFAULT lPos       := .F.
+
+   UnSelectAll()
+
+   for i := 1 to Len( aWnd )
+      if aWnd[ i ] <> nil
+         aFirstWndCoors := GetCoors( aWnd[ i ]:hWnd )
+         EXIT
+      endif
+   next
+
+   if lLeft = .T. .OR. lPageLeft = .T.
+      if aFirstWndCoors[2] = 0
+         nZugabe := 0
+      elseif aFirstWndCoors[2] + IIF( lLeft, nZugabe, nPageZugabe ) >= 0
+         nZugabe     := -1 * aFirstWndCoors[2]
+         nPageZugabe := -1 * aFirstWndCoors[2]
+      endif
+   endif
+
+   if lRight = .T. .OR. lPageRight = .T.
+      if aFirstWndCoors[2] + ::nTotalWidth <= aCliRect[4] - 40
+         nZugabe     := 0
+         nPageZugabe := 0
+      endif
+   endif
+
+   if lPos = .T.
+      nAltWert := ::oMainWnd:oWndClient:oHScroll:GetPos()
+      ::oMainWnd:oWndClient:oHScroll:SetPos( nPosZugabe )
+      nZugabe := -1 * ::nTotalWidth * ( ::oMainWnd:oWndClient:oHScroll:GetPos() - nAltWert ) / 100
+   endif
+
+
+   for i := 1 to Len( aWnd )
+      if aWnd[ i ] <> nil
+         if lLeft = .T. .OR. lPos = .T.
+            aWnd[ i ]:Move( aWnd[ i ]:nTop, aWnd[ i ]:nLeft + nZugabe , 0, 0, .T. )
+         elseif lRight = .T.
+            aWnd[ i ]:Move( aWnd[ i ]:nTop, aWnd[ i ]:nLeft - nZugabe , 0, 0, .T. )
+         elseif lPageLeft = .T.
+            aWnd[ i ]:Move( aWnd[ i ]:nTop, aWnd[ i ]:nLeft + nPageZugabe, 0, 0, .T. )
+         elseif lPageRight = .T.
+            aWnd[ i ]:Move( aWnd[ i ]:nTop, aWnd[ i ]:nLeft - nPageZugabe, 0, 0, .T. )
+         endif
+      endif
+   next
+
+return .T.
+
+//----------------------------------------------------------------------------//
+
+METHOD FillWindow( nArea, cAreaIni ) CLASS TEasyReport
+
+   local i
+   local cRuler1
+   local cRuler2
+   local aWerte
+   local nEntry
+   local nTmpCol
+   local nFirstTop
+   local nFirstLeft
+   local nFirstWidth
+   local nFirstHeight
+   local nFirstItem
+   local aFirst      := { .F., 0, 0, 0, 0, 0 }
+   local nElemente   := 0
+   local aIniEntries := GetIniSection( "Items", cAreaIni )
+   local oRulerBmp2
+
+   //Ruler anzeigen
+   if ::nMeasure = 1 ; cRuler1 := "RULER1_MM" ; cRuler2 := "RULER2_MM" ; endif
+   if ::nMeasure = 2 ; cRuler1 := "RULER1_IN" ; cRuler2 := "RULER2_IN" ; endif
+   if ::nMeasure = 3 ; cRuler1 := "RULER1_PI" ; cRuler2 := "RULER2_PI" ; endif
+
+   @ 0, 0 SAY " " SIZE 1200, ::nRulerTop - ::nRuler PIXEL ;
+      COLORS 0, oGenVar:nBClrAreaTitle OF aWnd[ nArea ]
+
+   @ 2,  3 BTNBMP RESOURCE "AREAMINMAX" SIZE 12,12 ACTION  nAktArea:= nArea, AreaHide( nAktArea )
+   @ 2, 17 BTNBMP RESOURCE "AREAPROP"   SIZE 12,12 ACTION  nAktArea:= nArea, AreaProperties( nAktArea )
+
+   @ 2, 29 SAY oGenVar:aAreaTitle[ nArea ] ;
+      PROMPT " " + AllTrim( GetPvProfString( "General", "Title" , "", cAreaIni ) ) ;
+      SIZE 400, ::nRulerTop - ::nRuler - 2 PIXEL FONT oGenVar:aAppFonts[ 1 ] ;
+      COLORS oGenVar:nF1ClrAreaTitle, oGenVar:nBClrAreaTitle OF aWnd[ nArea ]
+
+   @ ::nRulerTop - ::nRuler, 20 BITMAP oRulerBmp2 RESOURCE cRuler1 ;
+      OF aWnd[ nArea ] PIXEL NOBORDER
+
+   @ ::nRulerTop - ::nRuler, 0 BITMAP oRulerBmp2 RESOURCE cRuler2 ;
+      OF aWnd[ nArea ] PIXEL NOBORDER
+
+    oRulerBmp2:bLClicked = { |nRow,nCol,nFlags| nAktArea := aWnd[ nArea ]:nArea, ::oMainWnd:SetFocus() }
+
+   // @ oEr:nRulerTop-oER:nRuler, 20 SAY aRuler[ nArea, 1 ] PROMPT "" SIZE  1, 20 PIXEL ;
+   //    COLORS oGenVar:nClrReticule, oGenVar:nClrReticule OF aWnd[ nArea ]
+
+   // @ 20, 0 SAY aRuler[ nArea, 2 ] PROMPT "" SIZE 20,  1 PIXEL ;
+   //    COLORS oGenVar:nClrReticule, oGenVar:nClrReticule OF aWnd[ nArea ]
+
+   aWnd[ nArea ]:bPainted  = {| hDC, cPS | ZeichneHintergrund( nArea ) }
+
+   aWnd[ nArea ]:bGotFocus = { || SetTitleColor( .T. ) }
+
+   aWnd[ nArea ]:bMMoved = {|nRow,nCol,nFlags| ;
+                           MsgBarInfos( nRow, nCol ), ;
+                           MoveSelection( nRow, nCol, aWnd[ nArea ] ) ,;
+                           if(!lScrollVert, SetReticule( nRow, nCol, nArea ), SetReticule( 0, 0, nArea )),;
+                           lScrollVert :=  .F. }
+
+   aWnd[ nArea ]:bRClicked = {|nRow,nCol,nFlags| nAktArea := aWnd[ nArea ]:nArea, ::oMainWnd:SetFocus(),;
+                                                 PopupMenu( nArea,, nRow, nCol ) }
+
+
+    aWnd[ nArea ]:bLClicked = {|nRow,nCol,nFlags| DeactivateItem(), ;
+                              IIF( GetKeyState( VK_SHIFT ),, UnSelectAll() ), ;
+                              StartSelection( nRow, nCol, aWnd[ nArea ] ), ;
+                              nAktArea := aWnd[ nArea ]:nArea, ::oMainWnd:SetFocus()  }
+
+   aWnd[ nArea ]:bLButtonUp = {|nRow,nCol,nFlags| StopSelection( nRow, nCol, aWnd[ nArea ] ) }
+
+   aWnd[ nArea ]:bKeyDown   = {|nKey| WndKeyDownAction( nKey, nArea, cAreaIni ) }
+
+   for i := 1 to LEN( aIniEntries )
+      nEntry := EntryNr( aIniEntries[ i ] )
+      if nEntry <> 0
+         ShowItem( nEntry, nArea, cAreaIni, @aFirst, @nElemente, aIniEntries, i )
+      endif
+   next
+
+   //Durch diese Anweisung werden alle Controls resizable
+   if nElemente <> 0
+      ::lFillWindow := .T.
+      aItems[ nArea,aFirst[6]]:CheckDots()
+      aItems[ nArea,aFirst[6]]:Move( aFirst[2], aFirst[3], aFirst[4], aFirst[5], .T. )
+      ::lFillWindow := .F.
+   endif
+
+   Memory(-1)
+   SysRefresh()
 
 return .T.
 

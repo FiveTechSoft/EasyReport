@@ -167,6 +167,9 @@ LANGUAGE 7, SUBLANG_DEFAULT
 B_ITEMLIST32       BITMAP         "./bitmaps/itemlist.bmp"
 
 LANGUAGE 7, SUBLANG_DEFAULT
+B_ITEMLIST16       BITMAP         "./bitmaps/itemlist16.bmp"
+
+LANGUAGE 7, SUBLANG_DEFAULT
 B_ITEMLIST321      BITMAP         "./bitmaps/itemlist1.bmp"
 
 LANGUAGE 7, SUBLANG_DEFAULT
