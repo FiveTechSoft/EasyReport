@@ -1823,13 +1823,24 @@ return .T.
 
 //----------------------------------------------------------------------------//
 
-function MsgBarInfos( nRow, nCol )
+function MsgBarInfos( nRow, nCol, nArea )
    LOCAL nDecimals := IIF( oER:nMeasure == 2, 2, 0 )
+   Local nTotRow   := 0
+   Local x
 
    DEFAULT nRow := 0
    DEFAULT nCol := 0
 
-   oMsgInfo:SetText( GL("Row:")    + " " + AllTrim(STR( GetCmInch( nRow - oEr:nRulerTop ), 5, nDecimals ) ) + "    " + ;
+   For x = 1 to nArea - 1
+       if !empty( aWnd[ x ] )
+          nTotRow  += aWnd[ x ]:nHeight
+       endif
+   Next x
+
+   nTotRow += nRow - ( oEr:nRulerTop ) * nArea
+
+   oMsgInfo:SetText( GL("Row:")    + " " + AllTrim( Str( GetCmInch( nTotRow ), 5, nDecimals ) ) + " / " + ;
+                     AllTrim(STR( GetCmInch( nRow - oEr:nRulerTop ), 5, nDecimals ) ) + "    " + ;
                      GL("Column:") + " " + AllTrim(STR( GetCmInch( nCol - oEr:nRuler ), 5, nDecimals ) ) )
 
 return .T.
@@ -3974,7 +3985,7 @@ METHOD FillWindow( nArea, cAreaIni ) CLASS TEasyReport
    aWnd[ nArea ]:bGotFocus = { || SetTitleColor( .T. ) }
 
    aWnd[ nArea ]:bMMoved = {|nRow,nCol,nFlags| ;
-                           MsgBarInfos( nRow, nCol ), ;
+                           MsgBarInfos( nRow, nCol, nArea ), ;
                            MoveSelection( nRow, nCol, aWnd[ nArea ] ) ,;
                            if(!lScrollVert, ::SetReticule( nRow, nCol, nArea ), ::SetReticule( 0, 0, nArea )),;
                            lScrollVert :=  .F. }
