@@ -2900,10 +2900,15 @@ function ItemList( )
 
    else
 
-     oEr:oTree:bLDblClick  = { | nRow, nCol, nKeyFlags | ClickListTree( oEr:oTree ) }
-     FillTree( oEr:oTree,oEr:oMainWnd )
-   //  oEr:oTree:show()
-     oEr:oFld:show()
+     if !empty( oER:oTree )
+        if empty( oER:oTree:aItems )
+           oEr:oTree:bLDblClick  = { | nRow, nCol, nKeyFlags | ClickListTree( oEr:oTree ) }
+           FillTree( oEr:oTree,oEr:oMainWnd )
+           //  oEr:oTree:show()
+           oEr:oFld:show()
+        endif
+     endif
+
    endif
 
  return nil
