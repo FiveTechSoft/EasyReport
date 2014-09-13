@@ -43,7 +43,7 @@ function InsertArea( lBefore, cTitle )
       cDir := cDefaultPath
    endif
 
-   for i := 1 TO 100
+   for i := 1 TO Len( aWnd )
       AADD( aAreaInis, ALLTRIM( GetIniEntry( aIniEntries, ALLTRIM(STR( i, 5 )) , "" ) ) )
    NEXT
 
