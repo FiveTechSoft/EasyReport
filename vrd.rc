@@ -90,6 +90,9 @@ LANGUAGE 7, SUBLANG_DEFAULT
 B_EDIT321          BITMAP         "./bitmaps/properties1.bmp"
 
 LANGUAGE 7, SUBLANG_DEFAULT
+B_EDIT16           BITMAP         "./bitmaps/properties16.bmp"
+
+LANGUAGE 7, SUBLANG_DEFAULT
 B_EDIT             BITMAP         "./bitmaps/bitmap16.bmp"
 
 LANGUAGE 7, SUBLANG_DEFAULT
