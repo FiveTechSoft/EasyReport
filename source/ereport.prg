@@ -111,16 +111,19 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
 
    IF oER:lShowPanel
 
-      @ 0.5, 1 FOLDER oER:oFld PROMPT "&Items", "&Grid Setup", "&Databases" ;
-      OF oEr:oMainWnd SIZE 342, 90
+      @ 0.5, 1 FOLDER oER:oFld ;
+      PROMPT GL("&Report Settings"), GL("&Grid Setup"), GL("&Items"), GL("&Databases"), GL("&Expressions") ;
+      OF oEr:oMainWnd SIZE 342, GetSysMetrics( 1 ) - 136
       
       oEr:oFld:SetColor(  , oEr:nClrPaneTree )
       oEr:oMainWnd:oLeft  :=  oER:oFld
 
-      oER:oTree := TTreeView():New( 0, 2, oER:oFld:aDialogs[1] , 0, , .T., .F., 230 , oEr:oMainWnd:nHeight - 155 ,"",, )
-     // oEr:oMainWnd:oLeft  :=   oER:oTree
+      //oER:oTree := TTreeView():New( 0, 2, oER:oFld:aDialogs[3] , 0, , .T., .F., 230 , oEr:oMainWnd:nHeight - 155 ,"",, )
+      oER:oTree := TTreeView():New( 0, 2, oER:oFld:aDialogs[3] , 0, , .T., .F., 340 , oEr:oMainWnd:nHeight - 136 ,"",, )
+      //oER:oFld:nWidth - 8 , GetSysMetrics( 1 ) - 165
+      // oEr:oMainWnd:oLeft  :=   oER:oTree
       oEr:oTree:SetColor( ,  oEr:nClrPaneTree )
-      oEr:oTree:l3DLook := .T.
+      oEr:oTree:l3DLook := .F.
       oER:oFld:aDialogs[1]:SetControl( oEr:oTree )
       oER:oFld:Hide()
 
@@ -133,7 +136,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
       ON INIT ( SetMainWnd(), IniMainWindow(), ;
                 IIF( Empty( oER:cDefIni ), OpenFile(), SetScrollBar() ), ;
                 StartMessage(), SetSave( .T. ), ClearUndoRedo(),;
-                oEr:oMainWnd:SetFocus() ) ;
+                oEr:oFld:SetOption(3), oEr:oMainWnd:SetFocus() ) ;
       VALID ( AEVal( aWnd, { |o| if( o <> nil, o:End(), ) } ), AskSaveFiles() )
 
    oEr:oAppFont:End()
@@ -518,13 +521,13 @@ function DeclarePublics( cDefFile )
    endif
 
    oER:cDefIni      := VRD_LF2SF( cDefFile )
-   cLongDefIni  := cDefFile
-   cDefaultPath := CheckPath(  oEr:GetGeneralIni( "General", "DefaultPath", "" ) )
+   cLongDefIni      := cDefFile
+   cDefaultPath     := CheckPath(  oEr:GetGeneralIni( "General", "DefaultPath", "" ) )
 
-   oEr:lShowPanel  := ( oEr:GetGeneralIni( "General", "ShowPanel", "1" ) = "1")
+   oEr:lShowPanel   := ( oEr:GetGeneralIni( "General", "ShowPanel", "1" ) = "1")
 
    if AT( "\", oER:cDefIni ) = 0 .and. !Empty( oER:cDefIni )
-      oER:cDefIni := ".\" + oER:cDefIni
+      oER:cDefIni   := ".\" + oER:cDefIni
    endif
 
    cDefIniPath := CheckPath( cFilePath( oER:cDefIni ) )
