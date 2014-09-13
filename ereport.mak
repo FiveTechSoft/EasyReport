@@ -23,7 +23,8 @@ PRG =        \
 #.\fileedit.prg \
 .\vrd.prg      \
 .\vrdbcode.prg \
-.\vrditem.prg  
+.\vrditem.prg   \
+.\strings.prg
 
 C =            \
 .\cfunc.c      \               
