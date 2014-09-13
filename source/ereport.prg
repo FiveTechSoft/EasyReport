@@ -3518,57 +3518,6 @@ FUNCTION DlgBarTitle( oWnd, cTitle, cBmp ,nHeight )
 
 RETURN oTitle
 //------------------------------------------------------------------------------
-
-FUNCTION DlgRoundRun( cValue, cBmp, bProcess )
-   LOCAL oFont
-   LOCAL oDlg, oSay, oBmp
-
-   DEFAULT cValue := "Process"
-
-  DEFINE Font oFont name "Verdana" size 0,-15 BOLD
-
-  DEFINE DIALOG oDlg FROM 5,10 TO 14, 70 TITLE cValue ;
-      STYLE nOR( WS_POPUP, DS_SYSMODAL )  ;
-      FONT oFont COLOR 0, RGB(0,0,0)
-
-      oDlg:nOpacity:= 180
-
-  @  2 , 12 SAY oSay PROMPT cValue SIZE 165,14 OF oDlg FONT oFont TRANSPARENT COLOR CLR_WHITE
-
-  @ 3, 3  BITMAP obmp RESNAME cBmp SIZE 65,65 OF oDlg pixel NOBORDER
-
-  oDlg:bStart := { || RoundCorners( oDlg , 20 ), oDlg:Show(), oBmp:display(),Eval( bProcess, oDlg ), oDlg:End() }
-
-  ACTIVATE DIALOG oDlg CENTERED
-
-  oFont:end()
-
-//------------------------------------------------------------------------------
-
-function RoundCorners( oDlg, nRounder )
-
-   local aRect, hRgn
-   LOCAL lresult
-   aRect       := GetClientRect( oDlg:hWnd )
-   hRgn        := CreateRoundRectRgn( aRect, nRounder, nRounder )
-   lresult:= SetWindowRgn( oDlg:hWnd, hRgn )
-   DeleteObject( hRgn )
-
-return nil
-
-#pragma BEGINDUMP
-
-#include <hbapi.h>
-#include <Windows.h>
-
-HB_FUNC( SETWINDOWRGN )
-{
-  hb_retnl( SetWindowRgn( ( HWND ) hb_parnl( 1 ), ( HRGN ) hb_parnl( 2 ), TRUE ) );
-}
-
-#pragma ENDDUMP
-
-
 //----------------------------------------------------------------------------//
 
 function TScript()
