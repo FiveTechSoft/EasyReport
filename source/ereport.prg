@@ -90,6 +90,15 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
 
    SetDlgGradient( oER:aClrDialogs )
 
+   if Val( Substr( FWVERSION, 5, 2 ) ) < 10 
+      oER:lShowPanel := .F.
+   else
+      if Val( Substr( FWVERSION, 5, 2 ) ) = 10 
+         if Val( Right( FWVERSION, 2 ) ) < 8
+            oER:lShowPanel := .F.
+         endif
+      endif
+   endif
 
    DEFINE WINDOW oEr:oMainWnd VSCROLL ; //FROM 0, 0 to 50, 200 VSCROLL ;
       TITLE MainCaption() ;
@@ -115,7 +124,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
       PROMPT GL("&Report Settings"), GL("&Grid Setup"), GL("&Items"), GL("&Databases"), GL("&Expressions") ;
       OF oEr:oMainWnd SIZE 342, GetSysMetrics( 1 ) - 136 ;
       OPTION 3 ;
-      BITMAPS { "B_EDIT", "B_EDIT2", "B_GRAPHIC", "B_EDIT16", "B_AREA" } ;
+      BITMAPS { "B_EDIT16", "B_EDIT", "B_EDIT2", "B_GRAPHIC", "B_AREA" } ;
       PIXEL ;
       SEPARATOR 0
       //oER:oFld:SetFont(  )
