@@ -2922,7 +2922,13 @@ static Function FillTree( oTree, oDlg )
    local cAreaFilesDir := CheckPath( oEr:GetDefIni( "General", "AreaFilesDir", "" ) )
    local oTr1
    local aTr:= {}
-   local i, y, oTr2, cItemDef, aElemente, nEntry, cTitle
+   local i
+   local y
+   local oTr2
+   local cItemDef
+   local aElemente
+   local nEntry
+   local cTitle
    local ele
 
    CreateTreeImageList( oDlg, oTree )
@@ -2930,19 +2936,19 @@ static Function FillTree( oTree, oDlg )
    for i := 1 to LEN( aIniEntries )
       nEntry := EntryNr( aIniEntries[ i ] )
       if nEntry != 0
-            cTitle := aWndTitle[nEntry]
-            oTr1 := oTree:Add( AllTrim(STR(nEntry,5)) + ". " + cTitle , 0 )
-            oTr1:Set( , IF( oTr1:IsExpanded() , 1  , 0   )    )
+           cTitle := aWndTitle[nEntry] //+ " - [ " + GL("Area" ) + " ]"
+           oTr1 := oTree:Add( AllTrim(STR(nEntry,5)) + ". " + cTitle , 0 )
+           oTr1:Set( , IF( oTr1:IsExpanded() , 1  , 0   )    )
 
-            if Empty( cAreaFilesDir )
-                cAreaFilesDir := cDefaultPath
+           if Empty( cAreaFilesDir )
+              cAreaFilesDir := cDefaultPath
            endif
            if Empty( cAreaFilesDir )
                cAreaFilesDir := cDefIniPath
            endif
            cItemDef := VRD_LF2SF( cAreaFilesDir + ;
             AllTrim( GetIniEntry( aIniEntries, AllTrim(STR(nEntry,5)) , "" ) ) )
-            if .NOT. Empty( cItemDef )
+            if !Empty( cItemDef )
 
             cItemDef := IIF( AT( "\", cItemDef ) = 0, ".\", "" ) + cItemDef
 
@@ -2951,6 +2957,7 @@ static Function FillTree( oTree, oDlg )
 
             for y := 1 to LEN( aElemente )
 
+               //oTr2 := oTr1:Add( aElemente[y, 2 ] + " - [ " + GL("Item") + " ]", aElemente[y,3], aElemente[y,3] )
                oTr2 := oTr1:Add( aElemente[y, 2 ], aElemente[y,3], aElemente[y,3] )
                if aElemente[y,6] <> 0
                   ele:= oTr2:Add( GL("Visible"), aElemente[y,5], aElemente[y,4] )
@@ -3159,7 +3166,7 @@ function ClickListTree( oTree )
    local cPrompt := oTree:GetSelText()
    local oItem   := oTree:GetSelected()
 
-   if cPrompt = GL("Visible") .OR. cPrompt = GL("Item Properties")
+   if cPrompt = GL("Visible") .OR. cPrompt = GL("Item Properties") //.or. !empty( At( ("[ " + GL("Item") + " ]"), cPrompt ) )
 
       oLinkArea := oItem:GetParent()
       nItem     := Val( oLinkArea:cPrompt )
@@ -3167,7 +3174,7 @@ function ClickListTree( oTree )
 
    endif
 
-   if cPrompt = GL("Area Properties")
+   if cPrompt = GL("Area Properties") //.or. !empty( At( ("[ " + GL("Area") + " ]"), cPrompt ) )
 
       nArea     := Val( oItem:GetParent():cPrompt )
       AreaProperties( nArea )
@@ -3187,7 +3194,7 @@ function ClickListTree( oTree )
 
       DeleteItem( nItem, nArea, .T., lWert )
 
-   elseif cPrompt = GL("Item Properties")
+   elseif cPrompt = GL("Item Properties") //.or. !empty( At( ("[ " + GL("Item") + " ]"), cPrompt ) )
 
      oLinkArea:SetText( ItemProperties( nItem, nArea, .T. ) )
 
