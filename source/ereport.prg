@@ -119,7 +119,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
 
       @ 0.5, 1 FOLDEREX oER:oFld ;
       PROMPT GL("&Report Settings"), GL("&Grid Setup"), GL("&Items"), GL("&Databases"), GL("&Expressions") ;
-      OF oEr:oMainWnd SIZE 342, GetSysMetrics( 1 ) - 136 ;
+      OF oEr:oMainWnd SIZE 342, GetSysMetrics( 1 ) - 138 ;
       OPTION 3 ;
       BITMAPS { "B_EDIT16", "B_GRAPHIC", "B_ITEMLIST16", "B_AREA", "B_EDIT2" } ;
       PIXEL ;
@@ -131,7 +131,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
       oEr:oMainWnd:oLeft  :=  oER:oFld
 
       //oER:oTree := TTreeView():New( 0, 2, oER:oFld:aDialogs[3] , 0, , .T., .F., 230 , oEr:oMainWnd:nHeight - 155 ,"",, )
-      oER:oTree := TTreeView():New( 0, 2, oER:oFld:aDialogs[3] , 0, , .T., .F., 340 , oEr:oMainWnd:nHeight - 136 ,"",, )
+      oER:oTree := TTreeView():New( 0, 2, oER:oFld:aDialogs[3] , 0, , .T., .F., 340 , oER:oFld:aDialogs[3]:nHeight ,"",, )
       // oEr:oMainWnd:oLeft  :=   oER:oTree
       oEr:oTree:SetColor( ,  oEr:nClrPaneTree )
       oEr:oTree:l3DLook := .F.
