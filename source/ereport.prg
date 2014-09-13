@@ -113,14 +113,13 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
 
       @ 0.5, 1 FOLDER oER:oFld ;
       PROMPT GL("&Report Settings"), GL("&Grid Setup"), GL("&Items"), GL("&Databases"), GL("&Expressions") ;
-      OF oEr:oMainWnd SIZE 342, GetSysMetrics( 1 ) - 136
+      OF oEr:oMainWnd SIZE 342, GetSysMetrics( 1 ) - 136 OPTION 3
       
       oEr:oFld:SetColor(  , oEr:nClrPaneTree )
       oEr:oMainWnd:oLeft  :=  oER:oFld
 
       //oER:oTree := TTreeView():New( 0, 2, oER:oFld:aDialogs[3] , 0, , .T., .F., 230 , oEr:oMainWnd:nHeight - 155 ,"",, )
       oER:oTree := TTreeView():New( 0, 2, oER:oFld:aDialogs[3] , 0, , .T., .F., 340 , oEr:oMainWnd:nHeight - 136 ,"",, )
-      //oER:oFld:nWidth - 8 , GetSysMetrics( 1 ) - 165
       // oEr:oMainWnd:oLeft  :=   oER:oTree
       oEr:oTree:SetColor( ,  oEr:nClrPaneTree )
       oEr:oTree:l3DLook := .F.
@@ -134,9 +133,9 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
       MAXIMIZED ;
       ON RESIZE if(!Empty(oER:oTree),oER:oTree:refresh(.t.), ) ;
       ON INIT ( SetMainWnd(), IniMainWindow(), ;
-                IIF( Empty( oER:cDefIni ), OpenFile(), SetScrollBar() ), ;
+                IIF( Empty( oER:cDefIni ), OpenFile(), oER:SetScrollBar() ), ;
                 StartMessage(), SetSave( .T. ), ClearUndoRedo(),;
-                oEr:oFld:SetOption(3), oEr:oMainWnd:SetFocus() ) ;
+                oEr:oMainWnd:SetFocus() ) ;
       VALID ( AEVal( aWnd, { |o| if( o <> nil, o:End(), ) } ), AskSaveFiles() )
 
    oEr:oAppFont:End()
@@ -314,15 +313,15 @@ function ER_MouseWheel( nKey, nDelta, nXPos, nYPos )
 
       if lAnd( nKey, MK_MBUTTON )
          if nDelta > 0
-            ScrollV(-4, .t.)
+            oER:ScrollV(-4, .t.)
          else
-            ScrollV(4,,.t.)
+            oER:ScrollV(4,,.t.)
          endif
       else
          if nDelta > 0
-            ScrollV( - WheelScroll() , .T.,, .T. )
+            oER:ScrollV( - WheelScroll() , .T.,, .T. )
          else
-            ScrollV( WheelScroll() ,,.T.,.T. )
+            oER:ScrollV( WheelScroll() ,,.T.,.T. )
          endif
       endif
 
@@ -686,7 +685,7 @@ function IniMainWindow()
 return .T.
 
 //----------------------------------------------------------------------------//
-
+/*
  function SetScrollBar()
 
    //local oVScroll
@@ -724,6 +723,7 @@ return .T.
 
 
 return .T.
+*/
 
 /*
 function SetScrollBar()
@@ -761,7 +761,7 @@ return .T.
 */
 
 //----------------------------------------------------------------------------//
-
+/*
 function ScrollV( nPosZugabe, lUp, lDown, lPos )
    local i, aFirstWndCoors, nAltWert
     local nZugabe     := 14
@@ -819,9 +819,9 @@ function ScrollV( nPosZugabe, lUp, lDown, lPos )
    oGenVar:lShowReticule = lReticule
 
 return .T.
-
+*/
 //----------------------------------------------------------------------------//
-
+/*
 function ScrollVertical( lUp, lDown, lPageUp, lPageDown, lPos, nPosZugabe )
 
    local i, aFirstWndCoors, nAltWert
@@ -887,7 +887,7 @@ function ScrollVertical( lUp, lDown, lPageUp, lPageDown, lPos, nPosZugabe )
    oGenVar:lShowReticule = lReticule
 
 return .T.
-
+*/
 //----------------------------------------------------------------------------//
 
 function ScrollHorizont( lLeft, lRight, lPageLeft, lPageRight, lPos, nPosZugabe )
@@ -1532,7 +1532,7 @@ function FillWindow( nArea, cAreaIni )
    @ oEr:nRulerTop - oEr:nRuler, 0 BITMAP oRulerBmp2 RESOURCE cRuler2 ;
       OF aWnd[ nArea ] PIXEL NOBORDER
 
-    oRulerBmp2:bLClicked = { |nRow,nCol,nFlags| nAktArea := aWnd[ nArea ]:nArea }
+    oRulerBmp2:bLClicked = { |nRow,nCol,nFlags| nAktArea := aWnd[ nArea ]:nArea, oER:oMainWnd:SetFocus() }
 
    // @ oEr:nRulerTop-oER:nRuler, 20 SAY aRuler[ nArea, 1 ] PROMPT "" SIZE  1, 20 PIXEL ;
    //    COLORS oGenVar:nClrReticule, oGenVar:nClrReticule OF aWnd[ nArea ]
@@ -1547,16 +1547,17 @@ function FillWindow( nArea, cAreaIni )
    aWnd[ nArea ]:bMMoved = {|nRow,nCol,nFlags| ;
                            MsgBarInfos( nRow, nCol ), ;
                            MoveSelection( nRow, nCol, aWnd[ nArea ] ) ,;
-                           if(!lScrollVert,SetReticule( nRow, nCol, nArea ),SetReticule( 0, 0, nArea )),;
+                           if(!lScrollVert, SetReticule( nRow, nCol, nArea ), SetReticule( 0, 0, nArea )),;
                            lScrollVert :=  .F. }
 
-   aWnd[ nArea ]:bRClicked = {|nRow,nCol,nFlags| PopupMenu( nArea,, nRow, nCol ) }
+   aWnd[ nArea ]:bRClicked = {|nRow,nCol,nFlags| nAktArea := aWnd[ nArea ]:nArea, oER:oMainWnd:SetFocus(),;
+                                                 PopupMenu( nArea,, nRow, nCol ) }
 
 
     aWnd[ nArea ]:bLClicked = {|nRow,nCol,nFlags| DeactivateItem(), ;
                               IIF( GetKeyState( VK_SHIFT ),, UnSelectAll() ), ;
                               StartSelection( nRow, nCol, aWnd[ nArea ] ), ;
-                              nAktArea := aWnd[ nArea ]:nArea  }
+                              nAktArea := aWnd[ nArea ]:nArea, oER:oMainWnd:SetFocus()  }
 
    aWnd[ nArea ]:bLButtonUp = {|nRow,nCol,nFlags| StopSelection( nRow, nCol, aWnd[ nArea ] ) }
 
@@ -3562,6 +3563,8 @@ CLASS TEasyReport
    METHOD GetDefIni( cSection , cKey, cDefault ) INLINE GetPvProfString( cSection, cKey, cDefault, ::cDefIni )
    METHOD GetColor( nNr ) INLINE  Val( GetPvProfString(  "Colors", AllTrim(STR( nNr, 5 )), "", ::cDefIni ) )
    METHOD SetGeneralPreferences()
+   METHOD SetScrollBar()
+   METHOD ScrollV( nPosZugabe, lUp, lDown, lPos )
 
 ENDCLASS
 
@@ -3705,6 +3708,109 @@ return .T.
 
 //------------------------------------------------------------------------------
 
+METHOD SetScrollBar() CLASS TEasyReport
+
+   //local oVScroll
+   local nPageZugabe //:= 392/100
+   local oWnd        := ::oMainWnd:oWndClient
+
+   if !Empty( oWnd:oVScroll )
+
+      oWnd:oVScroll := ER_ScrollBar():WinNew(0,100,10,.T., oWnd )
+
+      oWnd:oVScroll:bGoUp     = { || ::ScrollV( -1 )  }
+      oWnd:oVScroll:bGoDown   = { || ::ScrollV( 1 )   }
+      oWnd:oVScroll:bPageUp   = { || ::ScrollV( -4 )  }
+      oWnd:oVScroll:bPageDown = { || ::ScrollV( 4 )   }
+      oWnd:oVScroll:bPos      = { | nWert | ::ScrollV( nWert )  }
+      oWnd:oVScroll:nPgStep   = 10
+
+      oWnd:oVScroll:SetPos( 0 )
+
+ ENDIF
+
+   if ! Empty( oWnd:oHScroll )
+      nPageZugabe := 602/100
+      oWnd:oHScroll:SetRange( 0, oEr:nTotalWidth / 100 )
+
+      oWnd:oHScroll:bGoUp     = {|| ScrollHorizont( .T. ) }
+      oWnd:oHScroll:bGoDown   = {|| ScrollHorizont( , .T. ) }
+      oWnd:oHScroll:bPageUp   = {|| ScrollHorizont( ,, .T. ) }
+      oWnd:oHScroll:bPageDown = {|| ScrollHorizont( ,,, .T. ) }
+      oWnd:oHScroll:bPos      = {| nWert | ScrollHorizont( ,,,, .T., nWert/100 ) }
+      oWnd:oHScroll:nPgStep   = nPageZugabe  //602
+
+      oWnd:oHScroll:SetPos( 0 )
+   endif
+
+
+return .T.
+
+//----------------------------------------------------------------------------//
+
+METHOD ScrollV( nPosZugabe, lUp, lDown, lPos ) CLASS TEasyReport
+   Local i
+   Local aFirstWndCoors
+   Local nAltWert
+   Local nZugabe     := 14
+   Local nPageZugabe := 392
+   Local aCliRect    := ::oMainWnd:GetCliRect()
+   Local lReticule
+   Local oVScroll    := ::oMainWnd:oWndClient:oVScroll
+
+   DEFAULT lUp       := .F.
+   DEFAULT lDown     := .F.
+   DEFAULT lPos      := .F.
+
+   UnSelectAll()
+
+    for i := 1 to Len( aWnd )
+      if aWnd[ i ] <> nil
+         aFirstWndCoors := GetCoors( aWnd[ i ]:hWnd )
+         EXIT
+      endif
+   next
+
+   if lUp
+      if aFirstWndCoors[ 1 ] = 0
+         nZugabe := 0
+      elseif aFirstWndCoors[ 1 ] + IIF( lUp, nZugabe, nPageZugabe ) >= 0
+         nZugabe     := -1 * aFirstWndCoors[ 1 ]
+         nPageZugabe := -1 * aFirstWndCoors[ 1 ]
+      endif
+   endif
+
+   if lDown
+      if aFirstWndCoors[ 1 ] + (oEr:nTotalHeight) <= aCliRect[3] - 80
+         nZugabe     := 0
+         nPageZugabe := 0
+      endif
+   endif
+
+
+   lReticule = oGenVar:lShowReticule
+   oGenVar:lShowReticule = .F.
+   SetReticule( 0, 0 ) // turn off the rulers lines
+
+
+   nAltWert := IF ( lPos, oVScroll:GetPos(), oVScroll:nPrevPos )
+
+   oVScroll:SetPos( nPosZugabe )
+   nZugabe := ::nTotalHeight * ( oVScroll:GetPos() - nAltWert ) / ( (::nTotalHeight) / 100 )
+
+   for i := 1 to Len( aWnd )
+      if aWnd[ i ] <> nil
+         aWnd[ i ]:Move( aWnd[ i ]:nTop - Int(nZugabe/10), aWnd[ i ]:nLeft, 0, 0, .T. )
+      endif
+   next
+
+   oGenVar:lShowReticule = lReticule
+
+return .T.
+
+//----------------------------------------------------------------------------//
+
+
 #define TME_LEAVE 2
 #define WM_MOUSELEAVE 675
 
@@ -3766,3 +3872,6 @@ CLASS ER_ScrollBar FROM TScrollBar
                  nPos, ::lReDraw )
 
 ENDCLASS
+
+//----------------------------------------------------------------------------//
+
