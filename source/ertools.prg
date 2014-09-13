@@ -13,6 +13,7 @@ MEMVAR oER
 function GetFreeSystemResources()
 return 0
 
+
 //-----------------------------------------------------------------------------//
 
 function CheckPath( cPath )
@@ -1178,7 +1179,7 @@ function GetResDLL()
 return ( cDLLName )
  */
 //------------------------------------------------------------------------------
-
+ /*
 function OpenLanguage()
 
    USE LANGUAGE.DBF
@@ -1197,9 +1198,40 @@ function OpenLanguage()
    LANGUAGE->(DBCLOSEAREA())
 
 return .T.
+ */
+
+function OpenLanguage()
+   LOCAL aStrings:= FWGetStrings()
+   FOR i = 1 TO Len(aStrings  )
+
+        AADD( oGenVar:aLanguages, { aStrings[i,1],;
+                                    aStrings[i,5],;
+                                    aStrings[i,6],;
+                                    aStrings[i,2],;
+                                    aStrings[i,4],;
+                                    aStrings[i,3] } )
+   next
+
+  /*
+   USE LANGUAGE.DBF
+
+   DO WHILE !LANGUAGE->(EOF())
+
+      AADD( oGenVar:aLanguages, { LANGUAGE->LANGUAGE1, LANGUAGE->LANGUAGE2, ;
+                                  LANGUAGE->LANGUAGE3, LANGUAGE->LANGUAGE4, ;
+                                  LANGUAGE->LANGUAGE5, LANGUAGE->LANGUAGE6, ;
+                                  LANGUAGE->LANGUAGE7, LANGUAGE->LANGUAGE8, ;
+                                  LANGUAGE->LANGUAGE9 } )
+      LANGUAGE->(DBSKIP())
+
+   ENDDO
+
+   LANGUAGE->(DBCLOSEAREA())
+   */
+return .T.
 
 //------------------------------------------------------------------------------
-
+/*
 function GL( cOriginal )
 
    local cAltText := strtran( cOriginal, " ", "_" )
@@ -1228,6 +1260,71 @@ function GL( cOriginal )
    endif
 
 return ( STRTRAN(ALLTRIM( cText ), "_", " " ) )
+   */
+//------------------------------------------------------------------------------
+
+function GL( cOriginal )
+
+   local cAltText := cOriginal   //strtran( cOriginal, " ", "_" )
+   local cText    := cAltText
+   LOCAL aLanguage
+   LOCAL aStrings:= FWGetStrings()
+
+   LOCAL cFileName := cFilePath( GetModuleFileName( GetInstance() ) ) + ;
+                        "fwstrings.ini"
+
+   local nPos     := ASCAN( aStrings, ;
+                            { |aVal| ALLTRIM( aVal[1] ) == ALLTRIM( cAltText ) } )
+
+   if nPos = 0
+
+      aLanguage :=  ER_LoadStrings()
+      AAdd( aLanguage,{ cOriginal,,,,, } )
+      FWSaveStrings( cFileName , aLanguage )
+      FWAddString( { cOriginal,,,,, } )
+
+      //New String
+   //   SELECT 0
+    //  USE LANGUAGE
+    //  FLOCK()
+    //  APPEND BLANK
+    //  REPLACE LANGUAGE->LANGUAGE1 WITH cText
+    //  UNLOCK
+    //  LANGUAGE->(DBCLOSEAREA())
+
+      oGenVar:aLanguages := {}
+      OpenLanguage()
+
+    //  SELECT( nSelect )
+   ELSE
+      cText := oGenVar:aLanguages[ nPos, oGenVar:nLanguage ]
+      if EMPTY( cText )
+         cText := oGenVar:aLanguages[ nPos, 1 ]
+      endif
+   endif
+
+return ALLTRIM( cText )  //( STRTRAN(ALLTRIM( cText ), "_", " " ) )
+
+//------------------------------------------------------------------------------
+
+function ER_LoadStrings( cFileName )
+
+   local cLine, n := 1
+   loca aLanguage
+
+   DEFAULT cFileName := cFilePath( GetModuleFileName( GetInstance() ) ) + ;
+                        "fwstrings.ini"
+
+   while ! Empty( cLine := GetPvProfString( "strings", AllTrim( Str( n++ ) ), "", cFileName ) )
+      AAdd( aLanguage, { AllTrim( StrToken( cLine, 1, "|" ) ),;
+                        AllTrim( StrToken( cLine, 2, "|" ) ),;
+                        AllTrim( StrToken( cLine, 3, "|" ) ),;
+                        AllTrim( StrToken( cLine, 4, "|" ) ),;
+                        AllTrim( StrToken( cLine, 5, "|" ) ),;
+                        AllTrim( StrToken( cLine, 6, "|" ) ) } )
+   end
+
+RETURN aLanguage
 
 //------------------------------------------------------------------------------
 
@@ -1707,4 +1804,41 @@ function MultiUndoRedo( nTyp, nCount )
       IIF( nTyp = 1, Undo(), Redo() )
    NEXT
 
-return .T.
+   return .T.
+
+
+//------------------------------------------------------------------------------
+
+
+/*
+FUNCTION CreateIniStrings(cFileName)
+   LOCAL aLanguage:= {}
+   LOCAL aStrings
+
+   local cText := "[strings]" + CRLF, n
+
+   DEFAULT cFileName := cFilePath( GetModuleFileName( GetInstance() ) ) + ;
+                        "fwstrings.ini"
+   msginfo(cfileName)
+   use language new
+   go top
+   DO WHILE !Eof()
+      aString:= {  STRTRAN(ALLTRIM( AllTrim(FIELD->language1) ), "_", " " ) ,;
+                  STRTRAN(ALLTRIM( AllTrim(FIELD->language4) ), "_", " " ) ,;
+                  STRTRAN(ALLTRIM( AllTrim(FIELD->language7) ), "_", " " ) ,;
+                STRTRAN(ALLTRIM( AllTrim(FIELD->language5) ), "_", " " ) ,;
+                 STRTRAN(ALLTRIM( AllTrim(FIELD->language2) ), "_", " " ) ,;
+                 STRTRAN(ALLTRIM( AllTrim(FIELD->language3) ), "_", " " ) }
+
+       AAdd( aLanguage , aString  )
+
+      skip
+   enddo
+
+    FWSaveStrings( cFileName , aLanguage )
+
+   close language
+RETURN nil
+ */
+
+
