@@ -6,7 +6,7 @@ MEMVAR aItems, aFonts, aAreaIni, aWnd, aWndTitle
 MEMVAR oCbxArea, aCbxItems
 MEMVAR nAktItem, nAktArea, nSelArea, aSelection
 MEMVAR oMsgInfo
-MEMVAR lFillWindow, nDeveloper
+MEMVAR nDeveloper         //lFillWindow, 
 MEMVAR nRuler, nRulerTop
 MEMVAR cItemCopy, nCopyEntryNr, nCopyAreaNr, aSelectCopy, aItemCopy, nXMove, nYMove
 MEMVAR cInfoWidth, cInfoHeight, nInfoRow, nInfoCol, aItemPixelPos
@@ -49,7 +49,7 @@ function ElementActions( oItem, i, cName, nArea, cAreaIni, cTyp )
                         aPoint := ClientToScreen( oItem:hWnd, aPoint ),;
                         aPoint := ScreenToClient( aWnd[ nArea ]:hWnd, aPoint ),;
                         nRow := aPoint[ 1 ], nCol := aPoint[ 2 ],;
-                        SetReticule( nRow, nCol, nArea ),;
+                        oER:SetReticule( nRow, nCol, nArea ),;
                         MsgBarItem( i, nArea, cAreaIni, nRow, nCol ) }
 
    oItem:bRClicked = { | nRow, nCol, nFlags | oItem:SetFocus(),;
@@ -1470,7 +1470,7 @@ function SetItemSize( i, nArea, cAreaIni )
          VAL( GetField( cItemDef, 9  ) ) <> VAL( GetField( cOldDef, 9  ) ) .OR. ;
          VAL( GetField( cItemDef, 10 ) ) <> VAL( GetField( cOldDef, 10 ) )
 
-         if !lFillWindow
+         if !oER:lFillWindow
             Add2Undo( cOldDef, i, nArea )
             SetSave( .F. )
          endif
@@ -1479,12 +1479,12 @@ function SetItemSize( i, nArea, cAreaIni )
 
    endif
 
-   lFillWindow := .T.
+   oER:lFillWindow := .T.
    aItems[nArea,i]:Move( oEr:nRulerTop + ER_GetPixel( VAL( GetField( cItemDef, 7 ) ) ), ;
       oER:nRuler + ER_GetPixel( VAL( GetField( cItemDef, 8 ) ) ), ;
       ER_GetPixel( VAL( GetField( cItemDef, 9 ) ) ), ;
       ER_GetPixel( VAL( GetField( cItemDef, 10 ) ) ), .T. )
-   lFillWindow := .F.
+   oER:lFillWindow := .F.
 
    aItemPosition := { GetField( cItemDef, 7 ), GetField( cItemDef, 8 ), ;
                       GetField( cItemDef, 9 ), GetField( cItemDef, 10 ) }

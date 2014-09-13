@@ -1624,7 +1624,7 @@ function FillWindow( nArea, cAreaIni )
 return .T.
 */
 //----------------------------------------------------------------------------//
-
+/*
 function SetReticule( nRow, nCol, nArea )
 
    local nRowPos := nRow
@@ -1651,7 +1651,7 @@ function SetReticule( nRow, nCol, nArea )
    endif
 
 return .T.
-
+*/
 //----------------------------------------------------------------------------//
 
 function DrawRulerHorzLine( oWnd, nRowPos )
@@ -3608,6 +3608,7 @@ CLASS TEasyReport
    METHOD ScrollV( nPosZugabe, lUp, lDown, lPos )
    METHOD ScrollH( lLeft, lRight, lPageLeft, lPageRight, lPos, nPosZugabe )
    METHOD FillWindow( nArea, cAreaIni )
+   METHOD SetReticule( nRow, nCol, nArea )
 
 ENDCLASS
 
@@ -3835,7 +3836,7 @@ METHOD ScrollV( nPosZugabe, lUp, lDown, lPos ) CLASS TEasyReport
 
    lReticule = oGenVar:lShowReticule
    oGenVar:lShowReticule = .F.
-   SetReticule( 0, 0 ) // turn off the rulers lines
+   ::SetReticule( 0, 0 ) // turn off the rulers lines
 
 
    nAltWert := IF ( lPos, oVScroll:GetPos(), oVScroll:nPrevPos )
@@ -3975,7 +3976,7 @@ METHOD FillWindow( nArea, cAreaIni ) CLASS TEasyReport
    aWnd[ nArea ]:bMMoved = {|nRow,nCol,nFlags| ;
                            MsgBarInfos( nRow, nCol ), ;
                            MoveSelection( nRow, nCol, aWnd[ nArea ] ) ,;
-                           if(!lScrollVert, SetReticule( nRow, nCol, nArea ), SetReticule( 0, 0, nArea )),;
+                           if(!lScrollVert, ::SetReticule( nRow, nCol, nArea ), ::SetReticule( 0, 0, nArea )),;
                            lScrollVert :=  .F. }
 
    aWnd[ nArea ]:bRClicked = {|nRow,nCol,nFlags| nAktArea := aWnd[ nArea ]:nArea, ::oMainWnd:SetFocus(),;
@@ -4008,6 +4009,34 @@ METHOD FillWindow( nArea, cAreaIni ) CLASS TEasyReport
 
    Memory(-1)
    SysRefresh()
+
+return .T.
+
+//----------------------------------------------------------------------------//
+
+METHOD SetReticule( nRow, nCol, nArea ) CLASS TEasyReport
+
+   local nRowPos := nRow
+   local nColPos := nCol
+   local lShow   := ( oGenVar:lShowReticule .and. !oGenVar:lSelectItems )
+
+   if nRow <= ::nRulerTop
+      nRowPos := ::nRulerTop
+   elseif nRow >= ER_GetPixel( oGenVar:aAreaSizes[ nArea, 2 ] ) + ::nRulerTop
+      nRowPos := ER_GetPixel( oGenVar:aAreaSizes[ nArea, 2 ] ) + ::nRulerTop
+   endif
+
+   if nCol <= ::nRuler
+      nColPos := ::nRuler
+   elseif nCol >= ER_GetPixel( oGenVar:aAreaSizes[ nArea, 1 ] ) + ::nRuler
+      nColPos := ER_GetPixel( oGenVar:aAreaSizes[ nArea, 1 ] ) + ::nRuler
+   endif
+
+   if lShow
+      DrawRulerHorzLine( aWnd[ nArea ], nRowPos )
+
+      AEval( aWnd, { | oWnd | If( oWnd != nil, DrawRulerVertLine( oWnd, nColPos ),) } )
+   endif
 
 return .T.
 
@@ -4053,7 +4082,7 @@ return ::Super:HandleEvent( nMsg, nWParam, nLParam )
 
 METHOD MouseLeave( nRow, nCol, nFlags ) CLASS ER_MdiChild
 
-   SetReticule( nRow, nCol, ::nArea )
+   oER:SetReticule( nRow, nCol, ::nArea )
 
 return nil
 
