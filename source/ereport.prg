@@ -121,6 +121,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
       PROMPT GL("&Report Settings"), GL("&Grid Setup"), GL("&Items"), GL("&Databases"), GL("&Expressions") ;
       OF oEr:oMainWnd SIZE 342, GetSysMetrics( 1 ) - 138 ;
       OPTION 3 ;
+      TAB HEIGHT 34 ;
       BITMAPS { "B_EDIT16", "B_GRAPHIC", "B_ITEMLIST16", "B_AREA", "B_EDIT2" } ;
       PIXEL ;
       SEPARATOR 0
@@ -135,7 +136,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
       // oEr:oMainWnd:oLeft  :=   oER:oTree
       oEr:oTree:SetColor( ,  oEr:nClrPaneTree )
       oEr:oTree:l3DLook := .F.
-      oER:oFld:aDialogs[1]:SetControl( oEr:oTree )
+      oER:oFld:aDialogs[3]:SetControl( oEr:oTree )
       oER:oFld:Hide()
 
    ENDIF
@@ -199,14 +200,14 @@ function BarMenu()
       ACTION SaveFile() ;
       WHEN !Empty( oER:cDefIni ) .and. !lVRDSave
 
-   if nDeveloper = 1 .OR. oGenVar:lStandalone 
+   //if nDeveloper = 1 .OR. oGenVar:lStandalone 
       DEFINE BUTTON aBtn[ 1 ] RESOURCE "B_PREVIEW", "B_PREVIEW", "B_PREVIEW1" ;
          OF oBar ;
          PROMPT FWString( "Preview" ) ;
          TOOLTIP GL("Preview") ;
          ACTION PrintReport( .T., !oGenVar:lStandalone ) ;
          WHEN !Empty( oER:cDefIni )
-   endif
+   //endif
 
    DEFINE BUTTON RESOURCE "print", "print", "print1" ;
       OF oBar ;
@@ -2532,7 +2533,12 @@ return aWerte
 
 function ReportSettings()
 
-   local i, oDlg, oIni, aGrp[2], oRad1, aGet[ 1 ]
+   Local i
+   Local oDlg
+   Local oIni
+   Local aGrp[ 2 ]
+   Local oRad1
+   Local aGet[ 1 ]
    local lSave       := .F.
    local nWidth      := Val( oEr:GetDefIni( "General", "PaperWidth" , "" ) )
    local nHeight     := Val( oEr:GetDefIni( "General", "PaperHeight", "" ) )
@@ -2546,7 +2552,7 @@ function ReportSettings()
    local aFormat     := GetPaperSizes()
    local nFormat     := Val( oEr:GetDefIni( "General", "PaperSize", "9" ) )
    local cFormat     := aFormat[ IIF( nFormat = 0, 9, nFormat ) ]
-   LOCAL nDecimals    := IIF( oER:nMeasure = 2, 2, 0 )
+   Local nDecimals   := IIF( oER:nMeasure = 2, 2, 0 )
 
    DEFINE DIALOG oDlg NAME "REPORTOPTIONS" TITLE GL("Report Settings")
 
@@ -2587,13 +2593,13 @@ function ReportSettings()
    REDEFINE SAY PROMPT " " + GL("Orientation") + ":" ID 176 OF oDlg
 
    REDEFINE GROUP aGrp[ 1 ] ID 190 OF oDlg
-   REDEFINE GROUP aGrp[2] ID 191 OF oDlg
+   REDEFINE GROUP aGrp[ 2 ] ID 191 OF oDlg
 
    ACTIVATE DIALOG oDlg CENTERED ;
       ON INIT ( aGrp[ 1 ]:SetText( GL("Paper Size") ), ;
-                aGrp[2]:SetText( GL("Report") ), ;
+                aGrp[ 2 ]:SetText( GL("Report") ), ;
                 oRad1:aItems[ 1 ]:SetText( GL("Portrait") ), ;
-                oRad1:aItems[2]:SetText( GL("Landscape") ) )
+                oRad1:aItems[ 2 ]:SetText( GL("Landscape") ) )
 
    if lSave = .T.
 
