@@ -660,7 +660,7 @@ function DeclarePublics( cDefFile )
    oGenVar:AddMember( "aAppFonts",, ARRAY(2) )
 
    DEFINE FONT oGenVar:aAppFonts[ 1 ] NAME GetSysFont() SIZE 0,-11 BOLD
-   DEFINE FONT oGenVar:aAppFonts[2] NAME GetSysFont() SIZE 0,-10 BOLD
+   DEFINE FONT oGenVar:aAppFonts[ 2 ] NAME GetSysFont() SIZE 0,-10 BOLD
 
    oGenVar:AddMember( "lItemDlg",, .F. )
    oGenVar:AddMember( "lDlgSave",, .F. )
@@ -1688,12 +1688,15 @@ return nil
 
 //----------------------------------------------------------------------------//
 
-function SetTitleColor( lOff )
+function SetTitleColor( lOff, nArea )
 LOCAL nColor :=  IIF( lOff, oGenVar:nF2ClrAreaTitle , oGenVar:nF1ClrAreaTitle )
-
-   oGenVar:aAreaTitle[nAktArea]:SetColor( nColor, oGenVar:nBClrAreaTitle )
+   if lOff
+   oGenVar:aAreaTitle[ nArea ]:SetColor( nColor, oGenVar:nBClrAreaTitle )
+   oGenVar:aAreaTitle[ nArea ]:Refresh()
+   else
+   oGenVar:aAreaTitle[ nAktArea ]:SetColor( nColor, oGenVar:nBClrAreaTitle )
    oGenVar:aAreaTitle[ nAktArea ]:Refresh()
-
+   endif
 return .T.
 
 //----------------------------------------------------------------------------//
@@ -4007,9 +4010,10 @@ METHOD FillWindow( nArea, cAreaIni ) CLASS TEasyReport
    // @ 20, 0 SAY aRuler[ nArea, 2 ] PROMPT "" SIZE 20,  1 PIXEL ;
    //    COLORS oGenVar:nClrReticule, oGenVar:nClrReticule OF aWnd[ nArea ]
 
-   aWnd[ nArea ]:bPainted  = {| hDC, cPS | ZeichneHintergrund( nArea ) }
+   aWnd[ nArea ]:bPainted   = {| hDC, cPS | ZeichneHintergrund( nArea ) }
 
-   aWnd[ nArea ]:bGotFocus = { || SetTitleColor( .T. ) }
+   aWnd[ nArea ]:bGotFocus  = { || SetTitleColor( .F., nArea ) }
+   aWnd[ nArea ]:bLostFocus = { || SetTitleColor( .T., nArea ) }
 
    aWnd[ nArea ]:bMMoved = {|nRow,nCol,nFlags| ;
                            MsgBarInfos( nRow, nCol, nArea ), ;
