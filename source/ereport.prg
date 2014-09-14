@@ -64,7 +64,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
    //Einf�ge-Modus einschalten
    ReadInsert( .T. )
 
- FWLoadStrings( )
+   FWLoadStrings( )
    FwSetLanguage( 2 )
 
    PUBLIC oER := TEasyReport():new()
@@ -1932,7 +1932,9 @@ return cCurFont
 
 function ShowColorChoice( nCurrentClr )
 
-   local oIni, oDlg, nDefClr
+   local oIni
+   local oDlg
+   local nDefClr
    local aColors := GetAllColors()
    local aSay    := ARRAY(30)
    local oSay
@@ -2117,7 +2119,15 @@ return ( aColors )
 
 function FontsAndColors()
 
-   local i, oDlg, oFld, oLbx, oSay1, oGet1, nDefClr, oIni
+   local i
+   local oDlg
+   local oFld
+   local oLbx
+   local oSay1
+   local oGet1
+   local nDefClr
+   local oIni
+   local x
    local aColorGet[30], aColorSay[30]
    local aGetFonts  := GetFonts()
    local aShowFonts := GetFontText( aGetFonts )
