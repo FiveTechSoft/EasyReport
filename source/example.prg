@@ -201,7 +201,7 @@ FUNCTION PrintOrder( lPreview )
    EASYREPORT oVRD NAME ".\examples\EasyReportExample1.vrd" ;
               PREVIEW lPreview OF oWnd PRINTDIALOG IIF( lPreview, .F., .T. )
 
-   IF oVRD:lDialogCancel = .T.
+   IF oVRD:lDialogCancel
       RETURN( .F. )
    ENDIF
 
@@ -244,8 +244,8 @@ FUNCTION PrintOrder( lPreview )
 
       FOR i := 1 TO MLCOUNT( oVRD:Cargo2[ EXAMPLE->(RECNO()) ], 240 )
 
-         if lLastPosition = .T. .AND. oVRD:nNextRow > oVRD:nPageBreak - oVRD:aAreaHeight[5] .OR. ;
-            lLastPosition = .F. .AND. oVRD:nNextRow > oVRD:nPageBreak
+         if lLastPosition .AND. oVRD:nNextRow > oVRD:nPageBreak - oVRD:aAreaHeight[5] .OR. ;
+            !lLastPosition .AND. oVRD:nNextRow > oVRD:nPageBreak
             PAGEBREAK oVRD
          ENDIF
 
@@ -256,8 +256,8 @@ FUNCTION PrintOrder( lPreview )
       NEXT
 
       //New Page
-      if lLastPosition = .T. .AND. oVRD:nNextRow > oVRD:nPageBreak - oVRD:aAreaHeight[5] .OR. ;
-         lLastPosition = .F. .AND. oVRD:nNextRow > oVRD:nPageBreak
+      if lLastPosition .AND. oVRD:nNextRow > oVRD:nPageBreak - oVRD:aAreaHeight[5] .OR. ;
+         !lLastPosition .AND. oVRD:nNextRow > oVRD:nPageBreak
          PAGEBREAK oVRD
       ENDIF
 
@@ -300,7 +300,7 @@ FUNCTION PrOrderControlled( lPreview )
               PREVIEW lPreview OF oWnd PRINTDIALOG IIF( lPreview, .F., .T. ) //;
               //AREAPATH "c:\fivewin\vdesign\test\"
 
-   IF oVRD:lDialogCancel = .T.
+   IF oVRD:lDialogCancel
       RETURN( .F. )
    ENDIF
 
@@ -382,8 +382,8 @@ FUNCTION PrOrderControlled( lPreview )
       nTotal += EXAMPLE->TOTALPRICE
 
       //New Page
-      if lLastPosition = .T. .AND. oVRD:nNextRow > oVRD:nPageBreak - oVRD:aAreaHeight[4] .OR. ;
-         lLastPosition = .F. .AND. oVRD:nNextRow > oVRD:nPageBreak
+      if lLastPosition .AND. oVRD:nNextRow > oVRD:nPageBreak - oVRD:aAreaHeight[4] .OR. ;
+         !lLastPosition .AND. oVRD:nNextRow > oVRD:nPageBreak
 
          //Print order footer
          PRINTAREA 5 OF oVRD ;
@@ -447,7 +447,7 @@ FUNCTION PrintTextFeatures( lPreview )
    EASYREPORT oVRD NAME ".\examples\EasyReportExample2.vrd" ;
               PREVIEW lPreview OF oWnd PRINTDIALOG IIF( lPreview, .F., .T. )
 
-   IF oVRD:lDialogCancel = .T.
+   IF oVRD:lDialogCancel
       RETURN( .F. )
    ENDIF
 
@@ -477,7 +477,7 @@ FUNCTION PrintReport( lPreview )
    oVRD := VRD():New( ".\examples\EasyReportExample3.vrd", lPreview,, oWnd, ;
                       ,,,,, IIF( lPreview, .F., .T. ) )
 
-   IF oVRD:lDialogCancel = .T.
+   IF oVRD:lDialogCancel
       RETURN( .F. )
    ENDIF
 
@@ -542,7 +542,7 @@ FUNCTION PrintRep2( lPreview, lBreakAfterGroup )
    // the check clause. With the check clause you get the total number of
    // pages. The End() method of the VRD class returns an object (oInfo).
 
-   IF lBreakAfterGroup = .T.
+   IF lBreakAfterGroup
 
       ER QUICK oVRD NAME ".\examples\EasyReportExample4.vrd" ;
                     PREVIEW lPreview                          ;
@@ -557,7 +557,7 @@ FUNCTION PrintRep2( lPreview, lBreakAfterGroup )
 
       ReportIt( oVRD, lBreakAfterGroup )
 
-      IF oVRD:lDialogCancel = .T.
+      IF oVRD:lDialogCancel
          RETURN( .F. )
       ENDIF
 
@@ -566,7 +566,7 @@ FUNCTION PrintRep2( lPreview, lBreakAfterGroup )
       EASYREPORT oVRD NAME ".\examples\EasyReportExample4.vrd" ;
          PREVIEW lPreview OF oWnd PRINTDIALOG IIF( lPreview, .F., .T. )
 
-      IF oVRD:lDialogCancel = .T.
+      IF oVRD:lDialogCancel
          RETURN( .F. )
       ENDIF
 
@@ -629,7 +629,7 @@ FUNCTION ReportIt( oVRD, lBreakAfterGroup )
             ITEMIDS    { 101 } ;
             ITEMVALUES { ALLTRIM(STR( nTotal, 12, 2 )) }
 
-         IF lBreakAfterGroup = .T.
+         IF lBreakAfterGroup
             PRINTAREA 1 OF oVRD PAGEBREAK
          ENDIF
 
@@ -704,7 +704,7 @@ FUNCTION PrTest()
 
    EASYREPORT oVRD NAME ".\examples\test.vrd" PREVIEW .T. OF oWnd PRINTDIALOG .F.
 
-   IF oVRD:lDialogCancel = .T.
+   IF oVRD:lDialogCancel
       RETURN( .F. )
    ENDIF
 

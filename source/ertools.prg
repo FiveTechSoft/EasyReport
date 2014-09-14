@@ -205,9 +205,9 @@ function GetDBField( oGet, lInsert )
 
    ACTIVATE DIALOG oDlg CENTERED
 
-   if lreturn = .T. .AND. .NOT. EMPTY( cField ) .AND. lInsert = .T.
+   if lreturn .AND. !EMPTY( cField ) .AND. lInsert
       oGet:Paste( "[" + ALLTRIM( cDbase ) + ":" + ALLTRIM( cField ) + "]" )
-   ELSEif lreturn = .T. .AND. .NOT. EMPTY( cField )
+   ELSEif lreturn .AND. !EMPTY( cField )
       if ALLTRIM( cDbase ) == cGeneral
          oGet:VarPut( "[1]" + ALLTRIM( cField ) )
       ELSEif ALLTRIM( cDbase ) == cUser
@@ -294,7 +294,7 @@ function OpenDatabases()
 
       aFields := {}
 
-      if FILE( cDbase ) = .T.
+      if FILE( cDbase )
 
          if Upper( cFileExt( cDBase ) ) = "DBF"
 

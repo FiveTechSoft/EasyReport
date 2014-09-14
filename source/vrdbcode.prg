@@ -200,13 +200,13 @@ METHOD CreateBarcode( cCode ) CLASS VRDBarCode
    FOR i := 1 TO LEN( cCode )
 
       IF SUBSTR( cCode, i, 1 ) = "1"
-         IF ::lHorizontal = .T.
+         IF ::lHorizontal
             Rectangle( ::hDC, nX, nY, nX + ::nHeight, ( nY += ::nPinWidth ) )
          ELSE
             Rectangle( ::hDC, nX, nY, ( nX += ::nPinWidth ), nY + ::nWidth )
          ENDIF
       ELSE
-         IF ::lHorizontal = .T.
+         IF ::lHorizontal
             nY += ::nPinWidth
          ELSE
             nX += ::nPinWidth
@@ -300,7 +300,7 @@ METHOD InitCode39( lCheck ) CLASS VRDBarCode
       END
    NEXT
 
-   if lCheck = .T.
+   if lCheck
       cBarra += aBarras[ nCheck%43 + 1 ]
    end
 

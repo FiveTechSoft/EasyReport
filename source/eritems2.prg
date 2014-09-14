@@ -12,7 +12,7 @@ MEMVAR oGenVar
 MEMVAR cInfoWidth, cInfoHeight
 MEMVAR oEr
 
-STATIC lBoxDraw
+STATIC lBoxDraw  := .F.
 
 //------------------------------------------------------------------------------
 
@@ -83,7 +83,7 @@ FUNCTION UnSelectAll( lDelSelection )
       ENDIF
    NEXT
 
-   IF lDelSelection = .T.
+   IF lDelSelection
       aSelection := {}
    ENDIF
 
@@ -176,7 +176,7 @@ RETURN (.T.)
 
 FUNCTION MoveSelection( nRow, nCol, oAktWnd )
 
-   IF lBoxDraw = .T.
+   IF lBoxDraw 
       RectDotted( oAktWnd:hWnd, nBoxTop, nBoxLeft, nBoxBottom, nBoxRight )
       nBoxBottom = nRow
       nBoxRight  = nCol
@@ -192,7 +192,7 @@ FUNCTION StopSelection( nRow, nCol, oAktWnd )
    LOCAL i, aBoxRect, aItemRect
    LOCAL aSelSearch := {}
 
-   IF lBoxDraw = .T.
+   IF lBoxDraw 
 
       nBoxBottom = nRow
       nBoxRight  = nCol

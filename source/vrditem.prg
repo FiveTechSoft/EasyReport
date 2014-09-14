@@ -165,7 +165,7 @@ METHOD New( cItemDef, oVRD, nArea, nItemID ) CLASS VRDItem
       ::cSVisible     := ALLTRIM( VRD_GetField( cItemDef, 18 ) )
       ::cSPrBorder    := ALLTRIM( VRD_GetField( cItemDef, 19 ) )
 
-   ELSEIF ::lGraphic = .T.
+   ELSEIF ::lGraphic
 
       ::nColor        := VAL( VRD_GetField( cItemDef, 11 ) )
       ::nColFill      := VAL( VRD_GetField( cItemDef, 12 ) )
@@ -276,7 +276,7 @@ METHOD Set( lSaveItem, nMeasure ) CLASS VRDItem
                   ALLTRIM( ::cSVisible     )   + "|" + ;
                   ALLTRIM( ::cSPrBorder    )
 
-   ELSEIF ::lGraphic = .T.
+   ELSEIF ::lGraphic
 
       cItemDef += ALLTRIM(STR( ::nColor, 4 ))    + "|" + ;
                   ALLTRIM(STR( ::nColFill, 4 ))  + "|" + ;
@@ -318,7 +318,7 @@ METHOD Set( lSaveItem, nMeasure ) CLASS VRDItem
 
    ENDIF
 
-   IF lSaveItem = .T.
+   IF lSaveItem 
       WritePProString( "Items", ::oVRD:GetEntryNr( ::nArea, ::nItemID ), cItemDef, ::cArea )
    ENDIF
 

@@ -389,9 +389,9 @@ FUNCTION BrowseItems()
       oBrw:RefreshLine() }
 
    ACTIVATE DIALOG oDlg CENTERED ;
-      VALID IIF( lSave = .F., MsgYesNo( "Do you want to end without saving?" ), .T. )
+      VALID IIF( !lSave, MsgYesNo( "Do you want to end without saving?" ), .T. )
 
-   IF lSave = .T.
+   IF lSave
 
       FILEEDIT->(DBGOTOP())
 
@@ -504,7 +504,7 @@ FUNCTION GetType( cTyp, lKlartext )
 
    DEFAULT lKlartext := .F.
 
-   IF lKlartext = .T.
+   IF lKlartext
       cTyp := aTypen[ ASCAN( aTypen, { |aVal| aVal[1] == cTyp } ), 2 ]
    ELSE
       cTyp := aTypen[ ASCAN( aTypen, { |aVal| aVal[2] == cTyp } ), 1 ]

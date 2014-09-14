@@ -1619,7 +1619,7 @@ function ItemCopy( lCut )
 
          oItemInfo := VRDItem():New( cItemCopy )
 
-         if lCut = .T.
+         if lCut
             DeleteItem( aSelection[i,2], aSelection[i,1], .T. )
             if oItemInfo:nItemID < 0
                DelIniEntry( "Items", AllTrim(STR(aSelection[i,2],5)), ;
@@ -1884,7 +1884,7 @@ function ShowItem( i, nArea, cAreaIni, aFirst, nElemente, aIniEntries, nIndex )
             <{uWhen}>, <.pixel.>, <{uValid}>, <.lDesign.> )
          */
 
-      ELSEif IsGraphic( cTyp ) = .T.
+      ELSEif IsGraphic( cTyp )
 
          nColor     := VAL( GetField( cItemDef, 11 ) )
          nColFill   := VAL( GetField( cItemDef, 12 ) )
@@ -1901,7 +1901,7 @@ function ShowItem( i, nArea, cAreaIni, aFirst, nElemente, aIniEntries, nIndex )
             DrawGraphic( hDC, cTyp, nWidth, nHeight, oER:GetColor( nColor ), oER:GetColor( nColFill ), ;
                          nStyle, nPenWidth, nRndWidth, nRndHeight ) }
 
-      ELSEif cTyp = "BARCODE" .AND. lProfi = .T.
+      ELSEif cTyp = "BARCODE" .AND. lProfi
 
          nBarcode    := VAL( GetField( cItemDef, 11 ) )
          nColText    := VAL( GetField( cItemDef, 12 ) )

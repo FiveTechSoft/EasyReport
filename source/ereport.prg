@@ -143,7 +143,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
 
    ACTIVATE WINDOW oEr:oMainWnd ;
       MAXIMIZED ;
-      ON RESIZE if(!Empty(oER:oTree),oER:oTree:refresh(.t.), ) ;
+      ON RESIZE if(!Empty(oER:oTree),oER:oTree:refresh( .T. ), ) ;
       ON INIT ( SetMainWnd(), IniMainWindow(), ;
                 IIF( Empty( oER:cDefIni ), OpenFile(), oER:SetScrollBar() ), ;
                 StartMessage(), SetSave( .T. ), ClearUndoRedo(),;
@@ -199,7 +199,7 @@ function BarMenu()
       ACTION SaveFile() ;
       WHEN !Empty( oER:cDefIni ) .and. !lVRDSave
 
-   if nDeveloper = 1 .OR. oGenVar:lStandalone = .T.
+   if nDeveloper = 1 .OR. oGenVar:lStandalone 
       DEFINE BUTTON aBtn[ 1 ] RESOURCE "B_PREVIEW", "B_PREVIEW", "B_PREVIEW1" ;
          OF oBar ;
          PROMPT FWString( "Preview" ) ;
@@ -350,15 +350,15 @@ function ER_MouseWheel( nKey, nDelta, nXPos, nYPos )
 
       if lAnd( nKey, MK_MBUTTON )
          if nDelta > 0
-            oER:ScrollV(-4, .t.)
+            oER:ScrollV(-4, .T. )
          else
-            oER:ScrollV(4,,.t.)
+            oER:ScrollV(4,, .T.)
          endif
       else
          if nDelta > 0
             oER:ScrollV( - WheelScroll() , .T.,, .T. )
          else
-            oER:ScrollV( WheelScroll() ,,.T.,.T. )
+            oER:ScrollV( WheelScroll() ,, .T., .T. )
          endif
       endif
 
@@ -703,7 +703,7 @@ return .T.
 
 function IniMainWindow()
 
-   if .NOT. Empty( oER:cDefIni )
+   if !Empty( oER:cDefIni )
 
       oGenVar:lFirstFile := .F.
 
@@ -886,7 +886,7 @@ function ScrollVertical( lUp, lDown, lPageUp, lPageDown, lPos, nPosZugabe )
       endif
    next
 
-   if lUp = .T. .OR. lPageUp = .T.
+   if lUp .OR. lPageUp
       if aFirstWndCoors[ 1 ] = 0
          nZugabe := 0
       elseif aFirstWndCoors[ 1 ] + IIF( lUp, nZugabe, nPageZugabe ) >= 0
@@ -895,7 +895,7 @@ function ScrollVertical( lUp, lDown, lPageUp, lPageDown, lPos, nPosZugabe )
       endif
    endif
 
-   if lDown = .T. .OR. lPageDown = .T.
+   if lDown .OR. lPageDown
       if aFirstWndCoors[ 1 ] + oEr:nTotalHeight <= aCliRect[3] - 80
          nZugabe     := 0
          nPageZugabe := 0
@@ -906,19 +906,19 @@ function ScrollVertical( lUp, lDown, lPageUp, lPageDown, lPos, nPosZugabe )
    oGenVar:lShowReticule = .F.
    SetReticule( 0, 0 ) // turn off the rulers lines
 
-   if lPos = .T.
+   if lPos
        nZugabe := oEr:nTotalHeight * ( oVScroll:GetPos() - nAltWert ) / ( (oEr:nTotalHeight) / 100 )
    ENDIF
 
    for i := 1 to Len( aWnd )
       if aWnd[ i ] <> nil
-         if lUp = .T. .OR. lPos = .T.
+         if lUp .OR. lPos
             aWnd[ i ]:Move( aWnd[ i ]:nTop + nZugabe, aWnd[ i ]:nLeft, 0, 0, .T. )
-         elseif lDown = .T.
+         elseif lDown
             aWnd[ i ]:Move( aWnd[ i ]:nTop - nZugabe, aWnd[ i ]:nLeft, 0, 0, .T. )
-         elseif lPageUp = .T.
+         elseif lPageUp
             aWnd[ i ]:Move( aWnd[ i ]:nTop + nPageZugabe, aWnd[ i ]:nLeft, 0, 0, .T. )
-         elseif lPageDown = .T.
+         elseif lPageDown
             aWnd[ i ]:Move( aWnd[ i ]:nTop - nPageZugabe, aWnd[ i ]:nLeft, 0, 0, .T. )
          endif
       endif
@@ -952,7 +952,7 @@ function ScrollHorizont( lLeft, lRight, lPageLeft, lPageRight, lPos, nPosZugabe 
       endif
    next
 
-   if lLeft = .T. .OR. lPageLeft = .T.
+   if lLeft .OR. lPageLeft
       if aFirstWndCoors[2] = 0
          nZugabe := 0
       elseif aFirstWndCoors[2] + IIF( lLeft, nZugabe, nPageZugabe ) >= 0
@@ -961,14 +961,14 @@ function ScrollHorizont( lLeft, lRight, lPageLeft, lPageRight, lPos, nPosZugabe 
       endif
    endif
 
-   if lRight = .T. .OR. lPageRight = .T.
+   if lRight .OR. lPageRight
       if aFirstWndCoors[2] + oEr:nTotalWidth <= aCliRect[4] - 40
          nZugabe     := 0
          nPageZugabe := 0
       endif
    endif
 
-   if lPos = .T.
+   if lPos
       nAltWert := oEr:oMainWnd:oWndClient:oHScroll:GetPos()
       oEr:oMainWnd:oWndClient:oHScroll:SetPos( nPosZugabe )
       nZugabe := -1 * oEr:nTotalWidth * ( oEr:oMainWnd:oWndClient:oHScroll:GetPos() - nAltWert ) / 100
@@ -977,13 +977,13 @@ function ScrollHorizont( lLeft, lRight, lPageLeft, lPageRight, lPos, nPosZugabe 
 
    for i := 1 to Len( aWnd )
       if aWnd[ i ] <> nil
-         if lLeft = .T. .OR. lPos = .T.
+         if lLeft .OR. lPos
             aWnd[ i ]:Move( aWnd[ i ]:nTop, aWnd[ i ]:nLeft + nZugabe , 0, 0, .T. )
-         elseif lRight = .T.
+         elseif lRight
             aWnd[ i ]:Move( aWnd[ i ]:nTop, aWnd[ i ]:nLeft - nZugabe , 0, 0, .T. )
-         elseif lPageLeft = .T.
+         elseif lPageLeft
             aWnd[ i ]:Move( aWnd[ i ]:nTop, aWnd[ i ]:nLeft + nPageZugabe, 0, 0, .T. )
-         elseif lPageRight = .T.
+         elseif lPageRight
             aWnd[ i ]:Move( aWnd[ i ]:nTop, aWnd[ i ]:nLeft - nPageZugabe, 0, 0, .T. )
          endif
       endif
@@ -1027,7 +1027,7 @@ function ShowAreasOnBar()
     aCbxItems := {}
 
     for n := 1 to LEN( aWndTitle )
-       if .NOT. Empty( aWndTitle[ n ] )
+       if !Empty( aWndTitle[ n ] )
          AADD( aCbxItems, aWndTitle[ n ] )
        endif
     next
@@ -1360,7 +1360,7 @@ function GenerateSource( nArea )
    REDEFINE BTNBMP ID 151 OF oDlg RESOURCE "OPEN" TRANSPARENT UPDATE ;
       TOOLTIP GL("Directory") ;
       ACTION ( cDir := cGetDir32( GL("Select a directory") ), ;
-               IIF( AT( "\", cFile ) = 0 .and. .NOT. Empty( cDir ), ;
+               IIF( AT( "\", cFile ) = 0 .and. !Empty( cDir ), ;
                   cFile := cDir + "\" + cFile, ), ;
                oGet1:Refresh() )
 
@@ -1368,14 +1368,14 @@ function GenerateSource( nArea )
       ON INIT( oRad1:aItems[ 1 ]:SetText( GL("Copy to clipboard") ), ;
                oRad1:aItems[2]:SetText( GL("Copy to file") + ":" ) )
 
-   if lGenerate = .T.
+   if lGenerate
 
       cAreaDef := oEr:GetDefIni( "Areas", AllTrim(STR(nArea,5)) , "" )
       cAreaDef := VRD_LF2SF( AllTrim( cAreaDef ) )
 
       cAreaTitle := AllTrim( GetPvProfString( "General", "Title" , "", aAreaIni[ nArea ] ) )
 
-      if .NOT. Empty( cAreaTitle )
+      if !Empty( cAreaTitle )
          cSource += SPACE(3) + "//--- Area: " + cAreaTitle + " ---" + CRLF
       endif
 
@@ -1383,7 +1383,7 @@ function GenerateSource( nArea )
 
          cItemDef := AllTrim( GetPvProfString( "Items", AllTrim(STR(i,5)) , "", aAreaIni[ nArea ] ) )
 
-         if .NOT. Empty( cItemDef )
+         if !Empty( cItemDef )
             if nStyle = 1
                cSource += SPACE(3) + "oVRD:PrintItem( " + ;
                           AllTrim(STR( nArea,3 )) + ;
@@ -1629,8 +1629,7 @@ function SetReticule( nRow, nCol, nArea )
 
    local nRowPos := nRow
    local nColPos := nCol
-   local lShow   := ( oGenVar:lShowReticule == .T. .and. ;
-                      oGenVar:lSelectItems == .F. )
+   local lShow   := ( oGenVar:lShowReticule .and. !oGenVar:lSelectItems )
 
    if nRow <= oEr:nRulerTop
       nRowPos := oEr:nRulerTop
@@ -1804,7 +1803,7 @@ function DelselectItems()
 
    local i
 
-   if MsgNoYes( GL("Delete the selected items?"), GL("Select an option") ) = .T.
+   if MsgNoYes( GL("Delete the selected items?"), GL("Select an option") )
 
       for i := 1 to LEN( aSelection )
 
@@ -2272,7 +2271,7 @@ function FontsAndColors()
    //Colors speichern
    INI oIni FILE oER:cDefIni
    for i := 1 to 30
-      if .NOT. Empty( aColors[ i ] )
+      if !Empty( aColors[ i ] )
          SET SECTION "Colors" ENTRY AllTrim(STR(i,5)) to aColors[ i ] OF oIni
       endif
    next
@@ -2316,7 +2315,7 @@ function GetFontText( aGetFonts, lShowEmpty )
    DEFAULT lShowEmpty := .T.
 
    for i := 1 to 20
-      if .NOT. Empty(aGetFonts[i, 1 ])
+      if !Empty(aGetFonts[i, 1 ])
          cText :=  AllTrim(STR( i, 3)) + ". " + ;
                    aGetFonts[i, 1 ] + ;
                    " " + AllTrim(STR( aGetFonts[i,3], 5 )) + ;
@@ -2327,7 +2326,7 @@ function GetFontText( aGetFonts, lShowEmpty )
                    IIF( aGetFonts[i,8] <> 0, " " + GL("Rotation:") + " " + AllTrim(STR( aGetFonts[i,8], 6)), "")
          AADD( aShowFonts, cText )
       else
-         if lShowEmpty = .T.
+         if lShowEmpty
             AADD( aShowFonts, AllTrim(STR( i, 3)) + ". " )
          endif
       endif
@@ -2486,8 +2485,7 @@ function GetFonts()
 
       cFontDef := AllTrim( oEr:GetDefIni( "Fonts", AllTrim(STR(i,3)) , "" ) )
 
-      if .NOT. Empty( cFontDef )
-
+      if !Empty( cFontDef )
 
          aWerte[i, 1] := AllTrim( GetField( cFontDef, 1 ) )                   // Name
          aWerte[i, 2] := Val( GetField( cFontDef, 2 ) )                       // Width
@@ -2682,7 +2680,7 @@ function Options()
 
    for i := 1 to 99
       cWert := GetPvProfString( "Languages", AllTrim(STR(i,2)), "", oER:cGeneralIni )
-      if .NOT. Empty( cWert )
+      if !Empty( cWert )
          AADD( aLanguage, cWert )
       endif
    next
@@ -2738,7 +2736,7 @@ function Options()
                 aGrp[ 1 ]:SetText( GL("General") ), ;
                 aGrp[2]:SetText( GL("Grid") ) )
 
-   if lSave = .T.
+   if lSave
 
       oGenVar:nGridWidth    := nGridWidth
       oGenVar:nGridHeight   := nGridHeight
@@ -2838,7 +2836,7 @@ function SetGrid()
       ON PAINT  DlgStatusBar(oDlg, 68,, .t. )
 
 
-   if lSave = .T.
+   if lSave
 
       oGenVar:nGridWidth    := nGridWidth
       oGenVar:nGridHeight   := nGridHeight
@@ -2846,11 +2844,11 @@ function SetGrid()
 
       IF !Empty( oER:cDefIni )
 
-      INI oIni FILE oER:cDefIni
-         SET SECTION "General" ENTRY "GridWidth"  to AllTrim(STR( nGridWidth , 5, nDecimals )) OF oIni
-         SET SECTION "General" ENTRY "GridHeight" to AllTrim(STR( nGridHeight, 5, nDecimals )) OF oIni
-         SET SECTION "General" ENTRY "ShowGrid"   to IIF( lShowGrid, "1", "0") OF oIni
-      ENDINI
+         INI oIni FILE oER:cDefIni
+            SET SECTION "General" ENTRY "GridWidth"  to AllTrim(STR( nGridWidth , 5, nDecimals )) OF oIni
+            SET SECTION "General" ENTRY "GridHeight" to AllTrim(STR( nGridHeight, 5, nDecimals )) OF oIni
+            SET SECTION "General" ENTRY "ShowGrid"   to IIF( lShowGrid, "1", "0") OF oIni
+         ENDINI
 
       endif
 
@@ -2904,7 +2902,7 @@ function ItemList( )
      if !empty( oER:oTree )
         if empty( oER:oTree:aItems )
            oEr:oTree:bLDblClick  = { | nRow, nCol, nKeyFlags | ClickListTree( oEr:oTree ) }
-           FillTree( oEr:oTree,oEr:oMainWnd )
+           FillTree( oEr:oTree, oEr:oMainWnd )
            //  oEr:oTree:show()
            oEr:oFld:show()
         endif
@@ -3062,11 +3060,11 @@ function ListTrees( oTree )
 
       nEntry := EntryNr( aIniEntries[ i ] )
 
-      if nEntry <> 0 //.and. .NOT. Empty( aWndTitle[nEntry] )
+      if nEntry <> 0 //.and. !Empty( aWndTitle[nEntry] )
 
          cTitle := aWndTitle[nEntry]
 
-         if lFirstArea = .T.
+         if lFirstArea
             oTr1 := oTr1:AddLastChild( AllTrim(STR(nEntry,5)) + ". " + cTitle, nClose, nOpen )
             lFirstArea := .F.
          else
@@ -3083,7 +3081,7 @@ function ListTrees( oTree )
          cItemDef := VRD_LF2SF( cAreaFilesDir + ;
             AllTrim( GetIniEntry( aIniEntries, AllTrim(STR(nEntry,5)) , "" ) ) )
 
-         if .NOT. Empty( cItemDef )
+         if !Empty( cItemDef )
 
             cItemDef := IIF( AT( "\", cItemDef ) = 0, ".\", "" ) + cItemDef
 
@@ -3128,14 +3126,14 @@ function GetAllItems( cAktAreaIni )
       nEntry := EntryNr( aIniEntries[ i ] )
       cItemDef := GetIniEntry( aIniEntries, AllTrim(STR(nEntry,5)) , "" )
 
-      if .NOT. Empty( cItemDef )
+      if !Empty( cItemDef )
 
          cTyp    := UPPER(AllTrim( GetField( cItemDef, 1 ) ))
          cName   := AllTrim( GetField( cItemDef, 2 ) )
          nShow   := Val( GetField( cItemDef, 4 ) )
          nDelete := Val( GetField( cItemDef, 5 ) )
 
-         if UPPER( cTyp ) = "IMAGE" .and. Empty( cName ) = .T.
+         if UPPER( cTyp ) = "IMAGE" .and. Empty( cName )
             cName := AllTrim(STR(nEntry,5)) + ". " + AllTrim( GetField( cItemDef, 11 ) )
          else
             cName := AllTrim(STR(nEntry,5)) + ". " + cName
@@ -3145,7 +3143,7 @@ function GetAllItems( cAktAreaIni )
             nTyp := 6
          elseif UPPER( cTyp ) = "IMAGE"
             nTyp := 7
-         elseif IsGraphic( cTyp ) = .T.
+         elseif IsGraphic( cTyp )
             nTyp := GetGraphIndex( cTyp ) + 9
          elseif UPPER( cTyp ) = "BARCODE"
             nTyp := 9
@@ -3389,7 +3387,7 @@ function AreaProperties( nArea )
                 aCbx[6]:SetText( GL("Print this area after every page break") ), ;
                 aCbx[4]:SetText( GL("Top depends on previous area") ) )
 
-   if lSave = .T.
+   if lSave
 
       INI oIni FILE aAreaIni[ nArea ]
          SET SECTION "General" ENTRY "Title"            to AllTrim( cAreaTitle ) OF oIni
@@ -3695,7 +3693,7 @@ METHOD SetGeneralPreferences() CLASS TEasyReport
 
    for i := 1 to 99
       cWert := ::GetGeneralIni( "Languages", AllTrim(STR(i,2)), "" )
-      if .NOT. Empty( cWert )
+      if !Empty( cWert )
          AADD( aLanguage, cWert )
       endif
    next
@@ -3736,7 +3734,7 @@ METHOD SetGeneralPreferences() CLASS TEasyReport
                 DlgBarTitle( oDlg, GL("Preferences"), "B_EDIT32",44 ) ) ;
       ON PAINT  DlgStatusBar(oDlg, 68,, .t. )
 
-   if lSave = .T.
+   if lSave
 
       oGenVar:lShowReticule := lShowReticule
       oGenVar:lShowBorder   := lShowBorder
@@ -3904,7 +3902,7 @@ METHOD ScrollH( lLeft, lRight, lPageLeft, lPageRight, lPos, nPosZugabe ) CLASS T
       endif
    next
 
-   if lLeft = .T. .OR. lPageLeft = .T.
+   if lLeft  .OR. lPageLeft
       if aFirstWndCoors[2] = 0
          nZugabe := 0
       elseif aFirstWndCoors[2] + IIF( lLeft, nZugabe, nPageZugabe ) >= 0
@@ -3913,14 +3911,14 @@ METHOD ScrollH( lLeft, lRight, lPageLeft, lPageRight, lPos, nPosZugabe ) CLASS T
       endif
    endif
 
-   if lRight = .T. .OR. lPageRight = .T.
+   if lRight .OR. lPageRight
       if aFirstWndCoors[2] + ::nTotalWidth <= aCliRect[4] - 40
          nZugabe     := 0
          nPageZugabe := 0
       endif
    endif
 
-   if lPos = .T.
+   if lPos
       nAltWert := ::oMainWnd:oWndClient:oHScroll:GetPos()
       ::oMainWnd:oWndClient:oHScroll:SetPos( nPosZugabe )
       nZugabe := -1 * ::nTotalWidth * ( ::oMainWnd:oWndClient:oHScroll:GetPos() - nAltWert ) / 100
@@ -3929,13 +3927,13 @@ METHOD ScrollH( lLeft, lRight, lPageLeft, lPageRight, lPos, nPosZugabe ) CLASS T
 
    for i := 1 to Len( aWnd )
       if aWnd[ i ] <> nil
-         if lLeft = .T. .OR. lPos = .T.
+         if lLeft .OR. lPos
             aWnd[ i ]:Move( aWnd[ i ]:nTop, aWnd[ i ]:nLeft + nZugabe , 0, 0, .T. )
-         elseif lRight = .T.
+         elseif lRight
             aWnd[ i ]:Move( aWnd[ i ]:nTop, aWnd[ i ]:nLeft - nZugabe , 0, 0, .T. )
-         elseif lPageLeft = .T.
+         elseif lPageLeft
             aWnd[ i ]:Move( aWnd[ i ]:nTop, aWnd[ i ]:nLeft + nPageZugabe, 0, 0, .T. )
-         elseif lPageRight = .T.
+         elseif lPageRight
             aWnd[ i ]:Move( aWnd[ i ]:nTop, aWnd[ i ]:nLeft - nPageZugabe, 0, 0, .T. )
          endif
       endif

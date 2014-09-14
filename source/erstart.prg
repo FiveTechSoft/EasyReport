@@ -167,7 +167,7 @@ METHOD PrintReport() CLASS ERStart
 
    LOCAL i, oInfo
 
-   IF ::lCheck = .T.
+   IF ::lCheck
 
       EASYREPORT ::oVRD NAME ::cRptFile CHECK .T. AUTOPAGEBREAK .T.
 
@@ -185,7 +185,7 @@ METHOD PrintReport() CLASS ERStart
       PRINTDIALOG   ( ::cMode == "PRINTDIALOG" ) ;
       AUTOPAGEBREAK .T.
 
-   IF ::oVRD:lDialogCancel = .T.
+   IF ::oVRD:lDialogCancel
       RETURN .F.
    ENDIF
 
