@@ -554,15 +554,8 @@ function ADelete( aArray, nIndex )
 return ( aNewArray )
 
 
-*-- function -----------------------------------------------------------------
-* Name........: StrAtNum( <cSearch>, <cString>, <nCount> )
-* Beschreibung: n-tes Auftreten einer Zeichenfolge in Strings ermitteln
-*               StrAtNum() sucht das <nCount>-te Auftreten von <cSearch>
-*               in <cString>. War die Suche erfolgreich, wird die Position
-*               innerhalb <cString> zur�ckgegeben, andernfalls 0.
-* R�ckgabewert: die Position des <nCount>-ten Auftretens von <cSearch>.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+
 function StrAtNum( cSearch, cString, nNr )
 
    cString := STRTRAN( cString, cSearch, REPLICATE( "@", LEN( cSearch ) ),, nNr - 1 )
@@ -570,27 +563,16 @@ function StrAtNum( cSearch, cString, nNr )
 return AT( cSearch, cString )
 
 
-*-- function -----------------------------------------------------------------
-* Name........: GoBottom
-* Beschreibung:
-* Argumente...: None
-* R�ckgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+
 function GoBottom()
 
   GO BOTTOM
 
 return !Eof()
 
+//-----------------------------------------------------------------------------
 
-*-- function -----------------------------------------------------------------
-* Name........: GetFile
-* Beschreibung:
-* Argumente...: None
-* R�ckgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function GetFile( cFileMask, cTitle, nDefaultMask, cInitDir, lSave, nFlags )
 
    local cTmpPath := CheckPath( oER:GetGeneralIni( "General", "DefaultPath", "" ) )
@@ -644,14 +626,8 @@ function IsPointInRect( aPoint, aRect )
 
 return ( lreturn )
 
+//-----------------------------------------------------------------------------
 
-*-- function -----------------------------------------------------------------
-* Name........: GetSourceToolTip
-* Beschreibung:
-* Argumente...: None
-* R�ckgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function GetSourceToolTip( cSourceCode )
 
    local cText := GL("Formula")
@@ -672,14 +648,8 @@ function GetSourceToolTip( cSourceCode )
 
 return ( cText )
 
+//-----------------------------------------------------------------------------
 
-*-- function -----------------------------------------------------------------
-* Name........: AddToRecentDocs
-* Beschreibung:
-* Argumente...: None
-* R�ckgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function AddToRecentDocs( cFullPathFile )
 
    local hDLL, uResult, cFarProc
@@ -701,14 +671,8 @@ function AddToRecentDocs( cFullPathFile )
 
 return uResult
 
+//-----------------------------------------------------------------------------
 
-*-- function -----------------------------------------------------------------
-* Name........: GetBarCodes
-* Beschreibung:
-* Argumente...: None
-* R�ckgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function GetBarCodes()
 
    local aBarcodes := { "Code 39", ;
@@ -746,14 +710,8 @@ function MainCaption()
 
 return ( cReturn )
 
+//-----------------------------------------------------------------------------
 
-*-- function -----------------------------------------------------------------
-* Name........: Expressions
-* Beschreibung:
-* Argumente...: None
-* R�ckgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function Expressions( lTake, cAltText )
 
    local i, oDlg, oFld, oBrw, oBrw2, oBrw3, oFont, creturn, oSay1, nTyp, oGet1
@@ -926,28 +884,16 @@ function CheckExpression( cText )
 
 return .T.
 
+//-----------------------------------------------------------------------------
 
-*-- function -----------------------------------------------------------------
-* Name........: DBPack
-* Beschreibung:
-* Argumente...: None
-* R�ckgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function DBPack()
 
    PACK
 
 return .T.
 
+//-----------------------------------------------------------------------------
 
-*-- function -----------------------------------------------------------------
-* Name........: DBReplace
-* Beschreibung:
-* Argumente...: None
-* R�ckgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 /*  no usado
 function DBReplace( cReplFeld, xAusdruck )
 
@@ -956,13 +902,8 @@ function DBReplace( cReplFeld, xAusdruck )
 return .T.
 */
 
-*-- function -----------------------------------------------------------------
-* Name........: CopyToExpress
-* Beschreibung:
-* Argumente...: None
-* R�ckgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+
 function CopyToExpress( cText, oGet, aUndo )
 
    AADD( aUndo, oGet:cText )
@@ -973,14 +914,8 @@ function CopyToExpress( cText, oGet, aUndo )
 
 return .T.
 
+//-----------------------------------------------------------------------------
 
-*-- function -----------------------------------------------------------------
-* Name........: UndoExpression
-* Beschreibung:
-* Argumente...: None
-* R�ckgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function UnDoExpression( oGet, aUndo )
 
    if Len( aUndo ) > 0
@@ -1112,14 +1047,8 @@ function ER_GetPixel( nValue )
 
 return ( nValue )
 
+//-----------------------------------------------------------------------------
 
-*-- function -----------------------------------------------------------------
-* Name........: GetCmInch
-* Beschreibung:
-* Argumente...: None
-* R�ckgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function GetCmInch( nValue )
 
    if oER:nMeasure = 1
@@ -1202,6 +1131,8 @@ return .T.
 
 function OpenLanguage()
    LOCAL aStrings:= FWGetStrings()
+   Local i
+
    FOR i = 1 TO Len(aStrings  )
 
         AADD( oGenVar:aLanguages, { aStrings[i,1],;
@@ -1680,42 +1611,24 @@ function Redo()
 
 return .T.
 
+//-----------------------------------------------------------------------------
 
-*-- function -----------------------------------------------------------------
-* Name........: RefreshUndo()
-* Beschreibung:
-* Argumente...: None
-* R�ckgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function RefreshUndo()
 
    nUndoCount := TMPUNDO->(LASTREC())
 
 return .T.
 
+//-----------------------------------------------------------------------------
 
-*-- function -----------------------------------------------------------------
-* Name........: RefreshRedo()
-* Beschreibung:
-* Argumente...: None
-* R�ckgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function RefreshRedo()
 
    nRedoCount := TMPREDO->(LASTREC())
 
 return .T.
 
+//-----------------------------------------------------------------------------
 
-*-- function -----------------------------------------------------------------
-* Name........: ClearUndoRedo
-* Beschreibung:
-* Argumente...: None
-* R�ckgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 function ClearUndoRedo()
 
    local nSelect := SELECT()
@@ -1737,14 +1650,8 @@ function ClearUndoRedo()
 
 return .T.
 
+//--------------------------------------------------------------------------
 
-* - function ---------------------------------------------------------------
-*  function....: UndoRedoMenu
-*  Beschreibung: Shell-Menu anzeigen
-*  Argumente...: None
-*  R�ckgabewert: ( NIL )
-*  Author......: Timm Sodtalbers
-* --------------------------------------------------------------------------
 function UndoRedoMenu( nTyp, oBtn )
 
    local i, oMenu
