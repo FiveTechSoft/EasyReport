@@ -99,7 +99,7 @@ static aStrings := { ;
 { "Export to Excel", "Exportar a Excel", "Exporter vers Excel", "Exportar para Excel", "Export nach Excel", ;
 "Esporta in Excel" }, ;
 { "Exit", "Salir", "Quitter", "Sair", "Ende", "Exit" }, ;
-{ "Preview", "Previsualización", "Visualisation", "Previsualização", "Vorschau", "Anteprima" }, ;
+{ "Preview", "Previsualizar", "Visualisation", "Previsualização", "Vorschau", "Anteprima" }, ;
 { "Save as", "Guardar como", "Enregistrer Sous", "Salvar como", "Speichern unter", "Salva con nome" }, ;
 { "Printing", "Imprimiendo", "Impression", "Imprimindo", "Drucke", "Stampa" }, ;
 { "Printing page", "Imprimiendo página", "Impression", "Imprimindo", "Druck von Seite", "Stampa" }, ;
@@ -299,7 +299,10 @@ static aStrings := { ;
 "File DBF| *.dbf|File Access| *.mdb|File Access 2010 |*.accdb|SQLite file| *.db|" },;
 { "Excel", "Excel", "Excel", "Excel", "Excel","Excel" },;
 { "Select", "Seleccione", "Sélectionner", "Selecionar", "Wählen", "Selezionare" },;
-{ "Modify DBF structure", "Modificar estructura DBF", "Changement structure DBF", "Alterar estrutura do DBF", "DBF-Struktur bearbeiten", "Modifica struttura DBF" } }
+{ "Modify DBF structure", "Modificar estructura DBF", "Changement structure DBF", "Alterar estrutura do DBF", "DBF-Struktur bearbeiten", "Modifica struttura DBF" },;
+{ "Items", "Items", "Items", "Items", "Items","Items" }, ;
+{ "Properties", "Propiedades", "Properties", "Properties", "Properties","Properties" } ;
+}
 
 static aMissing := {}
 
