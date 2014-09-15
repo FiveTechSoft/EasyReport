@@ -2915,7 +2915,7 @@ return .T.
 
 //------------------------------------------------------------------------------
 
-function ItemList( )
+function ItemList()
 
    local oTree
    local oImageList, oBmp1, oBmp2
@@ -3493,6 +3493,7 @@ function AreaChange( nArea, cAreaTitle, nOldWidth, nWidth, nOldHeight, nHeight )
    local cTemp1
    local cTemp2
    local nElem
+   local oItem
 
    aWndTitle[ nArea ]   := cAreaTitle
    aWnd[ nArea ]:cTitle := cAreaTitle
@@ -3543,7 +3544,6 @@ function AreaChange( nArea, cAreaTitle, nOldWidth, nWidth, nOldHeight, nHeight )
       For i = 1 to Len( oER:oTree:aItems )
           cTemp1 := Left( oER:oTree:aItems[ i ][ 5 ], At( ".", oER:oTree:aItems[ i ][ 5 ] ) )
           cTemp2 := Right( oER:oTree:aItems[ i ][ 5 ], Len( oER:oTree:aItems[ i ][ 5 ] ) - At( ".", oER:oTree:aItems[ i ][ 5 ] ) - 1 )
-          //? cTemp1, cTemp2, cOldTitle, cAreaTitle
           if RTrim( cTemp2 ) == RTrim( cOldTitle )
              nElem := i
              i := Len( oER:oTree:aItems ) + 1
@@ -3552,14 +3552,9 @@ function AreaChange( nArea, cAreaTitle, nOldWidth, nWidth, nOldHeight, nHeight )
       // Sustituir Caption del elemento
       if !empty( nElem )
          // 2 -> hWnd   3 -> Object   4 -> Array   5 -> Caption
-         /*
-         For i = 1 to Len( oER:oTree:aItems[ nElem ] )
-             ? oER:oTree:aItems[ nElem ][ i ]
-         Next i
-         oER:oTree:aItems[ nElem ][ 5 ] := cTemp1 + cAreaTitle    // Esto no funciona
-         */
+         //? TVGetText( oER:oTree:hWnd, oER:oTree:aItems[ nElem ][ 2 ] )
+         TVSetItemText( oER:oTree:hWnd, oER:oTree:aItems[ nElem ][ 2 ], cTemp1 + " " + cAreaTitle )
       endif
-      oER:oTree:Refresh()
    endif
 
 return .T.
