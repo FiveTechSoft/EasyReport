@@ -164,9 +164,15 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
       VALID ( AEVal( aWnd, { |o| if( o <> nil, o:End(), ) } ), AskSaveFiles() )
 
    oEr:oAppFont:End()
-   oBrush:End()
-   oGenVar:oAreaBrush:End()
-   oGenVar:oBarBrush:End()
+   if !empty( oBrush )
+      oBrush:End()
+   endif
+   if !empty( oGenVar:oAreaBrush )
+      oGenVar:oAreaBrush:End()
+   endif
+   if !empty( oGenVar:oBarBrush )
+      oGenVar:oBarBrush:End()
+   endif
 
    AEval( oGenVar:aAppFonts, {|x| x:End() } )
    AEval( aFonts, {|x| IIF( x <> nil, x:End(), ) } )
@@ -3479,8 +3485,10 @@ return oBtn
 
 function AreaChange( nArea, cAreaTitle, nOldWidth, nWidth, nOldHeight, nHeight )
 
-   local i, n
+   local i
+   local n
    local oMenuItem
+   local cOldTitle   := aWndTitle[ nArea ]    // aWnd[ nArea ]:cTitle  // da igual
 
    aWndTitle[ nArea ]   := cAreaTitle
    aWnd[ nArea ]:cTitle := cAreaTitle
@@ -3527,7 +3535,10 @@ function AreaChange( nArea, cAreaTitle, nOldWidth, nWidth, nOldHeight, nHeight )
    endif
 
    if !empty( oER:oTree )
+      
       // Falta actualizar el item del oTree
+      // Buscar el contenido de la variable cOldTitle (OJO, en el Item le añade la posicion: 1. Area)
+
       oER:oTree:Refresh()
    endif
 
