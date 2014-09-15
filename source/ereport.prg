@@ -158,7 +158,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
       MAXIMIZED ;
       ON RESIZE if(!Empty(oER:oTree),oER:oTree:refresh( .T. ), ) ;
       ON INIT ( SetMainWnd(), IniMainWindow(), ;
-                IIF( Empty( oER:cDefIni ), OpenFile(), oER:SetScrollBar() ), ;
+                IIF( Empty( oER:cDefIni ), OpenFile(,,.T.), oER:SetScrollBar() ), ;
                 StartMessage(), SetSave( .T. ), ClearUndoRedo(),;
                 oEr:oMainWnd:SetFocus() ) ;
       VALID ( AEVal( aWnd, { |o| if( o <> nil, o:End(), ) } ), AskSaveFiles() )
@@ -182,8 +182,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
    lChDir( cOldDir )
 
    IF oER:lReexec
-
-        ShellExecute( 0, "Open", "ereport.exe" )
+      ShellExecute( 0, "Open", "ereport.exe" )
    endif
 
 return nil
@@ -209,7 +208,7 @@ function BarMenu()
       OF oBar ;
       PROMPT FWString( "Open" ) ;
       TOOLTIP GL("Open") ;
-      ACTION OpenFile()
+      ACTION OpenFile(,,.T.)
 
    DEFINE BUTTON RESOURCE "B_SAVE", "B_SAVE", "B_SAVE1" ;
       OF oBar ;
@@ -1016,7 +1015,7 @@ function SetMainWnd()
 
    if Val( GetPvProfString( "General", "Maximize", "1", oER:cGeneralIni ) ) = 1
       oEr:oMainWnd:Maximize()
-      SysRefresh()
+      //SysRefresh()
    endif
 
 return .T.
@@ -1088,7 +1087,7 @@ function BuildMenu()
    endif
    MENUITEM GL("&Open") + chr(9) + GL("Ctrl+O") RESOURCE "B_OPEN_16" ;
       ACCELERATOR ACC_CONTROL, ASC( GL("O") ) ;
-      ACTION OpenFile()
+      ACTION OpenFile(,,.T.)
    SEPARATOR
    MENUITEM GL("&Save") + chr(9) + GL("Ctrl+S") RESOURCE "B_SAVE_16" ;
       ACCELERATOR ACC_CONTROL, ASC( GL("S") ) ;
@@ -1125,7 +1124,7 @@ function BuildMenu()
 
    MRU oMru FILENAME oER:cGeneralIni ;
             SECTION  "MRU" ;
-            ACTION   OpenFile( cMruItem ) ;
+            ACTION   OpenFile( cMruItem, , .T. ) ;
             SIZE     Val( oEr:GetGeneralIni( "General", "MruList"  , "4" ) )
    SEPARATOR
    MENUITEM GL("&Exit") RESOURCE "B_EXIT_16" ;
@@ -1520,7 +1519,7 @@ function ClientWindows()
 
             nDemoWidth := nWidth
             if oGenVar:lFixedAreaWidth
-               nWidth := 1200
+               nWidth := GetSysMetrics( 0 ) - 342  //1200
             else
                nWidth += oER:nRuler + nAreaZugabe2
             endif
@@ -3461,7 +3460,7 @@ function AreaProperties( nArea )
          Add2Undo( "", 0, nArea, cOldAreaText )
       endif
 
-      OpenFile( oER:cDefIni )
+      OpenFile( oER:cDefIni, .T., )
 
    endif
 
@@ -3491,6 +3490,9 @@ function AreaChange( nArea, cAreaTitle, nOldWidth, nWidth, nOldHeight, nHeight )
    local n
    local oMenuItem
    local cOldTitle   := aWndTitle[ nArea ]    // aWnd[ nArea ]:cTitle  // da igual
+   local cTemp1
+   local cTemp2
+   local nElem
 
    aWndTitle[ nArea ]   := cAreaTitle
    aWnd[ nArea ]:cTitle := cAreaTitle
@@ -3522,7 +3524,7 @@ function AreaChange( nArea, cAreaTitle, nOldWidth, nWidth, nOldHeight, nHeight )
    if nOldHeight <> nHeight
 
       aWnd[ nArea ]:Move( aWnd[ nArea ]:nTop, aWnd[ nArea ]:nLeft, ;
-         IIF( oGenVar:lFixedAreaWidth, 1200, ER_GetPixel( nWidth ) + oER:nRuler + nAreaZugabe2 ), ;
+         IIF( oGenVar:lFixedAreaWidth, ER_GetPixel(MaxWidthAreas( nArea ))+ oER:nRuler + nAreaZugabe2 , ER_GetPixel( nWidth ) + oER:nRuler + nAreaZugabe2 ), ;
          IIF( oGenVar:aAreaHide[ nArea ], oEr:nRulerTop, ER_GetPixel( nHeight ) + nAreaZugabe ), .T. )
 
       for i := nArea+1 to Len( aWnd )
@@ -3536,11 +3538,27 @@ function AreaChange( nArea, cAreaTitle, nOldWidth, nWidth, nOldHeight, nHeight )
 
    endif
 
+   nElem := 0
    if !empty( oER:oTree )
-      
-      // Falta actualizar el item del oTree
-      // Buscar el contenido de la variable cOldTitle (OJO, en el Item le añade la posicion: 1. Area)
-
+      For i = 1 to Len( oER:oTree:aItems )
+          cTemp1 := Left( oER:oTree:aItems[ i ][ 5 ], At( ".", oER:oTree:aItems[ i ][ 5 ] ) )
+          cTemp2 := Right( oER:oTree:aItems[ i ][ 5 ], Len( oER:oTree:aItems[ i ][ 5 ] ) - At( ".", oER:oTree:aItems[ i ][ 5 ] ) - 1 )
+          //? cTemp1, cTemp2, cOldTitle, cAreaTitle
+          if RTrim( cTemp2 ) == RTrim( cOldTitle )
+             nElem := i
+             i := Len( oER:oTree:aItems ) + 1
+          endif
+      Next i
+      // Sustituir Caption del elemento
+      if !empty( nElem )
+         // 2 -> hWnd   3 -> Object   4 -> Array   5 -> Caption
+         /*
+         For i = 1 to Len( oER:oTree:aItems[ nElem ] )
+             ? oER:oTree:aItems[ nElem ][ i ]
+         Next i
+         oER:oTree:aItems[ nElem ][ 5 ] := cTemp1 + cAreaTitle    // Esto no funciona
+         */
+      endif
       oER:oTree:Refresh()
    endif
 
@@ -3561,7 +3579,7 @@ function AreaHide( nArea )
                  IIF( oGenVar:aAreaHide[nAktArea], -1, 1 )
 
    aWnd[ nArea ]:Move( aWnd[ nArea ]:nTop, aWnd[ nArea ]:nLeft, ;
-      IIF( oGenVar:lFixedAreaWidth, 1200, ER_GetPixel( nWidth ) + oER:nRuler + nAreaZugabe2 ), ;
+      IIF( oGenVar:lFixedAreaWidth, ER_GetPixel(MaxWidthAreas( nArea ))+ oER:nRuler + nAreaZugabe2 , ER_GetPixel( nWidth ) + oER:nRuler + nAreaZugabe2 ), ;
       IIF( oGenVar:aAreaHide[nAktArea], 18, ER_GetPixel( nAreaHeight ) + nAreaZugabe ), .T. )
 
    for i := nArea+1 to Len( aWnd )
@@ -3575,6 +3593,25 @@ function AreaHide( nArea )
 return .T.
 
 //----------------------------------------------------------------------------//
+
+Function MaxWidthAreas( nArea )
+Local nMax   := 0
+Local i
+For i = 1 to Len( aWnd )
+    if !empty( aWnd[ i ] )
+       nMax := Max( nMax, oGenVar:aAreaSizes[ i, 1 ] )
+    endif
+Next i
+/*
+For i = 1 to Len( aWnd )
+    if !empty( aWnd[ i ] )
+    oGenVar:aAreaSizes[ i, 1 ] := nMax
+    endif
+Next i
+*/
+Return nMax
+
+//------------------------------------------------------------------------------
 
 //function EasyPreview()
 

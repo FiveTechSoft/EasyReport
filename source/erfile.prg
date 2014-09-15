@@ -11,11 +11,14 @@ MEMVAr oEr
 
 //------------------------------------------------------------------------------
 
-function OpenFile( cFile )
+function OpenFile( cFile, lChange, lAddDelNew )
 
    local i
-   local cLongFile  := cFile
-   local cMainTitle := ""
+   local cLongFile     := cFile
+   local cMainTitle    := ""
+
+   DEFAULT lChange     := .F.
+   DEFAULT lAddDelNew  := .F.
 
    if cFile = NIL
       cLongFile   := GetFile( GL("Designer Files") + " (*.vrd)|*.vrd|" + ;
@@ -33,8 +36,8 @@ function OpenFile( cFile )
    // Neustart des Programmes
    if !EMPTY( cFile ) .AND. !oGenVar:lFirstFile
       oGenVar:cLoadFile := cFile
-      oEr:oMainWnd:End()
-      return .T.
+      //oEr:oMainWnd:End()
+      //return .T.
    endif
 
    // Aufruf des neuen Reports im gleichen Frame gibt optische Probleme
@@ -43,25 +46,31 @@ function OpenFile( cFile )
       oGenVar:lFirstFile := .F.
 
       //oEr:oMainWnd:CloseAll()
+      /*
       For i = 1 to Len( aWnd )
           if !empty( aWnd[ i ] )
              aWnd[ i ]:End()
           endif
       Next i
+      */
 
       aItems    := NIL
       aAreaIni  := NIL
+      if !lChange
       aWnd      := NIL
       aWndTitle := NIL
       aRuler    := NIL
+      endif
       //MEMORY(-1)
       //SYSREFRESH()
 
+      if !lChange
       aWnd      := Array( oER:nTotAreas )
-      aItems    := Array( Len( aWnd ), 1000 )
-      aAreaIni  := Array( Len( aWnd ) )
       aWndTitle := Array( Len( aWnd ) )
       aRuler    := Array( Len( aWnd ), 2 )
+      endif
+      aItems    := Array( Len( aWnd ), 1000 )
+      aAreaIni  := Array( Len( aWnd ) )
 
       //Fontobjekte beenden
       for i := 1 TO 20
@@ -91,7 +100,15 @@ function OpenFile( cFile )
       //endif
 
       //Designwindows öffnen
+      if !lChange
       ClientWindows()
+      else
+      For i = 1 to Len( aWnd )
+          if !empty( aWnd[ i ] )
+             aWnd[ i ]:Refresh()
+          endif
+      Next i
+      endif
       //Areas anzeigen
       ShowAreasOnBar()
 
@@ -289,9 +306,11 @@ function AskSaveFiles()
 
    endif
 
+   /*
    if ! EMPTY( oGenVar:cLoadFile )
       ShellExecute( 0, "Open", GetModuleFileName( GetInstance() ), oGenVar:cLoadFile, NIL, 1 )
    endif
+   */
 
 return ( lreturn )
 
@@ -653,7 +672,7 @@ function NewReport()
    ERASE VRDTMP.DBF
 
    if lCreate
-      OpenFile( cGeneralName )
+      OpenFile( cGeneralName,, .T. )
    endif
 
 return .T.

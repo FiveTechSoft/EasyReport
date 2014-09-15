@@ -81,7 +81,7 @@ function InsertArea( lBefore, cTitle )
          "Width="  + ALLTRIM(STR( oGenVar:aAreaSizes[nAktArea,1], 5, nDecimals )) + CRLF + ;
          "Height=" + ALLTRIM(STR( oGenVar:aAreaSizes[nAktArea,2], 5, nDecimals )) )
 
-      OpenFile( oER:cDefIni )
+      OpenFile( oER:cDefIni,, .T. )
 
       aWnd[ nNewArea ]:SetFocus()
 
@@ -100,7 +100,7 @@ function DeleteArea()
       DelFile( aVRDSave[nAktArea,1] )
       DelIniEntry( "Areas", ALLTRIM(STR( nAktArea, 5 )), oER:cDefIni )
 
-      OpenFile( oER:cDefIni )
+      OpenFile( oER:cDefIni,, .T. )
 
    endif
 
