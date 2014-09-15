@@ -62,7 +62,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
  //  EP_SetPath( ".\" )
 
    //Einf�ge-Modus einschalten
-   ReadInsert( .T. )
+   ReadInsert( .F. )
 
    FWLoadStrings( )
    FwSetLanguage( 2 )
@@ -93,9 +93,9 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
 
    SetDlgGradient( oER:aClrDialogs )
 
-   if !ValidVersionFwh( 10, 8 )
-      oER:lShowPanel := .F.
-   endif
+   //if !ValidVersionFwh( 10, 8 )
+   //   oER:lShowPanel := .F.
+   //endif
 
    DEFINE WINDOW oEr:oMainWnd VSCROLL ; //FROM 0, 0 to 50, 200 VSCROLL ;
       TITLE MainCaption() ;
@@ -110,13 +110,15 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
 
    oEr:oMainWnd:oMsgBar:KeybOn()
    oEr:oMainWnd:oWndClient:bMouseWheel = { | nKey, nDelta, nXPos, nYPos | ;
-                                  ER_MouseWheel( nKey, nDelta, nXPos, nYPos ) }
+                         ER_MouseWheel( nKey, nDelta, nXPos, nYPos ) }
 
    BarMenu()
 
 
    IF oER:lShowPanel
 
+      if ValidVersionFwh( 10, 8 )
+   
       @ 0.5, 1 FOLDEREX oER:oFld ;
       PROMPT GL("&Report Settings"), GL("&Grid Setup"), GL("&Items"), GL("&Databases"), GL("&Expressions") ;
       OF oEr:oMainWnd SIZE 342, GetSysMetrics( 1 ) - 138 ;
@@ -127,7 +129,17 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
       SEPARATOR 0
       //oER:oFld:SetFont(  )
       //oER:oFld:lMultiline := .T.
-      
+
+      else
+
+      @ 0.5, 1 FOLDER oER:oFld ;
+      PROMPT GL("&Report Settings"), GL("&Grid Setup"), GL("&Items"), GL("&Databases"), GL("&Expressions") ;
+      OF oEr:oMainWnd SIZE 342, GetSysMetrics( 1 ) - 138 ;
+      OPTION 3 ;
+      PIXEL
+
+      endif
+     
       oEr:oFld:SetColor(  , oEr:nClrPaneTree )
       oEr:oMainWnd:oLeft  :=  oER:oFld
 
@@ -137,7 +149,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
       oEr:oTree:SetColor( ,  oEr:nClrPaneTree )
       oEr:oTree:l3DLook := .F.
       oER:oFld:aDialogs[3]:SetControl( oEr:oTree )
-      oER:oFld:Hide()
+      //oER:oFld:Hide()
 
    ENDIF
 
