@@ -301,7 +301,8 @@ static aStrings := { ;
 { "Select", "Seleccione", "Sélectionner", "Selecionar", "Wählen", "Selezionare" },;
 { "Modify DBF structure", "Modificar estructura DBF", "Changement structure DBF", "Alterar estrutura do DBF", "DBF-Struktur bearbeiten", "Modifica struttura DBF" },;
 { "Items", "Items", "Items", "Items", "Items","Items" }, ;
-{ "Properties", "Propiedades", "Properties", "Properties", "Properties","Properties" } ;
+{ "Properties", "Propiedades", "Properties", "Properties", "Properties","Properties" } ,;
+{ "Grid Setting", "Configurar Grid", "Grid Setting", "Grid Setting", "Grid Setting","Grid Setting" } ;
 }
 
 static aMissing := {}

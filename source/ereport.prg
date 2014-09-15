@@ -1314,6 +1314,11 @@ function PopupMenu( nArea, oItem, nRow, nCol, lItem )
 
    MENUITEM GL("&Area Properties") + CHR(9) + GL("Ctrl+A")    RESOURCE "B_AREA" ;
       ACTION ( aWnd[ nArea ]:SetFocus(), AreaProperties( nAktArea ) )
+   MENUITEM GL("Insert Area &before") ACTION InsertArea( .T., STRTRAN( GL("Insert Area &before"), "&" ) )
+
+   MENUITEM GL("Insert Area &after" ) ACTION InsertArea( .F., STRTRAN( GL("Insert Area &after" ), "&" ) )
+
+   MENUITEM GL("&Delete current Area") ACTION DeleteArea()
 
    SEPARATOR
 
