@@ -42,15 +42,20 @@ function OpenFile( cFile )
 
       oGenVar:lFirstFile := .F.
 
-      oEr:oMainWnd:CloseAll()
+      //oEr:oMainWnd:CloseAll()
+      For i = 1 to Len( aWnd )
+          if !empty( aWnd[ i ] )
+             aWnd[ i ]:End()
+          endif
+      Next i
 
       aItems    := NIL
       aAreaIni  := NIL
       aWnd      := NIL
       aWndTitle := NIL
       aRuler    := NIL
-      MEMORY(-1)
-      SYSREFRESH()
+      //MEMORY(-1)
+      //SYSREFRESH()
 
       aWnd      := Array( oER:nTotAreas )
       aItems    := Array( Len( aWnd ), 1000 )
@@ -66,7 +71,7 @@ function OpenFile( cFile )
       next
       aFonts := Array( 20 )
 
-      SysRefresh()
+      //SysRefresh()
 
       oER:cDefIni := cFile
       if AT( "\", oER:cDefIni ) = 0
@@ -90,7 +95,7 @@ function OpenFile( cFile )
       //Areas anzeigen
       ShowAreasOnBar()
 
-      SysRefresh()
+      //SysRefresh()
 
       ClearUndoRedo() // and refresh the bar
 
@@ -453,6 +458,7 @@ function NewReport()
    local nLeft        := 20
    local nPageBreak   := 270
    local nOrient      := 1
+   local oCombo
 
    //Defaults
    AFill( aCheck, .T. )
@@ -507,7 +513,7 @@ function NewReport()
                aGet[2]:Refresh() )
 
    REDEFINE CHECKBOX aCbx1[1] VAR lMakeSource ID 301 OF oFld:aDialogs[i]
-   REDEFINE COMBOBOX cMeasure  ITEMS aMeasure  ID 303 OF oFld:aDialogs[i]
+   REDEFINE COMBOBOX oCombo VAR cMeasure  ITEMS aMeasure  ID 303 OF oFld:aDialogs[i]
 
    REDEFINE GET nTop       ID 401 OF oFld:aDialogs[i] PICTURE "9999.99" SPINNER MIN 0
    REDEFINE GET nLeft      ID 402 OF oFld:aDialogs[i] PICTURE "9999.99" SPINNER MIN 0
@@ -655,8 +661,16 @@ return .T.
 function CreateNewReport( aCheck, cGeneralName, cSourceCode, cReportName, lMakeSource, ;
                           nTop, nLeft, nPageBreak, nOrient, aMeasure, cMeasure )
 
-   local i, nCol, nRow, nXCol, nXRow, nColStart, oIni, cSource
-   local cAreaTmpFile, cDefTmpIni
+   Local i
+   Local nCol
+   Local nRow
+   Local nXCol
+   Local nXRow
+   Local nColStart
+   Local oIni
+   Local cSource
+   Local cAreaTmpFile
+   Local cDefTmpIni
    LOCAL nDecimals
 
    //General ini file
@@ -669,6 +683,7 @@ function CreateNewReport( aCheck, cGeneralName, cSourceCode, cReportName, lMakeS
    endif
 
    oER:nMeasure := ASCAN( aMeasure, cMeasure )
+   oER:nMeasure := Max( 1, oER:nMeasure )
 
    INI oIni FILE cDefTmpIni
       SET SECTION "General" ENTRY "Title"              TO cReportName OF oIni

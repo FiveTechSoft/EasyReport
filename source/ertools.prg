@@ -42,7 +42,7 @@ function InsertArea( lBefore, cTitle )
    if EMPTY( cDir )
       cDir := cDefaultPath
    endif
-
+   
    for i := 1 TO Len( aWnd )
       AADD( aAreaInis, ALLTRIM( GetIniEntry( aIniEntries, ALLTRIM(STR( i, 5 )) , "" ) ) )
    NEXT
@@ -50,7 +50,7 @@ function InsertArea( lBefore, cTitle )
    DEFINE DIALOG oDlg NAME "NEWFILENAME" TITLE cTitle
 
    REDEFINE BUTTON PROMPT GL("&OK") ID 101 OF oDlg ACTION ;
-      IIF( FILE( cDir + cFile ), MsgStop( GL("The file already exists."), GL("Stop!") ), ;
+      IIF( FILE( cDir + cFile ), (MsgStop( GL("The file already exists."), GL("Stop!") )), ;
                                  ( lreturn := .T., oDlg:End() ) )
 
    REDEFINE BUTTON PROMPT GL("&Cancel") ID 102 OF oDlg ACTION oDlg:End()
@@ -65,12 +65,12 @@ function InsertArea( lBefore, cTitle )
 
       nNewArea := IIF( nNewArea < 1, 1, nNewArea )
       AINS( aAreaInis, nNewArea )
-      aAreaInis[nNewArea] := cFile
+      aAreaInis[nNewArea] := RTrim( cFile )
 
       DelIniSection( "Areas", oER:cDefIni )
 
       for i := 1 TO LEN( aAreaInis )
-         if .NOT. EMPTY( aAreaInis[i] )
+         if !EMPTY( aAreaInis[i] )
             WritePProString( "Areas", ALLTRIM(STR( i, 3 )), ALLTRIM( aAreaInis[i] ), oER:cDefIni )
          endif
       NEXT
@@ -83,7 +83,7 @@ function InsertArea( lBefore, cTitle )
 
       OpenFile( oER:cDefIni )
 
-      aWnd[nNewArea]:SetFocus()
+      aWnd[ nNewArea ]:SetFocus()
 
       AreaProperties( nAktArea )
 
@@ -1033,17 +1033,22 @@ return .T.
 
 function ER_GetPixel( nValue )
 
-   if Upper( ValType( oER:nMeasure ) ) = "L"
+   if Upper( ValType( oER:nMeasure ) ) = "L" .or. ;
+      Upper( ValType( oER:nMeasure ) ) = "O" .or. ;
+      empty( oER:nMeasure )
       oER:nMeasure := 1
    endif
 
-   if oER:nMeasure = 1
-      //mm
-      nValue := nValue * 3
-   ELSEif oER:nMeasure = 2
-      //Inch
-      nValue := nValue * 100
-   endif
+   Do Case
+      Case oER:nMeasure = 1
+           //mm
+           nValue := nValue * 3
+      Case oER:nMeasure = 2
+           //Inch
+           nValue := nValue * 100
+      Otherwise
+           nValue := nValue * 1
+   EndCase
 
 return ( nValue )
 
@@ -1701,7 +1706,7 @@ function UndoRedoMenu( nTyp, oBtn )
 
 return( oMenu )
 
-
+//------------------------------------------------------------------------------
 
 function MultiUndoRedo( nTyp, nCount )
 

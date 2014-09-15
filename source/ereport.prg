@@ -36,7 +36,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
    local nAltoSpl := 680
    LOCAL oFld
 
-  lChDir( cFilePath( GetModuleFileName( GetInstance() ) ) )
+   lChDir( cFilePath( GetModuleFileName( GetInstance() ) ) )
 
    if P1  <> nil ; cDefFile += P1  + " " ; endif
    if P2  <> nil ; cDefFile += P2  + " " ; endif
@@ -57,11 +57,10 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
 
    cDefFile := STRTRAN( AllTrim( cDefFile ), '"' )
 
-//   EP_TidyUp()
- //  EP_LinkedToApp()
- //  EP_SetPath( ".\" )
+   //  EP_TidyUp()
+   //  EP_LinkedToApp()
+   //  EP_SetPath( ".\" )
 
-   //Einf�ge-Modus einschalten
    ReadInsert( .F. )
 
    FWLoadStrings( )
@@ -69,7 +68,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
 
    PUBLIC oER := TEasyReport():new()
 
-   //Publics deklarieren
+   //Variables Publics declaration
    DeclarePublics( cDefFile )
 
    SET DELETED ON
@@ -89,7 +88,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
 
    DEFINE ICON oIcon FILE ".\vrd.ico"
 
-   DEFINE BRUSH oBrush RESOURCE "background"
+   //DEFINE BRUSH oBrush RESOURCE "background"
 
    SetDlgGradient( oER:aClrDialogs )
 
@@ -98,8 +97,8 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
    //endif
 
    DEFINE WINDOW oEr:oMainWnd VSCROLL ; //FROM 0, 0 to 50, 200 VSCROLL ;
-      TITLE MainCaption() ;
-      BRUSH oBrush MDI ;
+      TITLE MainCaption() ;  //      BRUSH oBrush ;
+      MDI ;
       ICON oIcon ;
       MENU BuildMenu()
 
@@ -110,7 +109,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
 
    oEr:oMainWnd:oMsgBar:KeybOn()
    oEr:oMainWnd:oWndClient:bMouseWheel = { | nKey, nDelta, nXPos, nYPos | ;
-                         ER_MouseWheel( nKey, nDelta, nXPos, nYPos ) }
+                        ER_MouseWheel( nKey, nDelta, nXPos, nYPos ) }
 
    BarMenu()
 
@@ -127,7 +126,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
       BITMAPS { "B_EDIT16", "B_GRAPHIC", "B_ITEMLIST16", "B_AREA", "B_EDIT2" } ;
       PIXEL ;
       SEPARATOR 0
-      //oER:oFld:SetFont(  )
+
       //oER:oFld:lMultiline := .T.
 
       else
@@ -139,6 +138,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
       PIXEL
 
       endif
+      //oER:oFld:SetFont(  )
      
       oEr:oFld:SetColor(  , oEr:nClrPaneTree )
       oEr:oMainWnd:oLeft  :=  oER:oFld
@@ -488,11 +488,11 @@ function DeclarePublics( cDefFile )
    PUBLIC oCbxArea := nil
    PUBLIC oCurDlg  := nil
 
-   //Gesamth�he und Breite
+   //
    //PUBLIC nTotalHeight := 0
    //PUBLIC nTotalWidth  := 0
 
-   //gerade gew�hlte(s) Element, Bereich, ini-Datei, multiple Selection
+   //
    PUBLIC nAktItem := 0
    PUBLIC nAktArea := 1
    PUBLIC nSelArea := 0
@@ -532,7 +532,7 @@ function DeclarePublics( cDefFile )
    PUBLIC nXMove := 0
    PUBLIC nYMove := 0
 
-   //Msgbar mit Elementgr��e aktualisieren wenn ein Element bewegt wird
+   //Msgbar
    PUBLIC cInfoWidth
    PUBLIC cInfoHeight
    PUBLIC nInfoRow
@@ -591,7 +591,7 @@ function DeclarePublics( cDefFile )
    oGenVar:AddMember( "nLanguage" ,, Val( oEr:GetGeneralIni(  "General", "Language", "1" ) )  )
 
 
-   //Sprachdatei f�llen
+   //Sprachdatei
    OpenLanguage()
 
    nHinCol1 := IniColor(  oEr:GetGeneralIni( "General", "BackgroundColor", "0" ) )
@@ -724,7 +724,7 @@ function IniMainWindow()
       DefineFonts()
       //Areas initieren
       // IniAreasOnBar()
-      //Designwindows �ffnen
+      //Designwindows
       ClientWindows()
       //Areas anzeigen
       ShowAreasOnBar()
@@ -1701,14 +1701,12 @@ return nil
 //----------------------------------------------------------------------------//
 
 function SetTitleColor( lOff, nArea )
-LOCAL nColor :=  IIF( lOff, oGenVar:nF2ClrAreaTitle , oGenVar:nF1ClrAreaTitle )
-   if lOff
-   oGenVar:aAreaTitle[ nArea ]:SetColor( nColor, oGenVar:nBClrAreaTitle )
-   oGenVar:aAreaTitle[ nArea ]:Refresh()
-   else
-   oGenVar:aAreaTitle[ nAktArea ]:SetColor( nColor, oGenVar:nBClrAreaTitle )
-   oGenVar:aAreaTitle[ nAktArea ]:Refresh()
-   endif
+Local nColor := if( lOff, oGenVar:nF2ClrAreaTitle , oGenVar:nF1ClrAreaTitle )
+Local nAr    := if( lOff, nArea, nAktArea )
+   
+   oGenVar:aAreaTitle[ nAr ]:SetColor( nColor, oGenVar:nBClrAreaTitle )
+   oGenVar:aAreaTitle[ nAr ]:Refresh()
+
 return .T.
 
 //----------------------------------------------------------------------------//
@@ -3720,7 +3718,7 @@ METHOD SetGeneralPreferences() CLASS TEasyReport
    local lShowBorder   := oGenVar:lShowBorder
    LOCAL lShowPanel  := ( ::GetGeneralIni( "General", "ShowPanel", "1" ) = "1" )
    local cPicture      := IIF( ::nMeasure = 2, "999.99", "99999" )
-   LOCAL nDecimals     :=   IIF( ::nMeasure = 2, 2, 0 )
+   local nDecimals     := IIF( ::nMeasure = 2, 2, 0 )
 
    for i := 1 to 99
       cWert := ::GetGeneralIni( "Languages", AllTrim(STR(i,2)), "" )
@@ -3992,6 +3990,7 @@ METHOD FillWindow( nArea, cAreaIni ) CLASS TEasyReport
    local aIniEntries := GetIniSection( "Items", cAreaIni )
    local oRulerBmp2
 
+   ::nMeasure  := if( empty( ::nMeasure ), 1, ::nMeasure )
    //Ruler anzeigen
    if ::nMeasure = 1 ; cRuler1 := "RULER1_MM" ; cRuler2 := "RULER2_MM" ; endif
    if ::nMeasure = 2 ; cRuler1 := "RULER1_IN" ; cRuler2 := "RULER2_IN" ; endif
@@ -4006,7 +4005,7 @@ METHOD FillWindow( nArea, cAreaIni ) CLASS TEasyReport
    @ 2, 29 SAY oGenVar:aAreaTitle[ nArea ] ;
       PROMPT " " + AllTrim( GetPvProfString( "General", "Title" , "", cAreaIni ) ) ;
       SIZE 400, ::nRulerTop - ::nRuler - 2 PIXEL FONT oGenVar:aAppFonts[ 1 ] ;
-      COLORS oGenVar:nF1ClrAreaTitle, oGenVar:nBClrAreaTitle OF aWnd[ nArea ]
+      COLORS oGenVar:nF2ClrAreaTitle, oGenVar:nBClrAreaTitle OF aWnd[ nArea ]
 
    @ ::nRulerTop - ::nRuler, 20 BITMAP oRulerBmp2 RESOURCE cRuler1 ;
       OF aWnd[ nArea ] PIXEL NOBORDER
