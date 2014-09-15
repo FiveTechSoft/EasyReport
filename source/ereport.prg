@@ -127,7 +127,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
       PIXEL ;
       SEPARATOR 0
 
-      //oER:oFld:lMultiline := .T.
+      //oER:oFld:lMultiline := .T.      // No hace falta
 
       else
 
@@ -3455,11 +3455,13 @@ function AreaProperties( nArea )
 
       AreaChange( nArea, cAreaTitle, nOldWidth, nWidth, nOldHeight, nHeight )
 
-      SetSave( .F. )
+      SetSave( .T. )   // .F.
 
       if cOldAreaText <> MEMOREAD( aAreaIni[ nArea ] )
          Add2Undo( "", 0, nArea, cOldAreaText )
       endif
+
+      OpenFile( oER:cDefIni )
 
    endif
 
@@ -4081,8 +4083,8 @@ METHOD FillWindow( nArea, cAreaIni ) CLASS TEasyReport
       ::lFillWindow := .F.
    endif
 
-   Memory(-1)
-   SysRefresh()
+   //Memory(-1)
+   //SysRefresh()
 
 return .T.
 
