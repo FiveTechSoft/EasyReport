@@ -85,10 +85,10 @@ function OpenFile( cFile )
       //Fonts definieren
       DefineFonts()
       //Areas initieren
-      if oCbxArea = NIL
-      else
-         oCbxArea:End()
-      endif
+      //if oCbxArea = NIL
+      //else
+      //   oCbxArea:End()
+      //endif
 
       //Designwindows öffnen
       ClientWindows()
