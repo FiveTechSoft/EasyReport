@@ -1443,7 +1443,9 @@ function Add2Undo( cEntryText, nEntryNr, nAreaNr, cAreaText )
    TMPUNDO->(DBCLOSEAREA())
    SELECT( nSelect )
 
-   oEr:oMainWnd:oBar:AEvalWhen()
+   if !empty( oEr:oMainWnd:oBar )
+      oEr:oMainWnd:oBar:AEvalWhen()
+   endif
 
 return .T.
 
@@ -1524,7 +1526,9 @@ function Undo()
 
    RefreshUndo()
    RefreshRedo()
-   oEr:oMainWnd:oBar:AEvalWhen()
+   if !empty( oEr:oMainWnd:oBar )
+      oEr:oMainWnd:oBar:AEvalWhen()
+   endif
 
    TMPUNDO->(DBCLOSEAREA())
    TMPREDO->(DBCLOSEAREA())
@@ -1608,7 +1612,9 @@ function Redo()
 
    RefreshUndo()
    RefreshRedo()
-   oEr:oMainWnd:oBar:AEvalWhen()
+   if !empty( oEr:oMainWnd:oBar )
+      oEr:oMainWnd:oBar:AEvalWhen()
+   endif
 
    TMPUNDO->(DBCLOSEAREA())
    TMPREDO->(DBCLOSEAREA())
@@ -1651,7 +1657,9 @@ function ClearUndoRedo()
    nUndoCount := 0
    nRedoCount := 0
 
-   oEr:oMainWnd:oBar:AEvalWhen()
+   if !empty( oEr:oMainWnd:oBar )
+      oEr:oMainWnd:oBar:AEvalWhen()
+   endif
 
 return .T.
 

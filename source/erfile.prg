@@ -421,7 +421,9 @@ function SetSave( lSave )
       lVRDSave := .F.
    endif
 
-   oEr:oMainWnd:oBar:AEvalWhen()
+   if !empty( oEr:oMainWnd:oBar )
+      oEr:oMainWnd:oBar:AEvalWhen()
+   endif
 
 return .T.
 
