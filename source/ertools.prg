@@ -1246,7 +1246,7 @@ return ALLTRIM( cText )  //( STRTRAN(ALLTRIM( cText ), "_", " " ) )
 function ER_LoadStrings( cFileName )
 
    local cLine, n := 1
-   loca aLanguage
+   local aLanguage := {}
 
    DEFAULT cFileName := cFilePath( GetModuleFileName( GetInstance() ) ) + ;
                         "fwstrings.ini"
