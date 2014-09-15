@@ -3526,6 +3526,11 @@ function AreaChange( nArea, cAreaTitle, nOldWidth, nWidth, nOldHeight, nHeight )
 
    endif
 
+   if !empty( oER:oTree )
+      // Falta actualizar el item del oTree
+      oER:oTree:Refresh()
+   endif
+
 return .T.
 
 //----------------------------------------------------------------------------//
