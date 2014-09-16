@@ -4043,6 +4043,7 @@ METHOD FillWindow( nArea, cAreaIni ) CLASS TEasyReport
    local aFirst      := { .F., 0, 0, 0, 0, 0 }
    local nElemente   := 0
    local aIniEntries := GetIniSection( "Items", cAreaIni )
+   local oRulerBmp1
    local oRulerBmp2
 
    ::nMeasure  := if( empty( ::nMeasure ), 1, ::nMeasure )
@@ -4062,7 +4063,7 @@ METHOD FillWindow( nArea, cAreaIni ) CLASS TEasyReport
       SIZE 400, ::nRulerTop - ::nRuler - 2 PIXEL FONT oGenVar:aAppFonts[ 1 ] ;
       COLORS oGenVar:nF2ClrAreaTitle, oGenVar:nBClrAreaTitle OF aWnd[ nArea ]
 
-   @ ::nRulerTop - ::nRuler, 20 BITMAP oRulerBmp2 RESOURCE cRuler1 ;
+   @ ::nRulerTop - ::nRuler, 20 BITMAP oRulerBmp1 RESOURCE cRuler1 ;
       OF aWnd[ nArea ] PIXEL NOBORDER
 
    @ ::nRulerTop - ::nRuler, 0 BITMAP oRulerBmp2 RESOURCE cRuler2 ;
@@ -4099,6 +4100,12 @@ METHOD FillWindow( nArea, cAreaIni ) CLASS TEasyReport
    aWnd[ nArea ]:bLButtonUp = {|nRow,nCol,nFlags| StopSelection( nRow, nCol, aWnd[ nArea ] ) }
 
    aWnd[ nArea ]:bKeyDown   = {|nKey| WndKeyDownAction( nKey, nArea, cAreaIni ) }
+
+   oRulerBmp1:bRClicked    := aWnd[ nArea ]:bRClicked
+   oRulerBmp2:bRClicked    := aWnd[ nArea ]:bRClicked
+
+   aRuler[ nArea , 1 ]     := oRulerBmp1
+   aRuler[ nArea , 2 ]     := oRulerBmp2
 
    for i := 1 to LEN( aIniEntries )
       nEntry := EntryNr( aIniEntries[ i ] )
