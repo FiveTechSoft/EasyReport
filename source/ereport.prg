@@ -4045,6 +4045,7 @@ METHOD FillWindow( nArea, cAreaIni ) CLASS TEasyReport
    local aIniEntries := GetIniSection( "Items", cAreaIni )
    local oRulerBmp1
    local oRulerBmp2
+   local oRulerBmp3
 
    ::nMeasure  := if( empty( ::nMeasure ), 1, ::nMeasure )
    //Ruler anzeigen
@@ -4063,13 +4064,17 @@ METHOD FillWindow( nArea, cAreaIni ) CLASS TEasyReport
       SIZE 400, ::nRulerTop - ::nRuler - 2 PIXEL FONT oGenVar:aAppFonts[ 1 ] ;
       COLORS oGenVar:nF2ClrAreaTitle, oGenVar:nBClrAreaTitle OF aWnd[ nArea ]
 
+   @ ::nRulerTop - ::nRuler,  0 BITMAP oRulerBmp2 RESOURCE cRuler2 ;
+      OF aWnd[ nArea ] PIXEL NOBORDER
+
+   //@ ::nRulerTop - ::nRuler, 20 BITMAP oRulerBmp3 RESOURCE cRuler2 ;
+   //   OF aWnd[ nArea ] PIXEL NOBORDER
+
    @ ::nRulerTop - ::nRuler, 20 BITMAP oRulerBmp1 RESOURCE cRuler1 ;
       OF aWnd[ nArea ] PIXEL NOBORDER
 
-   @ ::nRulerTop - ::nRuler, 0 BITMAP oRulerBmp2 RESOURCE cRuler2 ;
-      OF aWnd[ nArea ] PIXEL NOBORDER
-
-    oRulerBmp2:bLClicked = { |nRow,nCol,nFlags| nAktArea := aWnd[ nArea ]:nArea, ::oMainWnd:SetFocus() }
+   oRulerBmp1:bLClicked := { |nRow,nCol,nFlags| nAktArea := aWnd[ nArea ]:nArea, ::oMainWnd:SetFocus() }
+   oRulerBmp2:bLClicked := oRulerBmp1:bLClicked
 
    // @ oEr:nRulerTop-oER:nRuler, 20 SAY aRuler[ nArea, 1 ] PROMPT "" SIZE  1, 20 PIXEL ;
    //    COLORS oGenVar:nClrReticule, oGenVar:nClrReticule OF aWnd[ nArea ]
