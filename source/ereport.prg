@@ -1848,7 +1848,7 @@ return .T.
 
 function MsgBarInfos( nRow, nCol, nArea )
    LOCAL nDecimals := IIF( oER:nMeasure == 2, 2, 0 )
-   Local nTotRow   := 0
+   Local nTotRow   := -1
    Local x
 
    DEFAULT nRow := 0
@@ -1856,11 +1856,11 @@ function MsgBarInfos( nRow, nCol, nArea )
 
    For x = 1 to nArea - 1
        if !empty( aWnd[ x ] )
-          nTotRow  += aWnd[ x ]:nHeight
+          nTotRow  += ( aWnd[ x ]:nHeight - 1 )
        endif
    Next x
 
-   nTotRow += nRow - ( oEr:nRulerTop ) * nArea
+   nTotRow += ( nRow - ( oEr:nRulerTop ) * nArea )
 
    oMsgInfo:SetText( GL("Row:")    + " [ " + AllTrim( Str( GetCmInch( nTotRow ), 5, nDecimals ) ) + " ] / " + ;
                      if( GetCmInch( nRow - oEr:nRulerTop ) < 0, AllTrim( Str( 0, 5, nDecimals ) ) ,;
@@ -4060,7 +4060,9 @@ METHOD FillWindow( nArea, cAreaIni ) CLASS TEasyReport
    @ 2, 17 BTNBMP RESOURCE "AREAPROP"   SIZE 12,12 ACTION  nAktArea:= nArea, AreaProperties( nAktArea )
 
    @ 2, 29 SAY oGenVar:aAreaTitle[ nArea ] ;
-      PROMPT " " + AllTrim( GetPvProfString( "General", "Title" , "", cAreaIni ) ) ;
+      PROMPT " " + AllTrim( GetPvProfString( "General", "Title" , "", cAreaIni ) ) + Space( 14 ) + ;
+      "Ancho: " + Str( oGenVar:aAreaSizes[ nArea, 1 ] ) + "    " + ;
+      "Alto: " + Str( oGenVar:aAreaSizes[ nArea, 2 ] ) ;
       SIZE 400, ::nRulerTop - ::nRuler - 2 PIXEL FONT oGenVar:aAppFonts[ 1 ] ;
       COLORS oGenVar:nF2ClrAreaTitle, oGenVar:nBClrAreaTitle OF aWnd[ nArea ]
 
