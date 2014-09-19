@@ -1062,6 +1062,9 @@ function GetCmInch( nValue )
    ELSEif oER:nMeasure = 2
       //Inch
       nValue := ROUND( nValue / 100, 2 )
+   elseif oER:nMeasure = 3
+      // OJO
+      nValue := Round( nValue, 0 )
    endif
 
 return ( nValue )
