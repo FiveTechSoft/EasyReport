@@ -42,7 +42,7 @@ function InsertArea( lBefore, cTitle )
    if EMPTY( cDir )
       cDir := cDefaultPath
    endif
-   
+
    for i := 1 TO Len( aWnd )
       AADD( aAreaInis, ALLTRIM( GetIniEntry( aIniEntries, ALLTRIM(STR( i, 5 )) , "" ) ) )
    NEXT
@@ -1113,57 +1113,71 @@ function GetResDLL()
 return ( cDLLName )
  */
 //------------------------------------------------------------------------------
- /*
-function OpenLanguage()
 
-   USE LANGUAGE.DBF
-
-   DO WHILE !LANGUAGE->(EOF())
-
-      AADD( oGenVar:aLanguages, { LANGUAGE->LANGUAGE1, LANGUAGE->LANGUAGE2, ;
-                                  LANGUAGE->LANGUAGE3, LANGUAGE->LANGUAGE4, ;
-                                  LANGUAGE->LANGUAGE5, LANGUAGE->LANGUAGE6, ;
-                                  LANGUAGE->LANGUAGE7, LANGUAGE->LANGUAGE8, ;
-                                  LANGUAGE->LANGUAGE9 } )
-      LANGUAGE->(DBSKIP())
-
-   ENDDO
-
-   LANGUAGE->(DBCLOSEAREA())
-
-return .T.
- */
 
 function OpenLanguage()
    LOCAL aStrings:= FWGetStrings()
-   Local i
+   Local i, n, nLen
+   LOCAL aNames:= {}
+   LOCAL cName
+   LOCAL aLanguages
+   LOCAL hLanguages
+
+    oGenVar:aLanguages  := {}
 
    FOR i = 1 TO Len(aStrings  )
+        nLen:= Len(aStrings[i])
+
 
         AADD( oGenVar:aLanguages, { aStrings[i,1],;
-                                    aStrings[i,5],;
-                                    aStrings[i,6],;
-                                    aStrings[i,2],;
-                                    aStrings[i,4],;
-                                    aStrings[i,3] } )
-   next
+                                    IF( nLen < 5 , aStrings[i,1] ,aStrings[i,5]) ,;
+                                    IF( nLen < 6 , aStrings[i,1] ,aStrings[i,6]),;
+                                    IF( nLen < 2 , aStrings[i,1] ,aStrings[i,2]),;
+                                    IF( nLen < 4 , aStrings[i,1] ,aStrings[i,4]),;
+                                    IF( nLen < 3 , aSTrings[i,1] ,aStrings[i,3]) } )
+     next
+
+     //aLanguages :=  ER_LoadStrings()
+
+      hLanguages :=  ER_LoadStrings()
+
+
+
+   FOR EACH aNames IN hLanguages
+      nlen:= Len(aNames)
+      AADD( oGenVar:aLanguages, { aNames[1],;
+                                    IF( nLen < 5 , aNames[1] ,aNames[5]) ,;
+                                    IF( nLen < 6 ,  aNames[1] ,aNames[6]) ,;
+                                    IF( nLen < 2 , aNames[1] ,aNames[2]) ,;
+                                    IF( nLen < 4 ,  aNames[1] ,aNames[4]) ,;
+                                    IF( nLen < 3 ,  aNames[1] ,aNames[3] ) } )
+
+
+
+
+   NEXT
 
   /*
-   USE LANGUAGE.DBF
+     FOR i = 1 TO Len(aLanguages  )
 
-   DO WHILE !LANGUAGE->(EOF())
+        nLen:= Len(alanguages[i])
 
-      AADD( oGenVar:aLanguages, { LANGUAGE->LANGUAGE1, LANGUAGE->LANGUAGE2, ;
-                                  LANGUAGE->LANGUAGE3, LANGUAGE->LANGUAGE4, ;
-                                  LANGUAGE->LANGUAGE5, LANGUAGE->LANGUAGE6, ;
-                                  LANGUAGE->LANGUAGE7, LANGUAGE->LANGUAGE8, ;
-                                  LANGUAGE->LANGUAGE9 } )
-      LANGUAGE->(DBSKIP())
 
-   ENDDO
+        AADD( oGenVar:aLanguages, { aLanguages[i,1],;
+                                    IF( nLen < 5 , aLanguages[i,1] ,aLanguages[i,5]) ,;
+                                    IF( nLen < 6 , aLanguages[i,1] ,aLanguages[i,6]),;
+                                    IF( nLen < 2 , aLanguages[i,1] ,aLanguages[i,2]),;
+                                    IF( nLen < 4 , aLanguages[i,1] ,aLanguages[i,4]),;
+                                    IF( nLen < 3 , aLanguages[i,1] ,aLanguages[i,3]) } )
 
-   LANGUAGE->(DBCLOSEAREA())
-   */
+
+        next
+
+      */
+
+
+  //  msginfo(Len(  oGenVar:aLanguages   ))
+
 return .T.
 
 //------------------------------------------------------------------------------
@@ -1204,42 +1218,41 @@ function GL( cOriginal )
    local cAltText := cOriginal   //strtran( cOriginal, " ", "_" )
    local cText    := cAltText
    LOCAL aLanguage
-   LOCAL aStrings:= FWGetStrings()
+   LOCAL hLanguage
+   LOCAL npos
+   LOCAL lshort := .f.
+   LOCAL aNames := {}
 
-   LOCAL cFileName := cFilePath( GetModuleFileName( GetInstance() ) ) + ;
-                        "fwstrings.ini"
 
-   local nPos     := ASCAN( aStrings, ;
+     if '&' $ cAltText
+            lshort := .t.
+            cAltText  := StrTran( cAltText, '&', '' )
+     ENDIF
+
+
+   nPos  := ASCAN( oGenVar:aLanguages, ;
                             { |aVal| ALLTRIM( aVal[1] ) == ALLTRIM( cAltText ) } )
 
    if nPos = 0
 
-      aLanguage :=  ER_LoadStrings()
-      AAdd( aLanguage,{ cOriginal,,,,, } )
-      FWSaveStrings( cFileName , aLanguage )
-      FWAddString( { cOriginal,,,,, } )
+      hLanguage :=  ER_LoadStrings()
+      hlanguage[cAltText]:= { cAltText,,,,, }
 
-      //New String
-   //   SELECT 0
-    //  USE LANGUAGE
-    //  FLOCK()
-    //  APPEND BLANK
-    //  REPLACE LANGUAGE->LANGUAGE1 WITH cText
-    //  UNLOCK
-    //  LANGUAGE->(DBCLOSEAREA())
-
-      oGenVar:aLanguages := {}
+      FWSaveStrings( , hLanguage )
       OpenLanguage()
 
-    //  SELECT( nSelect )
+
    ELSE
+
       cText := oGenVar:aLanguages[ nPos, oGenVar:nLanguage ]
       if EMPTY( cText )
          cText := oGenVar:aLanguages[ nPos, 1 ]
       endif
+
    endif
 
-return ALLTRIM( cText )  //( STRTRAN(ALLTRIM( cText ), "_", " " ) )
+
+return  IF( lshort, '&',"") + ALLTRIM( cText )  //( STRTRAN(ALLTRIM( cText ), "_", " " ) )
 
 //------------------------------------------------------------------------------
 
@@ -1247,20 +1260,26 @@ function ER_LoadStrings( cFileName )
 
    local cLine, n := 1
    local aLanguage := {}
+   LOCAL hLanguage := {=>}
+   LOCAL aNames:={}
+
 
    DEFAULT cFileName := cFilePath( GetModuleFileName( GetInstance() ) ) + ;
                         "fwstrings.ini"
 
-   while ! Empty( cLine := GetPvProfString( "strings", AllTrim( Str( n++ ) ), "", cFileName ) )
-      AAdd( aLanguage, { AllTrim( StrToken( cLine, 1, "|" ) ),;
+      while ! Empty( cLine := GetPvProfString( "strings", AllTrim( Str( n++ ) ), "", cFileName ) )
+         aNames:=  { AllTrim( StrToken( cLine, 1, "|" ) ),;
                         AllTrim( StrToken( cLine, 2, "|" ) ),;
                         AllTrim( StrToken( cLine, 3, "|" ) ),;
                         AllTrim( StrToken( cLine, 4, "|" ) ),;
                         AllTrim( StrToken( cLine, 5, "|" ) ),;
-                        AllTrim( StrToken( cLine, 6, "|" ) ) } )
+                        AllTrim( StrToken( cLine, 6, "|" ) ) }
+
+         hLanguage[aNames[1]]:= aNames
+
    end
 
-RETURN aLanguage
+RETURN hLanguage
 
 //------------------------------------------------------------------------------
 
