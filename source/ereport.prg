@@ -235,11 +235,14 @@ FUNCTION dlg_colors()
    LOCAL ofont
    LOCAL aColors    := GetAllColors()
    LOCAL obrush
-   LOCAL aColorSay:= Array(4)
-   LOCAL aColorGet:= Array(30)
-   LOCAL i:= 4
-   LOCAL n , x
+   Local aColorSay  := Array( Len( aColors ) )
+   Local aColorGet  := Array( Len( aColors ) )
+   Local i          := 4
+   Local n
+   Local x
    LOCAL nDefClr
+   Local nCol       := 78
+   Local nFil       := 0
 
    DEFINE BRUSH oBrush COLOR oEr:nClrPaneTree
    oER:oFldI:aDialogs[4]:SetBrush( oBrush )
@@ -248,16 +251,33 @@ FUNCTION dlg_colors()
 
    DEFINE FONT ofont NAME "Verdana" Size 0,-14
 
-   @ 2,20 say " Nº" of oER:oFldI:aDialogs[4] FONT ofont TRANSPARENT
-   @ 2,5 say " Color" of oER:oFldI:aDialogs[4] FONT ofont TRANSPARENT
+   @ 02,020 SAY " Nº"    OF oER:oFldI:aDialogs[ i ] FONT oFont PIXEL TRANSPARENT
+   @ 02,100 SAY " Color" OF oER:oFldI:aDialogs[ i ] FONT oFont PIXEL TRANSPARENT
 
+   /*
+METHOD New( nRow, nCol, bSetGet, oWnd, nWidth, nHeight, cPict, bValid,;
+            nClrFore, nClrBack, oFont, lDesign, oCursor, lPixel, cMsg,;
+            lUpdate, bWhen, lCenter, lRight, bChanged, lReadOnly,;
+            lPassword, lNoBorder, nHelpId, lSpinner,;
+            bUp, bDown, bMin, bMax, bAction, cBmpName, cVarName,;
+            cCueText ) CLASS TGet
 
-   @ 55,120 GET aColorGet[1 ] VAR aColors[1 ] OF oER:oFldI:aDialogs[ i ] pixel SIZE 80, 20  VALID Set2Color( aColorSay[1 ], aColors[1 ], nDefClr )
-   @ 85,120 GET aColorGet[2 ] VAR aColors[2 ] OF oER:oFldI:aDialogs[ i ] pixel SIZE 80, 20  VALID Set2Color( aColorSay[2 ], aColors[2 ], nDefClr )
-   @ 115,120 GET aColorGet[3 ] VAR aColors[3 ] OF oER:oFldI:aDialogs[ i ] pixel SIZE 80, 20  VALID Set2Color( aColorSay[3 ], aColors[3 ], nDefClr )
-   @ 145,120 GET aColorGet[4 ] VAR aColors[4 ] OF oER:oFldI:aDialogs[ i ] pixel SIZE 80, 20  VALID Set2Color( aColorSay[4 ], aColors[4 ], nDefClr )
+   */
 
+   For x = 1 to Len( aColors )
+   if x > 15
+      nCol := 220
+      nFil := 25+(x-1-15)*30
+   else
+      nFil := 25+(x-1)*30
+   endif
+   aColorGet[ x ] := TGet():New( nFil, nCol, MiSetGet( aColors, x ), oER:oFldI:aDialogs[ i ], 70, 20, , ,;
+                                 ,,,,, .T.,,,,,,,,,,,,,,,,,,, )
+   //aColorGet[ x ]:bValid  := { | o | Set2Color( aColorSay[ x ], aColors[ x ], nDefClr ) }
+   aColorGet[ x ]:bValid := SetMiColor( aColorSay, aColors, nDefClr, x )
+   Next x
 
+   /*
    @ 55, 20 BTNBMP aColorSay[1]  OF oER:oFldI:aDialogs[ i ] size 80,20 pixel NOBORDER ;
             ACTION ( aColors[1 ] := Set3Color( aColorSay[1 ], aColors[1 ], nDefClr ), aColorGet[2 ]:Refresh() )
 
@@ -269,21 +289,35 @@ FUNCTION dlg_colors()
 
    @ 145, 20 BTNBMP aColorSay[4]  OF oER:oFldI:aDialogs[ i ] size 80,20 pixel NOBORDER ;
             ACTION ( aColors[4 ] := Set3Color( aColorSay[4 ], aColors[4 ], nDefClr ), aColorGet[4 ]:Refresh() )
+   */
 
-
-
+   /*
    AEval( aColorSay, { | o, n | o:SetColor( 0,;
     If( Empty( aColors[ n ] ), CLR_WHITE, Val( aColors[ n ] ) ) ) } )
+   */
 
+   //x:= 115
+   //x:= x+60
 
-   x:= 115
-   x:= x+60
-
-   @ x , 20 BTNBMP PROMPT "Grabar" OF oER:oFldI:aDialogs[ i ] size 80,20 pixel ;
+   @ oER:oFldI:aDialogs[ i ]:nHeight - 40 , oER:oFldI:aDialogs[ i ]:nWidth - 100 BTNBMP PROMPT "Grabar" ;
+            OF oER:oFldI:aDialogs[ i ] SIZE 80,20 pixel ;
             ACTION msginfo("Grabado no implementado ")
 
 
 RETURN nil
+
+//------------------------------------------------------------------------------
+
+Function SetMiColor( aColorSay, aColors, nDefClr, nPos )
+Local cExpr
+cExpr := "{ || Set2Color( aColorSay[ " + Alltrim( Str( nPos ) ) + " ], aColors[  " + Alltrim( Str( nPos ) ) + " ], "+ Alltrim( Str( nDefClr ) ) + " ) }"
+Return &cExpr
+
+//------------------------------------------------------------------------------
+
+Function MiSetGet( aBuffer , n )
+
+Return bSETGET( aBuffer[ n ] )
 
 //------------------------------------------------------------------------------
 
