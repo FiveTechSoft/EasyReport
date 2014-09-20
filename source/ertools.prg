@@ -935,6 +935,13 @@ return ( aUndo )
 
 function EditLanguage()
 
+  FWEditHStrings()
+
+return .T.
+
+/*
+function EditLanguage()
+
    local oDlg, oBrw
    local aHeader    := ARRAY(20)
    local aCol       := ARRAY(20)
@@ -988,8 +995,9 @@ function EditLanguage()
    LANGUAGE->(DBCLOSEAREA())
    SELECT( nSelect )
 
-return .T.
+   return .T.
 
+      */
 //------------------------------------------------------------------------------
 
 function GetLanguage()
@@ -1241,7 +1249,7 @@ function GL( cOriginal )
       hLanguage :=  ER_LoadStrings()
       hlanguage[cAltText]:= { cAltText,,,,, }
 
-      FWSaveStrings( , hLanguage )
+      FWSaveHStrings( , hLanguage )
       OpenLanguage()
 
 
@@ -1751,36 +1759,5 @@ function MultiUndoRedo( nTyp, nCount )
 
 //------------------------------------------------------------------------------
 
-
-/*
-FUNCTION CreateIniStrings(cFileName)
-   LOCAL aLanguage:= {}
-   LOCAL aStrings
-
-   local cText := "[strings]" + CRLF, n
-
-   DEFAULT cFileName := cFilePath( GetModuleFileName( GetInstance() ) ) + ;
-                        "fwstrings.ini"
-   msginfo(cfileName)
-   use language new
-   go top
-   DO WHILE !Eof()
-      aString:= {  STRTRAN(ALLTRIM( AllTrim(FIELD->language1) ), "_", " " ) ,;
-                  STRTRAN(ALLTRIM( AllTrim(FIELD->language4) ), "_", " " ) ,;
-                  STRTRAN(ALLTRIM( AllTrim(FIELD->language7) ), "_", " " ) ,;
-                STRTRAN(ALLTRIM( AllTrim(FIELD->language5) ), "_", " " ) ,;
-                 STRTRAN(ALLTRIM( AllTrim(FIELD->language2) ), "_", " " ) ,;
-                 STRTRAN(ALLTRIM( AllTrim(FIELD->language3) ), "_", " " ) }
-
-       AAdd( aLanguage , aString  )
-
-      skip
-   enddo
-
-    FWSaveStrings( cFileName , aLanguage )
-
-   close language
-RETURN nil
- */
 
 
