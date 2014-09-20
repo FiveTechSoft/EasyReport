@@ -1,5 +1,6 @@
 #include "FiveWin.ch"
 #include "ttitle.ch"
+#include "Splitter.ch"
 
 //Areazugabe
 STATIC nAreaZugabe  := 42
@@ -34,8 +35,8 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
    local cDefFile := ""
    local oSpl
    local nAltoSpl := 680
-   LOCAL oFld
-
+   local oSplit
+   local oPanel
    local aColorSay[30]
    local aColors
 
@@ -119,43 +120,78 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
 
    IF oER:lShowPanel
 
-      if ValidVersionFwh( 10, 8 )
+      oPanel := TPanel():New( 0.5, Int( ScreenWidth() - 2*328 ) + 2, ;
+                              GetSysMetrics( 1 ) - 140 , Int( ScreenWidth() - 327 ), ;
+                              oER:oMainWnd:oWndClient )
+      oPanel:SetColor( , oER:nClrPaneTree )  //CLR_WHITE )
+      SetParent( oPanel:hWnd, oER:oMainWnd:oWndClient:hWnd )
 
-      @ 0.5, 1 FOLDEREX oER:oFld ;
-      PROMPT GL("&Report Settings"), GL("&Grid Setup"), GL("&Items"),GL("&Colors") , GL("&Databases"), GL("&Expressions") ;
-      OF oEr:oMainWnd SIZE 342, GetSysMetrics( 1 ) - 138 ;
+
+
+      @ 0.5, Int( ScreenWidth() - ( 2*328 ) ) SPLITTER oSplit ;
+              VERTICAL ;  // PREVIOUS CONTROLS oPnel ;
+              HINDS CONTROLS oPanel ; //LEFT MARGIN 10 ; // RIGHT MARGIN 10 ;
+              SIZE 0.5, GetSysMetrics( 1 ) - 138 PIXEL ;
+              OF oEr:oMainWnd:oWndClient ;
+              COLOR CLR_WHITE 
+              //UPDATE
+
+      if ValidVersionFwh( 10, 8 )
+   
+      @ 0.5, 1 FOLDEREX oER:oFldI ;
+      PROMPT GL("&Report Settings"), GL("&Grid Setup"), GL("&Items"), GL("Colors"), GL("Fonts") ;
+      OF oEr:oMainWnd ;
+      SIZE 326, GetSysMetrics( 1 ) - 138 ;
       OPTION 3 ;
       TAB HEIGHT 34 ;
-      BITMAPS { "B_EDIT16", "B_GRAPHIC", "B_ITEMLIST16", "B_ITEMLIST16","B_AREA", "B_EDIT2" } ;
+      BITMAPS { "B_EDIT16", "B_GRAPHIC", "B_ITEMLIST16", "B_ITEMLIST16", "B_EDIT2" } ; //      BITMAPS { "B_EDIT16", "B_GRAPHIC", "B_ITEMLIST16", "B_ITEMLIST16", "B_AREA", "B_EDIT2" } ;
       PIXEL ;
       SEPARATOR 0
 
-      //oER:oFld:lMultiline := .T.      // No hace falta
+      @ 0.5, 1 FOLDEREX oER:oFldD ;
+      PROMPT GL("&Databases"), GL("&Fields"), GL("Fil&ters"), GL("&Expressions") ;
+      OF oPanel ;
+      SIZE 326, GetSysMetrics( 1 ) - 138 ;
+      OPTION 1 ;
+      TAB HEIGHT 34 ;
+      BITMAPS { "B_EDIT2", "B_ITEMLIST16", "B_AREA", "B_AREA" } ;
+      PIXEL ;
+      ADJUST ;
+      SEPARATOR 0
 
+      
+      
+      //oER:oFldI:lMultiline := .T.      // No hace falta
 
       else
 
-      @ 0.5, 1 FOLDER oER:oFld ;
+      @ 0.5, 1 FOLDER oER:oFldI ;
       PROMPT GL("&Report Settings"), GL("&Grid Setup"), GL("&Items"), GL("&Databases"), GL("&Expressions") ;
-      OF oEr:oMainWnd SIZE 342, GetSysMetrics( 1 ) - 138 ;
+      OF oEr:oMainWnd ;
+      SIZE 326, GetSysMetrics( 1 ) - 138 ;
       OPTION 3 ;
       PIXEL
 
       endif
-      //oER:oFld:SetFont(  )
+      //oER:oFldI:SetFont(  )
+     
+      oER:oFldI:SetColor(  , oEr:nClrPaneTree )
+      oEr:oMainWnd:oLeft  :=  oER:oFldI
 
-      oEr:oFld:SetColor(  , oEr:nClrPaneTree )
-      oEr:oMainWnd:oLeft  :=  oER:oFld
-
-      //oER:oTree := TTreeView():New( 0, 2, oER:oFld:aDialogs[3] , 0, , .T., .F., 230 , oEr:oMainWnd:nHeight - 155 ,"",, )
-      oER:oTree := TTreeView():New( 0, 2, oER:oFld:aDialogs[3] , 0, , .T., .F., 340 , oER:oFld:aDialogs[3]:nHeight ,"",, )
+      //oER:oTree := TTreeView():New( 0, 2, oER:oFldI:aDialogs[3] , 0, , .T., .F., 230 , oEr:oMainWnd:nHeight - 155 ,"",, )
+      oER:oTree := TTreeView():New( 0, 2, oER:oFldI:aDialogs[3] , 0, , .T., .F., 340 , oER:oFldI:aDialogs[3]:nHeight ,"",, )
       // oEr:oMainWnd:oLeft  :=   oER:oTree
       oEr:oTree:SetColor( ,  oEr:nClrPaneTree )
       oEr:oTree:l3DLook := .F.
-      oER:oFld:aDialogs[3]:SetControl( oEr:oTree )
-      //oER:oFld:Hide()
 
-      //---------------------- folder Colors --------------
+      if ValidVersionFwh( 14, 8 )
+         oEr:oTree:SetItemHeight( 24 )   // o  TvSetItemHeight( oER:oTree:hWnd, 24 )
+      endif
+      oEr:oTree:bMouseWheel = { | nKey, nDelta, nXPos, nYPos | ;
+                        ER_MouseWheelTree( nKey, nDelta, nXPos, nYPos ) }
+
+      oER:oFldI:aDialogs[3]:SetControl( oEr:oTree )
+      //oER:oFldI:Hide()
 
    ENDIF
 
@@ -206,32 +242,32 @@ FUNCTION dlg_colors()
    LOCAL nDefClr
 
    DEFINE BRUSH oBrush COLOR oEr:nClrPaneTree
-   oER:oFld:aDialogs[4]:SetBrush( oBrush )
+   oER:oFldI:aDialogs[4]:SetBrush( oBrush )
 
-   nDefClr := oER:oFld:aDialogs[ i ]:nClrPane
+   nDefClr := oER:oFldI:aDialogs[ i ]:nClrPane
 
    DEFINE FONT ofont NAME "Verdana" Size 0,-14
 
-   @ 2,20 say " Nº" of oER:oFld:aDialogs[4] FONT ofont TRANSPARENT
-   @ 2,5 say " Color" of oER:oFld:aDialogs[4] FONT ofont TRANSPARENT
+   @ 2,20 say " Nº" of oER:oFldI:aDialogs[4] FONT ofont TRANSPARENT
+   @ 2,5 say " Color" of oER:oFldI:aDialogs[4] FONT ofont TRANSPARENT
 
 
-   @ 55,120 GET aColorGet[1 ] VAR aColors[1 ] OF oER:oFld:aDialogs[ i ] pixel SIZE 80, 20  VALID Set2Color( aColorSay[1 ], aColors[1 ], nDefClr )
-   @ 85,120 GET aColorGet[2 ] VAR aColors[2 ] OF oER:oFld:aDialogs[ i ] pixel SIZE 80, 20  VALID Set2Color( aColorSay[2 ], aColors[2 ], nDefClr )
-   @ 115,120 GET aColorGet[3 ] VAR aColors[3 ] OF oER:oFld:aDialogs[ i ] pixel SIZE 80, 20  VALID Set2Color( aColorSay[3 ], aColors[3 ], nDefClr )
-   @ 145,120 GET aColorGet[4 ] VAR aColors[4 ] OF oER:oFld:aDialogs[ i ] pixel SIZE 80, 20  VALID Set2Color( aColorSay[4 ], aColors[4 ], nDefClr )
+   @ 55,120 GET aColorGet[1 ] VAR aColors[1 ] OF oER:oFldI:aDialogs[ i ] pixel SIZE 80, 20  VALID Set2Color( aColorSay[1 ], aColors[1 ], nDefClr )
+   @ 85,120 GET aColorGet[2 ] VAR aColors[2 ] OF oER:oFldI:aDialogs[ i ] pixel SIZE 80, 20  VALID Set2Color( aColorSay[2 ], aColors[2 ], nDefClr )
+   @ 115,120 GET aColorGet[3 ] VAR aColors[3 ] OF oER:oFldI:aDialogs[ i ] pixel SIZE 80, 20  VALID Set2Color( aColorSay[3 ], aColors[3 ], nDefClr )
+   @ 145,120 GET aColorGet[4 ] VAR aColors[4 ] OF oER:oFldI:aDialogs[ i ] pixel SIZE 80, 20  VALID Set2Color( aColorSay[4 ], aColors[4 ], nDefClr )
 
 
-   @ 55, 20 BTNBMP aColorSay[1]  OF oER:oFld:aDialogs[ i ] size 80,20 pixel NOBORDER ;
+   @ 55, 20 BTNBMP aColorSay[1]  OF oER:oFldI:aDialogs[ i ] size 80,20 pixel NOBORDER ;
             ACTION ( aColors[1 ] := Set3Color( aColorSay[1 ], aColors[1 ], nDefClr ), aColorGet[2 ]:Refresh() )
 
-   @ 85, 20 BTNBMP aColorSay[2]  OF oER:oFld:aDialogs[ i ] size 80,20 pixel NOBORDER ;
+   @ 85, 20 BTNBMP aColorSay[2]  OF oER:oFldI:aDialogs[ i ] size 80,20 pixel NOBORDER ;
             ACTION ( aColors[2 ] := Set3Color( aColorSay[2 ], aColors[2 ], nDefClr ), aColorGet[2 ]:Refresh() )
 
-   @ 115, 20 BTNBMP aColorSay[3]  OF oER:oFld:aDialogs[ i ] size 80,20 pixel NOBORDER ;
+   @ 115, 20 BTNBMP aColorSay[3]  OF oER:oFldI:aDialogs[ i ] size 80,20 pixel NOBORDER ;
             ACTION ( aColors[3 ] := Set3Color( aColorSay[3 ], aColors[3 ], nDefClr ), aColorGet[3 ]:Refresh() )
 
-   @ 145, 20 BTNBMP aColorSay[4]  OF oER:oFld:aDialogs[ i ] size 80,20 pixel NOBORDER ;
+   @ 145, 20 BTNBMP aColorSay[4]  OF oER:oFldI:aDialogs[ i ] size 80,20 pixel NOBORDER ;
             ACTION ( aColors[4 ] := Set3Color( aColorSay[4 ], aColors[4 ], nDefClr ), aColorGet[4 ]:Refresh() )
 
 
@@ -243,7 +279,7 @@ FUNCTION dlg_colors()
    x:= 115
    x:= x+60
 
-   @ x , 20 BTNBMP PROMPT "Grabar" OF oER:oFld:aDialogs[ i ] size 80,20 pixel ;
+   @ x , 20 BTNBMP PROMPT "Grabar" OF oER:oFldI:aDialogs[ i ] size 80,20 pixel ;
             ACTION msginfo("Grabado no implementado ")
 
 
@@ -445,6 +481,86 @@ function ER_MouseWheel( nKey, nDelta, nXPos, nYPos )
    endif
 
 return .T.
+
+//----------------------------------------------------------------------------//
+
+function ER_MouseWheelTree( nKey, nDelta, nXPos, nYPos )
+
+   local aPoint := { nYPos, nXPos }
+   local i      := 0
+   local oTemp1
+   local nElem  := 0
+
+   ScreenToClient( oEr:oTree:hWnd, aPoint )
+   if IsOverWnd( oEr:oTree:hWnd, aPoint[ 1 ], aPoint[ 2 ] )
+      /*
+      For i = 1 to Len( oER:oTree:aItems )
+          // 2 -> hWnd   3 -> Object   4 -> Array   5 -> Caption
+          oTemp1 := oER:oTree:aItems[ i ][ 3 ]
+          if oTemp1 == oEr:oTree:GetSelected()
+             nElem := i
+             i := Len( oER:oTree:aItems ) + 1
+          endif
+      Next i
+      */
+
+      if lAnd( nKey, MK_MBUTTON )
+         if nDelta > 0
+            if !empty( nElem )
+               if nElem > 1
+                  nElem--
+
+               else
+                  nElem := Len( oER:oTree:aItems )
+               endif
+            endif
+         else
+            if !empty( nElem )
+               if nElem < Len( oER:oTree:aItems )
+                  nElem++
+
+               else
+                  nElem := 1
+               endif
+            endif
+         endif
+      else
+         if nDelta > 0
+            //if empty( oEr:oTree:oParent )
+
+            //else
+
+            //endif
+            if !empty( nElem )
+               if nElem > 1
+                  nElem--
+
+               else
+                  nElem := Len( oER:oTree:aItems )
+               endif
+            endif
+         else
+            if !empty( nElem )
+               if nElem < Len( oER:oTree:aItems )
+                  nElem++
+
+               else
+                  nElem := 1
+               endif
+            endif
+         endif
+      endif
+      
+      if !empty( nElem )
+         oEr:oTree:Select( oER:oTree:aItems[ nElem ][ 3 ] )
+         //oEr:oTree:Refresh()
+      endif
+
+   endif
+
+return .T.
+
+//----------------------------------------------------------------------------//
 
 /*
 function ER_MouseWheel( nKey, nDelta, nXPos, nYPos )
@@ -3005,7 +3121,7 @@ function ItemList()
            oEr:oTree:bLDblClick  = { | nRow, nCol, nKeyFlags | ClickListTree( oEr:oTree ) }
            FillTree( oEr:oTree, oEr:oMainWnd )
            //  oEr:oTree:show()
-           oEr:oFld:show()
+           oER:oFldI:Show()
         endif
      endif
 
@@ -3762,7 +3878,8 @@ CLASS TEasyReport
    DATA nTotalWidth
    DATA oTree
    DATA nClrPaneTree
-   DATA oFld
+   DATA oFldI
+   DATA oFldD
    DATA lReexec
    DATA nTotAreas
    DATA lFillWindow
