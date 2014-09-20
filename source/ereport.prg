@@ -232,17 +232,17 @@ return nil
 //----------------------------------------------------------------------------//
 
 FUNCTION dlg_colors()
-   LOCAL ofont
-   LOCAL aColors    := GetAllColors()
    LOCAL obrush
-   Local aColorSay  := Array( Len( aColors ) )
-   Local aColorGet  := Array( Len( aColors ) )
+   Local oFont
    Local i          := 4
    Local n
    Local x
    LOCAL nDefClr
    Local nCol       := 78
    Local nFil       := 0
+   Local aColors    := GetAllColors()
+   Local aColorSay  := Array( Len( aColors ) )
+   Local aColorGet  := Array( Len( aColors ) )
 
    DEFINE BRUSH oBrush COLOR oEr:nClrPaneTree
    oER:oFldI:aDialogs[4]:SetBrush( oBrush )
@@ -274,7 +274,9 @@ METHOD New( nRow, nCol, bSetGet, oWnd, nWidth, nHeight, cPict, bValid,;
    aColorGet[ x ] := TGet():New( nFil, nCol, MiSetGet( aColors, x ), oER:oFldI:aDialogs[ i ], 70, 20, , ,;
                                  ,,,,, .T.,,,,,,,,,,,,,,,,,,, )
    //aColorGet[ x ]:bValid  := { | o | Set2Color( aColorSay[ x ], aColors[ x ], nDefClr ) }
-   //aColorGet[ x ]:bValid := SetMiColor( aColorSay, aColors, nDefClr, x )
+   aColorGet[ x ]:bValid := SetMiColor( aColorSay, aColors,  nDefClr, x )
+
+
    Next x
 
    /*
@@ -308,10 +310,10 @@ RETURN nil
 
 //------------------------------------------------------------------------------
 
-Function SetMiColor( aColorSay, aColors, nDefClr, nPos )
-Local cExpr
-cExpr := "{ || Set2Color( aColorSay[ " + Alltrim( Str( nPos ) ) + " ], aColors[  " + Alltrim( Str( nPos ) ) + " ], "+ Alltrim( Str( nDefClr ) ) + " ) }"
-Return &cExpr
+Function SetMiColor( aColorSay, aColors,  nDefClr, nPos )
+Local bVal
+bVal  := { || Set2Color( aColorSay[ nPos ], aColors[ nPos ], nDefClr ) }
+Return bVal
 
 //------------------------------------------------------------------------------
 
