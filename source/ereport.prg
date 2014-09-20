@@ -175,7 +175,6 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
       oER:oFldI:SetColor(  , oEr:nClrPaneTree )
       oEr:oMainWnd:oLeft  :=  oER:oFldI
 
-      //oER:oTree := TTreeView():New( 0, 2, oER:oFldI:aDialogs[3] , 0, , .T., .F., 230 , oEr:oMainWnd:nHeight - 155 ,"",, )
       oER:oTree := TTreeView():New( 0, 2, oER:oFldI:aDialogs[3] , 0, , .T., .F., 340 , oER:oFldI:aDialogs[3]:nHeight ,"",, )
       // oEr:oMainWnd:oLeft  :=   oER:oTree
       oEr:oTree:SetColor( ,  oEr:nClrPaneTree )
@@ -187,7 +186,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
       oEr:oTree:bMouseWheel = { | nKey, nDelta, nXPos, nYPos | ;
                         ER_MouseWheelTree( nKey, nDelta, nXPos, nYPos ) }
 
-      oER:oFldI:aDialogs[3]:SetControl( oEr:oTree )
+      //oER:oFldI:aDialogs[3]:SetControl( oEr:oTree )
       //oER:oFldI:Hide()
       Dlg_Colors( 4 )
 
@@ -253,11 +252,11 @@ Function Dlg_Colors( i )
 
    DEFINE FONT ofont NAME "Verdana" Size 0,-14
 
-   @ 02,030 SAY " Nº"    OF oER:oFldI:aDialogs[ i ] FONT oFont PIXEL TRANSPARENT
-   @ 02,090 SAY " Color" OF oER:oFldI:aDialogs[ i ] FONT oFont PIXEL TRANSPARENT
+   @ 02,030 SAY "Nº"     OF oER:oFldI:aDialogs[ i ] FONT oFont PIXEL TRANSPARENT
+   @ 02,090 SAY "Color"  OF oER:oFldI:aDialogs[ i ] FONT oFont PIXEL TRANSPARENT
 
-   @ 02,180 SAY " Nº"    OF oER:oFldI:aDialogs[ i ] FONT oFont PIXEL TRANSPARENT
-   @ 02,240 SAY " Color" OF oER:oFldI:aDialogs[ i ] FONT oFont PIXEL TRANSPARENT
+   @ 02,180 SAY "Nº"     OF oER:oFldI:aDialogs[ i ] FONT oFont PIXEL TRANSPARENT
+   @ 02,240 SAY "Color"  OF oER:oFldI:aDialogs[ i ] FONT oFont PIXEL TRANSPARENT
 
    For x = 1 to Len( aColors )
    if x > 15
