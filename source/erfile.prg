@@ -123,7 +123,7 @@ function OpenFile( cFile, lChange, lAddDelNew )
 
       oEr:oMainWnd:SetMenu( BuildMenu() )
 
-      dlg_colors()
+      //dlg_colors()
 
       SetSave( .T. )
 

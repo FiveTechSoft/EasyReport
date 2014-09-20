@@ -36,7 +36,8 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
    local oSpl
    local nAltoSpl := 680
    local oSplit
-   local oPanel
+   local oPanelI
+   local oPanelD
    local aColorSay[30]
    local aColors
 
@@ -120,17 +121,15 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
 
    IF oER:lShowPanel
 
-      oPanel := TPanel():New( 0.5, Int( ScreenWidth() - 2*328 ) + 2, ;
+      oPanelD := TPanel():New( 0.5, Int( ScreenWidth() - 2*328 ) + 2, ;
                               GetSysMetrics( 1 ) - 140 , Int( ScreenWidth() - 327 ), ;
                               oER:oMainWnd:oWndClient )
-      oPanel:SetColor( , oER:nClrPaneTree )  //CLR_WHITE )
-      SetParent( oPanel:hWnd, oER:oMainWnd:oWndClient:hWnd )
-
-
+      oPanelD:SetColor( , oER:nClrPaneTree )  //CLR_WHITE )
+      SetParent( oPanelD:hWnd, oER:oMainWnd:oWndClient:hWnd )
 
       @ 0.5, Int( ScreenWidth() - ( 2*328 ) ) SPLITTER oSplit ;
               VERTICAL ;  // PREVIOUS CONTROLS oPnel ;
-              HINDS CONTROLS oPanel ; //LEFT MARGIN 10 ; // RIGHT MARGIN 10 ;
+              HINDS CONTROLS oPanelD ; //LEFT MARGIN 10 ; // RIGHT MARGIN 10 ;
               SIZE 0.5, GetSysMetrics( 1 ) - 138 PIXEL ;
               OF oEr:oMainWnd:oWndClient ;
               COLOR CLR_WHITE 
@@ -138,40 +137,38 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
 
       if ValidVersionFwh( 10, 8 )
    
-      @ 0.5, 1 FOLDEREX oER:oFldI ;
-      PROMPT GL("&Report Settings"), GL("&Grid Setup"), GL("&Items"), GL("Colors"), GL("Fonts") ;
-      OF oEr:oMainWnd ;
-      SIZE 326, GetSysMetrics( 1 ) - 138 ;
-      OPTION 3 ;
-      TAB HEIGHT 34 ;
-      BITMAPS { "B_EDIT16", "B_GRAPHIC", "B_ITEMLIST16", "B_ITEMLIST16", "B_EDIT2" } ; //      BITMAPS { "B_EDIT16", "B_GRAPHIC", "B_ITEMLIST16", "B_ITEMLIST16", "B_AREA", "B_EDIT2" } ;
-      PIXEL ;
-      SEPARATOR 0
+       @ 0.5, 1 FOLDEREX oER:oFldI ;
+       PROMPT GL("&Report Settings"), GL("&Grid Setup"), GL("&Items"), GL("Colors"), GL("Fonts") ;
+       OF oEr:oMainWnd ;
+       SIZE 326, GetSysMetrics( 1 ) - 138 ;
+       OPTION 3 ;
+       TAB HEIGHT 34 ;
+       BITMAPS { "B_EDIT16", "B_GRAPHIC", "B_ITEMLIST16", "B_ITEMLIST16", "B_EDIT2" } ; //      BITMAPS { "B_EDIT16", "B_GRAPHIC", "B_ITEMLIST16", "B_ITEMLIST16", "B_AREA", "B_EDIT2" } ;
+       PIXEL ;
+       SEPARATOR 0
 
-      @ 0.5, 1 FOLDEREX oER:oFldD ;
-      PROMPT GL("&Databases"), GL("&Fields"), GL("Fil&ters"), GL("&Expressions") ;
-      OF oPanel ;
-      SIZE 326, GetSysMetrics( 1 ) - 138 ;
-      OPTION 1 ;
-      TAB HEIGHT 34 ;
-      BITMAPS { "B_EDIT2", "B_ITEMLIST16", "B_AREA", "B_AREA" } ;
-      PIXEL ;
-      ADJUST ;
-      SEPARATOR 0
-
-      
-      
+       @ 0.5, 1 FOLDEREX oER:oFldD ;
+       PROMPT GL("&Databases"), GL("&Fields"), GL("Fil&ters"), GL("&Expressions") ;
+       OF oPanelD ;
+       SIZE 326, GetSysMetrics( 1 ) - 138 ;
+       OPTION 1 ;
+       TAB HEIGHT 34 ;
+       BITMAPS { "B_EDIT2", "B_ITEMLIST16", "B_AREA", "B_AREA" } ;
+       PIXEL ;
+       ADJUST ;
+       SEPARATOR 0
+       
       //oER:oFldI:lMultiline := .T.      // No hace falta
 
       else
 
-      @ 0.5, 1 FOLDER oER:oFldI ;
-      PROMPT GL("&Report Settings"), GL("&Grid Setup"), GL("&Items"), GL("&Databases"), GL("&Expressions") ;
-      OF oEr:oMainWnd ;
-      SIZE 326, GetSysMetrics( 1 ) - 138 ;
-      OPTION 3 ;
-      PIXEL
-
+       @ 0.5, 1 FOLDER oER:oFldI ;
+       PROMPT GL("&Report Settings"), GL("&Grid Setup"), GL("&Items"), GL("&Databases"), GL("&Expressions") ;
+       OF oEr:oMainWnd ;
+       SIZE 326, GetSysMetrics( 1 ) - 138 ;
+       OPTION 3 ;
+       PIXEL
+       
       endif
       //oER:oFldI:SetFont(  )
      
@@ -192,6 +189,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
 
       oER:oFldI:aDialogs[3]:SetControl( oEr:oTree )
       //oER:oFldI:Hide()
+      Dlg_Colors( 4 )
 
    ENDIF
 
@@ -231,10 +229,9 @@ return nil
 
 //----------------------------------------------------------------------------//
 
-FUNCTION dlg_colors()
+Function Dlg_Colors( i )
    LOCAL obrush
    Local oFont
-   Local i          := 4
    Local n
    Local x
    LOCAL nDefClr
@@ -244,20 +241,27 @@ FUNCTION dlg_colors()
    Local aColorSay  := Array( Len( aColors ) )
    Local aColorGet  := Array( Len( aColors ) )
 
+   //oER:oFldI:aDialogs[ i ]:Refresh()
+   // if !empty( oER:cDefIni )
+   // endif
+   //oER:oFldI:aDialogs[i]:SetFocus()
+
    DEFINE BRUSH oBrush COLOR oEr:nClrPaneTree
-   oER:oFldI:aDialogs[4]:SetBrush( oBrush )
+   oER:oFldI:aDialogs[i]:SetBrush( oBrush )
 
    nDefClr := oER:oFldI:aDialogs[ i ]:nClrPane
 
    DEFINE FONT ofont NAME "Verdana" Size 0,-14
 
-   @ 02,020 SAY " Nº"    OF oER:oFldI:aDialogs[ i ] FONT oFont PIXEL TRANSPARENT
-   @ 02,100 SAY " Color" OF oER:oFldI:aDialogs[ i ] FONT oFont PIXEL TRANSPARENT
+   @ 02,030 SAY " Nº"    OF oER:oFldI:aDialogs[ i ] FONT oFont PIXEL TRANSPARENT
+   @ 02,090 SAY " Color" OF oER:oFldI:aDialogs[ i ] FONT oFont PIXEL TRANSPARENT
 
+   @ 02,180 SAY " Nº"    OF oER:oFldI:aDialogs[ i ] FONT oFont PIXEL TRANSPARENT
+   @ 02,240 SAY " Color" OF oER:oFldI:aDialogs[ i ] FONT oFont PIXEL TRANSPARENT
 
    For x = 1 to Len( aColors )
    if x > 15
-      nCol := 220
+      nCol := 228
       nFil := 25+(x-1-15)*30
    else
       nFil := 25+(x-1)*30
@@ -271,7 +275,7 @@ FUNCTION dlg_colors()
    nCol       := 78
    For x = 1 to Len( aColors )
    if x > 15
-      nCol := 220
+      nCol := 228
       nFil := 25+(x-1-15)*30
    else
       nFil := 25+(x-1)*30
@@ -289,8 +293,8 @@ FUNCTION dlg_colors()
    AEval( aColorSay, { | o, n | o:SetColor( 0,;
     If( Empty( aColors[ n ] ), CLR_WHITE, Val( aColors[ n ] ) ) ) } )
    
-   @ oER:oFldI:aDialogs[ i ]:nHeight - 40 , oER:oFldI:aDialogs[ i ]:nWidth - 100 BTNBMP PROMPT "Grabar" ;
-            OF oER:oFldI:aDialogs[ i ] SIZE 80,20 pixel ;
+   @ nFil + 40 , oER:oFldI:aDialogs[ i ]:nWidth - 100 BTNBMP PROMPT "Grabar" ;
+            OF oER:oFldI:aDialogs[ i ] SIZE 80, 20 pixel ;
             ACTION msginfo("Grabado no implementado ")
 
 
