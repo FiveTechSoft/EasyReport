@@ -255,14 +255,25 @@ FUNCTION dlg_colors()
    @ 02,100 SAY " Color" OF oER:oFldI:aDialogs[ i ] FONT oFont PIXEL TRANSPARENT
 
    /*
-METHOD New( nRow, nCol, bSetGet, oWnd, nWidth, nHeight, cPict, bValid,;
+   METHOD New( nRow, nCol, bSetGet, oWnd, nWidth, nHeight, cPict, bValid,;
             nClrFore, nClrBack, oFont, lDesign, oCursor, lPixel, cMsg,;
             lUpdate, bWhen, lCenter, lRight, bChanged, lReadOnly,;
             lPassword, lNoBorder, nHelpId, lSpinner,;
             bUp, bDown, bMin, bMax, bAction, cBmpName, cVarName,;
             cCueText ) CLASS TGet
 
-   */
+
+   METHOD New( nTop, nLeft, nWidth, nHeight,;
+               cResName1, cResName2, cBmpFile1, cBmpFile2,;
+               bAction, oWnd, cMsg, bWhen, lAdjust, lUpdate,;
+               cPrompt, oFont, cResName3, cBmpFile3, lBorder, cLayout, ;
+               l2007, cResName4, cBmpFile4, lTransparent, cToolTip,;
+               lRound, bGradColors, lPixel, lDesign ) CONSTRUCTOR
+            
+            
+            
+            
+            */
 
    For x = 1 to Len( aColors )
    if x > 15
@@ -279,6 +290,25 @@ METHOD New( nRow, nCol, bSetGet, oWnd, nWidth, nHeight, cPict, bValid,;
 
    Next x
 
+   nCol       := 78
+   For x = 1 to Len( aColors )
+   if x > 15
+      nCol := 220
+      nFil := 25+(x-1-15)*30
+   else
+      nFil := 25+(x-1)*30
+   endif
+
+   aColorSay[ x ] := TBtnBmp():New( nFil, nCol - 65, 60, 20,;
+                                    ,,,,;
+                                    ,oER:oFldI:aDialogs[ i ],,,,,;
+                                    ,,,, .F.,,;
+                                    ,,,,,;
+                                    ,,.T.,)
+   
+   Next x
+   
+   
    /*
    @ 55, 20 BTNBMP aColorSay[1]  OF oER:oFldI:aDialogs[ i ] size 80,20 pixel NOBORDER ;
             ACTION ( aColors[1 ] := Set3Color( aColorSay[1 ], aColors[1 ], nDefClr ), aColorGet[2 ]:Refresh() )
@@ -293,10 +323,10 @@ METHOD New( nRow, nCol, bSetGet, oWnd, nWidth, nHeight, cPict, bValid,;
             ACTION ( aColors[4 ] := Set3Color( aColorSay[4 ], aColors[4 ], nDefClr ), aColorGet[4 ]:Refresh() )
    */
 
-   /*
+   
    AEval( aColorSay, { | o, n | o:SetColor( 0,;
     If( Empty( aColors[ n ] ), CLR_WHITE, Val( aColors[ n ] ) ) ) } )
-   */
+   
 
    //x:= 115
    //x:= x+60
