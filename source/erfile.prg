@@ -123,6 +123,8 @@ function OpenFile( cFile, lChange, lAddDelNew )
 
       oEr:oMainWnd:SetMenu( BuildMenu() )
 
+      dlg_colors()
+
       SetSave( .T. )
 
       if VAL( GetPvProfString( "General", "MruList"  , "4", oER:cGeneralIni ) ) > 0

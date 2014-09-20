@@ -36,6 +36,9 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
    local nAltoSpl := 680
    LOCAL oFld
 
+   local aColorSay[30]
+   local aColors
+
    lChDir( cFilePath( GetModuleFileName( GetInstance() ) ) )
 
    if P1  <> nil ; cDefFile += P1  + " " ; endif
@@ -117,17 +120,18 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
    IF oER:lShowPanel
 
       if ValidVersionFwh( 10, 8 )
-   
+
       @ 0.5, 1 FOLDEREX oER:oFld ;
-      PROMPT GL("&Report Settings"), GL("&Grid Setup"), GL("&Items"), GL("&Databases"), GL("&Expressions") ;
+      PROMPT GL("&Report Settings"), GL("&Grid Setup"), GL("&Items"),GL("&Colors") , GL("&Databases"), GL("&Expressions") ;
       OF oEr:oMainWnd SIZE 342, GetSysMetrics( 1 ) - 138 ;
       OPTION 3 ;
       TAB HEIGHT 34 ;
-      BITMAPS { "B_EDIT16", "B_GRAPHIC", "B_ITEMLIST16", "B_AREA", "B_EDIT2" } ;
+      BITMAPS { "B_EDIT16", "B_GRAPHIC", "B_ITEMLIST16", "B_ITEMLIST16","B_AREA", "B_EDIT2" } ;
       PIXEL ;
       SEPARATOR 0
 
       //oER:oFld:lMultiline := .T.      // No hace falta
+
 
       else
 
@@ -139,7 +143,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
 
       endif
       //oER:oFld:SetFont(  )
-     
+
       oEr:oFld:SetColor(  , oEr:nClrPaneTree )
       oEr:oMainWnd:oLeft  :=  oER:oFld
 
@@ -150,6 +154,8 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
       oEr:oTree:l3DLook := .F.
       oER:oFld:aDialogs[3]:SetControl( oEr:oTree )
       //oER:oFld:Hide()
+
+      //---------------------- folder Colors --------------
 
    ENDIF
 
@@ -189,6 +195,62 @@ return nil
 
 //----------------------------------------------------------------------------//
 
+FUNCTION dlg_colors()
+   LOCAL ofont
+   LOCAL aColors    := GetAllColors()
+   LOCAL obrush
+   LOCAL aColorSay:= Array(4)
+   LOCAL aColorGet:= Array(30)
+   LOCAL i:= 4
+   LOCAL n , x
+   LOCAL nDefClr
+
+   DEFINE BRUSH oBrush COLOR oEr:nClrPaneTree
+   oER:oFld:aDialogs[4]:SetBrush( oBrush )
+
+   nDefClr := oER:oFld:aDialogs[ i ]:nClrPane
+
+   DEFINE FONT ofont NAME "Verdana" Size 0,-14
+
+   @ 2,20 say " Nº" of oER:oFld:aDialogs[4] FONT ofont TRANSPARENT
+   @ 2,5 say " Color" of oER:oFld:aDialogs[4] FONT ofont TRANSPARENT
+
+
+   @ 55,120 GET aColorGet[1 ] VAR aColors[1 ] OF oER:oFld:aDialogs[ i ] pixel SIZE 80, 20  VALID Set2Color( aColorSay[1 ], aColors[1 ], nDefClr )
+   @ 85,120 GET aColorGet[2 ] VAR aColors[2 ] OF oER:oFld:aDialogs[ i ] pixel SIZE 80, 20  VALID Set2Color( aColorSay[2 ], aColors[2 ], nDefClr )
+   @ 115,120 GET aColorGet[3 ] VAR aColors[3 ] OF oER:oFld:aDialogs[ i ] pixel SIZE 80, 20  VALID Set2Color( aColorSay[3 ], aColors[3 ], nDefClr )
+   @ 145,120 GET aColorGet[4 ] VAR aColors[4 ] OF oER:oFld:aDialogs[ i ] pixel SIZE 80, 20  VALID Set2Color( aColorSay[4 ], aColors[4 ], nDefClr )
+
+
+   @ 55, 20 BTNBMP aColorSay[1]  OF oER:oFld:aDialogs[ i ] size 80,20 pixel NOBORDER ;
+            ACTION ( aColors[1 ] := Set3Color( aColorSay[1 ], aColors[1 ], nDefClr ), aColorGet[2 ]:Refresh() )
+
+   @ 85, 20 BTNBMP aColorSay[2]  OF oER:oFld:aDialogs[ i ] size 80,20 pixel NOBORDER ;
+            ACTION ( aColors[2 ] := Set3Color( aColorSay[2 ], aColors[2 ], nDefClr ), aColorGet[2 ]:Refresh() )
+
+   @ 115, 20 BTNBMP aColorSay[3]  OF oER:oFld:aDialogs[ i ] size 80,20 pixel NOBORDER ;
+            ACTION ( aColors[3 ] := Set3Color( aColorSay[3 ], aColors[3 ], nDefClr ), aColorGet[3 ]:Refresh() )
+
+   @ 145, 20 BTNBMP aColorSay[4]  OF oER:oFld:aDialogs[ i ] size 80,20 pixel NOBORDER ;
+            ACTION ( aColors[4 ] := Set3Color( aColorSay[4 ], aColors[4 ], nDefClr ), aColorGet[4 ]:Refresh() )
+
+
+
+   AEval( aColorSay, { | o, n | o:SetColor( 0,;
+    If( Empty( aColors[ n ] ), CLR_WHITE, Val( aColors[ n ] ) ) ) } )
+
+
+   x:= 115
+   x:= x+60
+
+   @ x , 20 BTNBMP PROMPT "Grabar" OF oER:oFld:aDialogs[ i ] size 80,20 pixel ;
+            ACTION msginfo("Grabado no implementado ")
+
+
+RETURN nil
+
+//------------------------------------------------------------------------------
+
 function BarMenu()
    LOCAL oBar
    local aBtn[3]
@@ -217,7 +279,7 @@ function BarMenu()
       ACTION SaveFile() ;
       WHEN !Empty( oER:cDefIni ) .and. !lVRDSave
 
-   //if nDeveloper = 1 .OR. oGenVar:lStandalone 
+   //if nDeveloper = 1 .OR. oGenVar:lStandalone
       DEFINE BUTTON aBtn[ 1 ] RESOURCE "B_PREVIEW", "B_PREVIEW", "B_PREVIEW1" ;
          OF oBar ;
          PROMPT FWString( "Preview" ) ;
@@ -337,7 +399,7 @@ Local lVersion   := .T.
    if GetFwVersion()[ 1 ] < nVersion1
       lVersion := .F.
    else
-      if GetFwVersion()[ 1 ] = nVersion1 
+      if GetFwVersion()[ 1 ] = nVersion1
          if GetFwVersion()[ 2 ] < nVersion2
             lVersion := .F.
          endif
@@ -352,7 +414,7 @@ Function GetFwVersion()
 Local aVersion := Array( 2 )
       aVersion[ 1 ] := Val( Substr( FWVERSION, 5, 2 ) )
       aVersion[ 2 ] := Val( Right( FWVERSION, 2 ) )
-Return aVersion 
+Return aVersion
 
 //----------------------------------------------------------------------------//
 
@@ -1713,7 +1775,7 @@ return nil
 function SetTitleColor( lOff, nArea )
 Local nColor := if( lOff, oGenVar:nF2ClrAreaTitle , oGenVar:nF1ClrAreaTitle )
 Local nAr    := if( lOff, nArea, nAktArea )
-   
+
    oGenVar:aAreaTitle[ nAr ]:SetColor( nColor, oGenVar:nBClrAreaTitle )
    oGenVar:aAreaTitle[ nAr ]:Refresh()
 

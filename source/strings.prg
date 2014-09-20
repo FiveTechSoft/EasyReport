@@ -529,17 +529,21 @@ return nil
 
 //----------------------------------------------------------------------------//
 
-function FWEditHStrings( hNewStrings )
+function FWEditHStrings( cFileName, hNewStrings )
   LOCAL aNewStrings:= {}
   LOCAL aNames:= {}
 
 DEFAULT hNewStrings:= hIniStrings
+DEFAULT cFileName := cFilePath( GetModuleFileName( GetInstance() ) ) + ;
+                        "fwstrings.ini"
 
    FOR EACH aNames IN hNewStrings
       AAdd( aNewStrings, aNames )
    NEXT
 
    XBROWSER aNewStrings FASTEDIT AUTOSORT SETUP BrwSetup( oBrw )
+
+   FWSaveStrings( cFileName  , aNewStrings )
 
 return nil
 
@@ -561,8 +565,8 @@ static function BrwSetUp( oBrw )
    oBrw:aCols[ 2 ]:cHeader = "Spanish"
    oBrw:aCols[ 3 ]:cHeader = "French"
    oBrw:aCols[ 4 ]:cHeader = "Portuguese"
-   oBrw:aCols[ 5 ]:cHeader = "Italian"
-   oBrw:aCols[ 6 ]:cHeader = "German"
+   oBrw:aCols[ 6 ]:cHeader = "Italian"
+   oBrw:aCols[ 5 ]:cHeader = "German"
 
    AEval( oBrw:aCols, { | oCol | oCol:nWidth := 200 } )
 
