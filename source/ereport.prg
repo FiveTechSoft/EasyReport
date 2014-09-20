@@ -274,7 +274,7 @@ METHOD New( nRow, nCol, bSetGet, oWnd, nWidth, nHeight, cPict, bValid,;
    aColorGet[ x ] := TGet():New( nFil, nCol, MiSetGet( aColors, x ), oER:oFldI:aDialogs[ i ], 70, 20, , ,;
                                  ,,,,, .T.,,,,,,,,,,,,,,,,,,, )
    //aColorGet[ x ]:bValid  := { | o | Set2Color( aColorSay[ x ], aColors[ x ], nDefClr ) }
-   aColorGet[ x ]:bValid := SetMiColor( aColorSay, aColors, nDefClr, x )
+   //aColorGet[ x ]:bValid := SetMiColor( aColorSay, aColors, nDefClr, x )
    Next x
 
    /*
