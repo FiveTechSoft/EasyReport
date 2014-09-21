@@ -589,7 +589,7 @@ Function NoLimitGet( oCol, nC )
 Local uVar   := ""
 DEFAULT nC   := 20
 if Valtype( oCol:Value ) = "C"
-   oCol:bOnPreEdit := { | o | uVar := o:Value, uVar := RTrim( uVar) + space(20), ;  //  o:cEditPicture := Replicate("X", Len( uVar) ), ;
+   oCol:bOnPreEdit := { | o | uVar := o:Value, uVar := RTrim( uVar) + space( nC ), ;  //  o:cEditPicture := Replicate("X", Len( uVar) ), ;
                               o:oEditGet:cText( uVar ) } 
 
 endif
