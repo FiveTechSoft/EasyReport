@@ -320,7 +320,7 @@ Return bVal
 
 FUNCTION SaveDlgColors( aColors )
  LOCAL oIni, i
- 
+
  RndMsg( FwString("Saving Colors ") )
 
   INI oIni FILE oER:cDefIni
@@ -341,6 +341,53 @@ RETURN nil
 
 //------------------------------------------------------------------------------
 
+Function Dlg_Fonts( i )
+   local aGetFonts  := GetFonts()
+   local aShowFonts := GetFontText( aGetFonts )
+   local cFont      := aGetFonts [1, 1 ]
+
+   local cFontText  := ""
+   LOCAL olbx
+   LOCAL oSay1, oGet1, oFont
+   LOCAL oDlg := oER:oFldI:aDialogs[ i ]
+
+    for i := 33 to 254
+      cFontText += CHR( i )
+   next
+
+   DEFINE FONT oFont NAME "Verdana" Size 0,-14
+
+   @ 10,010 SAY  GL("Font") OF oDlg FONT oFont PIXEL TRANSPARENT
+
+   @ 032, 10 LISTBOX olbx VAR cFont ITEMS aShowFonts SIZE 300, 360 OF oDlg ;
+      ON CHANGE PreviewRefresh( oSay1, oLbx, oGet1 ) ;
+      ON DBLCLICK ( aShowFonts := SelectFont( oSay1, oLbx, oGet1 ) ) PIXEL FONT oFont
+
+   oLbx:nDlgCode = DLGC_WANTALLKEYS
+   oLbx:bKeyDown = { | nKey, nFlags | IIF( nKey == VK_RETURN, ;
+                                          aShowFonts := SelectFont( oSay1, oLbx ), ) }
+
+
+   @ 380,010 SAY GL("Doubleclick to edit the font properties") OF oDlg ;
+             SIZE 300, 160 pixel TRANSPARENT
+
+
+   @ 410,010 SAY GL("Preview")  OF oDlg FONT oFont PIXEL TRANSPARENT ;
+              SIZE 300,30
+
+  @ 430, 10 SAY oSay1 PROMPT "  " OF oDlg ;
+                 SIZE 300,100 pixel UPDATE FONT aFonts[ 1 ] TRANSPARENT box
+
+  @ 440 ,20 SAY oSay1 PROMPT  GL("Test 123") OF oDlg ;
+                 SIZE 280,80 pixel UPDATE FONT aFonts[ 1 ] TRANSPARENT CENTER
+
+   @ 540,10 GET oGet1 VAR cFontText OF oDlg UPDATE FONT aFonts[ 1 ] MEMO  ;
+            SIZE 300, 160 pixel
+
+
+RETURN nil
+
+//------------------------------------------------------------------------------
 
 function BarMenu()
    LOCAL oBar
