@@ -570,8 +570,30 @@ static function BrwSetUp( oBrw )
 
    AEval( oBrw:aCols, { | oCol | oCol:nWidth := 200 } )
 
+   /*
+   AEval( oBrw:aCols, { | oCol | oCol:bOnPreEdit := { | o , uVar | uVar := o:Value, uVar := RTrim( uVar) + space(20), ;  //  o:cEditPicture := Replicate("X", Len( uVar) ), ;
+                                                                   o:oEditGet:cText( uVar ) } } )
+   */
+
+   // Falta por calcular el nº de caracteres máximo que se puede editar según el ancho de columna y font actual
+   // Por defecto ponemos 20
+
+   AEval( oBrw:aCols, { | oCol | NoLimitGet( oCol, 20 ) } )
    ADD TO oBrw AT 1 DATA oBrw:BookMark HEADER " Nº "
 
 return nil
 
 //----------------------------------------------------------------------------//
+
+Function NoLimitGet( oCol, nC )
+Local uVar   := ""
+DEFAULT nC   := 20
+if Valtype( oCol:Value ) = "C"
+   oCol:bOnPreEdit := { | o | uVar := o:Value, uVar := RTrim( uVar) + space(20), ;  //  o:cEditPicture := Replicate("X", Len( uVar) ), ;
+                              o:oEditGet:cText( uVar ) } 
+
+endif
+Return nil
+
+//----------------------------------------------------------------------------//
+
