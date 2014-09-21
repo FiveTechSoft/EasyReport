@@ -585,6 +585,7 @@ return nil
 static function BrwSetUp( oBrw )
 Local aTextSize 
 Local n          := 0
+local x
 
    oBrw:aCols[ 1 ]:cHeader = "English"
    oBrw:aCols[ 2 ]:cHeader = "Spanish"

@@ -510,14 +510,12 @@ function BarMenu()
       ACTION SaveFile() ;
       WHEN !Empty( oER:cDefIni ) .and. !lVRDSave
 
-   //if nDeveloper = 1 .OR. oGenVar:lStandalone
-      DEFINE BUTTON aBtn[ 1 ] RESOURCE "B_PREVIEW", "B_PREVIEW", "B_PREVIEW1" ;
+  DEFINE BUTTON aBtn[ 1 ] RESOURCE "B_PREVIEW", "B_PREVIEW", "B_PREVIEW1" ;
          OF oBar ;
          PROMPT FWString( "Preview" ) ;
          TOOLTIP GL("Preview") ;
-         ACTION PrintReport( .T., !oGenVar:lStandalone ) ;
-         WHEN !Empty( oER:cDefIni )
-   //endif
+         ACTION Print_erReport(,,2, oEr:oMainWnd )    //   PrintReport( .T., !oGenVar:lStandalone ) ;
+     //    WHEN !Empty( oER:cDefIni )
 
    DEFINE BUTTON RESOURCE "print", "print", "print1" ;
       OF oBar ;

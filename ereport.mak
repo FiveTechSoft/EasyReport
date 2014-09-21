@@ -22,6 +22,7 @@ PRG =        \
 .\ertools.prg  \
 #.\fileedit.prg \
 .\vrd.prg      \
+.\ermain.prg \
 .\vrdbcode.prg \
 .\vrditem.prg   \
 .\strings.prg
