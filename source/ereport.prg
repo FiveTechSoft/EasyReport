@@ -343,13 +343,15 @@ Function Dlg_Fonts( i )
    */
 
    @ 25, 8 XBROWSE oLbx ARRAY aShowFonts  OF oER:oFldI:aDialogs[ i ] ;
-      SIZE oER:oFldI:aDialogs[ i ]:nWidth - 15, Int( oER:oFldI:aDialogs[ i ]:nHeight / 2 ) ;
+      SIZE oER:oFldI:aDialogs[ i ]:nWidth - 15, Int( oER:oFldI:aDialogs[ i ]:nHeight / 2 ) - 5 ;
       FONT oFont PIXEL NOBORDER ;
       ON CHANGE PreviewRefresh( oSay1, oLbx, oGet1 ) ;
       ON DBLCLICK ( aShowFonts := SelectFont( oSay1, oLbx, oGet1 ), oBtn:Enable() )
 
    oLbx:lRecordSelector     := .F.
    oLbx:lHeader             := .F.
+
+   oLbx:lHScroll            := .F.
 
    oLbx:CreateFromCode()
 
