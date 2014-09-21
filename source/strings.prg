@@ -516,13 +516,14 @@ function FWSaveStrings( cFileName  , aNewStrings )
 
    DEFAULT aNewStrings := aStrings
    DEFAULT cFileName := cFilePath( GetModuleFileName( GetInstance() ) ) + ;
-                        "fwstrings.ini"
+                                   "fwstrings.ini"
 
-   for n = 1 to Len( aNewStrings )
+  for n = 1 to Len( aNewStrings )
       cText += AllTrim( Str( n ) ) + "="
       AEval( aNewStrings[ n ], { | c | cText += If( c != nil, c, "" ) + "|" } )
       cText += CRLF
-   next
+  next
+  MemoWrit( cFileName , cText )
 
 return nil
 
@@ -564,7 +565,8 @@ DEFAULT cFileName := cFilePath( GetModuleFileName( GetInstance() ) ) + ;
 
    XBROWSER aNewStrings FASTEDIT AUTOSORT SETUP BrwSetup( oBrw )
 
-   FWSaveStrings( cFileName  , aNewStrings )
+   FWSaveStrings( cFileName, aNewStrings )
+   FWLoadStrings( cFileName, .f. )
 
 return nil
 
@@ -575,6 +577,7 @@ function FWEditStrings( aNewStrings )
   DEFAULT aNewStrings:= aSTrings
 
   XBROWSER aStrings FASTEDIT AUTOSORT SETUP BrwSetup( oBrw )
+
 
 return nil
 
@@ -608,7 +611,7 @@ return nil
 
 Function NoLimitGet( oCol, nC )
 Local uVar   := ""
-Local bPreEd 
+Local bPreEd
 DEFAULT nC   := 20
 if !empty( oCol:bOnPreEdit )
    bPreEd := oCol:bOnPreEdit
@@ -616,10 +619,10 @@ endif
 if Valtype( oCol:Value ) = "C"
    if empty( bPreEd )
    oCol:bOnPreEdit := { | o | uVar := o:Value, uVar := RTrim( uVar) + space( nC ), ;  //  o:cEditPicture := Replicate("X", Len( uVar) ), ;
-                              o:oEditGet:cText( uVar ) } 
+                              o:oEditGet:cText( uVar ) }
    else
    oCol:bOnPreEdit := { | o | uVar := o:Value, uVar := RTrim( uVar) + space( nC ), ;  //  o:cEditPicture := Replicate("X", Len( uVar) ), ;
-                              o:oEditGet:cText( uVar ), Eval( bPreEd ) } 
+                              o:oEditGet:cText( uVar ), Eval( bPreEd ) }
    endif
 endif
 Return nil
