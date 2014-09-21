@@ -587,11 +587,19 @@ return nil
 
 Function NoLimitGet( oCol, nC )
 Local uVar   := ""
+Local bPreEd 
 DEFAULT nC   := 20
+if !empty( oCol:bOnPreEdit )
+   bPreEd := oCol:bOnPreEdit
+endif
 if Valtype( oCol:Value ) = "C"
+   if empty( bPreEd )
    oCol:bOnPreEdit := { | o | uVar := o:Value, uVar := RTrim( uVar) + space( nC ), ;  //  o:cEditPicture := Replicate("X", Len( uVar) ), ;
                               o:oEditGet:cText( uVar ) } 
-
+   else
+   oCol:bOnPreEdit := { | o | uVar := o:Value, uVar := RTrim( uVar) + space( nC ), ;  //  o:cEditPicture := Replicate("X", Len( uVar) ), ;
+                              o:oEditGet:cText( uVar ), Eval( bPreEd ) } 
+   endif
 endif
 Return nil
 
