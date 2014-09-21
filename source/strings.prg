@@ -583,6 +583,8 @@ return nil
 //----------------------------------------------------------------------------//
 
 static function BrwSetUp( oBrw )
+Local aTextSize 
+Local n          := 0
 
    oBrw:aCols[ 1 ]:cHeader = "English"
    oBrw:aCols[ 2 ]:cHeader = "Spanish"
@@ -598,10 +600,13 @@ static function BrwSetUp( oBrw )
                                                                    o:oEditGet:cText( uVar ) } } )
    */
 
-   // Falta por calcular el nº de caracteres máximo que se puede editar según el ancho de columna y font actual
-   // Por defecto ponemos 20
+   aTextSize := Array( Len( oBrw:aCols ) )
+   For x = 1 to Len( aTextSize )
+       aTextSize[ x ] := Int( oBrw:aCols[ x ]:nWidth / oBrw:aCols[ x ]:DataFont:nWidth )
+   Next x
 
-   AEval( oBrw:aCols, { | oCol | NoLimitGet( oCol, 20, .T. ) } )
+   AEval( oBrw:aCols, { | oCol | n++, NoLimitGet( oCol, aTextSize[ n ], .T. ) } )
+
    ADD TO oBrw AT 1 DATA oBrw:BookMark HEADER " Nº "
 
 return nil
