@@ -320,6 +320,8 @@ Return bVal
 
 FUNCTION SaveDlgColors( aColors )
  LOCAL oIni, i
+ 
+ RndMsg( FwString("Saving Colors ") )
 
   INI oIni FILE oER:cDefIni
    for i := 1 to Len( aColors )
@@ -330,6 +332,10 @@ FUNCTION SaveDlgColors( aColors )
    ENDINI
 
    SetSave( .F. )
+
+   syswait(.3)
+   RndMsg()
+
 
 RETURN nil
 

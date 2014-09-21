@@ -1760,4 +1760,79 @@ function MultiUndoRedo( nTyp, nCount )
 //------------------------------------------------------------------------------
 
 
+Function RndMsg( cCaption, cBmp ,nExpRow  )
+   LOCAL nHeight := IF( Empty( cBmp ), 4, 11 )
+   LOCAL nTextSize,nDlgSize,oSay
+
+   STATIC lOn := .F.
+   STATIC oRndDlg,oFont14
+
+   DEFAULT nExpRow:= 50
+
+   if Empty( cCaption )
+      if !Empty( oRndDlg )
+          lOn := .T.
+      endif
+   endif
+
+   if lOn
+        oRndDlg:End()
+        oFont14:End()
+        lOn := .F.
+        sysrefresh()
+        Return NIL
+   endif
+
+   IF cCaption == NIL; cCaption := FWString("Please, wait...") ; ENDIF
+
+   cCaption := Alltrim(cCaption)
+
+   DEFINE FONT oFont14 NAME "Verdana" SIZE 0,-14 BOLD
+
+   SetDlgGradient()
+
+   DEFINE DIALOG oRndDlg ;
+      FROM 0,0 TO ( nHeight * 16 ) ,( Len( cCaption ) * 16 )  ;
+      STYLE nOR( WS_POPUP, DS_SYSMODAL ) ;
+      FONT oFont14  COLOR 0,CLR_BLACK PIXEL
+
+     oRndDlg:nOpacity:= 200
+
+      nTextSize := oRndDlg:GetWidth( cCaption, oFont14 )
+      nDlgSize := IF( ( nTextsize ) < 150 , 150, nTextSize )
+
+
+      @ ( oRndDlg:nHeight() /2 ) - IF( !Empty( cBmp ), 16, 20 ) , ( ( nDlgsize + nExpRow ) / 4 ) - ( nTextSize /4 ) ;
+            SAY osay PROMPT cCaption OF oRndDlg ;
+            FONT oFont14 COLOR CLR_WHITE PIXEL TRANSPARENT
+
+
+      IF cBmp != NIL
+         @  3 ,  ( nDlgsize + nExpRow -(84*1.5)  ) / 4  BITMAP RESNAME cBmp SIZE 84,84 OF oRndDlg NOBORDER PIXEL
+      endif
+
+      oRndDlg:cMsg := cCaption
+
+      ACTIVATE DIALOG oRndDlg CENTERED NOWAIT  ;
+          ON INIT ( lOn := .T., oRndDlg:nWidth( nDlgSize +  nExpRow  ), oRndDlg:center() ,RoundCorners( oRndDlg, 20 ) )
+
+      oRndDlg:show()
+      syswait(.1)
+      ofont14:END()
+      SetDlgGradient( oER:aClrDialogs )
+
+ Return nil
+
+//------------------------------------------------------------------------------
+
+ function RoundCorners( oDlg, nRounder )
+
+   local aRect, hRgn
+
+   aRect       := GetClientRect( oDlg:hWnd )
+   hRgn        := CreateRoundRectRgn( aRect, nRounder, nRounder )
+   SetWindowRgn( oDlg:hWnd, hRgn )
+   DeleteObject( hRgn )
+
+return nil
 
