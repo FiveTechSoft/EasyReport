@@ -246,16 +246,15 @@ Function Dlg_Colors( i )
 
    DEFINE FONT ofont NAME "Verdana" Size 0,-14
 
-   @ 02,030 SAY "Nº"     OF oER:oFldI:aDialogs[ i ] FONT oFont PIXEL TRANSPARENT
-   @ 02,090 SAY "Color"  OF oER:oFldI:aDialogs[ i ] FONT oFont PIXEL TRANSPARENT
+   @ 02,025 SAY "Color"     OF oER:oFldI:aDialogs[ i ] FONT oFont PIXEL TRANSPARENT
+   @ 02,095 SAY "Valor"  OF oER:oFldI:aDialogs[ i ] FONT oFont PIXEL TRANSPARENT
 
-   @ 02,180 SAY "Nº"     OF oER:oFldI:aDialogs[ i ] FONT oFont PIXEL TRANSPARENT
-   @ 02,240 SAY "Color"  OF oER:oFldI:aDialogs[ i ] FONT oFont PIXEL TRANSPARENT
-
+   @ 02,180 SAY "Color"     OF oER:oFldI:aDialogs[ i ] FONT oFont PIXEL TRANSPARENT
+   @ 02,250 SAY "Valor"  OF oER:oFldI:aDialogs[ i ] FONT oFont PIXEL TRANSPARENT
 
    For x = 1 to Len( aColors )
       if x > 15
-         nCol := 228
+         nCol := 234
          nFil := 25+(x-1-15)*30
       else
          nFil := 25+(x-1)*30
@@ -269,7 +268,7 @@ Function Dlg_Colors( i )
    nCol       := 78
    For x = 1 to Len( aColors )
      if x > 15
-        nCol := 228
+        nCol := 234
         nFil := 25+(x-1-15)*30
      else
         nFil := 25+(x-1)*30
@@ -298,6 +297,79 @@ RETURN nil
 
 //------------------------------------------------------------------------------
 
+Function Dlg_Fonts( i )
+   Local oBrush
+   Local oFont
+   Local n
+   Local nCol       := 78
+   Local nFil       := 0
+   Local aColors    := GetAllColors()
+   Local aColorSay  := Array( Len( aColors ) )
+   Local aColorGet  := Array( Len( aColors ) )
+   local oDlg
+   local oFld
+   local oLbx
+   local oSay1
+   local oGet1
+   local nDefClr
+   local oIni
+   local x
+   local aGetFonts  := GetFonts()
+   local aShowFonts := GetFontText( aGetFonts )
+   local cFont      := aGetFonts [ 1, 1 ]
+   local cFontText  := ""
+
+   DEFAULT i := 5
+
+   for n := 33 to 254
+      cFontText += CHR( n )
+   next
+
+   nDefClr := oER:oFldI:aDialogs[ i ]:nClrPane
+
+   DEFINE FONT oFont NAME "Verdana" Size 0,-14
+
+   @ 25, 8 LISTBOX oLbx VAR cFont ITEMS aShowFonts OF oER:oFldI:aDialogs[ i ] ;
+      SIZE oER:oFldI:aDialogs[ i ]:nWidth - 15, Int( oER:oFldI:aDialogs[ i ]:nHeight / 2 ) ; //+ 80 ;
+      FONT oFont PIXEL ;
+      ON CHANGE PreviewRefresh( oSay1, oLbx, oGet1 ) ;
+      ON DBLCLICK ( aShowFonts := SelectFont( oSay1, oLbx, oGet1 ) )
+
+   oLbx:nDlgCode = DLGC_WANTALLKEYS
+   oLbx:bKeyDown = { | nKey, nFlags | IIF( nKey == VK_RETURN, ;
+                                      aShowFonts := SelectFont( oSay1, oLbx ), ) }
+
+   @ 02, 008 SAY GL("Fonts") OF oER:oFldI:aDialogs[ i ] FONT oFont PIXEL TRANSPARENT
+
+   @ 06, 120 SAY "[ "+GL("Doubleclick to edit the font properties")+" ]" OF oER:oFldI:aDialogs[ i ] ;
+             SIZE 300, 16 PIXEL TRANSPARENT
+
+   @ Int( oER:oFldI:aDialogs[ i ]:nHeight / 2 ) + 28, 8 SAY GL("Preview")+": " ;
+         OF oER:oFldI:aDialogs[ i ] FONT oFont PIXEL TRANSPARENT
+
+   @ Int( oER:oFldI:aDialogs[ i ]:nHeight / 2 ) + 26, 70 SAY oSay1 PROMPT "    " ;
+         OF oER:oFldI:aDialogs[ i ] UPDATE FONT aFonts[ 1 ] ;
+         SIZE oER:oFldI:aDialogs[ i ]:nWidth - 76, 76 ;
+         PIXEL BOX TRANSPARENT
+
+   @ Int( oER:oFldI:aDialogs[ i ]:nHeight / 2 ) + 32, 72 SAY oSay1 PROMPT GL("Test 123") ;
+         OF oER:oFldI:aDialogs[ i ] UPDATE FONT aFonts[ 1 ] ;
+         SIZE oER:oFldI:aDialogs[ i ]:nWidth - 84, 68 ;
+         PIXEL TRANSPARENT CENTER
+
+   @ Int( oER:oFldI:aDialogs[ i ]:nHeight / 2 ) + 110, 8 GET oGet1 VAR cFontText OF oER:oFldI:aDialogs[ i ] ;
+            UPDATE FONT aFonts[ 1 ] MEMO ;
+            SIZE oER:oFldI:aDialogs[ i ]:nWidth - 15, 116 PIXEL
+
+   @ oER:oFldI:aDialogs[ i ]:nHeight - 40 , oER:oFldI:aDialogs[ i ]:nWidth - 100 BTNBMP PROMPT "Grabar" ;
+            OF oER:oFldI:aDialogs[ i ] SIZE 80, 20 PIXEL ;
+            ACTION MsgInfo("Grabacion de Fonts, no implementada")
+
+RETURN nil
+
+//------------------------------------------------------------------------------
+
+
 Function SetMi2Color( aColorSay, aColors,  nDefClr, nPos )
 Local bVal
 bVal  := { || Set2Color( aColorSay[ nPos ], aColors[ nPos ], nDefClr ) }
@@ -320,7 +392,7 @@ Return bVal
 
 FUNCTION SaveDlgColors( aColors )
  LOCAL oIni, i
-
+ 
  RndMsg( FwString("Saving Colors ") )
 
   INI oIni FILE oER:cDefIni
@@ -341,6 +413,7 @@ RETURN nil
 
 //------------------------------------------------------------------------------
 
+/*
 Function Dlg_Fonts( i )
    local aGetFonts  := GetFonts()
    local aShowFonts := GetFontText( aGetFonts )
@@ -386,6 +459,7 @@ Function Dlg_Fonts( i )
 
 
 RETURN nil
+*/
 
 //------------------------------------------------------------------------------
 
@@ -2253,7 +2327,7 @@ function GetFontText( aGetFonts, lShowEmpty )
 
    for i := 1 to 20
       if !Empty(aGetFonts[i, 1 ])
-         cText :=  AllTrim(STR( i, 3)) + ". " + ;
+         cText :=  Right("0"+AllTrim(STR( i, 3)),2) + ". " + ;
                    aGetFonts[i, 1 ] + ;
                    " " + AllTrim(STR( aGetFonts[i,3], 5 )) + ;
                    IIF( aGetFonts[i,4], " " + GL("bold"), "") + ;
@@ -2264,7 +2338,7 @@ function GetFontText( aGetFonts, lShowEmpty )
          AADD( aShowFonts, cText )
       else
          if lShowEmpty
-            AADD( aShowFonts, AllTrim(STR( i, 3)) + ". " )
+            AADD( aShowFonts, Right("0"+AllTrim(STR( i, 3)), 2) + ". " )
          endif
       endif
    next
@@ -2276,13 +2350,15 @@ return ( aShowFonts )
 function PreviewRefresh( oSay, oLbx, oGet )
 
    local nID := Val(SUBSTR( oLbx:GetItem(oLbx:GetPos()), 1, 2))
+   
+   if !empty( aFonts[nID] ) .and. Valtype( aFonts[nID] ) = "O"
+      oSay:Default()
+      oSay:SetFont( aFonts[nID] )
+      oSay:Refresh()
 
-   oSay:Default()
-   oSay:SetFont( aFonts[nID] )
-   oSay:Refresh()
-
-   oGet:SetFont( aFonts[nID] )
-   oGet:Refresh()
+      oGet:SetFont( aFonts[nID] )
+      oGet:Refresh()
+   endif
 
 return .T.
 
