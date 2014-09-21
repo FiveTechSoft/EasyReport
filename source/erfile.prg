@@ -125,6 +125,7 @@ function OpenFile( cFile, lChange, lAddDelNew )
       
       IF oER:lShowPanel
          dlg_colors(4)
+         Dlg_Fonts( 5 )
       endif
       
       SetSave( .T. )
