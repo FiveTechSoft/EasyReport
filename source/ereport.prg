@@ -189,8 +189,6 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
       //oER:oFldI:aDialogs[3]:SetControl( oEr:oTree )
       //oER:oFldI:Hide()
 
-     // dlg_colors(4)
-
    ENDIF
 
 
@@ -241,13 +239,8 @@ Function Dlg_Colors( i )
    Local aColorSay  := Array( Len( aColors ) )
    Local aColorGet  := Array( Len( aColors ) )
 
-   //oER:oFldI:aDialogs[ i ]:Refresh()
-   // if !empty( oER:cDefIni )
-   // endif
-   //oER:oFldI:aDialogs[i]:SetFocus()
-
-   DEFINE BRUSH oBrush COLOR oEr:nClrPaneTree
-   oER:oFldI:aDialogs[i]:SetBrush( oBrush )
+   //DEFINE BRUSH oBrush COLOR oEr:nClrPaneTree
+   //oER:oFldI:aDialogs[i]:SetBrush( oBrush )
 
    nDefClr := oER:oFldI:aDialogs[ i ]:nClrPane
 

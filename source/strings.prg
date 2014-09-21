@@ -602,27 +602,33 @@ static function BrwSetUp( oBrw )
    // Falta por calcular el nº de caracteres máximo que se puede editar según el ancho de columna y font actual
    // Por defecto ponemos 20
 
-   AEval( oBrw:aCols, { | oCol | NoLimitGet( oCol, 20 ) } )
+   AEval( oBrw:aCols, { | oCol | NoLimitGet( oCol, 20, .T. ) } )
    ADD TO oBrw AT 1 DATA oBrw:BookMark HEADER " Nº "
 
 return nil
 
 //----------------------------------------------------------------------------//
 
-Function NoLimitGet( oCol, nC )
+Function NoLimitGet( oCol, nC, lAfter )
 Local uVar   := ""
 Local bPreEd
-DEFAULT nC   := 20
+DEFAULT nC      := 20
+DEFAULT lAfter  := .T.
 if !empty( oCol:bOnPreEdit )
    bPreEd := oCol:bOnPreEdit
 endif
 if Valtype( oCol:Value ) = "C"
    if empty( bPreEd )
-   oCol:bOnPreEdit := { | o | uVar := o:Value, uVar := RTrim( uVar) + space( nC ), ;  //  o:cEditPicture := Replicate("X", Len( uVar) ), ;
+      oCol:bOnPreEdit := { | o | uVar := o:Value, uVar := RTrim( uVar) + space( nC ), ;  //  o:cEditPicture := Replicate("X", Len( uVar) ), ;
                               o:oEditGet:cText( uVar ) }
    else
-   oCol:bOnPreEdit := { | o | uVar := o:Value, uVar := RTrim( uVar) + space( nC ), ;  //  o:cEditPicture := Replicate("X", Len( uVar) ), ;
+     if lAfter
+        oCol:bOnPreEdit := { | o | uVar := o:Value, uVar := RTrim( uVar) + space( nC ), ;  //  o:cEditPicture := Replicate("X", Len( uVar) ), ;
                               o:oEditGet:cText( uVar ), Eval( bPreEd ) }
+     else
+        oCol:bOnPreEdit := { | o | Eval( bPreEd ), uVar := o:Value, uVar := RTrim( uVar) + space( nC ), ;  //  o:cEditPicture := Replicate("X", Len( uVar) ), ;
+                              o:oEditGet:cText( uVar ) }
+     endif
    endif
 endif
 Return nil
