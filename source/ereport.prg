@@ -24,7 +24,7 @@ MEMVAR lProfi, nUndoCount, nRedoCount, nDlgTextCol, nDlgBackCol
 MEMVAR lPersonal, oGenVar, oCurDlg
 MEMVAR oER
 
-static oBtnAreas, oMenuAreas, lScrollVert
+Static oBtnAreas, oMenuAreas, lScrollVert   //, oMenuPreview
 
 //----------------------------------------------------------------------------//
 
@@ -514,12 +514,16 @@ function BarMenu()
       ACTION SaveFile() ;
       WHEN !Empty( oER:cDefIni ) .and. !lVRDSave
 
+  //MENU oMenuPreview POPUP
+  //ENDMENU
+
   DEFINE BUTTON aBtn[ 1 ] RESOURCE "B_PREVIEW", "B_PREVIEW", "B_PREVIEW1" ;
          OF oBar ;
          PROMPT FWString( "Preview" ) ;
          TOOLTIP GL("Preview") ;
-         ACTION Print_erReport(,,2, oEr:oMainWnd )    //   PrintReport( .T., !oGenVar:lStandalone ) ;
-     //    WHEN !Empty( oER:cDefIni )
+         ACTION Print_erReport(,,2, oEr:oMainWnd ) //;   //   PrintReport( .T., !oGenVar:lStandalone ) ;
+         //WHEN !Empty( oER:cDefIni ) ;
+         //MENU oMenuPreview
 
    DEFINE BUTTON RESOURCE "print", "print", "print1" ;
       OF oBar ;
