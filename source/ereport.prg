@@ -318,7 +318,8 @@ Function Dlg_Fonts( i )
    local aShowFonts := GetFontText( aGetFonts )
    local cFont      := aGetFonts [ 1, 1 ]
    local cFontText  := ""
-   local oBtn
+   local oBtn1
+   Local oBtn2
 
    DEFAULT i := 5
 
@@ -346,7 +347,7 @@ Function Dlg_Fonts( i )
       SIZE oER:oFldI:aDialogs[ i ]:nWidth - 15, Int( oER:oFldI:aDialogs[ i ]:nHeight / 2 ) - 5 ;
       FONT oFont PIXEL NOBORDER ;
       ON CHANGE PreviewRefresh( oSay1, oLbx, oGet1 ) ;
-      ON DBLCLICK ( aShowFonts := SelectFont( oSay1, oLbx, oGet1 ), oBtn:Enable() )
+      ON DBLCLICK ( aShowFonts := SelectFont( oSay1, oLbx, oGet1 ) )
 
    oLbx:lRecordSelector     := .F.
    oLbx:lHeader             := .F.
@@ -377,12 +378,15 @@ Function Dlg_Fonts( i )
             UPDATE FONT aFonts[ 1 ] MEMO ;
             SIZE oER:oFldI:aDialogs[ i ]:nWidth - 15, 116 PIXEL
 
-   @ oER:oFldI:aDialogs[ i ]:nHeight - 40 , oER:oFldI:aDialogs[ i ]:nWidth - 100 BTNBMP oBtn ;
-            PROMPT "Grabar" ;
-            OF oER:oFldI:aDialogs[ i ] SIZE 80, 20 PIXEL ;
-            ACTION MsgInfo("Grabacion de Fonts, no implementada")
+   @ oER:oFldI:aDialogs[ i ]:nHeight - 40 , oER:oFldI:aDialogs[ i ]:nWidth - 110 BTNBMP oBtn1 ;
+            PROMPT GL("Borrar Font") ;
+            OF oER:oFldI:aDialogs[ i ] SIZE 100, 20 PIXEL ;
+            ACTION ( DelFont( oLbx, .T. ) )
 
-   oBtn:Disable()
+   @ oER:oFldI:aDialogs[ i ]:nHeight - 40, 8  BTNBMP oBtn2 ;
+            PROMPT GL("Borrar Todos Fonts") ;
+            OF oER:oFldI:aDialogs[ i ] SIZE 100, 20 PIXEL ;
+            ACTION ( DelFont( oLbx, .T. ) )
 
 RETURN nil
 
@@ -2115,6 +2119,54 @@ function DefineFonts()
 return .T.
 
 //----------------------------------------------------------------------------//
+
+Function DelFont( oLbx, lAll )
+Local nID
+Local aGetFonts
+Local aShowFonts
+Local x
+Local nFonts
+
+   DEFAULT lAll   := .F.
+
+   if !lAll
+      if oLbx:ClassName() = "LISTBOX"
+         nID := Val(SUBSTR( oLbx:GetItem(oLbx:GetPos()), 1, 2))
+      else
+          if oLbx:ClassName() = "TXBROWSE"
+             nID  := oLbx:nArrayAt
+          endif
+      endif
+
+      RndMsg( FwString("Deleting Font ") )
+
+      DelIniEntry(  "Fonts", AllTrim(STR(nID,3)) ,oER:cDefIni  )
+      aFonts[nID]:= nil
+   else
+      RndMsg( FwString("Deleting Font ") )
+      For x = 1 to Len( aFonts )
+          nID  := x
+          DelIniEntry(  "Fonts", AllTrim(STR(nID,3)) ,oER:cDefIni  )
+          aFonts[nID]:= nil
+      Next x
+   endif
+   aGetFonts  := GetFonts()
+   aShowFonts := GetFontText( aGetFonts )
+   if oLbx:ClassName() = "LISTBOX"
+      oLbx:SetItems( aShowFonts )
+   else
+      if oLbx:ClassName() = "TXBROWSE"
+         oLbx:SetArray( aShowFonts )
+      endif
+   endif
+   oLbx:Refresh()
+
+   SysWait(.3)
+   RndMsg()
+
+Return nil
+
+//----------------------------------------------------------------------------//
 /*
 function GetColor( nNr )
 
@@ -2370,7 +2422,7 @@ function PreviewRefresh( oSay, oLbx, oGet )
 
    if oLbx:ClassName() = "LISTBOX"
 
-   nID := Val(SUBSTR( oLbx:GetItem(oLbx:GetPos()), 1, 2))
+      nID := Val(SUBSTR( oLbx:GetItem(oLbx:GetPos()), 1, 2))
 
    else
        if oLbx:ClassName() = "TXBROWSE"
@@ -2393,23 +2445,53 @@ return .T.
 
 function SelectFont( oSay, oLbx, oGet )
 
-   local oDlg, cFontDef, oFontGet, oIni, oNewFont, aShowFonts, nPos, aFontNames
-   local i, y, cItemDef, aIniEntries, nEntry
+   local oDlg
+   local cFontDef
+   local oFontGet
+   local oIni
+   local oNewFont
+   local aShowFonts
+   local nPos
+   local aFontNames
+   local i
+   local y
+   local cItemDef
+   local aIniEntries
+   local nEntry
    local lSave       := .F.
    local aCbx        := ARRAY(4)
-   local nID         := Val(SUBSTR( oLbx:GetItem(oLbx:GetPos()), 1, 2))
+   local nID
    local aGetFonts   := GetFonts()
-   local cFontGet    := aGetFonts[nID, 1 ]
-   local nWidth      := aGetFonts[nID, 2 ]
-   local nHeight     := aGetFonts[nID,3] * -1
-   local lBold       := aGetFonts[nID,4]
-   local lItalic     := aGetFonts[nID,5]
-   local lUnderline  := aGetFonts[nID,6]
-   local lStrikeOut  := aGetFonts[nID,7]
-   local nEscapement := aGetFonts[nID,8]
-   local nOrient     := aGetFonts[nID,10]
-   local nCharSet    := aGetFonts[nID,9]
+   local cFontGet    
+   local nWidth      
+   local nHeight     
+   local lBold       
+   local lItalic     
+   local lUnderline  
+   local lStrikeOut  
+   local nEscapement 
+   local nOrient     
+   local nCharSet    
    local hDC         := oEr:oMainWnd:GetDC()
+
+   if oLbx:ClassName() = "LISTBOX"
+      nID := Val(SUBSTR( oLbx:GetItem(oLbx:GetPos()), 1, 2))
+   else
+       if oLbx:ClassName() = "TXBROWSE"
+          nID  := oLbx:nArrayAt
+       endif
+   endif
+
+   cFontGet    := aGetFonts[nID, 1 ]
+   nWidth      := aGetFonts[nID, 2 ]
+   nHeight     := aGetFonts[nID, 3 ] * -1
+   lBold       := aGetFonts[nID, 4 ]
+   lItalic     := aGetFonts[nID, 5 ]
+   lUnderline  := aGetFonts[nID, 6 ]
+   lStrikeOut  := aGetFonts[nID, 7 ]
+   nEscapement := aGetFonts[nID, 8 ]
+   nOrient     := aGetFonts[nID, 10 ]
+   nCharSet    := aGetFonts[nID, 9 ]
 
    if Empty( aFontNames := GetFontNames( hDC ) )
       MsgStop( GL("Error getting font names."), GL("Stop!") )
@@ -2473,10 +2555,21 @@ function SelectFont( oSay, oLbx, oGet )
                                   nEscapement, nOrient,, lItalic, lUnderline, lStrikeOut, ;
                                   nCharSet )
 
-      nPos := oLbx:GetPos()
-      aShowFonts := GetFontText( GetFonts() )
-      oLbx:SetItems( aShowFonts )
-      oLbx:Select( nPos )
+      if oLbx:ClassName() = "LISTBOX"
+         nPos := oLbx:GetPos()
+         aShowFonts := GetFontText( GetFonts() )
+         oLbx:SetItems( aShowFonts )
+         oLbx:Select( nPos )
+      else
+         if oLbx:ClassName() = "TXBROWSE"
+            nPos  := oLbx:nArrayAt
+            aShowFonts := GetFontText( GetFonts() )
+            oLbx:SetArray( aShowFonts )
+            oLbx:Select( nPos )
+         endif
+      endif
+
+
       PreviewRefresh( oSay, oLbx, oGet )
 
       //Alle Elemente aktualisieren
