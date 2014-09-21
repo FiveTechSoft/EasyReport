@@ -464,11 +464,14 @@ return nLanguage
 
 //----------------------------------------------------------------------------//
 
-function FWLoadStrings( cFileName )
+function FWLoadStrings( cFileName, lFindDuplicates )
 
    local cLine, n := 1
    LOCAL aNames:= {}
+   LOCAL cName
+ //  LOCAL i := 0
 
+   DEFAULT lfindDuplicates := .t.
    DEFAULT cFileName := cFilePath( GetModuleFileName( GetInstance() ) ) + ;
                         "fwstrings.ini"
 
@@ -485,7 +488,25 @@ function FWLoadStrings( cFileName )
 
    end
 
+   IF lFindDuplicates
+
+      FOR n = 1 TO Len(aStrings)
+         cName:= aStrings[n,1 ]
+         IF HHasKey( hIniStrings, cName )
+
+            HB_HDEL( hIniStrings, cName )
+          //  i++
+         endif
+
+      NEXT
+    //  msginfo("borradas "+AllTrim(Str(i))+" claves")
+      FWSaveHStrings( cFileName  , hIniStrings  )
+
+   ENDIF
+
+
 RETURN nil
+
 
 //----------------------------------------------------------------------------//
 
