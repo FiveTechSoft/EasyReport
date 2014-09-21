@@ -425,6 +425,115 @@ return ( NIL )
 
 //-----------------------------------------------------------------------------//
 
+function Er_Databases( lTake )
+
+   Local oDlg       := oER:oFldD:aDialogs[ 1 ]
+   Local aDBGet1    := Array( 12 )
+   Local aDBGet2    := Array( 12 )
+   Local oFont
+   Local nDefClr
+   Local x
+   Local nCol
+   Local nFil
+   Local aBmps1     := Array( 12 )
+   Local aBmps2     := Array( 12 )
+
+   nDefClr := oDlg:nClrPane
+
+   DEFINE FONT oFont NAME "Verdana" Size 0,-12
+
+   //DEFINE DIALOG oDlg NAME "DATABASES" TITLE GL("Databases")
+
+   //@ 2, 008 SAY GL("Nr.")      OF oDlg FONT oFont PIXEL TRANSPARENT
+   @ 4, 084 SAY GL("Database") OF oDlg FONT oFont PIXEL TRANSPARENT
+   @ 4, 228 SAY GL("Alias")    OF oDlg FONT oFont PIXEL TRANSPARENT
+
+   For x = 1 to Len( aDBGet1 )
+       nCol := 8
+       nFil := 25+(x-1)*30
+       aDBGet1[ x ] := TGet():New( nFil, nCol, MiSetGetDb( oGenVar:aDBFile, x, 1 ), oDlg, 200, 20, , ,;
+                                  ,,,,, .T.,,,,,,,,,,,,,,,,,,, )
+       //aDBGet1[ x ]:bValid := SetMi2Color( aColorSay, aColors,  nDefClr, x )
+
+       nCol := 212
+       aDBGet2[ x ] := TGet():New( nFil, nCol, MiSetGetDb( oGenVar:aDBFile, x, 2 ), oDlg, 60, 20, , ,;
+                                  ,,,,, .T.,,,,,,,,,,,,,,,,,,, )
+
+       nCol := 278
+       aBmps1[ x ] := TBtnBmp():New( nFil, nCol, 16, 16,;
+                                    "B_OPEN_16",,,,;
+                                    ,oDlg,,,,,;
+                                    ,,,, .F.,,;
+                                    ,,,.T.,GL("Open"),;
+                                    ,,.T.,)
+
+       nCol := 300
+       aBmps2[ x ] := TBtnBmp():New( nFil, nCol, 16, 16,;
+                                    "B_DEL",,,,;
+                                    ,oDlg,,,,,;
+                                    ,,,, .F.,,;
+                                    ,,,.T.,GL("Delete"),;
+                                    ,,.T.,)
+       
+
+   Next x
+
+   @ nFil + 30 , oDlg:nWidth - 110 BTNBMP PROMPT "Grabar" ;
+            OF oDlg SIZE 100, 20 PIXEL ;
+            ACTION ( SaveDatabases(), OpenDatabases() )
+
+
+   /*
+   METHOD New( nTop, nLeft, nWidth, nHeight,;
+               cResName1, cResName2, cBmpFile1, cBmpFile2,;
+               bAction, oWnd, cMsg, bWhen, lAdjust, lUpdate,;
+               cPrompt, oFont, cResName3, cBmpFile3, lBorder, cLayout, ;
+               l2007, cResName4, cBmpFile4, lTransparent, cToolTip,;
+               lRound, bGradColors, lPixel, lDesign ) CONSTRUCTOR
+   */
+   /*
+   For x = 1 to Len( aColors )
+
+     aBmps1[ x ] := TBtnBmp():New( nFil, nCol - 65, 60, 20,;
+                                    ,,,,;
+                                    ,oDlg,,,,,;
+                                    ,,,, .F.,,;
+                                    ,,,,,;
+                                    ,,.T.,)
+
+     aBmps1[ x ]:bAction := SetMi3Color( aColorSay, aColors,  nDefClr, aColorGet, x )
+
+
+   Next x
+   */
+
+   /*
+   REDEFINE GET aDBGet1[ 1] VAR oGenVar:aDBFile[ 1,1] ID 201 OF oDlg
+
+   REDEFINE GET aDBGet2[ 1] VAR oGenVar:aDBFile[ 1,2] ID 221 OF oDlg
+
+   REDEFINE BTNBMP ID 301 OF oDlg RESOURCE "B_OPEN_16" TRANSPARENT NOBORDER TOOLTIP GL("Open") ACTION GetDBase( oGenVar:aDBFile[ 1,1], aDBGet1[ 1], aDBGet2[ 1] )
+
+   REDEFINE BTNBMP ID 321 OF oDlg RESOURCE "B_DEL" TRANSPARENT NOBORDER TOOLTIP GL("Delete") ACTION DelDBase( aDBGet1[ 1], aDBGet2[ 1] )
+
+   REDEFINE BUTTON PROMPT GL("&OK") ID 101 OF oDlg //ACTION oDlg:End()
+   */
+
+
+   //ACTIVATE DIALOG oDlg CENTER
+
+   //SaveDatabases()
+   //OpenDatabases()
+
+return ( NIL )
+
+//-----------------------------------------------------------------------------//
+
+Function MiSetGetDb( aBuffer , n , m )
+Return bSETGET( aBuffer[ n ][ m ] )
+
+//-----------------------------------------------------------------------------//
+
 function GetDBase( cOldFile, oGet1, oGet2 )
 
    local cFile := GetFile( GL("Databases") + " (DBF,TXT,XML)" + "|*.DBF;*.TXT;*.XML|" + ;

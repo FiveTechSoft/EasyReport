@@ -1365,7 +1365,7 @@ function BuildMenu()
    endif
    if Val( oEr:GetDefIni( "General", "EditDatabases", "1" ) ) > 0
       MENUITEM GL("&Databases") ;
-         ACTION Databases() ;
+         ACTION Databases() ;   //Er_Databases()
          WHEN !Empty( oER:cDefIni )
    endif
    MENUITEM GL("&Report Settings") ;
