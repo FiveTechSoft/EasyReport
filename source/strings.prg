@@ -563,7 +563,7 @@ DEFAULT cFileName := cFilePath( GetModuleFileName( GetInstance() ) ) + ;
       AAdd( aNewStrings, aNames )
    NEXT
 
-   XBROWSER aNewStrings FASTEDIT AUTOSORT SETUP BrwSetup( oBrw )
+   XBROWSER aNewStrings FASTEDIT AUTOSORT SETUP BrwSetup( oBrw ) // RECID
 
    FWSaveStrings( cFileName, aNewStrings )
    FWLoadStrings( cFileName, .f. )
@@ -576,8 +576,7 @@ return nil
 function FWEditStrings( aNewStrings )
   DEFAULT aNewStrings:= aSTrings
 
-  XBROWSER aStrings FASTEDIT AUTOSORT SETUP BrwSetup( oBrw )
-
+  XBROWSER aStrings FASTEDIT AUTOSORT SETUP BrwSetup( oBrw ) // RECID
 
 return nil
 
