@@ -132,11 +132,11 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
               HINDS CONTROLS oPanelD ; //LEFT MARGIN 10 ; // RIGHT MARGIN 10 ;
               SIZE 0.5, GetSysMetrics( 1 ) - 138 PIXEL ;
               OF oEr:oMainWnd:oWndClient ;
-              COLOR CLR_WHITE 
+              COLOR CLR_WHITE
               //UPDATE
 
       if ValidVersionFwh( 10, 8 )
-   
+
        @ 0.5, 1 FOLDEREX oER:oFldI ;
        PROMPT GL("&Report Settings"), GL("&Grid Setup"), GL("&Items"), GL("Colors"), GL("Fonts") ;
        OF oEr:oMainWnd ;
@@ -157,7 +157,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
        PIXEL ;
        ADJUST ;
        SEPARATOR 0
-       
+
       //oER:oFldI:lMultiline := .T.      // No hace falta
 
       else
@@ -168,10 +168,10 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
        SIZE 326, GetSysMetrics( 1 ) - 138 ;
        OPTION 3 ;
        PIXEL
-       
+
       endif
       //oER:oFldI:SetFont(  )
-     
+
       oER:oFldI:SetColor(  , oEr:nClrPaneTree )
       oEr:oMainWnd:oLeft  :=  oER:oFldI
 
@@ -188,7 +188,8 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
 
       //oER:oFldI:aDialogs[3]:SetControl( oEr:oTree )
       //oER:oFldI:Hide()
-      Dlg_Colors( 4 )
+
+     // dlg_colors(4)
 
    ENDIF
 
@@ -258,44 +259,47 @@ Function Dlg_Colors( i )
    @ 02,180 SAY "Nº"     OF oER:oFldI:aDialogs[ i ] FONT oFont PIXEL TRANSPARENT
    @ 02,240 SAY "Color"  OF oER:oFldI:aDialogs[ i ] FONT oFont PIXEL TRANSPARENT
 
+
    For x = 1 to Len( aColors )
-   if x > 15
-      nCol := 228
-      nFil := 25+(x-1-15)*30
-   else
-      nFil := 25+(x-1)*30
-   endif
-   aColorGet[ x ] := TGet():New( nFil, nCol, MiSetGet( aColors, x ), oER:oFldI:aDialogs[ i ], 70, 20, , ,;
+      if x > 15
+         nCol := 228
+         nFil := 25+(x-1-15)*30
+      else
+         nFil := 25+(x-1)*30
+      endif
+      aColorGet[ x ] := TGet():New( nFil, nCol, MiSetGet( aColors, x ), oER:oFldI:aDialogs[ i ], 70, 20, , ,;
                                  ,,,,, .T.,,,,,,,,,,,,,,,,,,, )
-   aColorGet[ x ]:bValid := SetMi2Color( aColorSay, aColors,  nDefClr, x )
+      aColorGet[ x ]:bValid := SetMi2Color( aColorSay, aColors,  nDefClr, x )
 
    Next x
 
    nCol       := 78
    For x = 1 to Len( aColors )
-   if x > 15
-      nCol := 228
-      nFil := 25+(x-1-15)*30
-   else
-      nFil := 25+(x-1)*30
-   endif
+     if x > 15
+        nCol := 228
+        nFil := 25+(x-1-15)*30
+     else
+        nFil := 25+(x-1)*30
+     endif
 
-   aColorSay[ x ] := TBtnBmp():New( nFil, nCol - 65, 60, 20,;
+     aColorSay[ x ] := TBtnBmp():New( nFil, nCol - 65, 60, 20,;
                                     ,,,,;
                                     ,oER:oFldI:aDialogs[ i ],,,,,;
                                     ,,,, .F.,,;
                                     ,,,,,;
                                     ,,.T.,)
-   aColorSay[ x ]:bAction := SetMi3Color( aColorSay, aColors,  nDefClr, aColorGet, x )   
+
+     aColorSay[ x ]:bAction := SetMi3Color( aColorSay, aColors,  nDefClr, aColorGet, x )
+
+
    Next x
-   
+
    AEval( aColorSay, { | o, n | o:SetColor( 0,;
-    If( Empty( aColors[ n ] ), CLR_WHITE, Val( aColors[ n ] ) ) ) } )
-   
+          If( Empty( aColors[ n ] ), CLR_WHITE, Val( aColors[ n ] ) ) ) } )
+
    @ nFil + 40 , oER:oFldI:aDialogs[ i ]:nWidth - 100 BTNBMP PROMPT "Grabar" ;
             OF oER:oFldI:aDialogs[ i ] SIZE 80, 20 pixel ;
-            ACTION msginfo("Grabado no implementado ")
-
+            ACTION SaveDlgColors( aColors )
 
 RETURN nil
 
@@ -314,13 +318,29 @@ Return bSETGET( aBuffer[ n ] )
 
 //------------------------------------------------------------------------------
 
-Function SetMi3Color( aColorSay, aColors,  nDefClr, aColorGet, nPos )   
+Function SetMi3Color( aColorSay, aColors,  nDefClr, aColorGet, nPos )
 Local bVal
 bVal  := { || aColors[ nPos ] := Set3Color( aColorSay[ nPos ], aColors[ nPos ], nDefClr ), aColorGet[ nPos ]:Refresh() }
 Return bVal
 
 //------------------------------------------------------------------------------
 
+FUNCTION SaveDlgColors( aColors )
+ LOCAL oIni, i
+
+  INI oIni FILE oER:cDefIni
+   for i := 1 to Len( aColors )
+      if !Empty( aColors[ i ] )
+         SET SECTION "Colors" ENTRY AllTrim(STR(i,5)) to aColors[ i ] OF oIni
+      endif
+   next
+   ENDINI
+
+   SetSave( .F. )
+
+RETURN nil
+
+//------------------------------------------------------------------------------
 
 
 function BarMenu()
@@ -586,7 +606,7 @@ function ER_MouseWheelTree( nKey, nDelta, nXPos, nYPos )
             endif
          endif
       endif
-      
+
       if !empty( nElem )
          oEr:oTree:Select( oER:oTree:aItems[ nElem ][ 3 ] )
          //oEr:oTree:Refresh()
