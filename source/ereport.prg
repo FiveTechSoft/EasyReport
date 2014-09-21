@@ -318,6 +318,7 @@ Function Dlg_Fonts( i )
    local aShowFonts := GetFontText( aGetFonts )
    local cFont      := aGetFonts [ 1, 1 ]
    local cFontText  := ""
+   local oBtn
 
    DEFAULT i := 5
 
@@ -329,15 +330,28 @@ Function Dlg_Fonts( i )
 
    DEFINE FONT oFont NAME "Verdana" Size 0,-14
 
+   /*
    @ 25, 8 LISTBOX oLbx VAR cFont ITEMS aShowFonts OF oER:oFldI:aDialogs[ i ] ;
       SIZE oER:oFldI:aDialogs[ i ]:nWidth - 15, Int( oER:oFldI:aDialogs[ i ]:nHeight / 2 ) ; //+ 80 ;
       FONT oFont PIXEL ;
       ON CHANGE PreviewRefresh( oSay1, oLbx, oGet1 ) ;
-      ON DBLCLICK ( aShowFonts := SelectFont( oSay1, oLbx, oGet1 ) )
+      ON DBLCLICK ( aShowFonts := SelectFont( oSay1, oLbx, oGet1 ), oBtn:Enable() )
 
    oLbx:nDlgCode = DLGC_WANTALLKEYS
    oLbx:bKeyDown = { | nKey, nFlags | IIF( nKey == VK_RETURN, ;
                                       aShowFonts := SelectFont( oSay1, oLbx ), ) }
+   */
+
+   @ 25, 8 XBROWSE oLbx ARRAY aShowFonts  OF oER:oFldI:aDialogs[ i ] ;
+      SIZE oER:oFldI:aDialogs[ i ]:nWidth - 15, Int( oER:oFldI:aDialogs[ i ]:nHeight / 2 ) ;
+      FONT oFont PIXEL NOBORDER ;
+      ON CHANGE PreviewRefresh( oSay1, oLbx, oGet1 ) ;
+      ON DBLCLICK ( aShowFonts := SelectFont( oSay1, oLbx, oGet1 ), oBtn:Enable() )
+
+   oLbx:lRecordSelector     := .F.
+   oLbx:lHeader             := .F.
+
+   oLbx:CreateFromCode()
 
    @ 02, 008 SAY GL("Fonts") OF oER:oFldI:aDialogs[ i ] FONT oFont PIXEL TRANSPARENT
 
@@ -361,9 +375,12 @@ Function Dlg_Fonts( i )
             UPDATE FONT aFonts[ 1 ] MEMO ;
             SIZE oER:oFldI:aDialogs[ i ]:nWidth - 15, 116 PIXEL
 
-   @ oER:oFldI:aDialogs[ i ]:nHeight - 40 , oER:oFldI:aDialogs[ i ]:nWidth - 100 BTNBMP PROMPT "Grabar" ;
+   @ oER:oFldI:aDialogs[ i ]:nHeight - 40 , oER:oFldI:aDialogs[ i ]:nWidth - 100 BTNBMP oBtn ;
+            PROMPT "Grabar" ;
             OF oER:oFldI:aDialogs[ i ] SIZE 80, 20 PIXEL ;
             ACTION MsgInfo("Grabacion de Fonts, no implementada")
+
+   oBtn:Disable()
 
 RETURN nil
 
@@ -2349,7 +2366,17 @@ return ( aShowFonts )
 
 function PreviewRefresh( oSay, oLbx, oGet )
 
-   local nID := Val(SUBSTR( oLbx:GetItem(oLbx:GetPos()), 1, 2))
+   local nID
+
+   if oLbx:ClassName() = "LISTBOX"
+
+   nID := Val(SUBSTR( oLbx:GetItem(oLbx:GetPos()), 1, 2))
+
+   else
+       if oLbx:ClassName() = "TXBROWSE"
+          nID  := oLbx:nArrayAt
+       endif
+   endif
    
    if !empty( aFonts[nID] ) .and. Valtype( aFonts[nID] ) = "O"
       oSay:Default()
