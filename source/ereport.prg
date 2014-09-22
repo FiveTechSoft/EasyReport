@@ -522,7 +522,8 @@ function BarMenu()
          OF oBar ;
          PROMPT FWString( "Preview" ) ;
          TOOLTIP GL("Preview") ;
-         ACTION  Print_erReport(,,2, oEr:oMainWnd ) ;   //   PrintReport( .T., !oGenVar:lStandalone ) ;
+         ACTION ( if( oER:oPanelD:IsVisible(), oER:oPanelD:Hide(), ), ;
+                  if( !Print_erReport(,,2, oEr:oMainWnd ), oER:oPanelD:Show(), ) );   //   PrintReport( .T., !oGenVar:lStandalone ) ;
          WHEN Empty( oER:cDefIni ) //;
          //MENU oMenuPreview
 
@@ -530,7 +531,7 @@ function BarMenu()
       OF oBar ;
       PROMPT FWString( "Print" ) ;
       TOOLTIP GL( "Print" ) ;
-      ACTION ( oER:oPanelD:Hide(), PrintReport() ) ;
+      ACTION ( if( oER:oPanelD:IsVisible(), oER:oPanelD:Hide(), ), PrintReport() ) ;
       WHEN !Empty( oER:cDefIni )
 
    DEFINE BUTTON aBtn[2] RESOURCE "B_UNDO", "B_UNDO", "B_UNDO1" ;
@@ -618,7 +619,7 @@ function BarMenu()
    // if Val( GetPvProfString( "General", "ShowExitButton", "0", oER:cGeneralIni ) ) = 1
 
       DEFINE BUTTON RESOURCE "HIDE0", "HIDE1" ;
-         PROMPT FWString( "Show/Hide" ) ;
+         PROMPT FWString( "Databases" ) ;
          OF oBar GROUP ;
          ACTION ( if( oER:oPanelD:IsVisible(), oER:oPanelD:Hide(), oER:oPanelD:Show() ) )
 

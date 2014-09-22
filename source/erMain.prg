@@ -6,6 +6,8 @@
 
 FUNCTION Print_erReport( cRptFile, cPrinter, nMode, oDlg )
 LOCAL oReport
+Local lRet     := .T.
+
 
 local aMode:= { "PRINT", "PREVIEW", "PRINTDIALOG" }
 local cMode
@@ -23,10 +25,17 @@ local cMode
 
    endif
 
-   oReport := ERStart():New(  cRptFile, cPrinter , oDlg )
-   oReport:cMode := cMode
+   if Empty(cRptFile)    // añadido comprobar que se escoge un fichero valido 
+      //Return .f.
+      lRet  := .F.
+   endif
 
-RETURN (.T.)
+   if lRet
+      oReport := ERStart():New(  cRptFile, cPrinter , oDlg )
+      oReport:cMode := cMode
+   endif
+
+RETURN lRet
 
 
 *-- CLASS DEFINITION ---------------------------------------------------------
