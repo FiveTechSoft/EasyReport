@@ -425,9 +425,9 @@ return ( NIL )
 
 //-----------------------------------------------------------------------------//
 
-function Er_Databases( lTake )
+function Er_Databases( lTake, nD )
 
-   Local oDlg       := oER:oFldD:aDialogs[ 2 ]
+   Local oDlg
    Local aDBGet1    := Array( 12 )
    Local aDBGet2    := Array( 12 )
    Local oFont
@@ -438,11 +438,12 @@ function Er_Databases( lTake )
    Local aBmps1     := Array( 12 )
    Local aBmps2     := Array( 12 )
 
+   DEFAULT nD := 1
+   oDlg       := oER:oFldD:aDialogs[ nD ]
+
    nDefClr := oDlg:nClrPane
 
    DEFINE FONT oFont NAME "Verdana" Size 0,-12
-
-   //DEFINE DIALOG oDlg NAME "DATABASES" TITLE GL("Databases")
 
    //@ 2, 008 SAY GL("Nr.")      OF oDlg FONT oFont PIXEL TRANSPARENT
    @ 4, 084 SAY GL("Database") OF oDlg FONT oFont PIXEL TRANSPARENT
