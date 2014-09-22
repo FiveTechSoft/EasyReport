@@ -37,7 +37,6 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
    local nAltoSpl := 680
    local oSplit
    local oPanelI
-   local oPanelD
    local aColorSay[30]
    local aColors
 
@@ -121,15 +120,15 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
 
    IF oER:lShowPanel
 
-      oPanelD := TPanel():New( 0.5, Int( ScreenWidth() - 2*328 ) + 2, ;
+      oER:oPanelD := TPanel():New( 0.5, Int( ScreenWidth() - 2*328 ) + 2, ;
                               GetSysMetrics( 1 ) - 140 , Int( ScreenWidth() - 327 ), ;
                               oER:oMainWnd:oWndClient )
-      oPanelD:SetColor( , oER:nClrPaneTree )  //CLR_WHITE )
-      SetParent( oPanelD:hWnd, oER:oMainWnd:oWndClient:hWnd )
+      oER:oPanelD:SetColor( , oER:nClrPaneTree )  //CLR_WHITE )
+      SetParent( oER:oPanelD:hWnd, oER:oMainWnd:oWndClient:hWnd )
 
       @ 0.5, Int( ScreenWidth() - ( 2*328 ) ) SPLITTER oSplit ;
               VERTICAL ;  // PREVIOUS CONTROLS oPnel ;
-              HINDS CONTROLS oPanelD ; //LEFT MARGIN 10 ; // RIGHT MARGIN 10 ;
+              HINDS CONTROLS oER:oPanelD ; //LEFT MARGIN 10 ; // RIGHT MARGIN 10 ;
               SIZE 0.5, GetSysMetrics( 1 ) - 138 PIXEL ;
               OF oEr:oMainWnd:oWndClient ;
               COLOR CLR_WHITE
@@ -148,8 +147,8 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
        SEPARATOR 0
 
        @ 0.5, 1 FOLDEREX oER:oFldD ;
-       PROMPT GL("&Databases"), GL("&Fields"), GL("Fil&ters"), GL("&Expressions") ;
-       OF oPanelD ;
+       PROMPT GL("&Expressions"), GL("&Databases"), GL("&Fields"), GL("Fil&ters") ;
+       OF oER:oPanelD ;
        SIZE 326, GetSysMetrics( 1 ) - 138 ;
        OPTION 1 ;
        TAB HEIGHT 34 ;
@@ -3808,6 +3807,7 @@ CLASS TEasyReport
    DATA lReexec
    DATA nTotAreas
    DATA lFillWindow
+   DATA oPanelD
 
    METHOD New() CONSTRUCTOR
    METHOD GetGeneralIni( cSection , cKey, cDefault ) INLINE GetPvProfString( cSection, cKey, cDefault, ::cGeneralIni )

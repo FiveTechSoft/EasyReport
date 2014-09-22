@@ -427,7 +427,7 @@ return ( NIL )
 
 function Er_Databases( lTake )
 
-   Local oDlg       := oER:oFldD:aDialogs[ 1 ]
+   Local oDlg       := oER:oFldD:aDialogs[ 2 ]
    Local aDBGet1    := Array( 12 )
    Local aDBGet2    := Array( 12 )
    Local oFont
