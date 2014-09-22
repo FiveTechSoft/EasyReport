@@ -566,6 +566,13 @@ TYP_TEXT           BITMAP         "./bitmaps/bitmap134.bmp"
 LANGUAGE 7, SUBLANG_DEFAULT
 UNCHECKED          BITMAP         "./bitmaps/bitmap135.bmp"
 
+LANGUAGE 7, SUBLANG_DEFAULT
+HIDE0              BITMAP         "./bitmaps/hide.bmp"
+
+LANGUAGE 7, SUBLANG_DEFAULT
+HIDE1              BITMAP         "./bitmaps/hide1.bmp"
+
+
 //
 // Dialog resources
 //

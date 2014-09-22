@@ -124,8 +124,9 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
                               GetSysMetrics( 1 ) - 140 , Int( ScreenWidth() - 327 ), ;
                               oER:oMainWnd:oWndClient )
       oER:oPanelD:SetColor( , oER:nClrPaneTree )  //CLR_WHITE )
-      SetParent( oER:oPanelD:hWnd, oER:oMainWnd:oWndClient:hWnd )
+      //SetParent( oER:oPanelD:hWnd, oER:oMainWnd:oWndClient:hWnd )
 
+      /*
       @ 0.5, Int( ScreenWidth() - ( 2*328 ) ) SPLITTER oSplit ;
               VERTICAL ;  // PREVIOUS CONTROLS oPnel ;
               HINDS CONTROLS oER:oPanelD ; //LEFT MARGIN 10 ; // RIGHT MARGIN 10 ;
@@ -133,6 +134,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
               OF oEr:oMainWnd:oWndClient ;
               COLOR CLR_WHITE
               //UPDATE
+      */
 
       if ValidVersionFwh( 10, 8 )
 
@@ -188,6 +190,8 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
       //oER:oFldI:aDialogs[3]:SetControl( oEr:oTree )
       //oER:oFldI:Hide()
 
+       //oEr:oMainWnd:oLeft  := oER:oFldI
+       //oEr:oMainWnd:oRight := oER:oPanelD
    ENDIF
 
 
@@ -520,15 +524,15 @@ function BarMenu()
          OF oBar ;
          PROMPT FWString( "Preview" ) ;
          TOOLTIP GL("Preview") ;
-         ACTION Print_erReport(,,2, oEr:oMainWnd ) //;   //   PrintReport( .T., !oGenVar:lStandalone ) ;
-         //WHEN !Empty( oER:cDefIni ) ;
+         ACTION  Print_erReport(,,2, oEr:oMainWnd ) ;   //   PrintReport( .T., !oGenVar:lStandalone ) ;
+         WHEN Empty( oER:cDefIni ) //;
          //MENU oMenuPreview
 
    DEFINE BUTTON RESOURCE "print", "print", "print1" ;
       OF oBar ;
       PROMPT FWString( "Print" ) ;
       TOOLTIP GL( "Print" ) ;
-      ACTION PrintReport() ;
+      ACTION ( oER:oPanelD:Hide(), PrintReport() ) ;
       WHEN !Empty( oER:cDefIni )
 
    DEFINE BUTTON aBtn[2] RESOURCE "B_UNDO", "B_UNDO", "B_UNDO1" ;
@@ -614,6 +618,12 @@ function BarMenu()
    endif
 
    // if Val( GetPvProfString( "General", "ShowExitButton", "0", oER:cGeneralIni ) ) = 1
+
+      DEFINE BUTTON RESOURCE "HIDE0", "HIDE1" ;
+         PROMPT FWString( "Show/Hide" ) ;
+         OF oBar GROUP ;
+         ACTION ( if( oER:oPanelD:IsVisible(), oER:oPanelD:Hide(), oER:oPanelD:Show() ) )
+
 
       DEFINE BUTTON RESOURCE "B_EXIT" ;
          PROMPT FWString( "Exit" ) ;
