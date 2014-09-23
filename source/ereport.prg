@@ -120,10 +120,10 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
 
    IF oER:lShowPanel
 
-      oER:oPanelD := TPanel():New( 0.5, Int( ScreenWidth() - 2*328 ) + 2, ;
-                              GetSysMetrics( 1 ) - 140 , Int( ScreenWidth() - 327 ), ;
-                              oER:oMainWnd:oWndClient )
-      oER:oPanelD:SetColor( , oER:nClrPaneTree )  //CLR_WHITE )
+    //  oER:oPanelD := TPanel():New( 0.5, Int( ScreenWidth() - 2*328 ) + 2, ;
+    //                          GetSysMetrics( 1 ) - 140 , Int( ScreenWidth() - 327 ), ;
+    //                          oER:oMainWnd:oWndClient )
+    //  oER:oPanelD:SetColor( , oER:nClrPaneTree )  //CLR_WHITE )
       //SetParent( oER:oPanelD:hWnd, oER:oMainWnd:oWndClient:hWnd )
 
       /*
@@ -148,18 +148,17 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
        PIXEL ;
        SEPARATOR 0
 
+
+
        @ 0.5, 1 FOLDEREX oER:oFldD ;
-       PROMPT GL("&Databases"), GL("&Expressions"), GL("&Fields"), GL("Fil&ters") ;
-       OF oER:oPanelD ;
+        PROMPT GL("&Databases"), GL("&Expressions"), GL("&Fields"), GL("Fil&ters") ;
+       OF oEr:oMainWnd ;
        SIZE 326, GetSysMetrics( 1 ) - 138 ;
        OPTION 1 ;
        TAB HEIGHT 34 ;
-       BITMAPS { "B_EDIT2", "B_ITEMLIST16", "B_AREA", "B_AREA" } ;
+        BITMAPS { "B_EDIT2", "B_ITEMLIST16", "B_AREA", "B_AREA" } ;
        PIXEL ;
-       ADJUST ;
        SEPARATOR 0
-
-      //oER:oFldI:lMultiline := .T.      // No hace falta
 
       else
 
@@ -175,6 +174,10 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
 
       oER:oFldI:SetColor(  , oEr:nClrPaneTree )
       oEr:oMainWnd:oLeft  :=  oER:oFldI
+
+        oER:oFldI:SetColor(  , oEr:nClrPaneTree )
+      oEr:oMainWnd:oRight  :=  oER:oFldD
+
 
       oER:oTree := TTreeView():New( 0, 2, oER:oFldI:aDialogs[3] , 0, , .T., .F., 340 , oER:oFldI:aDialogs[3]:nHeight ,"",, )
       // oEr:oMainWnd:oLeft  :=   oER:oTree
@@ -225,6 +228,26 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
    endif
 
 return nil
+//------------------------------------------------------------------------------
+
+FUNCTION swichFldD(oWnd,oFld, lSetVisible  )
+
+  LOCAL nWidth :=  GetSysMetrics( 1 ) - 1
+  DEFAULT lSetVisible := !ofld:isVisible()
+
+
+  IF lSetVisible
+     ofld:show()
+     oWnd:oRight:=ofld
+  ELSE
+     ofld:hide()
+     oWnd:oRight:= NIL
+  ENDIF
+
+  oWnd:resize()
+
+RETURN nil
+
 
 //----------------------------------------------------------------------------//
 
@@ -416,7 +439,7 @@ Return bVal
 
 FUNCTION SaveDlgColors( aColors )
  LOCAL oIni, i
- 
+
  RndMsg( FwString("Saving Colors ") )
 
   INI oIni FILE oER:cDefIni
@@ -522,8 +545,8 @@ function BarMenu()
          OF oBar ;
          PROMPT FWString( "Preview" ) ;
          TOOLTIP GL("Preview") ;
-         ACTION ( if( oER:oPanelD:IsVisible(), oER:oPanelD:Hide(), ), ;
-                  if( !Print_erReport(,,2, oEr:oMainWnd ), oER:oPanelD:Show(), ) );   //   PrintReport( .T., !oGenVar:lStandalone ) ;
+         ACTION (  swichFldD( oEr:oMainWnd, oER:oFldD ), ;
+                  if( !Print_erReport(,,2, oEr:oMainWnd ), swichFldD( oEr:oMainWnd, oER:oFldD ,.t.), ) );   //   PrintReport( .T., !oGenVar:lStandalone ) ;
          WHEN Empty( oER:cDefIni ) //;
          //MENU oMenuPreview
 
@@ -531,7 +554,7 @@ function BarMenu()
       OF oBar ;
       PROMPT FWString( "Print" ) ;
       TOOLTIP GL( "Print" ) ;
-      ACTION ( if( oER:oPanelD:IsVisible(), oER:oPanelD:Hide(), ), PrintReport() ) ;
+      ACTION ( swichFldD( oEr:oMainWnd, oER:oFldD ), PrintReport() ) ;
       WHEN !Empty( oER:cDefIni )
 
    DEFINE BUTTON aBtn[2] RESOURCE "B_UNDO", "B_UNDO", "B_UNDO1" ;
@@ -621,7 +644,7 @@ function BarMenu()
       DEFINE BUTTON RESOURCE "HIDE0", "HIDE1" ;
          PROMPT FWString( "Databases" ) ;
          OF oBar GROUP ;
-         ACTION ( if( oER:oPanelD:IsVisible(), oER:oPanelD:Hide(), oER:oPanelD:Show() ) )
+         ACTION (  swichFldD( oEr:oMainWnd, oER:oFldD ) )
 
 
       DEFINE BUTTON RESOURCE "B_EXIT" ;
@@ -2441,7 +2464,7 @@ function PreviewRefresh( oSay, oLbx, oGet )
           nID  := oLbx:nArrayAt
        endif
    endif
-   
+
    if !empty( aFonts[nID] ) .and. Valtype( aFonts[nID] ) = "O"
       oSay:Default()
       oSay:SetFont( aFonts[nID] )
@@ -2474,16 +2497,16 @@ function SelectFont( oSay, oLbx, oGet )
    local aCbx        := ARRAY(4)
    local nID
    local aGetFonts   := GetFonts()
-   local cFontGet    
-   local nWidth      
-   local nHeight     
-   local lBold       
-   local lItalic     
-   local lUnderline  
-   local lStrikeOut  
-   local nEscapement 
-   local nOrient     
-   local nCharSet    
+   local cFontGet
+   local nWidth
+   local nHeight
+   local lBold
+   local lItalic
+   local lUnderline
+   local lStrikeOut
+   local nEscapement
+   local nOrient
+   local nCharSet
    local hDC         := oEr:oMainWnd:GetDC()
 
    if oLbx:ClassName() = "LISTBOX"
