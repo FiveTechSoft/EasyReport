@@ -642,8 +642,7 @@ function BarMenu()
    // if Val( GetPvProfString( "General", "ShowExitButton", "0", oER:cGeneralIni ) ) = 1
 
       DEFINE BUTTON RESOURCE "HIDE0", "HIDE1" ;
-         PROMPT FWString( "Databases" ) ;
-         OF oBar GROUP ;
+                 OF oBar GROUP ;
          ACTION (  swichFldD( oEr:oMainWnd, oER:oFldD ) )
 
 
