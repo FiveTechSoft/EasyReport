@@ -122,13 +122,13 @@ function OpenFile( cFile, lChange, lAddDelNew )
       oER:SetScrollBar()
 
       oEr:oMainWnd:SetMenu( BuildMenu() )
-      
+
       IF oER:lShowPanel
          Dlg_Colors( 4 )
          Dlg_Fonts( 5 )
          Er_Databases()
       endif
-      
+
       SetSave( .T. )
 
       if VAL( GetPvProfString( "General", "MruList"  , "4", oER:cGeneralIni ) ) > 0
@@ -487,6 +487,20 @@ function NewReport()
    local nOrient      := 1
    local oCombo
 
+   LOCAL aVrdtmp := {;
+                   { "NAME"      , "C",   120,    0 },;
+                   { "TEXTNR"    , "N",     4,    0 },;
+                   { "IMAGENR"   , "N",     4,    0 },;
+                   { "GRAPHNR"   , "N",     4,    0 },;
+                   { "BCODENR"   , "N",     4,    0 },;
+                   { "TOP1"      , "N",     6,    2 },;
+                   { "TOP2"      , "N",     6,    2 },;
+                   { "LTOP"      , "L",     1,    0 },;
+                   { "WIDTH"     , "N",     6,    2 },;
+                   { "HEIGHT"    , "N",     6,    2 },;
+                   { "CONDITION" , "N",     1,    0 } }
+
+
    //Defaults
    AFill( aCheck, .T. )
 
@@ -559,6 +573,10 @@ function NewReport()
 
    i := 2
    SELECT 0
+
+   DBCreate( ".\vrdTmp.dbf",aVrdtmp )
+
+   /*
    CREATE VRDTMPST
 
    APPEND BLANK
@@ -585,6 +603,7 @@ function NewReport()
    REPLACE FIELD_NAME WITH "CONDITION" , FIELD_TYPE WITH "N", FIELD_LEN WITH 1  , FIELD_DEC WITH 0
 
    CREATE VRDTMP FROM VRDTMPST
+   */
 
    USE VRDTMP.DBF ALIAS "AREAS"
    APPEND BLANK
@@ -674,7 +693,8 @@ function NewReport()
    AREAS->(DBCLOSEAREA())
    SELECT( nAltSel )
 
-   ERASE VRDTMPST.DBF
+//   ERASE VRDTMPST.DBF
+
    ERASE VRDTMP.DBF
 
    if lCreate
