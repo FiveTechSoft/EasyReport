@@ -454,7 +454,6 @@ function Er_Databases( lTake, nD )
        nFil := 25+(x-1)*30
        aDBGet1[ x ] := TGet():New( nFil, nCol, MiSetGetDb( oGenVar:aDBFile, x, 1 ), oDlg, 200, 20, , ,;
                                   ,,,,, .T.,,,,,,,,,,,,,,,,,,, )
-       //aDBGet1[ x ]:bValid := SetMi2Color( aColorSay, aColors,  nDefClr, x )
 
        nCol := 212
        aDBGet2[ x ] := TGet():New( nFil, nCol, MiSetGetDb( oGenVar:aDBFile, x, 2 ), oDlg, 60, 20, , ,;
@@ -468,6 +467,8 @@ function Er_Databases( lTake, nD )
                                     ,,,.T.,GL("Open"),;
                                     ,,.T.,)
 
+       aBmps1[ x ]:bAction := SetMi2File( aDBGet1, aDBGet2, x )
+
        nCol := 300
        aBmps2[ x ] := TBtnBmp():New( nFil, nCol, 16, 16,;
                                     "B_DEL",,,,;
@@ -475,7 +476,8 @@ function Er_Databases( lTake, nD )
                                     ,,,, .F.,,;
                                     ,,,.T.,GL("Delete"),;
                                     ,,.T.,)
-       
+
+       aBmps2[ x ]:bAction := SetMi3File( aDBGet1, aDBGet2, x )
 
    Next x
 
@@ -483,50 +485,23 @@ function Er_Databases( lTake, nD )
             OF oDlg SIZE 100, 20 PIXEL ;
             ACTION ( SaveDatabases(), OpenDatabases() )
 
-
-   /*
-   METHOD New( nTop, nLeft, nWidth, nHeight,;
-               cResName1, cResName2, cBmpFile1, cBmpFile2,;
-               bAction, oWnd, cMsg, bWhen, lAdjust, lUpdate,;
-               cPrompt, oFont, cResName3, cBmpFile3, lBorder, cLayout, ;
-               l2007, cResName4, cBmpFile4, lTransparent, cToolTip,;
-               lRound, bGradColors, lPixel, lDesign ) CONSTRUCTOR
-   */
-   /*
-   For x = 1 to Len( aColors )
-
-     aBmps1[ x ] := TBtnBmp():New( nFil, nCol - 65, 60, 20,;
-                                    ,,,,;
-                                    ,oDlg,,,,,;
-                                    ,,,, .F.,,;
-                                    ,,,,,;
-                                    ,,.T.,)
-
-     aBmps1[ x ]:bAction := SetMi3Color( aColorSay, aColors,  nDefClr, aColorGet, x )
-
-
-   Next x
-   */
-
-   /*
-   REDEFINE GET aDBGet1[ 1] VAR oGenVar:aDBFile[ 1,1] ID 201 OF oDlg
-
-   REDEFINE GET aDBGet2[ 1] VAR oGenVar:aDBFile[ 1,2] ID 221 OF oDlg
-
-   REDEFINE BTNBMP ID 301 OF oDlg RESOURCE "B_OPEN_16" TRANSPARENT NOBORDER TOOLTIP GL("Open") ACTION GetDBase( oGenVar:aDBFile[ 1,1], aDBGet1[ 1], aDBGet2[ 1] )
-
-   REDEFINE BTNBMP ID 321 OF oDlg RESOURCE "B_DEL" TRANSPARENT NOBORDER TOOLTIP GL("Delete") ACTION DelDBase( aDBGet1[ 1], aDBGet2[ 1] )
-
-   REDEFINE BUTTON PROMPT GL("&OK") ID 101 OF oDlg //ACTION oDlg:End()
-   */
-
-
    //ACTIVATE DIALOG oDlg CENTER
+
 
    //SaveDatabases()
    //OpenDatabases()
 
 return ( NIL )
+
+//-----------------------------------------------------------------------------//
+
+Function SetMi2File( aDBGet1, aDBGet2, nPos )
+Return { || GetDBase( oGenVar:aDBFile[ nPos, 1 ], aDBGet1[ nPos ], aDBGet2[ nPos ] ) }
+
+//-----------------------------------------------------------------------------//
+
+Function SetMi3File( aDBGet1, aDBGet2, nPos )
+Return { || DelDBase( aDBGet1[ nPos ], aDBGet2[ nPos ] ) }
 
 //-----------------------------------------------------------------------------//
 
