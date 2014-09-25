@@ -473,7 +473,6 @@ function NewReport()
 
    local i, y, oDlg, oFld, oFont, oBrw, cTmpFile, oRad1, oRad2
    local aGet[3], aBtn[2], aGet2[1], aCbx1[1], aCbx2[1], aCbx3[8], aCheck[9]
-   local nAltSel      := SELECT()
    local lCreate      := .F.
    local aMeasure     := { "mm", "inch", "pixel" }
    local cMeasure     := aMeasure[1]
@@ -491,24 +490,10 @@ function NewReport()
    LOCAL aDataItem := {}
 
    LOCAL nAt
+   LOCAL nArea:= 1
 
    local hVar:= {=>}
- /*
-   LOCAL aVrdtmp := {;
-                   { "NAME"      , "C",   120,    0 },;
-                   { "TEXTNR"    , "N",     4,    0 },;
-                   { "IMAGENR"   , "N",     4,    0 },;
-                   { "GRAPHNR"   , "N",     4,    0 },;
-                   { "BCODENR"   , "N",     4,    0 },;
-                   { "TOP1"      , "N",     6,    2 },;
-                   { "TOP2"      , "N",     6,    2 },;
-                   { "LTOP"      , "L",     1,    0 },;
-                   { "WIDTH"     , "N",     6,    2 },;
-                   { "HEIGHT"    , "N",     6,    2 },;
-                   { "CONDITION" , "N",     1,    0 } }
-     */
 
-   //Defaults
    AFill( aCheck, .T. )
 
    DEFINE FONT oFont NAME "Arial" SIZE 0, -12
@@ -581,100 +566,46 @@ function NewReport()
 
    i := 2
 
-  /*
-  SELECT 0
-
-  DBCreate( ".\vrdTmp.dbf",aVrdtmp )
-
-
-   CREATE VRDTMPST
-
-   APPEND BLANK
-   REPLACE FIELD_NAME WITH "NAME"   , FIELD_TYPE WITH "C", FIELD_LEN WITH 120, FIELD_DEC WITH 0
-   APPEND BLANK
-   REPLACE FIELD_NAME WITH "TEXTNR" , FIELD_TYPE WITH "N", FIELD_LEN WITH 4  , FIELD_DEC WITH 0
-   APPEND BLANK
-   REPLACE FIELD_NAME WITH "IMAGENR", FIELD_TYPE WITH "N", FIELD_LEN WITH 4  , FIELD_DEC WITH 0
-   APPEND BLANK
-   REPLACE FIELD_NAME WITH "GRAPHNR", FIELD_TYPE WITH "N", FIELD_LEN WITH 4  , FIELD_DEC WITH 0
-   APPEND BLANK
-   REPLACE FIELD_NAME WITH "BCODENR", FIELD_TYPE WITH "N", FIELD_LEN WITH 4  , FIELD_DEC WITH 0
-   APPEND BLANK
-   REPLACE FIELD_NAME WITH "TOP1"   , FIELD_TYPE WITH "N", FIELD_LEN WITH 6  , FIELD_DEC WITH 2
-   APPEND BLANK
-   REPLACE FIELD_NAME WITH "TOP2"   , FIELD_TYPE WITH "N", FIELD_LEN WITH 6  , FIELD_DEC WITH 2
-   APPEND BLANK
-   REPLACE FIELD_NAME WITH "LTOP"   , FIELD_TYPE WITH "L", FIELD_LEN WITH 0  , FIELD_DEC WITH 0
-   APPEND BLANK
-   REPLACE FIELD_NAME WITH "WIDTH"  , FIELD_TYPE WITH "N", FIELD_LEN WITH 6  , FIELD_DEC WITH 2
-   APPEND BLANK
-   REPLACE FIELD_NAME WITH "HEIGHT" , FIELD_TYPE WITH "N", FIELD_LEN WITH 6  , FIELD_DEC WITH 2
-   APPEND BLANK
-   REPLACE FIELD_NAME WITH "CONDITION" , FIELD_TYPE WITH "N", FIELD_LEN WITH 1  , FIELD_DEC WITH 0
-
-   CREATE VRDTMP FROM VRDTMPST
-   */
-
- //  USE VRDTMP.DBF ALIAS "AREAS"
- //  APPEND BLANK
-
- //  REPLACE AREAS->NAME WITH "1. " + GL("Area")
-
-   addNewDatas( @aDataAreas, @aNames )
+   addNewDatas( @aDataAreas, @aNames, nArea++ )
 
    nAt := 1
    LoadNewDatas( aDataAreas[nAt], HVar )
 
-    /*
-    REDEFINE LISTBOX oBrw ;
-      FIELDS AREAS->NAME ;
-      HEADERS " " + GL("Name") ;
-      ID 301 OF oFld:aDialogs[i] FONT oFont ;
-      ON CHANGE ( oDlg:Update(), aGet2[1]:SetFocus() )
-       */
-
    REDEFINE xBrowse oBrw  ;
       Array aNames ;
-      HEADERS  " " + GL("Name") ;
       ID 301 OF oFld:aDialogs[i] ;
       ON CHANGE (RestoreNewDatas( aDataAreas[ nAt ] , @Hvar ),;
                   nAt:= oBrw:nArrayAt ,;
                   LoadNewDatas(  aDataAreas[ nAt ], @HVar ),;
-                   oDlg:Update(), aGet2[1]:SetFocus() )
+                  oDlg:Update(), aGet2[1]:SetFocus() )
+
+
+   obrw:nMarqueeStyle := MARQSTYLE_HIGHLROW
+   obrw:bClrSel := { || { CLR_WHITE ,{ { 0.60, nRGB( 108, 163, 217 ), nRGB( 64, 127, 194 ) }, ;
+                         { 0.40, nRGB( 64, 127, 194 ), nRGB( 40, 106, 180 ) } } } }
 
 
    REDEFINE BUTTON PROMPT GL("&New") ID 101 OF oFld:aDialogs[i] UPDATE ;
-      ACTION ( RestoreNewDatas( aDataAreas[ nAt ] , @Hvar ), addNewDatas( @aDataAreas, @aNames )  , ;
-               nAt := Len(aDataAreas) , LoadNewDatas( aDataAreas[nAt], HVar ), ;
-               oBrw:Refresh(), oBrw:GoBottom(), oDlg:Update() )
+      ACTION ( RestoreNewDatas( aDataAreas[ nAt ] , @Hvar ), ;
+               addNewDatas( aDataAreas, oBrw:aArrayData , nArea++ ) ,;
+               nAt:= RenewNewDatas(aDataAreas,oBrw,hVar) ,;
+               oBrw:GoBottom(), oDlg:Update() )
 
    REDEFINE BUTTON PROMPT GL("&Delete") ID 102 OF oFld:aDialogs[i] UPDATE ;
-      ACTION ( DelNewDatas( aDataAreas, oBrw )   ,;
-                  oBrw:Refresh(),;
-                  nAt:= oBrw:nArrayAt  , ;
-                  LoadNewDatas(  aDataAreas[ nAt ], @HVar ),;
-                  oDlg:Update() ) ;
+      ACTION ( nAt:= DelNewDatas( aDataAreas, oBrw, hVar ) , oDlg:Update() ) ;
       WHEN Len(aDataAreas) > 1
 
    REDEFINE BUTTON PROMPT GL("Move &up") ID 103 OF oFld:aDialogs[i] UPDATE ;
-      ACTION (  RestoreNewDatas( aDataAreas[ nAt ] , @Hvar ),;
-                MoveItem ( .t., oBrw, @aDataAreas ),;
-                oBrw:Refresh(),;
-                nAt:= obrw:nArrayAt,;
-                LoadNewDatas( aDataAreas[nAt], HVar ), ;
-                obrw:godown() ) ;
+      ACTION (  RestoreNewDatas( aDataAreas[ nAt ] , Hvar ),;
+                nAt:= MoveItem ( .t., oBrw, aDataAreas , hVar ),;
+                obrw:goup() ) ;
       WHEN nAt != 1
 
-
    REDEFINE BUTTON PROMPT GL("Move &down") ID 104 OF oFld:aDialogs[i] UPDATE ;
-      ACTION ( RestoreNewDatas( aDataAreas[ nAt ] , @Hvar ),;
-               MoveItem ( .f., oBrw, aDataAreas ),;
-               oBrw:Refresh(),;
-               nAt:=oBrW:nArrayAt ,;
-               LoadNewDatas( aDataAreas[nAt], HVar ), ;
+      ACTION ( RestoreNewDatas( aDataAreas[ nAt ] , Hvar ),;
+               nAt:= MoveItem ( .f., oBrw, aDataAreas, hVar ),;
                obrw:godown() ) ;
       WHEN nAt != Len(  aDataAreas )
-
 
    REDEFINE SAY PROMPT " " + GL("Name")            ID 191 OF oFld:aDialogs[i] COLOR nDlgTextCol, nDlgBackCol FONT oFont
    REDEFINE SAY PROMPT " " + GL("Number of Items") ID 192 OF oFld:aDialogs[i] COLOR nDlgTextCol, nDlgBackCol FONT oFont
@@ -695,7 +626,7 @@ function NewReport()
    REDEFINE SAY PROMPT GL("Barcode") + ":" ID 180 OF oFld:aDialogs[i]
 
    REDEFINE GET aGet2[1] VAR hVar["NAME"] ID 201 OF oFld:aDialogs[i] UPDATE ;
-      VALID ( oBrw:Refresh(), !EMPTY( hVar["NAME"] ) )
+      VALID ( oBrw:aArrayData[oBrw:nArrayAt]:= hVar["NAME"], oBrw:Refresh(), !EMPTY( hVar["NAME"] ) )
 
    REDEFINE GET oget VAR hVar["TEXTNR"]  ID 202 OF oFld:aDialogs[i] UPDATE SPINNER MIN 0 MAX 99
    REDEFINE GET oget VAR hVar["IMAGENR"] ID 203 OF oFld:aDialogs[i] UPDATE SPINNER MIN 0 MAX 99
@@ -729,7 +660,10 @@ function NewReport()
                 oRad2:aItems[2]:SetText( GL("never") ), ;
                 oRad2:aItems[3]:SetText( GL("page = 1") ), ;
                 oRad2:aItems[4]:SetText( GL("page > 1") ), ;
-                aCbx2[1]:SetText( GL("Top depends on") ) )
+                aCbx2[1]:SetText( GL("Top depends on") ) ,;
+                oBrw:acols[1]:nwidth:= 180 , ;
+                oBrw:acols[1]:cHeader:= GL("Name") ;
+                 )
 
    oFont:End()
 
@@ -739,14 +673,6 @@ function NewReport()
          {|| CreateNewReport( aCheck, cGeneralName, cSourceCode, cReportName, lMakeSource, ;
                               nTop, nLeft, nPageBreak, nOrient, aMeasure, cMeasure,aDataAreas  ) } )
    endif
-
-  // AREAS->(DBCLOSEAREA())
-
-   SELECT( nAltSel )
-
-//   ERASE VRDTMPST.DBF
-
-//   ERASE VRDTMP.DBF
 
    if lCreate
       OpenFile( cGeneralName,, .T. )
@@ -812,47 +738,13 @@ function CreateNewReport( aCheck, cGeneralName, cSourceCode, cReportName, lMakeS
       SET SECTION "Colors"  ENTRY "1" TO "0" OF oIni
       SET SECTION "Colors"  ENTRY "2" TO "16777215" OF oIni
 
-     /*
-     AREAS->(DBGOTOP())
-
-     DO WHILE !AREAS->(EOF())
-        aNewErArea:= { ;
-                  AREAS->NAME ,;
-                  AREAS->TEXTNR ,;
-                  AREAS->IMAGENR ,;
-                  AREAS->GRAPHNR ,;
-                  AREAS->BCODENR ,;
-                  AREAS->TOP1 ,;
-                  AREAS->TOP2 ,;
-                  AREAS->LTOP ,;
-                  AREAS->WIDTH ,;
-                  AREAS->HEIGHT ,;
-                  AREAS->CONDITION ;
-                  }
-
-        AAdd( aDataAreas, aNewErArea )
-        AREAS->(DBSKIP())
-     ENDDO
-     */
-
       FOR i=1 TO Len( aDataAreas )
 
            SET SECTION "Areas" ENTRY ALLTRIM(STR( i, 5)) ;
-            TO cFileNoPath( SUBSTR( cLongDefIni, 1, LEN( cLongDefIni ) - 2 ) + ;
+           TO cFileNoPath( SUBSTR( cLongDefIni, 1, LEN( cLongDefIni ) - 2 ) + ;
                PADL( ALLTRIM( STR( i, 2 ) ), 2, "0" ) ) OF oIni
 
       NEXT
-
-     /*
-      AREAS->(DBGOTOP())
-
-      DO WHILE .NOT. AREAS->(EOF())
-         SET SECTION "Areas" ENTRY ALLTRIM(STR( AREAS->(RECNO()), 5)) ;
-            TO cFileNoPath( SUBSTR( cLongDefIni, 1, LEN( cLongDefIni ) - 2 ) + ;
-               PADL( ALLTRIM( STR( AREAS->(RECNO()), 2 ) ), 2, "0" ) ) OF oIni
-         AREAS->(DBSKIP())
-      ENDDO
-        */
 
    ENDINI
 
@@ -1000,147 +892,7 @@ function CreateNewReport( aCheck, cGeneralName, cSourceCode, cReportName, lMakeS
 
     next
 
-  /*
-   AREAS->(DBGOTOP())
-
-   DO WHILE !AREAS->(EOF())
-
-      cAreaTmpFile := SUBSTR( cLongDefIni, 1, LEN( cLongDefIni ) - 2 ) + ;
-         PADL( ALLTRIM( STR( AREAS->(RECNO()), 2 ) ), 2, "0" )
-      CreateNewFile( cAreaTmpFile )
-      cAreaTmpFile := VRD_LF2SF( ALLTRIM( cAreaTmpFile ) )
-
-      INI oIni FILE cAreaTmpFile
-
-         SET SECTION "General" ENTRY "Title"       TO AREAS->NAME  OF oIni
-         SET SECTION "General" ENTRY "Width"       TO ALLTRIM(STR( AREAS->WIDTH, 5, nDecimals )) OF oIni
-         SET SECTION "General" ENTRY "Height"      TO ALLTRIM(STR( AREAS->HEIGHT, 5, nDecimals )) OF oIni
-         SET SECTION "General" ENTRY "Top1"        TO ALLTRIM(STR( AREAS->TOP1, 5, nDecimals )) OF oIni
-         SET SECTION "General" ENTRY "Top2"        TO ALLTRIM(STR( AREAS->TOP2, 5, nDecimals )) OF oIni
-         SET SECTION "General" ENTRY "TopVariable" TO IIF( AREAS->LTOP, "1", "0") OF oIni
-         SET SECTION "General" ENTRY "Condition"   TO STR( AREAS->CONDITION, 1 ) OF oIni
-
-         nRow := 1
-         nCol := 1
-         nXRow := 0
-         nXCol := 0
-
-         for i := 1 TO AREAS->TEXTNR
-            nXRow := 5 + ( nRow - 1 ) * 24
-            nXCol := 5 + ( nCol - 1 ) * 55
-            if GetCmInch( nXRow + 48 ) > AREAS->HEIGHT
-               nRow := 1
-               nCol += 1
-            else
-               nRow += 1
-            endif
-            if GetCmInch( nXCol + 55 ) > AREAS->WIDTH
-               EXIT
-            endif
-            SET SECTION "Items" ENTRY ALLTRIM(STR(i,3)) ;
-               TO "Text|" + ALLTRIM(STR(i,3)) + "| " + ALLTRIM(STR(i,3)) + "|1|1|1|" + ;
-               ALLTRIM(STR( GetCmInch( nXRow ), 5, nDecimals )) + "|" + ;
-               ALLTRIM(STR( GetCmInch( nXCol ), 5, nDecimals )) + "|" + ;
-               ALLTRIM(STR( GetCmInch( 50 ), 5, nDecimals )) + "|" + ;
-               ALLTRIM(STR( GetCmInch( 20 ), 5, nDecimals )) + "|" + ;
-               "1|1|2|0|0|0|" OF oIni
-         next
-
-         if AREAS->TEXTNR > 0
-            nColStart := nXCol + 55
-         else
-            nColStart := 5
-         endif
-         nCol := 1
-         nRow := 1
-
-         for i := 1 TO AREAS->IMAGENR
-            nXRow := 5 + ( nRow - 1 ) * 24
-            nXCol := nColStart + ( nCol - 1 ) * 55
-            if GetCmInch( nXRow + 48 ) > AREAS->HEIGHT
-               nRow := 1
-               nCol += 1
-            else
-               nRow += 1
-            endif
-            if GetCmInch( nXCol + 55 ) > AREAS->WIDTH
-               EXIT
-            endif
-            SET SECTION "Items" ENTRY ALLTRIM(STR(100+i,3)) ;
-               TO "Image|| " + ALLTRIM(STR(100+i,3)) + "|1|1|1|" + ;
-               ALLTRIM(STR( GetCmInch( nXRow ), 5, nDecimals )) + "|" + ;
-               ALLTRIM(STR( GetCmInch( nXCol ), 5, nDecimals )) + "|" + ;
-               ALLTRIM(STR( GetCmInch( 50 ), 5, nDecimals )) + "|" + ;
-               ALLTRIM(STR( GetCmInch( 20 ), 5, nDecimals )) + "|" + ;
-               "|0" OF oIni
-         next
-
-         if AREAS->TEXTNR > 0 .OR. AREAS->IMAGENR > 0
-            nColStart := nXCol + 55
-         else
-            nColStart := 5
-         endif
-         nCol := 1
-         nRow := 1
-
-         for i := 1 TO AREAS->GRAPHNR
-            nXRow := 5 + ( nRow - 1 ) * 24
-            nXCol := nColStart + ( nCol - 1 ) * 55
-            if GetCmInch( nXRow + 48 ) > AREAS->HEIGHT
-               nRow := 1
-               nCol += 1
-            else
-               nRow += 1
-            endif
-            if GetCmInch( nXCol + 55 ) > AREAS->WIDTH
-               EXIT
-            endif
-            SET SECTION "Items" ENTRY ALLTRIM(STR(200+i,3)) ;
-               TO "LineHorizontal|" + GL("Line horizontal") + "| " + ALLTRIM(STR(200+i,3)) + "|1|1|1|" + ;
-               ALLTRIM(STR( GetCmInch( nXRow ), 5, nDecimals )) + "|" + ;
-               ALLTRIM(STR( GetCmInch( nXCol ), 5, nDecimals )) + "|" + ;
-               ALLTRIM(STR( GetCmInch( 50 ), 5, nDecimals )) + "|" + ;
-               ALLTRIM(STR( GetCmInch( 20 ), 5, nDecimals )) + "|" + ;
-               "1|2|1|1|0|0" OF oIni
-         next
-
-         if AREAS->TEXTNR > 0 .OR. AREAS->IMAGENR > 0 .OR. AREAS->GRAPHNR > 0
-            nColStart := nXCol + 55
-         else
-            nColStart := 5
-         endif
-         nCol := 1
-         nRow := 1
-
-         for i := 1 TO AREAS->BCODENR
-            nXRow := 5 + ( nRow - 1 ) * 24
-            nXCol := nColStart + ( nCol - 1 ) * 175
-            if GetCmInch( nXRow + 48 ) > AREAS->HEIGHT
-               nRow := 1
-               nCol += 1
-            else
-               nRow += 1
-            endif
-            if GetCmInch( nXCol + 175 ) > AREAS->WIDTH
-               EXIT
-            endif
-            SET SECTION "Items" ENTRY ALLTRIM(STR(300+i,3)) ;
-               TO "Barcode|12345678| " + ALLTRIM(STR(300+i,3)) + "|1|1|1|" + ;
-               ALLTRIM(STR( GetCmInch( nXRow ), 5, nDecimals )) + "|" + ;
-               ALLTRIM(STR( GetCmInch( nXCol ), 5, nDecimals )) + "|" + ;
-               ALLTRIM(STR( GetCmInch( 170 ), 5, nDecimals )) + "|" + ;
-               ALLTRIM(STR( GetCmInch( 20 ), 5, nDecimals )) + "|" + ;
-               "1|1|2|1|1|0.3|" OF oIni
-         next
-
-      ENDINI
-
-      AREAS->(DBSKIP())
-
-   ENDDO
-  */
-
-   //Create source code
+    // create source code
    if lMakeSource = .T.
 
       cSource := CRLF
@@ -1189,59 +941,6 @@ function CreateNewReport( aCheck, cGeneralName, cSourceCode, cReportName, lMakeS
                     CRLF + CRLF
       next
 
-
-      /*
-
-      AREAS->(DBGOTOP())
-
-      DO WHILE !AREAS->(EOF())
-
-         if !EMPTY( AREAS->NAME )
-            cSource += SPACE(3) + "//--- Area: " + ALLTRIM( AREAS->NAME ) + " ---"
-         endif
-
-         if AREAS->TEXTNR > 0
-            cSource += CRLF + SPACE(3) + "//Text items" + CRLF
-         endif
-         for i := 1 TO AREAS->TEXTNR
-            cSource += SPACE(3) + "oVRD:PrintItem( " + ALLTRIM(STR(AREAS->(RECNO()),3)) + ;
-                       ", " + ALLTRIM(STR( i, 5)) + ", )" + CRLF
-         next
-
-         if AREAS->IMAGENR > 0
-            cSource += CRLF + SPACE(3) + "//Image items" + CRLF
-         endif
-         for i := 1 TO AREAS->IMAGENR
-            cSource += SPACE(3) + "oVRD:PrintItem( " + ALLTRIM(STR(AREAS->(RECNO()),3)) + ;
-                       ", " + ALLTRIM(STR( 100+i, 5)) + ", )" + CRLF
-         next
-
-         if AREAS->GRAPHNR > 0
-            cSource += CRLF + SPACE(3) + "//Graphic items" + CRLF
-         endif
-         for i := 1 TO AREAS->GRAPHNR
-            cSource += SPACE(3) + "oVRD:PrintItem( " + ALLTRIM(STR(AREAS->(RECNO()),3)) + ;
-                       ", " + ALLTRIM(STR( 200+i, 5)) + ", )" + CRLF
-         next
-
-         if AREAS->BCODENR > 0
-            cSource += CRLF + SPACE(3) + "//Barcode items" + CRLF
-         endif
-         for i := 1 TO AREAS->BCODENR
-            cSource += SPACE(3) + "oVRD:PrintItem( " + ALLTRIM(STR(AREAS->(RECNO()),3)) + ;
-                       ", " + ALLTRIM(STR( 300+i, 5)) + ", )" + CRLF
-         next
-
-         cSource += CRLF + SPACE(3) + ;
-                    "oVRD:PrintRest( " + ALLTRIM(STR(AREAS->(RECNO()),3)) + " )" + ;
-                    CRLF + CRLF
-
-         AREAS->(DBSKIP())
-
-      ENDDO
-
-      */
-
       cSource += SPACE(3) + "oVRD:End()" + CRLF
 
       CreateNewFile( cSourceCode )
@@ -1277,8 +976,7 @@ return ( lreturn )
 
 function SetNewReportDefaults( nAreas )
 
-   LOCAL aNewErArea:= Array(11)
-
+ LOCAL aNewErArea:= Array(11)
 
    aNewErArea[1] := ALLTRIM(STR( nAreas)) + ". " + GL("Area")
    aNewErArea[2] := 0
@@ -1292,93 +990,26 @@ function SetNewReportDefaults( nAreas )
    aNewErArea[10] := 40
    aNewErArea[11] := 1
 
- /*
-   REPLACE AREAS->NAME      WITH ALLTRIM(STR( AREAS->(RECNO()) )) + ". " + GL("Area")
-   REPLACE AREAS->LTOP      WITH .T.
-   REPLACE AREAS->WIDTH     WITH 200
-   REPLACE AREAS->HEIGHT    WITH 40
-   REPLACE AREAS->CONDITION WITH 1
-  */
-
 return aNewErArea
-
-*-----------------------------------------------------------------------------
-
-function MoveRecord( lUp, oBrw )
-
-   local i, xFeld
-   local aFields1 := {}
-   local aFields2 := {}
-
-   //alte Werte einlesen
-   for i := 1 to FCOUNT()
-      xFeld = FIELDNAME(i)
-      aadd( aFields1, &xFeld)
-   next
-
-   DBSKIP( IIF( lUp, -1, 1) )
-
-   for i := 1 to FCOUNT()
-      xFeld = FIELDNAME(i)
-      aadd( aFields2, &xFeld)
-   next
-
-   //neue Werte wegschreiben
-   for i := 1 to FCOUNT()
-      xFeld = FIELDNAME(i)
-      REPLACE &xFeld WITH aFields1[i]
-   next
-
-   DBSKIP( IIF( lUp, 1, -1) )
-
-   for i := 1 to FCOUNT()
-      xFeld = FIELDNAME(i)
-      REPLACE &xFeld WITH aFields2[i]
-   next
-
-   if lUp
-      oBrw:GoUp()
-   else
-      oBrw:GoDown()
-   endif
-
-   return .T.
 
 //------------------------------------------------------------------------------
 
-
-function MoveItem ( lUp, oBrw, aDataAreas  )
+function MoveItem ( lUp, oBrw, aDataAreas , hVar )
 
    local aItemData2 := {}
-   LOCAL nAt := obrw:nArrayAt
-   LOCAL aItemData1 := aDataAreas[ nAt ]
-   LOCAL cName1 := obrw:aArrayData[nAt ]
    LOCAL cName2
-   IF lUp
-      aItemData2 := aDataAreas[ nAt-1 ]
-      aDataAreas[ nAt-1] :=  aItemData1
-      aDataAreas[ nAt] :=  aItemData2
+   LOCAL nAt := obrw:nArrayAt
+   LOCAL nBackPos := IF( lUp, nAt-1, nAt+1 )
 
-      cName2:= obrw:aArrayData[nAt-1 ]
-      obrw:aArrayData[nAt-1 ]:= cName1
-      obrw:aArrayData[nAt ]:= cName2
+   aItemData2 := aDataAreas[ nBackPos ]
+   aDataAreas[ nBackPos ] :=  aDataAreas[ nAt ]
+   aDataAreas[ nAt] :=  aItemData2
 
+   cName2:= obrw:aArrayData[ nBackPos ]
+   oBrw:aArrayData[ nBackPos ]:= obrw:aArrayData[ nAt ]
+   oBrw:aArrayData[ nAt ]:= cName2
 
-    ELSE
-
-      aItemData2 := aDataAreas[ nAt+1 ]
-      aDataAreas[ nAt+1] := aDataAreas[ nAt]
-      aDataAreas[ nAt] :=  aItemData2
-
-      cName2:= obrw:aArrayData[nAt+1 ]
-      obrw:aArrayData[nAt+1 ]:= cName1
-      obrw:aArrayData[nAt ]:= cName2
-
-
-   ENDIF
-
-
-   return .T.
+Return RenewNewDatas(aDataAreas,oBrw,hVar)
 
 //------------------------------------------------------------------------------
 
@@ -1396,26 +1027,35 @@ function LoadNewDatas( aDataItem, HVar )
 
 //------------------------------------------------------------------------------
 
-FUNCTION addNewDatas( aDataAreas, aNames )
+FUNCTION addNewDatas( aDataAreas, aNames, nArea )
    LOCAL aDataItem:= {}
 
-   aDataItem:= SetNewReportDefaults(Len(aDataAreas)+1)
+   aDataItem:= SetNewReportDefaults(nArea)
 
    AAdd( aDataAreas, aDataItem )
-   AAdd(aNames, aDataItem[1] )
+   AAdd( aNames, aDataItem[1] )
 
-RETURN
+RETURN .t.
 
 //------------------------------------------------------------------------------
 
-FUNCTION DelNewDatas( aDataAreas, oBrw )
+FUNCTION DelNewDatas( aDataAreas, oBrw, hVar  )
    LOCAL nAt:= oBrw:nArrayAt
+
    ADel( oBrw:aArrayData, nAt ,.t. )
    ADel( aDataAreas, nAt , .t. )
 
+RETURN RenewNewDatas(aDataAreas,oBrw,hVar)
 
-RETURN
+//------------------------------------------------------------------------------
 
+FUNCTION RenewNewDatas(aDataAreas,oBrw,hVar)
+   LOCAL nAt
+   oBrw:Refresh()
+   nAt:= oBrw:nArrayAt
+   LoadNewDatas(  aDataAreas[ nAt ], hVar )
+
+RETURN nAt
 //------------------------------------------------------------------------------
 
 FUNCTION RestoreNewDatas( aDataItem , Hvar )
