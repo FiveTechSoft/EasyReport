@@ -88,7 +88,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
    SET DATE FORMAT IIF( Empty( cDateFormat ), "dd.mm.yyyy", cDateFormat )
 
    //Open Undo database
-   OpenUndo()
+    OpenUndo()
 
    SET HELPFILE to "VRD.HLP"
 
@@ -221,7 +221,12 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
    AEval( oGenVar:aAppFonts, {|x| x:End() } )
    AEval( aFonts, {|x| IIF( x <> nil, x:End(), ) } )
 
-   CloseUndo()
+  // CloseUndo()
+
+   IF lisDir(oER:cTmpPath)
+      DelTempFiles(oER:cTmpPath )
+      dirRemove( oER:cTmpPath  )
+   endif
 
    lChDir( cOldDir )
 
@@ -3822,7 +3827,7 @@ CLASS TEasyReport
    DATA oMainWnd
    DATA cGeneralIni
    DATA cDefIni
-   DATA cDataPath
+   DATA cDataPath, cPath, cTmpPath
    DATA bClrBar
    DATA aClrDialogs
    DATA nMeasure
@@ -3860,8 +3865,17 @@ ENDCLASS
 METHOD New() CLASS TEasyReport
 
    ::cGeneralIni  := ".\vrd.ini"
-   ::cDataPath    := GetCurDir() + "\Datas\"
+   ::cPath:=  cFilePath( GetModuleFileName( GetInstance() ) )
+   ::cDataPath    := ::cPath + "Datas\"
+   ::cTmpPath:=   ::cPath + "tmp\"
    ::lReExec      := .F.
+
+   IF lisDir(::cTmpPath)
+      DelTempFiles(::cTmpPath )
+      dirRemove( ::cTmpPath  )
+   endif
+
+   MakeDir(::cTmpPath )
 
   // ::lShowPanel := .T.
 

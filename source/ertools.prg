@@ -1024,65 +1024,6 @@ function EditLanguage()
 
 return .T.
 
-/*
-function EditLanguage()
-
-   local oDlg, oBrw
-   local aHeader    := ARRAY(20)
-   local aCol       := ARRAY(20)
-   local nVorColor  := RGB( 0, 0, 0 )
-   local nHinColor  := RGB( 224, 239, 223 )
-   local nHinColor2 := RGB( 223, 231, 224 )
-   local nHinColor3 := RGB( 235, 234, 203 )
-   local nHVorCol   := RGB( 0, 0, 0 )
-   local nSelect    := SELECT()
-
-   DBUSEAREA( .T.,, "LANGUAGE.DBF",, .F. )
-
-   DEFINE DIALOG oDlg NAME "EDITLANGUAGE" TITLE GL("Language Database")
-
-   REDEFINE BUTTON PROMPT GL("&OK") ID 101 OF oDlg ACTION oDlg:End()
-
-   REDEFINE SAY PROMPT GL("Please restart the programm to activate the changes.") ;
-      ID 170 OF oDLg
-
-   SELECT LANGUAGE
-   SET ORDER TO 1
-   GO TOP
-
-   REDEFINE xbrowse oBrw ;
-      FIELDS LANGUAGE->LANGUAGE1, ;
-             LANGUAGE->LANGUAGE2, ;
-             LANGUAGE->LANGUAGE3, ;
-             LANGUAGE->LANGUAGE4, ;
-             LANGUAGE->LANGUAGE5, ;
-             LANGUAGE->LANGUAGE6, ;
-             LANGUAGE->LANGUAGE7, ;
-             LANGUAGE->LANGUAGE8, ;
-             LANGUAGE->LANGUAGE9 ;
-         FIELDSIZES 300, 300, 300, 300, 300, 300, 300, 300, 300 ;
-         HEADERS " " + oER:GetGeneralIni( "Languages", "1", "Language 1" ), ;
-                 " " + oER:GetGeneralIni( "Languages", "2", "Language 2" ), ;
-                 " " + oER:GetGeneralIni( "Languages", "3", "Language 3" ), ;
-                 " " + oER:GetGeneralIni( "Languages", "4", "Language 4" ), ;
-                 " " + oER:GetGeneralIni( "Languages", "5", "Language 5" ), ;
-                 " " + oER:GetGeneralIni( "Languages", "6", "Language 6" ), ;
-                 " " + oER:GetGeneralIni( "Languages", "7", "Language 7" ), ;
-                 " " + oER:GetGeneralIni( "Languages", "8", "Language 8" ), ;
-                 " " + oER:GetGeneralIni( "Languages", "9", "Language 9" ) ;
-         ID 301 OF oDlg ;
-         ON LEFT DBLCLICK GetLanguage()
-
-   oBrw:bKeyDown = { | nKey, nFlags | IIF( nKey == VK_RETURN, GetLanguage(), .T. ) }
-
-   ACTIVATE DIALOG oDlg CENTERED
-
-   LANGUAGE->(DBCLOSEAREA())
-   SELECT( nSelect )
-
-   return .T.
-
-      */
 //------------------------------------------------------------------------------
 
 function GetLanguage()
@@ -1473,8 +1414,10 @@ function OpenUndo()
                  { "AREANR"    , "N",     5,    0 },;
                  { "AREATEXT"  , "M",    10,    0 } }
 
-   oGenVar:AddMember( "cUndoFileName",, cTempFile() )
-   oGenVar:AddMember( "cRedoFileName",, cTempFile() )
+  // LOCAL cPath :=
+
+   oGenVar:AddMember( "cUndoFileName",, oER:cTmppath + cTempFile() )
+   oGenVar:AddMember( "cRedoFileName",, oER:cTmpPath + cTempFile() )
 
    DBCreate( oGenVar:cUndoFileName + ".dbf" ,aDbf )
    DBCreate( oGenVar:cRedoFileName + ".dbf" ,aDbf )
@@ -1523,6 +1466,16 @@ function Add2Undo( cEntryText, nEntryNr, nAreaNr, cAreaText )
    endif
 
 return .T.
+
+//------------------------------------------------------------------------------
+
+
+Function DelTempFiles(cPath)
+Local aDirName := DIRECTORY ( cPath+"*.*"  , "D" )
+   AEVAL ( aDirName, {| aFich |  DelFile( cpath + aFich[1] ) } )
+   SysRefresh ()
+Return nil
+
 
 //------------------------------------------------------------------------------
 
@@ -1800,7 +1753,6 @@ function MultiUndoRedo( nTyp, nCount )
    NEXT
 
    return .T.
-
 
 //------------------------------------------------------------------------------
 

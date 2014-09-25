@@ -473,6 +473,7 @@ function NewReport()
 
    local i, y, oDlg, oFld, oFont, oBrw, cTmpFile, oRad1, oRad2
    local aGet[3], aBtn[2], aGet2[1], aCbx1[1], aCbx2[1], aCbx3[8], aCheck[9]
+   local oGet
    local lCreate      := .F.
    local aMeasure     := { "mm", "inch", "pixel" }
    local cMeasure     := aMeasure[1]
