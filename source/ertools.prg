@@ -1277,37 +1277,6 @@ function OpenLanguage()
 return .T.
 
 //------------------------------------------------------------------------------
-/*
-function GL( cOriginal )
-
-   local cAltText := strtran( cOriginal, " ", "_" )
-   local cText    := cAltText
-   local nSelect  := Select()
-   local nPos     := ASCAN( oGenVar:aLanguages, ;
-                            { |aVal| ALLTRIM( aVal[1] ) == ALLTRIM( cAltText ) } )
-
-   if nPos = 0
-      //New String
-      SELECT 0
-      USE LANGUAGE
-      FLOCK()
-      APPEND BLANK
-      REPLACE LANGUAGE->LANGUAGE1 WITH cText
-      UNLOCK
-      LANGUAGE->(DBCLOSEAREA())
-      oGenVar:aLanguages := {}
-      OpenLanguage()
-      SELECT( nSelect )
-   ELSE
-      cText := oGenVar:aLanguages[ nPos, oGenVar:nLanguage ]
-      if EMPTY( cText )
-         cText := oGenVar:aLanguages[ nPos, 1 ]
-      endif
-   endif
-
-return ( STRTRAN(ALLTRIM( cText ), "_", " " ) )
-   */
-//------------------------------------------------------------------------------
 
 function GL( cOriginal )
 
@@ -1336,7 +1305,6 @@ function GL( cOriginal )
 
       FWSaveHStrings( , hLanguage )
       OpenLanguage()
-
 
    ELSE
 
@@ -1499,28 +1467,20 @@ return ( lreturn )
 function OpenUndo()
 
    local nSelect := SELECT()
+   LOCAL aDbf := {;
+                 { "ENTRYTEXT" , "C",   250,    0 },;
+                 { "ENTRYNR"   , "N",     5,    0 },;
+                 { "AREANR"    , "N",     5,    0 },;
+                 { "AREATEXT"  , "M",    10,    0 } }
 
    oGenVar:AddMember( "cUndoFileName",, cTempFile() )
    oGenVar:AddMember( "cRedoFileName",, cTempFile() )
 
-   cTempFile()
-   SELECT 0
-   CREATE TMPST
+   DBCreate( oGenVar:cUndoFileName + ".dbf" ,aDbf )
+   DBCreate( oGenVar:cRedoFileName + ".dbf" ,aDbf )
 
-   APPEND BLANK
-   REPLACE FIELD_NAME WITH "ENTRYTEXT" , FIELD_TYPE WITH "C", FIELD_LEN WITH 250, FIELD_DEC WITH 0
-   APPEND BLANK
-   REPLACE FIELD_NAME WITH "ENTRYNR"   , FIELD_TYPE WITH "N", FIELD_LEN WITH   5, FIELD_DEC WITH 0
-   APPEND BLANK
-   REPLACE FIELD_NAME WITH "AREANR"    , FIELD_TYPE WITH "N", FIELD_LEN WITH   5, FIELD_DEC WITH 0
-   APPEND BLANK
-   REPLACE FIELD_NAME WITH "AREATEXT"  , FIELD_TYPE WITH "M", FIELD_LEN WITH  10, FIELD_DEC WITH 0
+ //  TMPREDO->(DBCLOSEAREA())
 
-   CREATE ( oGenVar:cUndoFileName + ".dbf" ) FROM TMPST ALIAS TMPUNDO
-   CREATE ( oGenVar:cRedoFileName + ".dbf" ) FROM TMPST ALIAS TMPREDO
-
-   ERASE TMPST.DBF
-   TMPREDO->(DBCLOSEAREA())
    SELECT( nSelect )
 
 return .T.
