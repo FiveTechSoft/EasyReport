@@ -10,6 +10,8 @@ MEMVAR lBeta
 MEMVAR lProfi, nUndoCount, nRedoCount, lPersonal, oGenVar
 MEMVAR oER
 
+//-----------------------------------------------------------------------------//
+
 function GetFreeSystemResources()
 return 0
 
@@ -814,6 +816,8 @@ function Expressions( lTake, cAltText )
    DEFAULT cAltText := ""
    DEFAULT lTake    := .F.
 
+   aUndo      := {}
+
    if FILE( VRD_LF2SF( cGenExpr ) ) = .F.
       cErrorFile += cGenExpr + CRLF
    endif
@@ -978,8 +982,14 @@ function ER_Expressions( lTake, cAltText, nD )
    local oGet0
    local oGet2
    local x 
+   local cExpr      := ""
    local aBmps1     := {}
-   local aBtts1     := {}
+   local aBtts1     := {"="    , "<>"   , "<"    , ">"   , "<="  , ">="  , "=="  , "("   , ")"   ,;
+                        '"'    , "!"    , "$"    , "+"   , "-"   , "*"   , "/"   , ".T." , ".F." ,;
+                        ".or." , ".and.", ".not.", "If(,,)", "Val()"  , "Str()" }
+                        
+                        
+                        
    local nCol
    //local aRDD      := { "DBFNTX", "COMIX", "DBFCDX" }
 
@@ -987,6 +997,8 @@ function ER_Expressions( lTake, cAltText, nD )
    DEFAULT lTake    := .F.
    DEFAULT nD := 2
    oDlg       := oER:oFldD:aDialogs[ nD ]
+
+   aUndo      := {}
 
    if FILE( VRD_LF2SF( cGenExpr ) ) = .F.
       cErrorFile += cGenExpr + CRLF
@@ -1022,10 +1034,6 @@ function ER_Expressions( lTake, cAltText, nD )
          SIZE oDlg:nWidth - 2, oDlg:nHeight - 5 ;
          OPTION 1 ;
          PIXEL 
-         
-         //DIALOGS "EXPRESS_FOLDER1", ;
-         //        "EXPRESS_FOLDER2"
-       */
 
    ELSE
       if ValidVersionFwh( 10, 8 )
@@ -1091,7 +1099,7 @@ function ER_Expressions( lTake, cAltText, nD )
 
    @ 30, 1 XBROWSE oBrw2 ;
       OF oFld:aDialogs[i] ;
-      SIZE oFld:aDialogs[i]:nWidth - 1, Int( ( oFld:aDialogs[i]:nHeight - 1 ) / 2 ) ;      
+      SIZE oFld:aDialogs[i]:nWidth - 1, Int( ( oFld:aDialogs[i]:nHeight - 1 ) / 2 ) - 40 ;      
       FIELDS USEREXPR->NAME, USEREXPR->INFO ;
       COLSIZES 95, 195 ;
       HEADERS " " + GL("Name"), " " + GL("Description") ;
@@ -1107,7 +1115,7 @@ function ER_Expressions( lTake, cAltText, nD )
    //oBrw2:lVScroll          := .F.
    oBrw2:CreateFromCode()
 
-   nFil   :=  Int( ( oFld:aDialogs[i]:nHeight - 1 ) / 2 ) + 40
+   nFil   :=  Int( ( oFld:aDialogs[i]:nHeight - 1 ) / 2 ) // + 40
    @ nFil, 1 SAY GL("Name") ;
       OF oFld:aDialogs[i] FONT oFont PIXEL TRANSPARENT
 
@@ -1139,27 +1147,35 @@ function ER_Expressions( lTake, cAltText, nD )
 
    nFil += 55
    nCol := 1
-   /*
-   For x = 1 to 5
+   
+   For x = 1 to Len( aBtts1 )
        AAdd( aBmps1, nil )
-       aBmps1[ x ] := TBtnBmp():New( nFil, nCol, 16, 16,;
-                                    "B_OPEN_16",,,,;
+       aBmps1[ x ] := TBtnBmp():New( nFil, nCol, 30, 20,;
+                                    ,,,,;
                                     ,oFld:aDialogs[i],,,,,;
-                                    ,,,, .F.,,;
-                                    ,,,.T.,GL("Open"),;
-                                    ,,.T.,)
+                                    aBtts1[x],,,, .T.,,;
+                                    ,,,.T.,,;
+                                    ,,.T., )
 
-       //aBmps1[ x ]:bAction := SetMi2File( aDBGet1, aDBGet2, x )
-       nCol += 20
+       //aBmps1[ x ]:bAction := SetMi2Expr( aBtts1, oGet1, aUndo, x )
+
+       nCol += 40
+       if Mod( x, 8 ) = 0
+          nFil := nFil + 30
+          nCol := 1
+       endif
 
    Next x
-   */
- 
+   
+
+   /*
    @ nFil, 1 BTNBMP PROMPT "=" ;
             OF oFld:aDialogs[i] SIZE 20, 20 PIXEL ;
             FONT oFont ;
             CENTER ;
             ACTION CopyToExpress( "="   , oGet1, @aUndo )
+   */
+
    /*
    REDEFINE BUTTON ID 401 OF oFld:aDialogs[i] ACTION CopyToExpress( "="   , oGet1, @aUndo )
    REDEFINE BUTTON ID 402 OF oFld:aDialogs[i] ACTION CopyToExpress( "<>"  , oGet1, @aUndo )
@@ -1215,6 +1231,11 @@ return ( creturn )
 
 //------------------------------------------------------------------------------
 
+Function SetMi2Expr( aBtts1, oGet1, aUndo , x )
+Return { || CopyToExpress( aBtts1[ x ], oGet1, @aUndo ) }
+
+//------------------------------------------------------------------------------
+
 function CheckExpression( cText )
 
    local lreturn, xreturn, oScript
@@ -1256,7 +1277,9 @@ return .T.
 function CopyToExpress( cText, oGet, aUndo )
 
    AADD( aUndo, oGet:cText )
-
+   //if empty( oGet:cText )
+   //   oGet:cText := ""
+   //endif
    oGet:SetFocus()
    oGet:Paste( cText )
    oGet:SetPos( oGet:nPos + LEN( cText ) )

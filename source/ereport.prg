@@ -72,7 +72,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
    FWLoadStrings( )
    FwSetLanguage( 2 )
 
-   PUBLIC oER := TEasyReport():new()
+   PUBLIC oER    := TEasyReport():New()
 
    //Variables Publics declaration
    DeclarePublics( cDefFile )
@@ -153,12 +153,12 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
 
 
        @ 0.5, 1 FOLDEREX oER:oFldD ;
-        PROMPT GL("&Databases"), GL("&Expressions"), GL("&Fields"), GL("Fil&ters") ;
+        PROMPT GL("&Expressions"), GL("&Databases"), GL("&Fields"), GL("Fil&ters") ;
        OF oEr:oMainWnd ;
        SIZE 326, GetSysMetrics( 1 ) - 138 ;
        OPTION 1 ;
        TAB HEIGHT 34 ;
-        BITMAPS { "B_EDIT2", "B_ITEMLIST16", "B_AREA", "B_AREA" } ;
+        BITMAPS { "B_ITEMLIST16", "B_EDIT2", "B_AREA", "B_AREA" } ;
        PIXEL ;
        SEPARATOR 0
 
@@ -3869,7 +3869,7 @@ METHOD New() CLASS TEasyReport
    ::cDataPath    := ::cPath + "Datas\"
    ::cTmpPath:= GetEnv("TMP")+'\ERTMP\'
 
-   msginfo(::cTmpPath)
+   //msginfo(::cTmpPath)
    IF lisDir(::cTmpPath)
       DelTempFiles(::cTmpPath )
       dirRemove( ::cTmpPath  )
