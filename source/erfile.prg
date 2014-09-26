@@ -127,6 +127,7 @@ function OpenFile( cFile, lChange, lAddDelNew )
          Dlg_Colors( 4 )
          Dlg_Fonts( 5 )
          Er_Databases()
+         ER_Expressions(,,)
       endif
 
       SetSave( .T. )
