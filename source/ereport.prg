@@ -3867,9 +3867,9 @@ METHOD New() CLASS TEasyReport
    ::cGeneralIni  := ".\vrd.ini"
    ::cPath:=  cFilePath( GetModuleFileName( GetInstance() ) )
    ::cDataPath    := ::cPath + "Datas\"
-   ::cTmpPath:=   ::cPath + "tmp\"
-   ::lReExec      := .F.
+   ::cTmpPath:= GetEnv("TMP")+'\ERTMP\'
 
+   msginfo(::cTmpPath)
    IF lisDir(::cTmpPath)
       DelTempFiles(::cTmpPath )
       dirRemove( ::cTmpPath  )
