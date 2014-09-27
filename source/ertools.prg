@@ -1043,8 +1043,7 @@ function ER_Expressions( lTake, cAltText, nD )
            OF oDlg ;
            SIZE oDlg:nWidth - 2, oDlg:nHeight - 5 ;
            OPTION 1 ;
-           TAB HEIGHT 24 ;
-           BITMAPS { "B_EDIT2", "B_ITEMLIST16" } ;
+           TAB HEIGHT 24 ;  //           BITMAPS { "B_EDIT2", "B_EDIT1" } ;
            PIXEL ;
            SEPARATOR 0
 
@@ -1066,11 +1065,11 @@ function ER_Expressions( lTake, cAltText, nD )
 
    @ 1, 1 XBROWSE oBrw ;
       OF oFld:aDialogs[1] ;
-      SIZE oFld:aDialogs[1]:nWidth - 1, oFld:aDialogs[1]:nHeight - 10 ;
+      SIZE oFld:aDialogs[1]:nWidth - 1, oFld:aDialogs[1]:nHeight - 40 ;
       FIELDS GENEXPR->NAME, GENEXPR->INFO ; 
       COLSIZES 95, 195 ;
       HEADERS " " + GL("Name"), " " + GL("Description") ;
-      FONT oFont PIXEL NOBORDER  ;
+      FONT oFont PIXEL ; //NOBORDER  ;
       ON LEFT DBLCLICK ( creturn := GENEXPR->NAME, nTyp := 1, oDlg:End() )
 
    oBrw:lRecordSelector   := .F.
@@ -1117,6 +1116,7 @@ function ER_Expressions( lTake, cAltText, nD )
 
    nFil   :=  Int( ( oFld:aDialogs[i]:nHeight - 1 ) / 2 ) // + 40
    @ nFil, 1 SAY GL("Name") ;
+      SIZE 200, 20 ;
       OF oFld:aDialogs[i] FONT oFont PIXEL TRANSPARENT
 
    nFil += 20
@@ -1127,6 +1127,7 @@ function ER_Expressions( lTake, cAltText, nD )
 
    nFil += 20
    @ nFil, 1 SAY GL("Expression") ;
+      SIZE 200, 20 ;
       OF oFld:aDialogs[i] FONT oFont PIXEL TRANSPARENT
 
    nFil += 20
@@ -1137,6 +1138,7 @@ function ER_Expressions( lTake, cAltText, nD )
 
    nFil += 20
    @ nFil, 1 SAY GL("Description") ;
+      SIZE 200, 20 ;
       OF oFld:aDialogs[i] FONT oFont PIXEL TRANSPARENT
 
    nFil += 20
