@@ -175,9 +175,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
       //oER:oFldI:SetFont(  )
 
       oER:oFldI:SetColor(  , oEr:nClrPaneTree )
-      oEr:oMainWnd:oLeft  :=  oER:oFldI
-
-        oER:oFldI:SetColor(  , oEr:nClrPaneTree )
+      oEr:oMainWnd:oLeft   :=  oER:oFldI
       oEr:oMainWnd:oRight  :=  oER:oFldD
 
 
@@ -2822,14 +2820,18 @@ function ER_ReportSettings( nD )
    Local nGridWidth  := oGenVar:nGridWidth
    Local nGridHeight := oGenVar:nGridHeight
    Local lShowGrid   := oGenVar:lShowGrid
+   Local oFont
 
    DEFAULT nD := 1
+   //DEFINE FONT oFont NAME "Verdana" SIZE 0, -10
+   oFont := oER:oMainWnd:oFont
 
    oDlg := oER:oFldI:aDialogs[ nD ]
    oDlg:SetColor( CLR_BLACK, oEr:nClrPaneTree )
 
    @ oDlg:nHeight - 40, oDlg:nWidth - 110 BUTTON oBtn1 PROMPT GL("&OK") ;
-     OF oDlg SIZE 80, 20 PIXEL ACTION  GrabaReportSetting( .T., aFormat,;
+     OF oDlg FONT oFont SIZE 80, 20 ;
+     PIXEL ACTION  GrabaReportSetting( .T., aFormat,;
                              cFormat, nDecimals, nWidth, nHeight, nTop,   ;
                              nLeft, nPageBreak, nOrient, cTitle, cGroup,  ;
                              nGridWidth, nGridHeight, lShowGrid )
@@ -2843,60 +2845,61 @@ function ER_ReportSettings( nD )
    //  SIZE 60, 20 PIXEL TRANSPARENT
    @ nFil,  05 GROUP aGrp[ 1 ] TO nFil + 250, oDlg:nWidth - 5 OF oDlg ;
                     LABEL "  " + GL("Paper Size") + ": " ;
+                    FONT oFont ;
                     PIXEL COLOR CLR_BLACK, oEr:nClrPaneTree
 
    nFil += 20
    @ nFil, 10 COMBOBOX cFormat ITEMS aFormat OF oDlg ;
-      SIZE oDlg:nWidth - 20, 324 PIXEL ;
+      SIZE oDlg:nWidth - 20, 324 FONT oFont PIXEL ;
       ON CHANGE aGet[ 1 ]:Setfocus()
 
    nFil += 40
-   @ nFil + 4, 10  SAY GL("Width:") OF oDlg SIZE 60, 20 ;
+   @ nFil + 4, 10  SAY GL("Width:") OF oDlg FONT oFont SIZE 60, 24 ;
      COLOR CLR_BLACK, oEr:nClrPaneTree PIXEL TRANSPARENT
-   @ nFil + 4, 150 SAY oER:cMeasure OF oDlg SIZE 40, 20 ;
+   @ nFil + 4, 150 SAY oER:cMeasure OF oDlg FONT oFont SIZE 40, 24 ;
      COLOR CLR_BLACK, oEr:nClrPaneTree PIXEL TRANSPARENT
-   @ nFil, 70 GET nWidth OF oDlg ;
+   @ nFil, 70 GET nWidth OF oDlg FONT oFont ;
       PICTURE cPicture SPINNER MIN 0 ;
       SIZE 50, 24 PIXEL ;
       WHEN AllTrim( cFormat ) = GL("user-defined")
 
-   @ nFil + 4,  200 SAY " " + GL("Orientation") + ":"  OF oDlg SIZE 60, 20 ;
+   @ nFil,  200 SAY " " + GL("Orientation") + ":"  OF oDlg FONT oFont SIZE 60, 24 ;
      COLOR CLR_BLACK, oEr:nClrPaneTree PIXEL TRANSPARENT
-   @ nFil + 44, 200 RADIO oRad1 VAR nOrient PROMPT GL("Portrait") SIZE 80, 20 OF oDlg ;
+   @ nFil + 44, 200 RADIO oRad1 VAR nOrient PROMPT GL("Portrait") OF oDlg SIZE 80, 24 ;
      COLOR CLR_BLACK, oEr:nClrPaneTree PIXEL
    @ nFil + 84, 200 RADIOITEM GL("Landscape") RADIOMENU oRad1 OF oDlg ;
-     SIZE 80, 20 COLOR CLR_BLACK, oEr:nClrPaneTree PIXEL
+     SIZE 80, 24 COLOR CLR_BLACK, oEr:nClrPaneTree PIXEL
 
    nFil += 40
-   @ nFil + 4, 10  SAY GL("Height:") OF oDlg SIZE 60, 20 ;
-     COLOR CLR_BLACK, oEr:nClrPaneTree PIXEL TRANSPARENT
-   @ nFil + 4, 150 SAY oER:cMeasure OF oDlg SIZE 40, 20 ;
-     COLOR CLR_BLACK, oEr:nClrPaneTree PIXEL TRANSPARENT
+   @ nFil + 4, 10  SAY GL("Height:") OF oDlg SIZE 60, 24 ;
+     FONT oFont COLOR CLR_BLACK, oEr:nClrPaneTree PIXEL TRANSPARENT
+   @ nFil + 4, 150 SAY oER:cMeasure OF oDlg SIZE 40, 24 ;
+     FONT oFont COLOR CLR_BLACK, oEr:nClrPaneTree PIXEL TRANSPARENT
    @ nFil, 70 GET nHeight OF oDlg PICTURE cPicture ;
       SPINNER MIN 0 ;
-      SIZE 50, 24 PIXEL ;
+      SIZE 50, 24 FONT oFont PIXEL ;
       WHEN AllTrim( cFormat ) = GL("user-defined")
    nFil += 40
-   @ nFil + 4, 10  SAY GL("Top margin")  +":" OF oDlg ;
-     COLOR CLR_BLACK, oEr:nClrPaneTree PIXEL TRANSPARENT
-   @ nFil + 4, 150 SAY oER:cMeasure OF oDlg SIZE 40, 20 ;
-     COLOR CLR_BLACK, oEr:nClrPaneTree PIXEL TRANSPARENT
+   @ nFil + 4, 10  SAY GL("Top margin")  +":" OF oDlg SIZE 60, 24 ;
+     FONT oFont COLOR CLR_BLACK, oEr:nClrPaneTree PIXEL TRANSPARENT
+   @ nFil + 4, 150 SAY oER:cMeasure OF oDlg SIZE 40, 24 ;
+     FONT oFont COLOR CLR_BLACK, oEr:nClrPaneTree PIXEL TRANSPARENT
    @ nFil, 70 GET aGet[ 1 ] VAR nTop OF oDlg PICTURE cPicture SPINNER MIN 0 ;
-      SIZE 50, 24 PIXEL
+      SIZE 50, 24 FONT oFont PIXEL
    nFil += 40
-   @ nFil + 4, 10  SAY GL("Left margin") +":" OF oDlg ;
-     COLOR CLR_BLACK, oEr:nClrPaneTree PIXEL TRANSPARENT
-   @ nFil + 4, 150 SAY oER:cMeasure OF oDlg SIZE 40, 20 ;
-     COLOR CLR_BLACK, oEr:nClrPaneTree PIXEL TRANSPARENT
+   @ nFil + 4, 10  SAY GL("Left margin") +":" OF oDlg SIZE 60, 24 ;
+     FONT oFont COLOR CLR_BLACK, oEr:nClrPaneTree PIXEL TRANSPARENT
+   @ nFil + 4, 150 SAY oER:cMeasure OF oDlg SIZE 40, 24 ;
+     FONT oFont COLOR CLR_BLACK, oEr:nClrPaneTree PIXEL TRANSPARENT
    @ nFil, 70 GET nLeft  OF oDlg PICTURE cPicture SPINNER MIN 0 ;
-      SIZE 50, 24 PIXEL
+      FONT oFont SIZE 50, 24 PIXEL
    nFil += 40
-   @ nFil + 4, 10  SAY GL("Page break:") OF oDlg ;
-     COLOR CLR_BLACK, oEr:nClrPaneTree PIXEL TRANSPARENT
-   @ nFil + 4, 150 SAY oER:cMeasure OF oDlg SIZE 40, 20 ;
-     COLOR CLR_BLACK, oEr:nClrPaneTree PIXEL TRANSPARENT
+   @ nFil + 4, 10  SAY GL("Page break:") OF oDlg SIZE 60, 24  ;
+     FONT oFont COLOR CLR_BLACK, oEr:nClrPaneTree PIXEL TRANSPARENT
+   @ nFil + 4, 150 SAY oER:cMeasure OF oDlg SIZE 40, 24 ;
+     FONT oFont COLOR CLR_BLACK, oEr:nClrPaneTree PIXEL TRANSPARENT
    @ nFil, 70 GET nPageBreak OF oDlg PICTURE cPicture SPINNER MIN 0 ;
-      SIZE 50, 24 PIXEL
+      FONT oFont SIZE 50, 24 PIXEL
 
 
    nFil += 40
@@ -2904,40 +2907,41 @@ function ER_ReportSettings( nD )
    //  SIZE 60, 20 PIXEL TRANSPARENT
    @ nFil,  05 GROUP aGrp[ 2 ] TO nFil + 100, oDlg:nWidth - 5 OF oDlg ;
                     LABEL "  " + GL("Report") + ": " ;
-                    PIXEL COLOR CLR_BLACK, oEr:nClrPaneTree
+                    FONT oFont PIXEL COLOR CLR_BLACK, oEr:nClrPaneTree
 
    nFil += 20
-   @ nFil + 4, 10  SAY GL("Name")+":" OF oDlg ;
-     COLOR CLR_BLACK, oEr:nClrPaneTree PIXEL TRANSPARENT
+   @ nFil + 4, 10  SAY GL("Name")+":" OF oDlg SIZE 60, 24 ;
+     FONT oFont COLOR CLR_BLACK, oEr:nClrPaneTree PIXEL TRANSPARENT
    @ nFil, 50 GET cTitle OF oDlg SIZE 260, 24 PIXEL
    nFil += 40
-   @ nFil + 4, 10  SAY GL("Group")+":" OF oDlg ;
-     COLOR CLR_BLACK, oEr:nClrPaneTree PIXEL TRANSPARENT
-   @ nFil, 50 GET cGroup OF oDlg SIZE 260, 24 PIXEL
+   @ nFil + 4, 10  SAY GL("Group")+":" OF oDlg SIZE 60, 24 ;
+     FONT oFont COLOR CLR_BLACK, oEr:nClrPaneTree PIXEL TRANSPARENT
+   @ nFil, 50 GET cGroup OF oDlg SIZE 260, 24 FONT oFont PIXEL
 
    nFil += 60
    @ nFil,  05 GROUP aGrp[ 3 ] TO nFil + 100, oDlg:nWidth - 5 OF oDlg ;
                     LABEL "  " + GL("Grid Setup") + ": " ;
-                    PIXEL COLOR CLR_BLACK, oEr:nClrPaneTree
+                    FONT oFont PIXEL COLOR CLR_BLACK, oEr:nClrPaneTree
 
    nFil += 20
-   @ nFil + 4, 10  SAY GL("Width:") OF oDlg ;
-     COLOR CLR_BLACK, oEr:nClrPaneTree PIXEL TRANSPARENT
-   @ nFil + 4, 150 SAY oER:cMeasure OF oDlg SIZE 40, 20 ;
-     COLOR CLR_BLACK, oEr:nClrPaneTree PIXEL TRANSPARENT
+   @ nFil + 4, 10  SAY GL("Width:") OF oDlg SIZE 60, 24 ;
+     FONT oFont COLOR CLR_BLACK, oEr:nClrPaneTree PIXEL TRANSPARENT
+   @ nFil + 4, 150 SAY oER:cMeasure OF oDlg SIZE 40, 24 ;
+     FONT oFont COLOR CLR_BLACK, oEr:nClrPaneTree PIXEL TRANSPARENT
    @ nFil, 70 GET nGridWidth OF oDlg PICTURE cPicture SPINNER MIN 0.01 ;
-      SIZE 50, 24 PIXEL VALID nGridWidth  > 0
+      FONT oFont SIZE 50, 24 PIXEL VALID nGridWidth  > 0
 
    nFil += 40
-   @ nFil + 4, 10  SAY GL("Height:") OF oDlg ;
-     COLOR CLR_BLACK, oEr:nClrPaneTree PIXEL TRANSPARENT
-   @ nFil + 4, 150 SAY oER:cMeasure OF oDlg SIZE 40, 20  ;
-     COLOR CLR_BLACK, oEr:nClrPaneTree PIXEL TRANSPARENT
+   @ nFil + 4, 10  SAY GL("Height:") OF oDlg SIZE 60, 24 ;
+     FONT oFont COLOR CLR_BLACK, oEr:nClrPaneTree PIXEL TRANSPARENT
+   @ nFil + 4, 150 SAY oER:cMeasure OF oDlg SIZE 40, 24  ;
+     FONT oFont COLOR CLR_BLACK, oEr:nClrPaneTree PIXEL TRANSPARENT
    @ nFil, 70 GET nGridHeight OF oDlg PICTURE cPicture SPINNER MIN 0.01 ;
-      SIZE 50, 24 PIXEL VALID nGridHeight  > 0
+      FONT oFont SIZE 50, 24 PIXEL VALID nGridHeight  > 0
 
    @ nFil + 4, 220 CHECKBOX oCbx VAR lShowGrid ;
-     PROMPT GL("Show grid") OF oDlg COLOR CLR_BLACK, oEr:nClrPaneTree PIXEL
+     PROMPT GL("Show grid") OF oDlg SIZE 80, 24  ;
+     FONT oFont COLOR CLR_BLACK, oEr:nClrPaneTree PIXEL
 
 
 return .T.
