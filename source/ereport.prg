@@ -4094,6 +4094,7 @@ CLASS TErScript
 
 ENDCLASS
 
+//----------------------------------------------------------------------------//
 
 METHOD New( cText ) CLASS TErScript
 
@@ -4105,12 +4106,15 @@ METHOD New( cText ) CLASS TErScript
 
 return Self
 
+//----------------------------------------------------------------------------//
+
 METHOD Compile() CLASS TErScript
 
-  ::oHbr := HB_CompileFromBuf( ::cCode , "-n", "-Ic:\fwh\include", "-Ic:\harbour\include" )
+  ::oHrb := HB_CompileFromBuf( ::cCode , "-n", "-Ic:\fwh\include", "-Ic:\harbour\include" )
 
 RETURN nil
 
+//----------------------------------------------------------------------------//
 
 METHOD Run() CLASS TErScript
    local cResult, bOldError
