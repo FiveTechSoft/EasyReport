@@ -439,6 +439,8 @@ function Er_Databases( lTake, nD )
    Local nFil
    Local aBmps1     := Array( 12 )
    Local aBmps2     := Array( 12 )
+   Local cRdds
+   Local aRdds      := {"DbfNtx", "DbfCdx", "RddAds", "ADO" }
 
    DEFAULT nD := 1
    oDlg       := oER:oFldD:aDialogs[ nD ]
@@ -448,13 +450,20 @@ function Er_Databases( lTake, nD )
 
    DEFINE FONT oFont NAME "Verdana" Size 0,-12
 
+   @ 24, 10 SAY GL("Rdds")      OF oDlg FONT oFont PIXEL //TRANSPARENT
+   nFil  := 52
+   @ nFil, 10 COMBOBOX cRdds ITEMS aRdds OF oDlg ;
+      SIZE oDlg:nWidth - 20, 324 FONT oFont PIXEL //  ON CHANGE 
+
    //@ 2, 008 SAY GL("Nr.")      OF oDlg FONT oFont PIXEL TRANSPARENT
-   @ 4, 084 SAY GL("Database") OF oDlg FONT oFont PIXEL TRANSPARENT
-   @ 4, 228 SAY GL("Alias")    OF oDlg FONT oFont PIXEL TRANSPARENT
+   @ 155, 084 SAY GL("Database") OF oDlg FONT oFont ;
+     COLOR CLR_BLACK, oEr:nClrPaneTree PIXEL TRANSPARENT
+   @ 155, 228 SAY GL("Alias")    OF oDlg FONT oFont ;
+     COLOR CLR_BLACK, oEr:nClrPaneTree PIXEL TRANSPARENT
 
    For x = 1 to Len( aDBGet1 )
        nCol := 8
-       nFil := 25+(x-1)*30
+       nFil := 175+(x-1)*30
        aDBGet1[ x ] := TGet():New( nFil, nCol, MiSetGetDb( oGenVar:aDBFile, x, 1 ), oDlg, 200, 20, , ,;
                                   ,,,,, .T.,,,,,,,,,,,,,,,,,,, )
 
@@ -484,7 +493,7 @@ function Er_Databases( lTake, nD )
 
    Next x
 
-   @ nFil + 30 , oDlg:nWidth - 110 BTNBMP PROMPT "Grabar" ;
+   @ nFil + 35 , oDlg:nWidth - 110 BTNBMP PROMPT "Grabar" ;
             OF oDlg SIZE 100, 20 PIXEL ;
             ACTION ( SaveDatabases(), OpenDatabases() )
 
