@@ -1226,7 +1226,7 @@ function CheckExpression( cText )
       lreturn := .F.
    endif
 
-return .T.
+return lReturn
 
 //-----------------------------------------------------------------------------
 
