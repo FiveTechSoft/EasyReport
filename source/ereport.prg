@@ -2871,9 +2871,9 @@ function ER_ReportSettings( nD )
    @ nFil + 4, 10  SAY GL("Top margin")  +":" OF oDlg PIXEL TRANSPARENT
    @ nFil + 4, 150 SAY oER:cMeasure OF oDlg SIZE 40, 20 PIXEL TRANSPARENT
    @ nFil, 70 GET aGet[ 1 ] VAR nTop OF oDlg PICTURE cPicture SPINNER MIN 0 ;
-      SIZE 50, 24 PIXEL 
+      SIZE 50, 24 PIXEL
    nFil += 40
-   @ nFil + 4, 10  SAY GL("Left margin") +":" OF oDlg PIXEL TRANSPARENT 
+   @ nFil + 4, 10  SAY GL("Left margin") +":" OF oDlg PIXEL TRANSPARENT
    @ nFil + 4, 150 SAY oER:cMeasure OF oDlg SIZE 40, 20 PIXEL TRANSPARENT
    @ nFil, 70 GET nLeft  OF oDlg PICTURE cPicture SPINNER MIN 0 ;
       SIZE 50, 24 PIXEL
@@ -2881,7 +2881,7 @@ function ER_ReportSettings( nD )
    @ nFil + 4, 10  SAY GL("Page break:") OF oDlg PIXEL TRANSPARENT
    @ nFil + 4, 150 SAY oER:cMeasure OF oDlg SIZE 40, 20 PIXEL TRANSPARENT
    @ nFil, 70 GET nPageBreak OF oDlg PICTURE cPicture SPINNER MIN 0 ;
-      SIZE 50, 24 PIXEL 
+      SIZE 50, 24 PIXEL
 
 
    nFil += 40
@@ -2893,10 +2893,10 @@ function ER_ReportSettings( nD )
 
    nFil += 20
    @ nFil + 4, 10  SAY GL("Name")+":" OF oDlg PIXEL TRANSPARENT
-   @ nFil, 50 GET cTitle OF oDlg SIZE 260, 24 PIXEL 
+   @ nFil, 50 GET cTitle OF oDlg SIZE 260, 24 PIXEL
    nFil += 40
    @ nFil + 4, 10  SAY GL("Group")+":" OF oDlg PIXEL TRANSPARENT
-   @ nFil, 50 GET cGroup OF oDlg SIZE 260, 24 PIXEL 
+   @ nFil, 50 GET cGroup OF oDlg SIZE 260, 24 PIXEL
 
    nFil += 60
    @ nFil,  05 GROUP aGrp[ 3 ] TO nFil + 100, oDlg:nWidth - 10 OF oDlg ;
@@ -4080,6 +4080,109 @@ function TScript()
    MsgInfo( "TScript not linked yet" )
 
 return nil
+
+//------------------------------------------------------------------------------
+
+static function DoBreak( oError )
+
+   local cInfo := oError:operation, n
+
+   if ValType( oError:Args ) == "A"
+      cInfo += "   Args:" + CRLF
+      for n = 1 to Len( oError:Args )
+         MsgInfo( oError:Args[ n ] )
+         cInfo += "[" + Str( n, 4 ) + "] = " + ValType( oError:Args[ n ] ) + ;
+                   "   " + cValToChar( oError:Args[ n ] ) + CRLF
+         close all
+         exit
+      next
+   endif
+
+   MsgStop( oError:Description + CRLF + cInfo,;
+            "Script error at line: " + AllTrim( Str( ProcLine( 2 ) ) ) )
+
+   BREAK
+
+return nil
+
+//----------------------------------------------------------------//
+
+#pragma BEGINDUMP
+
+#include <stdio.h>
+#include <hbapi.h>
+
+HB_FUNC( FREOPEN_STDERR )
+{
+   hb_retnl( ( HB_LONG ) freopen( hb_parc( 1 ), hb_parc( 2 ), stderr ) );
+}
+
+#pragma ENDDUMP
+
+
+//----------------------------------------------------------------------------//
+
+   // TScript
+
+CLASS TErScript
+
+   DATA cCode
+   DATA cError
+   DATA lPreProcess  // ????
+   DATA oHrb
+
+
+   METHOD New(cText) CONSTRUCTOR
+   METHOD Compile()
+   METHOD Run()
+
+ENDCLASS
+
+
+METHOD New(cText) CLASS TErScript
+
+   ::cCode := cCode
+
+   IF Empty ( ::cCode)
+      Msginfo("no ha definido texto a compilar")
+   endif
+
+return Self
+
+METHOD Compile() CLASS TErScript
+
+  ::oHbr := HB_CompileFromBuf( ::cCode , "-n", "-Ic:\fwh\include", "-Ic:\harbour\include" )
+
+RETURN nil
+
+
+METHOD Run() CLASS TErScript
+   local cResult, bOldError
+
+  //  MemoEdit( cCode, "PRG code" )
+  //  MemoWrit( "_temp.prg", (Scripts)->Code )
+
+   FReOpen_Stderr( "comp.log", "w" )
+
+   ::compile()
+
+   //::oHrb = HB_CompileFromBuf( ::cCode , "-n", "-Ic:\fwh\include", "-Ic:\harbour\include" )
+
+ //  oResult:SetText( If( Empty( cResult := MemoRead( "comp.log" ) ), "ok", cResult ) )
+
+   if ! Empty( ::oHrb )
+      BEGIN SEQUENCE
+      bOldError = ErrorBlock( { | o | DoBreak( o ) } )
+      hb_HrbRun( ::oHrb )
+      END SEQUENCE
+      ErrorBlock( bOldError )
+   endif
+
+RETURN nil
+
+
+//----------------------------------------------------------------------------//
+
 
 
 //----------------------------------------------------------------------------//
