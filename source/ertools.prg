@@ -1017,6 +1017,7 @@ function ER_Expressions( lTake, cAltText, nD )
    /*
    @ 4, 4 SAY oSay1 ;
       PROMPT GL("Please doubleclick an expression to take it over.") ;
+      SIZE 200, 20 ;
       OF oDlg FONT oFont PIXEL TRANSPARENT
    */
    
@@ -1063,7 +1064,13 @@ function ER_Expressions( lTake, cAltText, nD )
    SELECT 0
    USE ( VRD_LF2SF( cGenExpr ) ) ALIAS "GENEXPR"
 
-   @ 1, 1 XBROWSE oBrw ;
+   @ 6, 4 SAY oSay1 ;
+      PROMPT GL("Please doubleclick an expression to take it over.") ;
+      SIZE 280, 20 ;
+      OF oFld:aDialogs[1] FONT oFont PIXEL TRANSPARENT
+
+
+   @ 30, 1 XBROWSE oBrw ;
       OF oFld:aDialogs[1] ;
       SIZE oFld:aDialogs[1]:nWidth - 1, oFld:aDialogs[1]:nHeight - 40 ;
       FIELDS GENEXPR->NAME, GENEXPR->INFO ; 
@@ -1159,7 +1166,7 @@ function ER_Expressions( lTake, cAltText, nD )
                                     ,,,.T.,,;
                                     ,,.T., )
 
-       //aBmps1[ x ]:bAction := SetMi2Expr( aBtts1, oGet1, aUndo, x )
+       aBmps1[ x ]:bAction := SetMi2Expr( aBtts1, oGet1, aUndo, x )
 
        nCol += 40
        if Mod( x, 8 ) = 0
