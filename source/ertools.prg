@@ -1261,7 +1261,7 @@ return .T.
 function UnDoExpression( oGet, aUndo )
 
    if Len( aUndo ) > 0
-      if .NOT. EMPTY( ATAIL( aUndo ) )
+      if !EMPTY( ATAIL( aUndo ) )
          oGet:cText( ATAIL( aUndo ) )
          oGet:Refresh()
          ASIZE( aUndo, Len( aUndo ) - 1 )
