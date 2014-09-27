@@ -442,6 +442,7 @@ function Er_Databases( lTake, nD )
 
    DEFAULT nD := 1
    oDlg       := oER:oFldD:aDialogs[ nD ]
+   oDlg:SetColor( CLR_BLACK, oEr:nClrPaneTree )
 
    nDefClr := oDlg:nClrPane
 
@@ -997,6 +998,7 @@ function ER_Expressions( lTake, cAltText, nD )
    DEFAULT lTake    := .F.
    DEFAULT nD := 2
    oDlg       := oER:oFldD:aDialogs[ nD ]
+   oDlg:SetColor( CLR_BLACK, oEr:nClrPaneTree )
 
    aUndo      := {}
 
@@ -1054,6 +1056,8 @@ function ER_Expressions( lTake, cAltText, nD )
 
    endif
 
+   oFld:aDialogs[1]:SetColor( CLR_BLACK, oEr:nClrPaneTree )
+   oFld:aDialogs[2]:SetColor( CLR_BLACK, oEr:nClrPaneTree )
    SELECT 0
    USE ( VRD_LF2SF( cGenExpr ) ) ALIAS "GENEXPR" SHARED
 

@@ -275,6 +275,7 @@ Function Dlg_Colors( i )
    //DEFINE BRUSH oBrush COLOR oEr:nClrPaneTree
    //oER:oFldI:aDialogs[i]:SetBrush( oBrush )
 
+   //oER:oFldI:aDialogs[ i ]:SetColor( CLR_BLACK, oEr:nClrPaneTree )
    nDefClr := oER:oFldI:aDialogs[ i ]:nClrPane
 
    DEFINE FONT ofont NAME "Verdana" Size 0,-14
@@ -360,6 +361,7 @@ Function Dlg_Fonts( i )
       cFontText += CHR( n )
    next
 
+   //oER:oFldI:aDialogs[ i ]:SetColor( CLR_BLACK, oEr:nClrPaneTree )
    nDefClr := oER:oFldI:aDialogs[ i ]:nClrPane
 
    DEFINE FONT oFont NAME "Verdana" Size 0,-14
