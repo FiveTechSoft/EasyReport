@@ -1206,10 +1206,16 @@ Return { || CopyToExpress( aBtts1[ x ], oGet1, @aUndo ) }
 
 function CheckExpression( cText )
 
-   local lreturn, xreturn, oScript
+   Local lReturn
+   Local xReturn
+   Local oScript
 
-   oScript := TScript():New( "function TEST()" + CRLF + cText + CRLF + "return" )
-
+   //oScript := TScript():New( "function TEST()" + CRLF + cText + CRLF + "return" )
+   if empty( AT( "FUNCTION", Upper( cText ) ) )
+      oScript := TErScript():New( "function TEST()" + CRLF + cText + CRLF + "return" )
+   else
+      oScript := TErScript():New( cText )
+   endif
    oScript:Compile()
 
    if EMPTY( oScript:cError )
