@@ -124,9 +124,11 @@ function OpenFile( cFile, lChange, lAddDelNew )
       oEr:oMainWnd:SetMenu( BuildMenu() )
 
       IF oER:lShowPanel
+         ER_ReportSettings( 1 )
+         //DlgTree( 2 )
          Dlg_Colors( 3 )
          Dlg_Fonts( 4 )
-         ER_ReportSettings()
+         //oER:oFldI:Default()
          Er_Databases(,2)
          ER_Expressions(,,1)
       endif
@@ -1072,7 +1074,7 @@ FUNCTION RestoreNewDatas( aDataItem , Hvar )
         aDataItem[i] := HVar[ cName ]
     NEXT
 
-RETURN
+RETURN nil
 
-
+//------------------------------------------------------------------------------
 

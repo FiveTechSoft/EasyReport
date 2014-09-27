@@ -153,7 +153,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
 
 
        @ 0.5, 1 FOLDEREX oER:oFldD ;
-        PROMPT GL("&Expressions"), GL("&Databases"), GL("&Fields"), GL("Fil&ters") ;
+       PROMPT GL("&Expressions"), GL("&Databases"), GL("&Fields"), GL("Fil&ters") ;
        OF oEr:oMainWnd ;
        SIZE 326, GetSysMetrics( 1 ) - 138 ;
        OPTION 1 ;
@@ -171,27 +171,21 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
        OPTION 1 ;
        PIXEL
 
+       @ 0.5, 1 FOLDER oER:oFldD ;
+       PROMPT GL("&Expressions"), GL("&Databases"), GL("&Fields"), GL("Fil&ters") ;
+       OF oEr:oMainWnd ;
+       SIZE 326, GetSysMetrics( 1 ) - 138 ;
+       OPTION 1 ;
+       PIXEL 
+
       endif
       //oER:oFldI:SetFont(  )
 
-      oER:oFldI:SetColor(  , oEr:nClrPaneTree )
       oEr:oMainWnd:oLeft   :=  oER:oFldI
       oEr:oMainWnd:oRight  :=  oER:oFldD
+      oER:oFldI:SetColor(  , oEr:nClrPaneTree )
 
-
-      oER:oTree := TTreeView():New( 0, 2, oER:oFldI:aDialogs[2] , 0, , .T., .F., 340 , oER:oFldI:aDialogs[3]:nHeight ,"",, )
-      // oEr:oMainWnd:oLeft  :=   oER:oTree
-      oEr:oTree:SetColor( ,  oEr:nClrPaneTree )
-      oEr:oTree:l3DLook := .F.
-
-      if ValidVersionFwh( 14, 8 )
-         oEr:oTree:SetItemHeight( 24 )   // o  TvSetItemHeight( oER:oTree:hWnd, 24 )
-      endif
-      oEr:oTree:bMouseWheel = { | nKey, nDelta, nXPos, nYPos | ;
-                        ER_MouseWheelTree( nKey, nDelta, nXPos, nYPos ) }
-
-      //oER:oFldI:aDialogs[3]:SetControl( oEr:oTree )
-      //oER:oFldI:Hide()
+      DlgTree( 2 )
 
    ENDIF
 
@@ -255,6 +249,28 @@ FUNCTION swichFldD(oWnd,oFld, lSetVisible  )
 
 RETURN nil
 
+//----------------------------------------------------------------------------//
+
+Function DlgTree( nD )
+
+DEFAULT nD  := 2
+
+      oER:oTree := TTreeView():New( 0, 2, oER:oFldI:aDialogs[ nD ] , 0, , .T., .F., 340 ,;
+                                    oER:oFldI:aDialogs[ nD ]:nHeight ,"",, )
+      // oEr:oMainWnd:oLeft  :=   oER:oTree
+      oEr:oTree:SetColor( ,  oEr:nClrPaneTree )
+      oEr:oTree:l3DLook := .F.
+
+      if ValidVersionFwh( 14, 8 )
+         oEr:oTree:SetItemHeight( 24 )   // o  TvSetItemHeight( oER:oTree:hWnd, 24 )
+      endif
+      oEr:oTree:bMouseWheel = { | nKey, nDelta, nXPos, nYPos | ;
+                        ER_MouseWheelTree( nKey, nDelta, nXPos, nYPos ) }
+
+      //oER:oFldI:aDialogs[ nD ]:SetControl( oEr:oTree )
+      //oER:oFldI:Hide()
+
+Return oEr:oTree
 
 //----------------------------------------------------------------------------//
 
@@ -2796,7 +2812,7 @@ function ER_ReportSettings( nD )
    Local oDlg
    Local aGrp[ 3 ]
    Local oRad1
-   Local aGet[ 1 ]
+   Local aGet[ 10 ]
    Local lSave       := .F.
    Local nWidth      := Val( oEr:GetDefIni( "General", "PaperWidth" , "" ) )
    Local nHeight     := Val( oEr:GetDefIni( "General", "PaperHeight", "" ) )
@@ -2858,7 +2874,7 @@ function ER_ReportSettings( nD )
      COLOR CLR_BLACK, oEr:nClrPaneTree PIXEL TRANSPARENT
    @ nFil + 4, 150 SAY oER:cMeasure OF oDlg FONT oFont SIZE 40, 24 ;
      COLOR CLR_BLACK, oEr:nClrPaneTree PIXEL TRANSPARENT
-   @ nFil, 70 GET nWidth OF oDlg FONT oFont ;
+   @ nFil, 70 GET aGet[ 2 ] VAR nWidth OF oDlg FONT oFont ;
       PICTURE cPicture SPINNER MIN 0 ;
       SIZE 50, 24 PIXEL ;
       WHEN AllTrim( cFormat ) = GL("user-defined")
@@ -2875,7 +2891,7 @@ function ER_ReportSettings( nD )
      FONT oFont COLOR CLR_BLACK, oEr:nClrPaneTree PIXEL TRANSPARENT
    @ nFil + 4, 150 SAY oER:cMeasure OF oDlg SIZE 40, 24 ;
      FONT oFont COLOR CLR_BLACK, oEr:nClrPaneTree PIXEL TRANSPARENT
-   @ nFil, 70 GET nHeight OF oDlg PICTURE cPicture ;
+   @ nFil, 70 GET aGet[ 3 ] VAR nHeight OF oDlg PICTURE cPicture ;
       SPINNER MIN 0 ;
       SIZE 50, 24 FONT oFont PIXEL ;
       WHEN AllTrim( cFormat ) = GL("user-defined")
@@ -2891,14 +2907,14 @@ function ER_ReportSettings( nD )
      FONT oFont COLOR CLR_BLACK, oEr:nClrPaneTree PIXEL TRANSPARENT
    @ nFil + 4, 150 SAY oER:cMeasure OF oDlg SIZE 40, 24 ;
      FONT oFont COLOR CLR_BLACK, oEr:nClrPaneTree PIXEL TRANSPARENT
-   @ nFil, 70 GET nLeft  OF oDlg PICTURE cPicture SPINNER MIN 0 ;
+   @ nFil, 70 GET aGet[ 4 ] VAR nLeft  OF oDlg PICTURE cPicture SPINNER MIN 0 ;
       FONT oFont SIZE 50, 24 PIXEL
    nFil += 40
    @ nFil + 4, 10  SAY GL("Page break:") OF oDlg SIZE 60, 24  ;
      FONT oFont COLOR CLR_BLACK, oEr:nClrPaneTree PIXEL TRANSPARENT
    @ nFil + 4, 150 SAY oER:cMeasure OF oDlg SIZE 40, 24 ;
      FONT oFont COLOR CLR_BLACK, oEr:nClrPaneTree PIXEL TRANSPARENT
-   @ nFil, 70 GET nPageBreak OF oDlg PICTURE cPicture SPINNER MIN 0 ;
+   @ nFil, 70 GET aGet[ 5 ] VAR nPageBreak OF oDlg PICTURE cPicture SPINNER MIN 0 ;
       FONT oFont SIZE 50, 24 PIXEL
 
 
@@ -2928,7 +2944,7 @@ function ER_ReportSettings( nD )
      FONT oFont COLOR CLR_BLACK, oEr:nClrPaneTree PIXEL TRANSPARENT
    @ nFil + 4, 150 SAY oER:cMeasure OF oDlg SIZE 40, 24 ;
      FONT oFont COLOR CLR_BLACK, oEr:nClrPaneTree PIXEL TRANSPARENT
-   @ nFil, 70 GET nGridWidth OF oDlg PICTURE cPicture SPINNER MIN 0.01 ;
+   @ nFil, 70 GET aGet[ 6 ] VAR nGridWidth OF oDlg PICTURE cPicture SPINNER MIN 0.01 ;
       FONT oFont SIZE 50, 24 PIXEL VALID nGridWidth  > 0
 
    nFil += 40
@@ -2936,7 +2952,7 @@ function ER_ReportSettings( nD )
      FONT oFont COLOR CLR_BLACK, oEr:nClrPaneTree PIXEL TRANSPARENT
    @ nFil + 4, 150 SAY oER:cMeasure OF oDlg SIZE 40, 24  ;
      FONT oFont COLOR CLR_BLACK, oEr:nClrPaneTree PIXEL TRANSPARENT
-   @ nFil, 70 GET nGridHeight OF oDlg PICTURE cPicture SPINNER MIN 0.01 ;
+   @ nFil, 70 GET aGet[ 7 ] VAR nGridHeight OF oDlg PICTURE cPicture SPINNER MIN 0.01 ;
       FONT oFont SIZE 50, 24 PIXEL VALID nGridHeight  > 0
 
    @ nFil + 4, 220 CHECKBOX oCbx VAR lShowGrid ;
