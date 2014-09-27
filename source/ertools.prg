@@ -941,11 +941,11 @@ function Expressions( lTake, cAltText )
       creturn := cAltText
    endif
 
-   GENEXPR->(DBCLOSEAREA())
+//   GENEXPR->(DBCLOSEAREA())
 
-   if nShowExpr = 1
-      USEREXPR->(DBCLOSEAREA())
-   endif
+//   if nShowExpr = 1
+//      USEREXPR->(DBCLOSEAREA())
+//   endif
 
    SELECT( nAltSel )
    oFont:End()
@@ -1076,7 +1076,7 @@ function ER_Expressions( lTake, cAltText, nD )
       FIELDS GENEXPR->NAME, GENEXPR->INFO ; 
       COLSIZES 95, 195 ;
       HEADERS " " + GL("Name"), " " + GL("Description") ;
-      FONT oFont PIXEL ; //NOBORDER  ;
+      FONT oFont PIXEL NOBORDER  ;
       ON LEFT DBLCLICK ( creturn := GENEXPR->NAME, nTyp := 1, oDlg:End() )
 
    oBrw:lRecordSelector   := .F.
@@ -1119,32 +1119,33 @@ function ER_Expressions( lTake, cAltText, nD )
    oBrw2:lRecordSelector   := .F.
    oBrw2:lHScroll          := .F.
    //oBrw2:lVScroll          := .F.
+   //oBrw2:nRowHeight        := 48
    oBrw2:CreateFromCode()
 
    nFil   :=  Int( ( oFld:aDialogs[i]:nHeight - 1 ) / 2 ) // + 40
-   @ nFil, 1 SAY GL("Name") ;
-      SIZE 200, 20 ;
+   @ nFil, 1 SAY GL("Name") + ":" ;
+      SIZE 80, 20 ;
       OF oFld:aDialogs[i] FONT oFont PIXEL TRANSPARENT
 
-   nFil += 20
-   @ nFil, 1 GET oGet0 VAR USEREXPR->NAME OF oFld:aDialogs[i] UPDATE PIXEL ;
-      SIZE oFld:aDialogs[i]:nWidth - 1, 16 ;
+   //nFil += 20
+   @ nFil, 81 GET oGet0 VAR USEREXPR->NAME OF oFld:aDialogs[i] UPDATE PIXEL ;
+      SIZE oFld:aDialogs[i]:nWidth - 81, 16 ;
       FONT oFont ;
       VALID ( oBrw2:Refresh(), .T. )
 
    nFil += 20
-   @ nFil, 1 SAY GL("Expression") ;
+   @ nFil, 1 SAY GL("Expression") + ":" ;
       SIZE 200, 20 ;
       OF oFld:aDialogs[i] FONT oFont PIXEL TRANSPARENT
 
    nFil += 20
    @ nFil , 1 GET oGet1 VAR USEREXPR->EXPRESSION  OF oFld:aDialogs[i] UPDATE PIXEL ;
-      SIZE oFld:aDialogs[i]:nWidth - 1, 16 ;      
+      SIZE oFld:aDialogs[i]:nWidth - 1, 48 ;      
       FONT oFont ;
       VALID ( oBrw2:Refresh(), .T. )
 
-   nFil += 20
-   @ nFil, 1 SAY GL("Description") ;
+   nFil += 50
+   @ nFil, 1 SAY GL("Description") + ":" ;
       SIZE 200, 20 ;
       OF oFld:aDialogs[i] FONT oFont PIXEL TRANSPARENT
 
@@ -1215,11 +1216,11 @@ function ER_Expressions( lTake, cAltText, nD )
 
    */
 
-   @ oFld:aDialogs[i]:nHeight - 30 , oFld:aDialogs[i]:nWidth - 110 BTNBMP PROMPT GL("Check") ;
+   @ oFld:aDialogs[i]:nHeight - 24 , oFld:aDialogs[i]:nWidth - 110 BTNBMP PROMPT GL("Check") ;
             OF oFld:aDialogs[i] SIZE 100, 20 PIXEL ;
             ACTION CheckExpression( USEREXPR->EXPRESSION )
 
-   @ oFld:aDialogs[i]:nHeight - 30 , 10 BTNBMP PROMPT GL("Undo") ;
+   @ oFld:aDialogs[i]:nHeight - 24 , 10 BTNBMP PROMPT GL("Undo") ;
             WHEN LEN( aUndo ) > 0 ;
             OF oFld:aDialogs[i] SIZE 100, 20 PIXEL ;
             ACTION aUndo := UnDoExpression( oGet1, aUndo )
@@ -1284,14 +1285,20 @@ return .T.
 //-----------------------------------------------------------------------------
 
 function CopyToExpress( cText, oGet, aUndo )
+local uVar := ""
 
    AADD( aUndo, oGet:cText )
-   //if empty( oGet:cText )
-   //   oGet:cText := ""
-   //endif
+   if empty( oGet:Value )
+      oGet:cText( " " )
+   endif
+
+   uVar := RTrim( oGet:Value ) + cText
+   oGet:cText( uVar )
    oGet:SetFocus()
    oGet:Paste( cText )
-   oGet:SetPos( oGet:nPos + LEN( cText ) )
+   //oGet:Refresh()
+   //oGet:SetPos( oGet:nPos + LEN( cText ) )
+   oGet:SetPos( Len( uVar ) + 1 )
 
 return .T.
 
