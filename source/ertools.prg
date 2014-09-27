@@ -1217,11 +1217,11 @@ function ER_Expressions( lTake, cAltText, nD )
 
    endif
 
-   GENEXPR->(DBCLOSEAREA())
+ //  GENEXPR->(DBCLOSEAREA())
 
-   if nShowExpr = 1
-      USEREXPR->(DBCLOSEAREA())
-   endif
+ //  if nShowExpr = 1
+ //     USEREXPR->(DBCLOSEAREA())
+ //  endif
 
    SELECT( nAltSel )
    oFont:End()
