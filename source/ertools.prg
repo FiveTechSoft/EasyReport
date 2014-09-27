@@ -1098,7 +1098,7 @@ function ER_Expressions( lTake, cAltText, nD )
 
    @ 30, 1 XBROWSE oBrw2 ;
       OF oFld:aDialogs[i] ;
-      SIZE oFld:aDialogs[i]:nWidth - 1, Int( ( oFld:aDialogs[i]:nHeight - 1 ) / 2 ) - 40 ;      
+      SIZE oFld:aDialogs[i]:nWidth - 1, Int( ( oFld:aDialogs[i]:nHeight - 1 ) / 2 ) - 60 ;      
       FIELDS USEREXPR->NAME, USEREXPR->INFO ;
       COLSIZES 95, 195 ;
       HEADERS " " + GL("Name"), " " + GL("Description") ;
@@ -1115,7 +1115,7 @@ function ER_Expressions( lTake, cAltText, nD )
    //oBrw2:nRowHeight        := 48
    oBrw2:CreateFromCode()
 
-   nFil   :=  Int( ( oFld:aDialogs[i]:nHeight - 1 ) / 2 ) // + 40
+   nFil   :=  Int( ( oFld:aDialogs[i]:nHeight - 1 ) / 2 ) - 20  // + 40
    @ nFil + 2, 1 SAY GL("Name") + ":" ;
       SIZE 80, 20 ;
       OF oFld:aDialogs[i] FONT oFont PIXEL TRANSPARENT

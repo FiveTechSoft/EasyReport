@@ -2828,7 +2828,8 @@ function ER_ReportSettings( nD )
    @ oDlg:nHeight - 40, oDlg:nWidth - 110 BUTTON oBtn1 PROMPT GL("&OK") ;
      OF oDlg SIZE 80, 20 PIXEL ACTION  GrabaReportSetting( lSave, aFormat,;
                              cFormat, nDecimals, nWidth, nHeight, nTop, ;
-                             nLeft, nPageBreak, nOrient, cTitle, cGroup )
+                             nLeft, nPageBreak, nOrient, cTitle, cGroup )    //,;
+                            //nGridWidth, nGridHeight, lShowGrid )
 
    //@ oDlg:nHeight - 50, oDlg:nWidth - 200 BUTTON oBtn2 PROMPT GL("&Cancel") ;
    //  OF oDlg SIZE 80, 20 PIXEL //ACTION oDlg:End()
@@ -2984,8 +2985,12 @@ return .T.
 //----------------------------------------------------------------------------//
 
 Function GrabaReportSetting( lSave, aFormat, cFormat, nDecimals, nWidth, nHeight, ;
-                             nTop, nLeft, nPageBreak, nOrient, cTitle, cGroup )
+                             nTop, nLeft, nPageBreak, nOrient, cTitle, cGroup )    //,;
+                            //nGridWidth, nGridHeight, lShowGrid )
 Local oIni
+//Local i
+//Local nXMove
+//Local nYMove
 
 DEFAULT lSave := .F.
 
@@ -3006,6 +3011,39 @@ DEFAULT lSave := .F.
       oEr:oMainWnd:cTitle := MainCaption()
 
       SetSave( .F. )
+
+      /*
+      oGenVar:nGridWidth    := nGridWidth
+      oGenVar:nGridHeight   := nGridHeight
+      oGenVar:lShowGrid     := lShowGrid
+
+      IF !Empty( oER:cDefIni )
+
+         INI oIni FILE oER:cDefIni
+            SET SECTION "General" ENTRY "GridWidth"  to AllTrim(STR( nGridWidth , 5, nDecimals )) OF oIni
+            SET SECTION "General" ENTRY "GridHeight" to AllTrim(STR( nGridHeight, 5, nDecimals )) OF oIni
+            SET SECTION "General" ENTRY "ShowGrid"   to IIF( lShowGrid, "1", "0") OF oIni
+         ENDINI
+
+      endif
+
+      for i := 1 to Len( aWnd )
+         if aWnd[ i ] <> nil
+            aWnd[ i ]:Refresh()
+         endif
+      next
+
+      SetGridSize( ER_GetPixel( nGridWidth ), ER_GetPixel( nGridHeight ) )
+      nXMove := ER_GetPixel( nGridWidth )
+      nYMove := ER_GetPixel( nGridHeight )
+
+      oGenVar:nGridWidth  := nGridWidth
+      oGenVar:nGridHeight := nGridHeight
+
+    //  SetSave( .F. )
+
+      SetSave( .T. )
+      */
 
    endif
 
