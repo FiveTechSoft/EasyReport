@@ -1015,13 +1015,6 @@ function ER_Expressions( lTake, cAltText, nD )
    DEFINE FONT oFont NAME "Verdana" SIZE 0, -10
 
    /*
-   @ 4, 4 SAY oSay1 ;
-      PROMPT GL("Please doubleclick an expression to take it over.") ;
-      SIZE 200, 20 ;
-      OF oDlg FONT oFont PIXEL TRANSPARENT
-   */
-   
-   /*
    @ oDlg:nHeight - 30 , oDlg:nWidth - 110 BTNBMP PROMPT "&OK" ;
             OF oDlg SIZE 100, 20 PIXEL //;
             //ACTION ( oDlg:End() )
@@ -1072,11 +1065,11 @@ function ER_Expressions( lTake, cAltText, nD )
 
    @ 30, 1 XBROWSE oBrw ;
       OF oFld:aDialogs[1] ;
-      SIZE oFld:aDialogs[1]:nWidth - 1, oFld:aDialogs[1]:nHeight - 40 ;
+      SIZE oFld:aDialogs[1]:nWidth - 1, oFld:aDialogs[1]:nHeight - 70 ;
       FIELDS GENEXPR->NAME, GENEXPR->INFO ; 
       COLSIZES 95, 195 ;
       HEADERS " " + GL("Name"), " " + GL("Description") ;
-      FONT oFont PIXEL NOBORDER  ;
+      FONT oFont PIXEL ; //NOBORDER  ;
       ON LEFT DBLCLICK ( creturn := GENEXPR->NAME, nTyp := 1, oDlg:End() )
 
    oBrw:lRecordSelector   := .F.
@@ -1123,29 +1116,29 @@ function ER_Expressions( lTake, cAltText, nD )
    oBrw2:CreateFromCode()
 
    nFil   :=  Int( ( oFld:aDialogs[i]:nHeight - 1 ) / 2 ) // + 40
-   @ nFil, 1 SAY GL("Name") + ":" ;
+   @ nFil + 2, 1 SAY GL("Name") + ":" ;
       SIZE 80, 20 ;
       OF oFld:aDialogs[i] FONT oFont PIXEL TRANSPARENT
 
    //nFil += 20
-   @ nFil, 81 GET oGet0 VAR USEREXPR->NAME OF oFld:aDialogs[i] UPDATE PIXEL ;
-      SIZE oFld:aDialogs[i]:nWidth - 81, 16 ;
+   @ nFil, 71 GET oGet0 VAR USEREXPR->NAME OF oFld:aDialogs[i] UPDATE PIXEL ;
+      SIZE oFld:aDialogs[i]:nWidth - 71, 16 ;
       FONT oFont ;
       VALID ( oBrw2:Refresh(), .T. )
 
    nFil += 20
-   @ nFil, 1 SAY GL("Expression") + ":" ;
+   @ nFil + 2, 1 SAY GL("Expression") + ":" ;
       SIZE 200, 20 ;
       OF oFld:aDialogs[i] FONT oFont PIXEL TRANSPARENT
 
    nFil += 20
-   @ nFil , 1 GET oGet1 VAR USEREXPR->EXPRESSION  OF oFld:aDialogs[i] UPDATE PIXEL ;
+   @ nFil, 1 GET oGet1 VAR USEREXPR->EXPRESSION  OF oFld:aDialogs[i] UPDATE PIXEL ;
       SIZE oFld:aDialogs[i]:nWidth - 1, 48 ;      
       FONT oFont ;
       VALID ( oBrw2:Refresh(), .T. )
 
    nFil += 50
-   @ nFil, 1 SAY GL("Description") + ":" ;
+   @ nFil + 2, 1 SAY GL("Description") + ":" ;
       SIZE 200, 20 ;
       OF oFld:aDialogs[i] FONT oFont PIXEL TRANSPARENT
 
@@ -1176,45 +1169,6 @@ function ER_Expressions( lTake, cAltText, nD )
        endif
 
    Next x
-   
-
-   /*
-   @ nFil, 1 BTNBMP PROMPT "=" ;
-            OF oFld:aDialogs[i] SIZE 20, 20 PIXEL ;
-            FONT oFont ;
-            CENTER ;
-            ACTION CopyToExpress( "="   , oGet1, @aUndo )
-   */
-
-   /*
-   REDEFINE BUTTON ID 401 OF oFld:aDialogs[i] ACTION CopyToExpress( "="   , oGet1, @aUndo )
-   REDEFINE BUTTON ID 402 OF oFld:aDialogs[i] ACTION CopyToExpress( "<>"  , oGet1, @aUndo )
-   REDEFINE BUTTON ID 403 OF oFld:aDialogs[i] ACTION CopyToExpress( "<"   , oGet1, @aUndo )
-   REDEFINE BUTTON ID 404 OF oFld:aDialogs[i] ACTION CopyToExpress( ">"   , oGet1, @aUndo )
-   REDEFINE BUTTON ID 405 OF oFld:aDialogs[i] ACTION CopyToExpress( "<="  , oGet1, @aUndo )
-   REDEFINE BUTTON ID 406 OF oFld:aDialogs[i] ACTION CopyToExpress( ">="  , oGet1, @aUndo )
-   REDEFINE BUTTON ID 407 OF oFld:aDialogs[i] ACTION CopyToExpress( "=="  , oGet1, @aUndo )
-   REDEFINE BUTTON ID 408 OF oFld:aDialogs[i] ACTION CopyToExpress( "("   , oGet1, @aUndo )
-   REDEFINE BUTTON ID 409 OF oFld:aDialogs[i] ACTION CopyToExpress( ")"   , oGet1, @aUndo )
-   REDEFINE BUTTON ID 410 OF oFld:aDialogs[i] ACTION CopyToExpress( '"'   , oGet1, @aUndo )
-   REDEFINE BUTTON ID 411 OF oFld:aDialogs[i] ACTION CopyToExpress( "!"   , oGet1, @aUndo )
-   REDEFINE BUTTON ID 412 OF oFld:aDialogs[i] ACTION CopyToExpress( "$"   , oGet1, @aUndo )
-   REDEFINE BUTTON ID 413 OF oFld:aDialogs[i] ACTION CopyToExpress( "+"   , oGet1, @aUndo )
-   REDEFINE BUTTON ID 414 OF oFld:aDialogs[i] ACTION CopyToExpress( "-"   , oGet1, @aUndo )
-   REDEFINE BUTTON ID 415 OF oFld:aDialogs[i] ACTION CopyToExpress( "*"   , oGet1, @aUndo )
-   REDEFINE BUTTON ID 416 OF oFld:aDialogs[i] ACTION CopyToExpress( "/"   , oGet1, @aUndo )
-   REDEFINE BUTTON ID 417 OF oFld:aDialogs[i] ACTION CopyToExpress( ".T." , oGet1, @aUndo )
-   REDEFINE BUTTON ID 418 OF oFld:aDialogs[i] ACTION CopyToExpress( ".F." , oGet1, @aUndo )
-
-   REDEFINE BUTTON ID 502 OF oFld:aDialogs[i] ACTION CopyToExpress( ".or." , oGet1, @aUndo )
-   REDEFINE BUTTON ID 503 OF oFld:aDialogs[i] ACTION CopyToExpress( ".and.", oGet1, @aUndo )
-   REDEFINE BUTTON ID 504 OF oFld:aDialogs[i] ACTION CopyToExpress( ".not.", oGet1, @aUndo )
-
-   REDEFINE BUTTON ID 601 OF oFld:aDialogs[i] ACTION CopyToExpress( "If( , , )", oGet1, @aUndo )
-   REDEFINE BUTTON ID 602 OF oFld:aDialogs[i] ACTION CopyToExpress( "Val(  )"  , oGet1, @aUndo )
-   REDEFINE BUTTON ID 603 OF oFld:aDialogs[i] ACTION CopyToExpress( "Str(  )"  , oGet1, @aUndo )
-
-   */
 
    @ oFld:aDialogs[i]:nHeight - 24 , oFld:aDialogs[i]:nWidth - 110 BTNBMP PROMPT GL("Check") ;
             OF oFld:aDialogs[i] SIZE 100, 20 PIXEL ;
