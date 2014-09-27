@@ -141,12 +141,12 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
       if ValidVersionFwh( 10, 8 )
 
        @ 0.5, 1 FOLDEREX oER:oFldI ;
-       PROMPT GL("&Report Settings"), "&Otros", GL("&Items"), GL("Colors"), GL("Fonts") ;
+       PROMPT GL("&Report Settings"), GL("&Items"), GL("Colors"), GL("Fonts") ;
        OF oEr:oMainWnd ;
        SIZE 326, GetSysMetrics( 1 ) - 138 ;
-       OPTION 3 ;
+       OPTION 1 ;
        TAB HEIGHT 34 ;
-       BITMAPS { "B_EDIT16", "B_GRAPHIC", "B_ITEMLIST16", "B_ITEMLIST16", "B_EDIT2" } ; //      BITMAPS { "B_EDIT16", "B_GRAPHIC", "B_ITEMLIST16", "B_ITEMLIST16", "B_AREA", "B_EDIT2" } ;
+       BITMAPS { "B_EDIT16", "B_ITEMLIST16", "B_ITEMLIST16", "B_EDIT2" } ; //      BITMAPS { "B_EDIT16", "B_GRAPHIC", "B_ITEMLIST16", "B_ITEMLIST16", "B_AREA", "B_EDIT2" } ;
        PIXEL ;
        SEPARATOR 0
 
@@ -165,10 +165,10 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
       else
 
        @ 0.5, 1 FOLDER oER:oFldI ;
-       PROMPT GL("&Report Settings"), GL("&Grid Setup"), GL("&Items"), GL("&Databases"), GL("&Expressions") ;
+       PROMPT GL("&Report Settings"), GL("&Items"), GL("&Databases"), GL("&Expressions") ;
        OF oEr:oMainWnd ;
        SIZE 326, GetSysMetrics( 1 ) - 138 ;
-       OPTION 3 ;
+       OPTION 1 ;
        PIXEL
 
       endif
@@ -181,7 +181,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
       oEr:oMainWnd:oRight  :=  oER:oFldD
 
 
-      oER:oTree := TTreeView():New( 0, 2, oER:oFldI:aDialogs[3] , 0, , .T., .F., 340 , oER:oFldI:aDialogs[3]:nHeight ,"",, )
+      oER:oTree := TTreeView():New( 0, 2, oER:oFldI:aDialogs[2] , 0, , .T., .F., 340 , oER:oFldI:aDialogs[3]:nHeight ,"",, )
       // oEr:oMainWnd:oLeft  :=   oER:oTree
       oEr:oTree:SetColor( ,  oEr:nClrPaneTree )
       oEr:oTree:l3DLook := .F.

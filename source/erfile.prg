@@ -124,8 +124,8 @@ function OpenFile( cFile, lChange, lAddDelNew )
       oEr:oMainWnd:SetMenu( BuildMenu() )
 
       IF oER:lShowPanel
-         Dlg_Colors( 4 )
-         Dlg_Fonts( 5 )
+         Dlg_Colors( 3 )
+         Dlg_Fonts( 4 )
          ER_ReportSettings()
          Er_Databases(,2)
          ER_Expressions(,,1)
