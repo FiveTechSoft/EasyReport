@@ -126,6 +126,7 @@ function OpenFile( cFile, lChange, lAddDelNew )
       IF oER:lShowPanel
          Dlg_Colors( 4 )
          Dlg_Fonts( 5 )
+         ER_ReportSettings()
          Er_Databases(,2)
          ER_Expressions(,,1)
       endif

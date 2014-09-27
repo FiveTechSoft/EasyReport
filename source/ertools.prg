@@ -852,7 +852,7 @@ function Expressions( lTake, cAltText )
    endif
 
    SELECT 0
-   USE ( VRD_LF2SF( cGenExpr ) ) ALIAS "GENEXPR"
+   USE ( VRD_LF2SF( cGenExpr ) ) ALIAS "GENEXPR" SHARED
 
    REDEFINE LISTBOX oBrw ;
       FIELDS GENEXPR->NAME, GENEXPR->INFO ;
@@ -868,7 +868,7 @@ function Expressions( lTake, cAltText )
 
    i := 2
    SELECT 0
-   USE ( VRD_LF2SF( cUserExpr ) ) ALIAS "USEREXPR"
+   USE ( VRD_LF2SF( cUserExpr ) ) ALIAS "USEREXPR" SHARED
 
    REDEFINE LISTBOX oBrw2 ;
       FIELDS USEREXPR->NAME, USEREXPR->INFO ;
@@ -1055,7 +1055,7 @@ function ER_Expressions( lTake, cAltText, nD )
    endif
 
    SELECT 0
-   USE ( VRD_LF2SF( cGenExpr ) ) ALIAS "GENEXPR"
+   USE ( VRD_LF2SF( cGenExpr ) ) ALIAS "GENEXPR" SHARED
 
    @ 6, 4 SAY oSay1 ;
       PROMPT GL("Please doubleclick an expression to take it over.") ;
@@ -1085,7 +1085,7 @@ function ER_Expressions( lTake, cAltText, nD )
 
    i := 2
    SELECT 0
-   USE ( VRD_LF2SF( cUserExpr ) ) ALIAS "USEREXPR"
+   USE ( VRD_LF2SF( cUserExpr ) ) ALIAS "USEREXPR" SHARED
 
    @ 4, oFld:aDialogs[i]:nWidth - 100 BTNBMP PROMPT GL("&New") ;
             OF oFld:aDialogs[i] SIZE 80, 20 PIXEL ;

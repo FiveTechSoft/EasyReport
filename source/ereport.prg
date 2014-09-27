@@ -2790,6 +2790,229 @@ return .T.
 
 //----------------------------------------------------------------------------//
 
+function ER_ReportSettings( nD )
+
+   Local i
+   Local oDlg
+   Local aGrp[ 3 ]
+   Local oRad1
+   Local aGet[ 1 ]
+   Local lSave       := .F.
+   Local nWidth      := Val( oEr:GetDefIni( "General", "PaperWidth" , "" ) )
+   Local nHeight     := Val( oEr:GetDefIni( "General", "PaperHeight", "" ) )
+   Local nTop        := Val( oEr:GetDefIni( "General", "TopMargin" , "20" ) )
+   Local nLeft       := Val( oEr:GetDefIni( "General", "LeftMargin", "20" ) )
+   Local nPageBreak  := Val( oEr:GetDefIni( "General", "PageBreak", "240" ) )
+   Local nOrient     := Val( oEr:GetDefIni( "General", "Orientation", "1" ) )
+   Local cTitle      := PADR( oEr:GetDefIni( "General", "Title", "" ), 80 )
+   Local cGroup      := PADR( oEr:GetDefIni( "General", "Group", "" ), 80 )
+   Local cPicture    := IIF( oER:nMeasure = 2, "999.99", "99999" )
+   Local aFormat     := GetPaperSizes()
+   Local nFormat     := Val( oEr:GetDefIni( "General", "PaperSize", "9" ) )
+   Local cFormat     := aFormat[ IIF( nFormat = 0, 9, nFormat ) ]
+   Local nDecimals   := IIF( oER:nMeasure = 2, 2, 0 )
+   Local oBtn1
+   Local oBtn2
+   Local nFil        := 0
+   Local oCbx
+   Local lInfo       := .F.
+   Local aLanguage   := {}
+   Local nGridWidth  := oGenVar:nGridWidth
+   Local nGridHeight := oGenVar:nGridHeight
+   Local lShowGrid   := oGenVar:lShowGrid
+
+   DEFAULT nD := 1
+
+   oDlg := oER:oFldI:aDialogs[ nD ]
+
+   @ oDlg:nHeight - 40, oDlg:nWidth - 110 BUTTON oBtn1 PROMPT GL("&OK") ;
+     OF oDlg SIZE 80, 20 PIXEL ACTION  GrabaReportSetting( lSave, aFormat,;
+                             cFormat, nDecimals, nWidth, nHeight, nTop, ;
+                             nLeft, nPageBreak, nOrient, cTitle, cGroup )
+
+   //@ oDlg:nHeight - 50, oDlg:nWidth - 200 BUTTON oBtn2 PROMPT GL("&Cancel") ;
+   //  OF oDlg SIZE 80, 20 PIXEL //ACTION oDlg:End()
+
+   nFil  := 4
+
+   //@ nFil, oDlg:nWidth - 80 SAY GL("Paper Size:") OF oDlg ;
+   //  SIZE 60, 20 PIXEL TRANSPARENT
+   @ nFil,  05 GROUP aGrp[ 1 ] TO nFil + 250, oDlg:nWidth - 10 OF oDlg ;
+                    LABEL " " + GL("Paper Size") + ":" ;
+                    PIXEL //COLOR CLR_BLACK, CLR_WHITE
+
+
+   nFil += 20
+   @ nFil, 10 COMBOBOX cFormat ITEMS aFormat OF oDlg ;
+      SIZE oDlg:nWidth - 20, 324 PIXEL ;
+      ON CHANGE aGet[ 1 ]:Setfocus()
+
+   nFil += 40
+   @ nFil + 4, 10  SAY GL("Width:") OF oDlg SIZE 60, 20 PIXEL TRANSPARENT
+   @ nFil + 4, 150 SAY oER:cMeasure OF oDlg SIZE 40, 20 PIXEL TRANSPARENT
+   @ nFil, 70 GET nWidth OF oDlg ;
+      PICTURE cPicture SPINNER MIN 0 ;
+      SIZE 50, 24 PIXEL ;
+      WHEN AllTrim( cFormat ) = GL("user-defined")
+
+   @ nFil + 4,  200 SAY " " + GL("Orientation") + ":"  OF oDlg SIZE 60, 20 PIXEL TRANSPARENT
+   @ nFil + 44, 200 RADIO oRad1 VAR nOrient PROMPT GL("Portrait") SIZE 80, 20 PIXEL OF oDlg
+   @ nFil + 84, 200 RADIOITEM GL("Landscape") RADIOMENU oRad1 OF oDlg PIXEL SIZE 80, 20
+
+   nFil += 40
+   @ nFil + 4, 10  SAY GL("Height:") OF oDlg SIZE 60, 20 PIXEL TRANSPARENT
+   @ nFil + 4, 150 SAY oER:cMeasure OF oDlg SIZE 40, 20 PIXEL TRANSPARENT
+   @ nFil, 70 GET nHeight OF oDlg PICTURE cPicture ;
+      SPINNER MIN 0 ;
+      SIZE 50, 24 PIXEL ;
+      WHEN AllTrim( cFormat ) = GL("user-defined")
+   nFil += 40
+   @ nFil + 4, 10  SAY GL("Top margin")  +":" OF oDlg PIXEL TRANSPARENT
+   @ nFil + 4, 150 SAY oER:cMeasure OF oDlg SIZE 40, 20 PIXEL TRANSPARENT
+   @ nFil, 70 GET aGet[ 1 ] VAR nTop OF oDlg PICTURE cPicture SPINNER MIN 0 ;
+      SIZE 50, 24 PIXEL 
+   nFil += 40
+   @ nFil + 4, 10  SAY GL("Left margin") +":" OF oDlg PIXEL TRANSPARENT 
+   @ nFil + 4, 150 SAY oER:cMeasure OF oDlg SIZE 40, 20 PIXEL TRANSPARENT
+   @ nFil, 70 GET nLeft  OF oDlg PICTURE cPicture SPINNER MIN 0 ;
+      SIZE 50, 24 PIXEL
+   nFil += 40
+   @ nFil + 4, 10  SAY GL("Page break:") OF oDlg PIXEL TRANSPARENT
+   @ nFil + 4, 150 SAY oER:cMeasure OF oDlg SIZE 40, 20 PIXEL TRANSPARENT
+   @ nFil, 70 GET nPageBreak OF oDlg PICTURE cPicture SPINNER MIN 0 ;
+      SIZE 50, 24 PIXEL 
+
+
+   nFil += 40
+   //@ nFil, oDlg:nWidth - 80 SAY GL("Report") OF oDlg ;
+   //  SIZE 60, 20 PIXEL TRANSPARENT
+   @ nFil,  05 GROUP aGrp[ 2 ] TO nFil + 100, oDlg:nWidth - 10 OF oDlg ;
+                    LABEL " " + GL("Report") + ":" ;
+                    PIXEL //COLOR CLR_BLACK, CLR_WHITE
+
+   nFil += 20
+   @ nFil + 4, 10  SAY GL("Name")+":" OF oDlg PIXEL TRANSPARENT
+   @ nFil, 50 GET cTitle OF oDlg SIZE 260, 24 PIXEL 
+   nFil += 40
+   @ nFil + 4, 10  SAY GL("Group")+":" OF oDlg PIXEL TRANSPARENT
+   @ nFil, 50 GET cGroup OF oDlg SIZE 260, 24 PIXEL 
+
+   nFil += 60
+   @ nFil,  05 GROUP aGrp[ 3 ] TO nFil + 100, oDlg:nWidth - 10 OF oDlg ;
+                    LABEL " " + GL("Grid Setup") + ":" ;
+                    PIXEL //COLOR CLR_BLACK, CLR_WHITE
+
+   nFil += 20
+   @ nFil + 4, 10  SAY GL("Width:") OF oDlg PIXEL TRANSPARENT
+   @ nFil + 4, 150 SAY oER:cMeasure OF oDlg SIZE 40, 20 PIXEL TRANSPARENT
+   @ nFil, 70 GET nGridWidth OF oDlg PICTURE cPicture SPINNER MIN 0.01 ;
+      SIZE 50, 24 PIXEL VALID nGridWidth  > 0
+
+   nFil += 40
+   @ nFil + 4, 10  SAY GL("Height:") OF oDlg PIXEL TRANSPARENT
+   @ nFil + 4, 150 SAY oER:cMeasure OF oDlg SIZE 40, 20 PIXEL TRANSPARENT
+   @ nFil, 70 GET nGridHeight OF oDlg PICTURE cPicture SPINNER MIN 0.01 ;
+      SIZE 50, 24 PIXEL VALID nGridHeight  > 0
+
+   @ nFil + 4, 220 CHECKBOX oCbx VAR lShowGrid ;
+     PROMPT GL("Show grid") OF oDlg PIXEL
+
+   /*
+
+   REDEFINE GET nWidth ID 411 OF oDlg PICTURE cPicture SPINNER MIN 0 ;
+      WHEN AllTrim( cFormat ) = GL("user-defined")
+   REDEFINE GET nHeight ID 412 OF oDlg PICTURE cPicture SPINNER MIN 0 ;
+      WHEN AllTrim( cFormat ) = GL("user-defined")
+
+   REDEFINE GET aGet[ 1 ] VAR nTop ID 401 OF oDlg PICTURE cPicture SPINNER MIN 0
+   REDEFINE GET nLeft      ID 402 OF oDlg PICTURE cPicture SPINNER MIN 0
+   REDEFINE GET nPageBreak ID 403 OF oDlg PICTURE cPicture SPINNER MIN 0
+
+   REDEFINE RADIO oRad1 VAR nOrient ID 601, 602 OF oDlg
+
+   REDEFINE SAY PROMPT oER:cMeasure ID 151 OF oDlg
+   REDEFINE SAY PROMPT oER:cMeasure ID 152 OF oDlg
+   REDEFINE SAY PROMPT oER:cMeasure ID 153 OF oDlg
+   REDEFINE SAY PROMPT oER:cMeasure ID 154 OF oDlg
+   REDEFINE SAY PROMPT oER:cMeasure ID 155 OF oDlg
+
+   REDEFINE GET cTitle ID 501 OF oDlg
+   REDEFINE GET cGroup ID 502 OF oDlg
+
+   REDEFINE SAY PROMPT GL("Width:")           ID 171 OF oDlg
+   REDEFINE SAY PROMPT GL("Height:")          ID 172 OF oDlg
+   REDEFINE SAY PROMPT GL("Top margin")  +":" ID 173 OF oDlg
+   REDEFINE SAY PROMPT GL("Left margin") +":" ID 174 OF oDlg
+   REDEFINE SAY PROMPT GL("Page break:")      ID 175 OF oDlg
+   REDEFINE SAY PROMPT GL("Name")        +":" ID 177 OF oDlg
+   REDEFINE SAY PROMPT GL("Group")       +":" ID 178 OF oDlg
+
+   REDEFINE SAY PROMPT " " + GL("Orientation") + ":" ID 176 OF oDlg
+
+   REDEFINE GROUP aGrp[ 1 ] ID 190 OF oDlg
+   REDEFINE GROUP aGrp[ 2 ] ID 191 OF oDlg
+
+   ACTIVATE DIALOG oDlg CENTERED ;
+      ON INIT ( aGrp[ 1 ]:SetText( GL("Paper Size") ), ;
+                aGrp[ 2 ]:SetText( GL("Report") ), ;
+                oRad1:aItems[ 1 ]:SetText( GL("Portrait") ), ;
+                oRad1:aItems[ 2 ]:SetText( GL("Landscape") ) )
+
+   if lSave = .T.
+
+      INI oIni FILE oER:cDefIni
+         SET SECTION "General" ENTRY "PaperSize"    to AllTrim(STR( ASCAN( aFormat, AllTrim( cFormat ) ), 3 )) OF oIni
+         SET SECTION "General" ENTRY "PaperWidth"   to AllTrim(STR( nWidth    , 5, nDecimals ) ) OF oIni
+         SET SECTION "General" ENTRY "PaperHeight"  to AllTrim(STR( nHeight   , 5, nDecimals ) ) OF oIni
+         SET SECTION "General" ENTRY "TopMargin"    to AllTrim(STR( nTop      , 5, nDecimals ) ) OF oIni
+         SET SECTION "General" ENTRY "LeftMargin"   to AllTrim(STR( nLeft     , 5, nDecimals ) ) OF oIni
+         SET SECTION "General" ENTRY "PageBreak"    to AllTrim(STR( nPageBreak, 5, nDecimals ) ) OF oIni
+         SET SECTION "General" ENTRY "Orientation"  to AllTrim(STR( nOrient, 1 )) OF oIni
+         SET SECTION "General" ENTRY "Title"        to AllTrim( cTitle ) OF oIni
+         SET SECTION "General" ENTRY "Group"        to AllTrim( cGroup ) OF oIni
+      ENDINI
+
+      oEr:oMainWnd:cTitle := MainCaption()
+
+      SetSave( .F. )
+
+   endif
+   */
+
+return .T.
+
+//----------------------------------------------------------------------------//
+
+Function GrabaReportSetting( lSave, aFormat, cFormat, nDecimals, nWidth, nHeight, ;
+                             nTop, nLeft, nPageBreak, nOrient, cTitle, cGroup )
+Local oIni
+
+DEFAULT lSave := .F.
+
+   if lSave
+
+      INI oIni FILE oER:cDefIni
+         SET SECTION "General" ENTRY "PaperSize"    to AllTrim(STR( ASCAN( aFormat, AllTrim( cFormat ) ), 3 )) OF oIni
+         SET SECTION "General" ENTRY "PaperWidth"   to AllTrim(STR( nWidth    , 5, nDecimals ) ) OF oIni
+         SET SECTION "General" ENTRY "PaperHeight"  to AllTrim(STR( nHeight   , 5, nDecimals ) ) OF oIni
+         SET SECTION "General" ENTRY "TopMargin"    to AllTrim(STR( nTop      , 5, nDecimals ) ) OF oIni
+         SET SECTION "General" ENTRY "LeftMargin"   to AllTrim(STR( nLeft     , 5, nDecimals ) ) OF oIni
+         SET SECTION "General" ENTRY "PageBreak"    to AllTrim(STR( nPageBreak, 5, nDecimals ) ) OF oIni
+         SET SECTION "General" ENTRY "Orientation"  to AllTrim(STR( nOrient, 1 )) OF oIni
+         SET SECTION "General" ENTRY "Title"        to AllTrim( cTitle ) OF oIni
+         SET SECTION "General" ENTRY "Group"        to AllTrim( cGroup ) OF oIni
+      ENDINI
+
+      oEr:oMainWnd:cTitle := MainCaption()
+
+      SetSave( .F. )
+
+   endif
+
+Return nil
+
+//----------------------------------------------------------------------------//
+
 function GetPaperSizes()
 
    local aSizes := { "Letter 8 1/2 x 11 inch"        , ;
