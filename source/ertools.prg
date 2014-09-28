@@ -450,20 +450,23 @@ function Er_Databases( lTake, nD )
 
    DEFINE FONT oFont NAME "Verdana" Size 0,-12
 
+   /*
    @ 24, 10 SAY GL("Rdds")      OF oDlg FONT oFont PIXEL //TRANSPARENT
    nFil  := 52
    @ nFil, 10 COMBOBOX cRdds ITEMS aRdds OF oDlg ;
       SIZE oDlg:nWidth - 20, 324 FONT oFont PIXEL //  ON CHANGE 
+   */
 
+   nFil  := 2   //155
    //@ 2, 008 SAY GL("Nr.")      OF oDlg FONT oFont PIXEL TRANSPARENT
-   @ 155, 084 SAY GL("Database") OF oDlg FONT oFont ;
+   @ nFil, 084 SAY GL("Database") OF oDlg FONT oFont ;
      COLOR CLR_BLACK, oEr:nClrPaneTree PIXEL TRANSPARENT
-   @ 155, 228 SAY GL("Alias")    OF oDlg FONT oFont ;
+   @ nFil, 228 SAY GL("Alias")    OF oDlg FONT oFont ;
      COLOR CLR_BLACK, oEr:nClrPaneTree PIXEL TRANSPARENT
 
    For x = 1 to Len( aDBGet1 )
        nCol := 8
-       nFil := 175+(x-1)*30
+       nFil := (x-1)*30 + 25 //175
        aDBGet1[ x ] := TGet():New( nFil, nCol, MiSetGetDb( oGenVar:aDBFile, x, 1 ), oDlg, 200, 20, , ,;
                                   ,,,,, .T.,,,,,,,,,,,,,,,,,,, )
 
