@@ -2,6 +2,42 @@
 #INCLUDE "VRD.ch"
 #INCLUDE "Mail.ch"
 
+#xcommand @ <nRow>, <nCol> CFOLDEREX [<oFolder>] ;
+             [ <of: OF, WINDOW, DIALOG> <oWnd> ] ;
+             [ <prm: PROMPT, PROMPTS, ITEMS> <cPrompt,...> ] ;
+             [ <bm: BITMAPS, IMAGES, BMPS> <cbmps,...> ] ;
+             [ <lPixel: PIXEL> ] ;
+             [ <lDesign: DESIGN> ] ;
+             [ TAB HEIGHT <ntabheight> ];
+             [ SEPARATOR <nSep> ];
+             [ OPTION <nOption> ] ;
+             [ ROUND <nRound> ];
+             [ SIZE <nWidth>, <nHeight> ] ;
+             [ <lAdjust: ADJUST> ] ;
+             [ <lStretch: STRETCH> ] ;
+             [ POPUP <upop>];
+             [ ALIGN <nAlign,...> ] ;
+             [ ACTION <uAction> ];
+             [ BRIGHT <nBright> ] ;
+             [ ON CHANGE <uChange> ] ;
+             [ ON PAINT TAB <uPaint> ];
+             [ ON PAINT TEXT <uPaintxt> ];
+             [ HELPTOPICS <cnHelpids,...> ] ;
+             [ <layout: TOP, LEFT, BOTTOM, RIGHT> ] ;
+             [ <lAnimate: ANIMATE> [ SPEED <nSpeed> ] ] ;
+	           [ FONT <oFont> ] ; //-->> byte-one 2010
+             [ <lTransparent: TRANSPARENT> ] ;
+	         [ <dlg: DIALOG, DIALOGS, PAGE, PAGES> <cDlgsName,...> ] ;  
+       => ;
+             [<oFolder> := ] TCFoldereX():New( <nRow>, <nCol>, <nWidth>, <nHeight>,;
+             <oWnd>, [\{<cbmps>\}], <.lPixel.>, <.lDesign.>, [\{<cPrompt>\}], ;
+             <ntabheight>, [\{<cnHelpids>\}], <nRound>, [{|nOption, nOldOption, Self | <uChange>}],;
+             [{|Self,nOption| <uPaint>}], [{|Self,nOption| <uPaintxt>}], ;
+             [\{<nAlign>\}], <.lAdjust.>, <nSep>, <nOption>, [{|Self,nOption| <upop>}],;
+             <.lStretch.>, [ Upper(<(layout)>) ], [{|Self,nOption| <uAction>}], <nBright>,;
+             <.lAnimate.>, [<nSpeed>], <oFont>, <.lTransparent.>, [\{<cDlgsName>\}] )
+
+
 MEMVAR aItems, aAreaIni, aWnd
 MEMVAR cDefaultPath
 MEMVAR nAktArea
@@ -1049,7 +1085,7 @@ function ER_Expressions( lTake, cAltText, nD )
    ELSE
       if ValidVersionFwh( 10, 8 )
 
-         @ 4, 1 FOLDEREX oFld ;
+         @ 4, 1 CFOLDEREX oFld ;
            PROMPT " " + GL("General") + " ", " " + GL("User defined") + " " ;
            OF oDlg ;
            SIZE oDlg:nWidth - 2, oDlg:nHeight - 5 ;

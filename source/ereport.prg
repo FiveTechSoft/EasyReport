@@ -2,6 +2,42 @@
 #include "ttitle.ch"
 #include "Splitter.ch"
 
+#xcommand @ <nRow>, <nCol> CFOLDEREX [<oFolder>] ;
+             [ <of: OF, WINDOW, DIALOG> <oWnd> ] ;
+             [ <prm: PROMPT, PROMPTS, ITEMS> <cPrompt,...> ] ;
+             [ <bm: BITMAPS, IMAGES, BMPS> <cbmps,...> ] ;
+             [ <lPixel: PIXEL> ] ;
+             [ <lDesign: DESIGN> ] ;
+             [ TAB HEIGHT <ntabheight> ];
+             [ SEPARATOR <nSep> ];
+             [ OPTION <nOption> ] ;
+             [ ROUND <nRound> ];
+             [ SIZE <nWidth>, <nHeight> ] ;
+             [ <lAdjust: ADJUST> ] ;
+             [ <lStretch: STRETCH> ] ;
+             [ POPUP <upop>];
+             [ ALIGN <nAlign,...> ] ;
+             [ ACTION <uAction> ];
+             [ BRIGHT <nBright> ] ;
+             [ ON CHANGE <uChange> ] ;
+             [ ON PAINT TAB <uPaint> ];
+             [ ON PAINT TEXT <uPaintxt> ];
+             [ HELPTOPICS <cnHelpids,...> ] ;
+             [ <layout: TOP, LEFT, BOTTOM, RIGHT> ] ;
+             [ <lAnimate: ANIMATE> [ SPEED <nSpeed> ] ] ;
+	           [ FONT <oFont> ] ; //-->> byte-one 2010
+             [ <lTransparent: TRANSPARENT> ] ;
+	         [ <dlg: DIALOG, DIALOGS, PAGE, PAGES> <cDlgsName,...> ] ;  
+       => ;
+             [<oFolder> := ] TCFoldereX():New( <nRow>, <nCol>, <nWidth>, <nHeight>,;
+             <oWnd>, [\{<cbmps>\}], <.lPixel.>, <.lDesign.>, [\{<cPrompt>\}], ;
+             <ntabheight>, [\{<cnHelpids>\}], <nRound>, [{|nOption, nOldOption, Self | <uChange>}],;
+             [{|Self,nOption| <uPaint>}], [{|Self,nOption| <uPaintxt>}], ;
+             [\{<nAlign>\}], <.lAdjust.>, <nSep>, <nOption>, [{|Self,nOption| <upop>}],;
+             <.lStretch.>, [ Upper(<(layout)>) ], [{|Self,nOption| <uAction>}], <nBright>,;
+             <.lAnimate.>, [<nSpeed>], <oFont>, <.lTransparent.>, [\{<cDlgsName>\}] )
+
+
 //Areazugabe
 STATIC nAreaZugabe  := 42
 STATIC nAreaZugabe2 := 10
@@ -138,18 +174,18 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
               //UPDATE
       */
 
-      /*
+      
       oER:oPanelI := TPanel():New( 0.5, 0, GetSysMetrics( 1 ) - 138, 326, ;
                                    oER:oMainWnd )
       oER:oPanelI:SetColor( , oER:nClrPaneTree )
-      */
+      
 
-
+      
       if ValidVersionFwh( 10, 8 )
 
-       @ 0.5, 1 FOLDEREX oER:oFldI ;
+       @ 0.5, 1 CFOLDEREX oER:oFldI ;
        PROMPT GL("&Report Settings"), GL("&Items"), GL("Colors"), GL("Fonts") ;
-       OF oEr:oMainWnd ;
+       OF oEr:oPanelI ; //oEr:oMainWnd ;
        SIZE 326, GetSysMetrics( 1 ) - 138 ;
        OPTION 2 ;
        TAB HEIGHT 34 ;
@@ -157,9 +193,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
        PIXEL ;
        SEPARATOR 0
 
-
-
-       @ 0.5, 1 FOLDEREX oER:oFldD ;
+       @ 0.5, 1 CFOLDEREX oER:oFldD ;
        PROMPT GL("&Expressions"), GL("&Databases"), GL("&Fields"), GL("Fil&ters") ;
        OF oEr:oMainWnd ;
        SIZE 326, GetSysMetrics( 1 ) - 138 ;
@@ -173,7 +207,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
 
        @ 0.5, 1 FOLDER oER:oFldI ;
        PROMPT GL("&Report Settings"), GL("&Items"), GL("&Databases"), GL("&Expressions") ;
-       OF oEr:oMainWnd ;
+       OF oEr:oPanelI ; //oEr:oMainWnd ;
        SIZE 326, GetSysMetrics( 1 ) - 138 ;
        OPTION 2 ;
        PIXEL
@@ -188,7 +222,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
       endif
       //oER:oFldI:SetFont(  )
 
-      oEr:oMainWnd:oLeft   :=  oER:oFldI
+      oEr:oMainWnd:oLeft   :=  oEr:oPanelI   //oER:oFldI
       oEr:oMainWnd:oRight  :=  oER:oFldD
       oER:oFldI:SetColor(  , oEr:nClrPaneTree )
 
