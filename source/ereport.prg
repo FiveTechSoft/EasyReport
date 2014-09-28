@@ -144,6 +144,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
       oER:oPanelI:SetColor( , oER:nClrPaneTree )
       */
 
+      
       if ValidVersionFwh( 10, 8 )
 
        @ 0.5, 1 FOLDEREX oER:oFldI ;
@@ -194,7 +195,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
       DlgTree( 2 )
 
    ENDIF
-
+   
 
    ACTIVATE WINDOW oEr:oMainWnd ;
       MAXIMIZED ;
@@ -258,23 +259,27 @@ RETURN nil
 //----------------------------------------------------------------------------//
 
 Function DlgTree( nD )
+Local oFont
 
 DEFAULT nD  := 2
 
-      oER:oTree := TTreeView():New( 0, 2, oER:oFldI:aDialogs[ nD ] , 0, , .T., .F., 340 ,;
-                                    oER:oFldI:aDialogs[ nD ]:nHeight ,"",, )
-      // oEr:oMainWnd:oLeft  :=   oER:oTree
-      oEr:oTree:SetColor( ,  oEr:nClrPaneTree )
-      oEr:oTree:l3DLook := .F.
+   DEFINE FONT oFont NAME "Verdana" SIZE 0, -10
+   oER:oTree := TTreeView():New( 0, 2, oER:oFldI:aDialogs[ nD ] , 0, , .T., .F., 340 ,;
+                                 oER:oFldI:aDialogs[ nD ]:nHeight ,"",, )
 
-      if ValidVersionFwh( 14, 8 )
-         oEr:oTree:SetItemHeight( 24 )   // o  TvSetItemHeight( oER:oTree:hWnd, 24 )
-      endif
-      oEr:oTree:bMouseWheel = { | nKey, nDelta, nXPos, nYPos | ;
+   // oEr:oMainWnd:oLeft  :=   oER:oTree
+   oEr:oTree:SetColor( ,  oEr:nClrPaneTree )
+   oEr:oTree:l3DLook := .F.
+   oEr:oTree:SetFont( oFont )
+
+   if ValidVersionFwh( 14, 8 )
+      oEr:oTree:SetItemHeight( 24 )   // o  TvSetItemHeight( oER:oTree:hWnd, 24 )
+   endif
+   oEr:oTree:bMouseWheel = { | nKey, nDelta, nXPos, nYPos | ;
                         ER_MouseWheelTree( nKey, nDelta, nXPos, nYPos ) }
 
-      //oER:oFldI:aDialogs[ nD ]:SetControl( oEr:oTree )
-      //oER:oFldI:Hide()
+   //oER:oFldI:aDialogs[ nD ]:SetControl( oEr:oTree )
+   //oER:oFldI:Hide()
 
 Return oEr:oTree
 
