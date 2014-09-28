@@ -138,6 +138,12 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
               //UPDATE
       */
 
+      /*
+      oER:oPanelI := TPanel():New( 0.5, 0, GetSysMetrics( 1 ) - 138, 326, ;
+                                   oER:oMainWnd )
+      oER:oPanelI:SetColor( , oER:nClrPaneTree )
+      */
+
       if ValidVersionFwh( 10, 8 )
 
        @ 0.5, 1 FOLDEREX oER:oFldI ;
@@ -2879,7 +2885,7 @@ function ER_ReportSettings( nD )
       SIZE 50, 24 PIXEL ;
       WHEN AllTrim( cFormat ) = GL("user-defined")
 
-   @ nFil,  200 SAY " " + GL("Orientation") + ":"  OF oDlg FONT oFont SIZE 60, 24 ;
+   @ nFil+4,  200 SAY " " + GL("Orientation") + ":"  OF oDlg FONT oFont SIZE 60, 24 ;
      COLOR CLR_BLACK, oEr:nClrPaneTree PIXEL TRANSPARENT
    @ nFil + 44, 200 RADIO oRad1 VAR nOrient PROMPT GL("Portrait") OF oDlg SIZE 80, 24 ;
      COLOR CLR_BLACK, oEr:nClrPaneTree PIXEL
@@ -2955,7 +2961,7 @@ function ER_ReportSettings( nD )
    @ nFil, 70 GET aGet[ 7 ] VAR nGridHeight OF oDlg PICTURE cPicture SPINNER MIN 0.01 ;
       FONT oFont SIZE 50, 24 PIXEL VALID nGridHeight  > 0
 
-   @ nFil + 4, 220 CHECKBOX oCbx VAR lShowGrid ;
+   @ nFil, 220 CHECKBOX oCbx VAR lShowGrid ;
      PROMPT GL("Show grid") OF oDlg SIZE 80, 24  ;
      FONT oFont COLOR CLR_BLACK, oEr:nClrPaneTree PIXEL
 
@@ -4192,6 +4198,7 @@ CLASS TEasyReport
    DATA nTotAreas
    DATA lFillWindow
    DATA oPanelD
+   DATA oPanelI
 
    METHOD New() CONSTRUCTOR
    METHOD GetGeneralIni( cSection , cKey, cDefault ) INLINE GetPvProfString( cSection, cKey, cDefault, ::cGeneralIni )
