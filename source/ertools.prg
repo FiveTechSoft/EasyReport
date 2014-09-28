@@ -22,7 +22,7 @@ function CheckPath( cPath )
 
    cPath := ALLTRIM( cPath )
 
-   if .NOT. EMPTY( cPath ) .AND. SUBSTR( cPath, LEN( cPath ) ) <> "\"
+   if !EMPTY( cPath ) .AND. SUBSTR( cPath, LEN( cPath ) ) != "\"
       cPath += "\"
    endif
 
@@ -150,7 +150,7 @@ function GetDBField( oGet, lInsert )
    if nShowDbase > 0
 
       for i := 1 TO nLen
-         if .NOT. EMPTY( oGenVar:aDBFile[i,2] )
+         if !EMPTY( oGenVar:aDBFile[i,2] )
             AADD( aDbase , ALLTRIM( oGenVar:aDBFile[i,2] ) )
             AADD( aFields, oGenVar:aDBFile[i,3] )
          endif
@@ -158,13 +158,13 @@ function GetDBField( oGet, lInsert )
 
    endif
 
-   if nShowExpr > 0 .AND. lInsert = .F.
+   if nShowExpr > 0 .AND. !lInsert
       AADD( aDbase, GL("Expressions") + ": " + GL("General") )
       AADD( aFields, GetExprFields( cGenExpr ) )
       cGeneral := aDbase[ LEN( aDbase ) ]
    endif
 
-   if nShowExpr <> 2 .AND. lInsert = .F.
+   if nShowExpr <> 2 .AND. !lInsert
       AADD( aDbase, GL("Expressions") + ": " + GL("User defined") )
       AADD( aFields, GetExprFields( cUserExpr ) )
       cUser := aDbase[ LEN( aDbase ) ]
@@ -231,8 +231,8 @@ function GetExprFields( cDatabase )
 
    DBUSEAREA( .T.,, cDatabase, "TEMPEXPR" )
 
-   DO WHILE .NOT. EOF()
-      if .NOT. EMPTY( TEMPEXPR->NAME )
+   DO WHILE !EOF()
+      if !EMPTY( TEMPEXPR->NAME )
          AADD( aTemp, ALLTRIM( TEMPEXPR->NAME ) )
       endif
       TEMPEXPR->(DBSKIP())
@@ -454,13 +454,16 @@ function Er_Databases( lTake, nD )
    @ 24, 10 SAY GL("Rdds")      OF oDlg FONT oFont PIXEL //TRANSPARENT
    nFil  := 52
    @ nFil, 10 COMBOBOX cRdds ITEMS aRdds OF oDlg ;
-      SIZE oDlg:nWidth - 20, 324 FONT oFont PIXEL //  ON CHANGE 
+      SIZE oDlg:nWidth - 20, 324 FONT oFont PIXEL //  ON CHANGE
    */
 
    nFil  := 2   //155
+
    //@ 2, 008 SAY GL("Nr.")      OF oDlg FONT oFont PIXEL TRANSPARENT
+
    @ nFil, 084 SAY GL("Database") OF oDlg FONT oFont ;
      COLOR CLR_BLACK, oEr:nClrPaneTree PIXEL TRANSPARENT
+
    @ nFil, 228 SAY GL("Alias")    OF oDlg FONT oFont ;
      COLOR CLR_BLACK, oEr:nClrPaneTree PIXEL TRANSPARENT
 
@@ -496,7 +499,7 @@ function Er_Databases( lTake, nD )
 
    Next x
 
-   @ nFil + 35 , oDlg:nWidth - 110 BTNBMP PROMPT "Grabar" ;
+   @ nFil + 35 , oDlg:nWidth - 110 BTNBMP PROMPT GL("Save") ;
             OF oDlg SIZE 100, 20 PIXEL ;
             ACTION ( SaveDatabases(), OpenDatabases() )
 
@@ -596,7 +599,7 @@ function CreateNewFile( cFile )
 
    lClose( hFile )
    CopyFile( cTmpFile, cFile )
-   DelFile( cTmpFile )
+   FErase( cTmpFile )
 
 return .T.
 
@@ -994,15 +997,15 @@ function ER_Expressions( lTake, cAltText, nD )
    local nFil       := 0
    local oGet0
    local oGet2
-   local x 
+   local x
    local cExpr      := ""
    local aBmps1     := {}
    local aBtts1     := {"="    , "<>"   , "<"    , ">"   , "<="  , ">="  , "=="  , "("   , ")"   ,;
                         '"'    , "!"    , "$"    , "+"   , "-"   , "*"   , "/"   , ".T." , ".F." ,;
                         ".or." , ".and.", ".not.", "If(,,)", "Val()"  , "Str()" }
-                        
-                        
-                        
+
+
+
    local nCol
    //local aRDD      := { "DBFNTX", "COMIX", "DBFCDX" }
 
@@ -1035,13 +1038,13 @@ function ER_Expressions( lTake, cAltText, nD )
    */
 
    if nShowExpr = 2
-       
+
        @ 4, 1 FOLDER oFld OF oDlg ;
          PROMPT " " + GL("General") + " ", ;
                 " " + GL("User defined") + " " ;
          SIZE oDlg:nWidth - 2, oDlg:nHeight - 5 ;
          OPTION 1 ;
-         PIXEL 
+         PIXEL
 
    ELSE
       if ValidVersionFwh( 10, 8 )
@@ -1082,7 +1085,7 @@ function ER_Expressions( lTake, cAltText, nD )
    @ 30, 1 XBROWSE oBrw ;
       OF oFld:aDialogs[1] ;
       SIZE oFld:aDialogs[1]:nWidth - 1, oFld:aDialogs[1]:nHeight - 70 ;
-      FIELDS GENEXPR->NAME, GENEXPR->INFO ; 
+      FIELDS GENEXPR->NAME, GENEXPR->INFO ;
       COLSIZES 95, 195 ;
       HEADERS " " + GL("Name"), " " + GL("Description") ;
       FONT oFont PIXEL ; //NOBORDER  ;
@@ -1114,7 +1117,7 @@ function ER_Expressions( lTake, cAltText, nD )
 
    @ 30, 1 XBROWSE oBrw2 ;
       OF oFld:aDialogs[i] ;
-      SIZE oFld:aDialogs[i]:nWidth - 1, Int( ( oFld:aDialogs[i]:nHeight - 1 ) / 2 ) - 60 ;      
+      SIZE oFld:aDialogs[i]:nWidth - 1, Int( ( oFld:aDialogs[i]:nHeight - 1 ) / 2 ) - 60 ;
       FIELDS USEREXPR->NAME, USEREXPR->INFO ;
       COLSIZES 95, 195 ;
       HEADERS " " + GL("Name"), " " + GL("Description") ;
@@ -1149,7 +1152,7 @@ function ER_Expressions( lTake, cAltText, nD )
 
    nFil += 20
    @ nFil, 1 GET oGet1 VAR USEREXPR->EXPRESSION  OF oFld:aDialogs[i] UPDATE PIXEL ;
-      SIZE oFld:aDialogs[i]:nWidth - 1, 48 ;      
+      SIZE oFld:aDialogs[i]:nWidth - 1, 48 ;
       FONT oFont ;
       VALID ( oBrw2:Refresh(), .T. )
 
@@ -1160,13 +1163,13 @@ function ER_Expressions( lTake, cAltText, nD )
 
    nFil += 20
    @ nFil, 1 GET oGet2 VAR USEREXPR->INFO OF oFld:aDialogs[i] UPDATE PIXEL ;
-      SIZE oFld:aDialogs[i]:nWidth - 1, 48 ;      
+      SIZE oFld:aDialogs[i]:nWidth - 1, 48 ;
       FONT oFont ;
       VALID ( oBrw2:Refresh(), .T. )
 
    nFil += 55
    nCol := 1
-   
+
    For x = 1 to Len( aBtts1 )
        AAdd( aBmps1, nil )
        aBmps1[ x ] := TBtnBmp():New( nFil, nCol, 30, 20,;

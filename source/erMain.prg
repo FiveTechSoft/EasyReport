@@ -25,7 +25,7 @@ local cMode
 
    endif
 
-   if Empty(cRptFile)    // añadido comprobar que se escoge un fichero valido 
+   if Empty(cRptFile)    // añadido comprobar que se escoge un fichero valido
       //Return .f.
       lRet  := .F.
    endif
@@ -93,14 +93,14 @@ METHOD New( cRptFile, cPrinter ,oDlg ) CLASS ERStart
    ENDIF
 
 
-   IF .NOT. EMPTY( ::cScript ) .AND. FILE( ::cScript ) = .F.
+   IF !EMPTY( ::cScript ) .AND. !FILE( ::cScript )
       MsgStop( "Script not found:" + CRLF + CRLF + ::cScript )
       QUIT
    ENDIF
 
    cDateFormat := LOWER(ALLTRIM( GetPvProfString( "General", "DateFormat", "", ::cIni )))
 
-   IF .NOT. EMPTY( cDateFormat )
+   IF !EMPTY( cDateFormat )
       SET DATE FORMAT cDateFormat
    ENDIF
 
@@ -197,13 +197,13 @@ RETURN .T.
 *-----------------------------------------------------------------------------
 METHOD RunScript() CLASS ERStart
 
-   LOCAL oScript := TScript():New( MEMOREAD( ::cScript ) )
+   LOCAL oScript := TErScript():New( MEMOREAD( ::cScript ) )
 
    oScript:lPreProcess := .T.
 
    oScript:Compile()
 
-   IF EMPTY( oScript:cError ) = .F.
+   IF !EMPTY( oScript:cError )
       MsgStop( "Error in script:" + CRLF + CRLF + ALLTRIM( oScript:cError ), "Error" )
    ELSE
       oScript:Run( "Script", ::oVRD )

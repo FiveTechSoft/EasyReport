@@ -144,7 +144,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
       oER:oPanelI:SetColor( , oER:nClrPaneTree )
       */
 
-      
+
       if ValidVersionFwh( 10, 8 )
 
        @ 0.5, 1 FOLDEREX oER:oFldI ;
@@ -183,7 +183,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
        OF oEr:oMainWnd ;
        SIZE 326, GetSysMetrics( 1 ) - 138 ;
        OPTION 1 ;
-       PIXEL 
+       PIXEL
 
       endif
       //oER:oFldI:SetFont(  )
@@ -195,7 +195,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
       DlgTree( 2 )
 
    ENDIF
-   
+
 
    ACTIVATE WINDOW oEr:oMainWnd ;
       MAXIMIZED ;
@@ -3639,65 +3639,6 @@ return .T.
 
 //----------------------------------------------------------------------------//
 
-/*
-function ClickListTree( oTree )
-
-   local cItemDef ,nItem, oLinkArea, nArea, lWert
-   local oLinkItem   := oTree:GetLinkAt( oTree:GetCursel() )
-   local cPrompt     := oLinkItem:TreeItem:cPrompt
-
-   if cPrompt = GL("Visible") .OR. cPrompt = GL("Item Properties")
-
-      nItem     := Val( oLinkItem:ParentLink:TreeItem:cPrompt )
-      oLinkArea := oLinkItem:ParentLink
-      nArea     := Val( oLinkArea:ParentLink:TreeItem:cPrompt )
-
-   endif
-
-   if cPrompt = GL("Area Properties")
-
-      nArea     := Val( oLinkItem:ParentLink:TreeItem:cPrompt )
-
-   endif
-
-   if cPrompt = GL("Visible")
-
-      cItemDef := AllTrim( GetPvProfString( "Items", AllTrim(STR(nItem,5)) , "", aAreaIni[ nArea ] ) )
-
-      oLinkItem:ToggleOpened()
-      oTree:Refresh()
-
-      if Val( GetField( cItemDef, 4 ) ) = 0
-         lWert := .F.
-      else
-         lWert := .T.
-      endif
-
-      DeleteItem( nItem, nArea, .T., lWert )
-
-   elseif cPrompt = GL("Area Properties")
-
-      AreaProperties( nArea )
-
-   elseif cPrompt = GL("Item Properties")
-
-      oLinkItem:ParentLink:TreeItem:SetText( ItemProperties( nItem, nArea, .T. ) )
-
-      cItemDef := AllTrim( GetPvProfString( "Items", AllTrim(STR(nItem,5)) , "", aAreaIni[ nArea ] ) )
-
-      if IsGraphic( UPPER(AllTrim( GetField( cItemDef, 1 ) )) )
-         oLinkItem:ParentLink:TreeItem:iBmpOpen  := SetGraphTreeBmp( nItem, aAreaIni[ nArea ] )
-         oLinkItem:ParentLink:TreeItem:iBmpClose := SetGraphTreeBmp( nItem, aAreaIni[ nArea ] )
-      endif
-
-      oTree:UpdateTV()
-
-   endif
-
-return .T.
-*/
-//----------------------------------------------------------------------------//
-
 function SetGraphTreeBmp( nItem, cAreaIni )
 
    local cItemDef := AllTrim( GetPvProfString( "Items", AllTrim(STR(nItem,5)) , "", cAreaIni ) )
@@ -3822,15 +3763,15 @@ function AreaProperties( nArea )
          SET SECTION "General" ENTRY "Title"            to AllTrim( cAreaTitle ) OF oIni
          SET SECTION "General" ENTRY "Top1"             to AllTrim(STR( nTop1  , 5, nDecimals )) OF oIni
          SET SECTION "General" ENTRY "Top2"             to AllTrim(STR( nTop2  , 5, nDecimals )) OF oIni
-         SET SECTION "General" ENTRY "TopVariable"      to IIF( lTop = .F., "0", "1") OF oIni
+         SET SECTION "General" ENTRY "TopVariable"      to IIF( !lTop , "0", "1") OF oIni
          SET SECTION "General" ENTRY "Condition"        to AllTrim(STR( nCondition, 1 )) OF oIni
          SET SECTION "General" ENTRY "Width"            to AllTrim(STR( nWidth , 5, nDecimals )) OF oIni
          SET SECTION "General" ENTRY "Height"           to AllTrim(STR( nHeight, 5,nDecimals )) OF oIni
-         SET SECTION "General" ENTRY "DelEmptySpace"    to IIF( lDelSpace = .F., "0", "1") OF oIni
-         SET SECTION "General" ENTRY "BreakBefore"      to IIF( lBreakBefore   = .F., "0", "1") OF oIni
-         SET SECTION "General" ENTRY "BreakAfter"       to IIF( lBreakAfter    = .F., "0", "1") OF oIni
-         SET SECTION "General" ENTRY "PrintBeforeBreak" to IIF( lPrBeforeBreak = .F., "0", "1") OF oIni
-         SET SECTION "General" ENTRY "PrintAfterBreak"  to IIF( lPrAfterBreak  = .F., "0", "1") OF oIni
+         SET SECTION "General" ENTRY "DelEmptySpace"    to IIF( !lDelSpace , "0", "1") OF oIni
+         SET SECTION "General" ENTRY "BreakBefore"      to IIF( !lBreakBefore , "0", "1") OF oIni
+         SET SECTION "General" ENTRY "BreakAfter"       to IIF( !lBreakAfter , "0", "1") OF oIni
+         SET SECTION "General" ENTRY "PrintBeforeBreak" to IIF( !lPrBeforeBreak , "0", "1") OF oIni
+         SET SECTION "General" ENTRY "PrintAfterBreak"  to IIF( !lPrAfterBreak , "0", "1") OF oIni
          SET SECTION "General" ENTRY "ControlDBF"       to AllTrim( cDatabase ) OF oIni
 
          for i := 1 to 12
@@ -4059,14 +4000,6 @@ FUNCTION DlgBarTitle( oWnd, cTitle, cBmp ,nHeight )
 
 
 RETURN oTitle
-//------------------------------------------------------------------------------
-//----------------------------------------------------------------------------//
-
-function TScript()
-
-   MsgInfo( "TScript not linked yet" )
-
-return nil
 
 //------------------------------------------------------------------------------
 
@@ -4106,18 +4039,17 @@ HB_FUNC( FREOPEN_STDERR )
 
 #pragma ENDDUMP
 
-
 //----------------------------------------------------------------------------//
 
-   // TScript
+// TScript
 
 CLASS TErScript
 
    DATA cCode
    DATA cError
-   DATA lPreProcess  // ????
+   DATA lPreProcess INIT .f.
    DATA oHrb
-
+   DATA cFwHPath, cHarbourPath
 
    METHOD New( cText ) CONSTRUCTOR
    METHOD Compile()
@@ -4130,6 +4062,8 @@ ENDCLASS
 METHOD New( cText ) CLASS TErScript
 
    ::cCode := cText
+   ::cFwHPath := "c:\fwh"
+   ::cHarbourPath := "c:\harbour"
 
    IF Empty ( ::cCode )
       Msginfo("no ha definido texto a compilar")
@@ -4141,7 +4075,11 @@ return Self
 
 METHOD Compile() CLASS TErScript
 
-  ::oHrb := HB_CompileFromBuf( ::cCode , "-n", "-Ic:\fwh\include", "-Ic:\harbour\include" )
+   IF ::lPreProcess
+      ::oHrb := HB_CompileFromBuf( ::cCode , "-n", "-I"+::cFwHPath+"\include", "-I"+::cHarbourPath+"\include","-o" )
+   ELSE
+      ::oHrb := HB_CompileFromBuf( ::cCode , "-n", "-I"+::cFwHPath+"\include", "-I"+::cHarbourPath+"\include" )
+   ENDIF
 
 RETURN nil
 
@@ -4157,9 +4095,10 @@ METHOD Run() CLASS TErScript
 
    ::compile()
 
-   //::oHrb = HB_CompileFromBuf( ::cCode , "-n", "-Ic:\fwh\include", "-Ic:\harbour\include" )
+   ::cError := MemoRead( "comp.log" )
 
- //  oResult:SetText( If( Empty( cResult := MemoRead( "comp.log" ) ), "ok", cResult ) )
+   //::oHrb = HB_CompileFromBuf( ::cCode , "-n", "-Ic:\fwh\include", "-Ic:\harbour\include" )
+   //  oResult:SetText( If( Empty( cResult := MemoRead( "comp.log" ) ), "ok", cResult ) )
 
    if ! Empty( ::oHrb )
       BEGIN SEQUENCE
