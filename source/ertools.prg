@@ -2015,43 +2015,43 @@ function UndoRedoMenu( nTyp, oBtn )
    local i, oMenu
    local cText1 := "" //IIF( nTyp = 1, GL("Undo"), GL("Redo") )
    local cText2 := IIF( nTyp = 1, GL("Undo all"), GL("Redo all") )
-   local nCount := IIF( nTyp = 1, nUndoCount, nRedoCount )
+   local nCount := IIF( nTyp = 1, oEr:nUndoCount, oEr:nRedoCount )
    local aRect  := GetClientRect( oBtn:hWnd )
 
    MENU oMenu POPUP
 
       MENUITEM cText1 + "1 " + GL("action") ;
-         WHEN IIF( nTyp = 1, nUndoCount, nRedoCount ) > 0 ;
+         WHEN IIF( nTyp = 1, oEr:nUndoCount, oEr:nRedoCount ) > 0 ;
          ACTION MultiUndoRedo( nTyp, 1 )
       MENUITEM cText1 + "2 " + GL("actions") ;
-         WHEN IIF( nTyp = 1, nUndoCount, nRedoCount ) > 1 ;
+         WHEN IIF( nTyp = 1, oEr:nUndoCount, oEr:nRedoCount ) > 1 ;
          ACTION MultiUndoRedo( nTyp, 2 )
       MENUITEM cText1 + "3 " + GL("actions") ;
-         WHEN IIF( nTyp = 1, nUndoCount, nRedoCount ) > 2 ;
+         WHEN IIF( nTyp = 1, oEr:nUndoCount, oEr:nRedoCount ) > 2 ;
          ACTION MultiUndoRedo( nTyp, 3 )
       MENUITEM cText1 + "4 " + GL("actions") ;
-         WHEN IIF( nTyp = 1, nUndoCount, nRedoCount ) > 3 ;
+         WHEN IIF( nTyp = 1, oEr:nUndoCount, oEr:nRedoCount ) > 3 ;
          ACTION MultiUndoRedo( nTyp, 4 )
       MENUITEM cText1 + "5 " + GL("actions") ;
-         WHEN IIF( nTyp = 1, nUndoCount, nRedoCount ) > 4 ;
+         WHEN IIF( nTyp = 1, oEr:nUndoCount, oEr:nRedoCount ) > 4 ;
          ACTION MultiUndoRedo( nTyp, 5 )
       MENUITEM cText1 + "6 " + GL("actions") ;
-         WHEN IIF( nTyp = 1, nUndoCount, nRedoCount ) > 5 ;
+         WHEN IIF( nTyp = 1, oEr:nUndoCount, oEr:nRedoCount ) > 5 ;
          ACTION MultiUndoRedo( nTyp, 6 )
       MENUITEM cText1 + "7 " + GL("actions") ;
-         WHEN IIF( nTyp = 1, nUndoCount, nRedoCount ) > 6 ;
+         WHEN IIF( nTyp = 1, oEr:nUndoCount, oEr:nRedoCount ) > 6 ;
          ACTION MultiUndoRedo( nTyp, 7 )
       MENUITEM cText1 + "8 " + GL("actions") ;
-         WHEN IIF( nTyp = 1, nUndoCount, nRedoCount ) > 7 ;
+         WHEN IIF( nTyp = 1, oEr:nUndoCount, oEr:nRedoCount ) > 7 ;
          ACTION MultiUndoRedo( nTyp, 8 )
       MENUITEM cText1 + "9 " + GL("actions") ;
-         WHEN IIF( nTyp = 1, nUndoCount, nRedoCount ) > 8 ;
+         WHEN IIF( nTyp = 1, oEr:nUndoCount, oEr:nRedoCount ) > 8 ;
          ACTION MultiUndoRedo( nTyp, 9 )
       MENUITEM cText1 + "10 " + GL("actions") ;
-         WHEN IIF( nTyp = 1, nUndoCount, nRedoCount ) > 9 ;
+         WHEN IIF( nTyp = 1, oEr:nUndoCount, oEr:nRedoCount ) > 9 ;
          ACTION MultiUndoRedo( nTyp, 10 )
 
-      MENUITEM cText2 ACTION MultiUndoRedo( nTyp, IIF( nTyp = 1, nUndoCount, nRedoCount ) )
+      MENUITEM cText2 ACTION MultiUndoRedo( nTyp, IIF( nTyp = 1, oEr:nUndoCount, oEr:nRedoCount ) )
 
    ENDMENU
 

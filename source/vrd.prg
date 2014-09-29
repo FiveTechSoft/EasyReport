@@ -10,12 +10,11 @@
     ==================================================================
 */
 
-
-   #INCLUDE "FiveWin.ch"
-   #INCLUDE "Struct.ch"
-   #INCLUDE "VRD.ch"
-   REQUEST DBFNTX
-   //REQUEST DBFCDX
+#INCLUDE "FiveWin.ch"
+#INCLUDE "Struct.ch"
+#INCLUDE "VRD.ch"
+REQUEST DBFNTX
+//REQUEST DBFCDX
 
 
 #DEFINE AREASOURCE_TOP1            1
@@ -233,12 +232,12 @@ METHOD New( cReportName, lPreview, cPrinter, oWnd, lModal, lPrintIDs, lNoPrint, 
    nLanguage  := VAL( GetPvProfString( "General", "Language", "1", ".\VRD.INI" ) )
    cDlgTitle  := IIF( ::lPreview, VRD_GL("Preview"), VRD_GL("Print") )
 
-   IF ::loPrnExist = .T.
+   IF ::loPrnExist
       ::oPrn := oPrint
    ENDIF
 
    //No printout. Useful if you want to get for example the total pages.
-   IF ::lCheck = .T.
+   IF ::lCheck
       ::lPreview := .T.
    ENDIF
 
@@ -313,7 +312,7 @@ METHOD New( cReportName, lPreview, cPrinter, oWnd, lModal, lPrintIDs, lNoPrint, 
             OF ::oInfoDlg SIZE 94, 20 PIXEL FONT oInfo2Font
       ENDIF
 
-      //IF ::lPreview = .T.
+      //IF ::lPreview
          @ 30, 105 BUTTON VRD_GL( "&Cancel" ) ;
             OF ::oInfoDlg SIZE 40, 10 PIXEL FONT oInfo2Font ;
             ACTION ( ::oInfoDlg:End(), IIF( ::lCheck, ::lDialogCancel := .T., ), ;
@@ -452,13 +451,13 @@ METHOD New( cReportName, lPreview, cPrinter, oWnd, lModal, lPrintIDs, lNoPrint, 
 
       lTmpValue := ( GetIniEntry( aIniEntries, "PrintBeforeBreak", "0" ) = "1" )
       ::EvalAreaSource( @lTmpValue, ::aAreaSource[i,AREASOURCE_PRBEFOREBREAK] )
-      IF lTmpValue = .T.
+      IF lTmpValue
          AADD( ::aPrBeforeBreak, i )
       ENDIF
 
       lTmpValue := ( GetIniEntry( aIniEntries, "PrintAfterBreak", "0" ) = "1" )
       ::EvalAreaSource( @lTmpValue, ::aAreaSource[i,AREASOURCE_PRAFTERBREAK] )
-      IF lTmpValue = .T.
+      IF lTmpValue
          AADD( ::aPrAfterBreak, i )
       ENDIF
 
@@ -500,7 +499,7 @@ METHOD End( lPrintArea ) CLASS VRD
 
    DEFAULT lPrintArea := .T.
 
-   IF ::loPrnExist = .T.
+   IF ::loPrnExist
       ::CloseDatabases()
       RETURN( NIL )
    ENDIF
@@ -743,7 +742,7 @@ METHOD AreaStart2( nArea, lPrintArea, aIDs, aStrings, lPageBreak ) CLASS VRD
    ::nLastPrintedRow  := 0
    ::lFirstAreaOnPage := .F.
 
-   IF lPrintArea = .T.
+   IF lPrintArea
       IF LEN( aIDs ) = 0 .AND. LEN( aStrings ) = 0
          ::PrintArea( nArea,, .F. )
       ELSE
@@ -985,7 +984,7 @@ METHOD PrintItem( nArea, nItemID, cValue, nAddToTop, lMemo, nEntry ) CLASS VRD
       hPen       := CreatePen( oItem:nStyle - 1, oItem:nPenWidth, ::aColors[ oItem:nColor ] )
       hOldPen    := SelectObject( ::oPrn:hDCOut, hPen )
       hBrush     := CreateSolidBrush( ::aColors[ oItem:nColFill ] )
-      IF oItem:lTrans = .T.
+      IF oItem:lTrans
          hOldBrush := SelectObject( ::oPrn:hDCOut, GetStockObject( 5 ) )
       ELSE
          hOldBrush := SelectObject( ::oPrn:hDCOut, hBrush )
@@ -1064,7 +1063,7 @@ METHOD PrintItem( nArea, nItemID, cValue, nAddToTop, lMemo, nEntry ) CLASS VRD
 
    //Last printed row
    IF oItem:nShow = 1 .AND. ::aDelEmptySpace[nArea]
-      IF lMemoPageBreak = .T.
+      IF lMemoPageBreak
          ::nLastPrintedRow := ::ToMmInch( nMemoHeight, .T. )
       ELSE
          ::nLastPrintedRow := MAX( ::nLastPrintedRow, nItemTop + ;
@@ -1965,7 +1964,7 @@ METHOD MsgError( lQuit ) CLASS VRD
          cErrorText += ::aErrors[i] + CRLF
       NEXT
       cErrorText += REPLICATE( "-", 100 )
-      IF lQuit = .T.
+      IF lQuit
          MsgStop( cErrorText )
          QUIT
       ELSE
@@ -2085,7 +2084,7 @@ METHOD PrintDialog() CLASS VRD
 
    ACTIVATE DIALOG oDlg CENTERED
 
-   IF lPrint = .T.
+   IF lPrint
       ::cPrinter := cPrinter
    ENDIF
 
@@ -2182,7 +2181,7 @@ METHOD GetDBContent( cDatabase, cDBAlias, cDBType, cSeparator, nIndex ) CLASS VR
          ENDIF
          cRec  := cLine
 
-         IF nFirstLine = .T. .AND. EMPTY( ::aDBFieldNames[ nIndex ] )
+         IF nFirstLine .AND. EMPTY( ::aDBFieldNames[ nIndex ] )
 
             aFields := VRD_aToken( cLine, cSeparator )
             AEVAL( aFields, {|x,y| aFields[y] := ALLTRIM( x ) } )
@@ -2330,7 +2329,7 @@ METHOD EvalDBFields( cSource, lGetString ) CLASS VRD
                nFieldPos := FIELDPOS( cField )
 
                IF nFieldPos <> 0
-                  IF lGetString = .T.
+                  IF lGetString
                      cSource := VRD_XTOC( FIELDGET( nFieldPos ) )
                   ELSE
                      cSource := SUBSTR( cSource, 1, nPos1-1 ) + ;
@@ -2345,7 +2344,7 @@ METHOD EvalDBFields( cSource, lGetString ) CLASS VRD
                nFieldPos := ASCAN( ::aDBContent[nAlias,1], cField )
 
                IF nFieldPos <> 0
-                  IF lGetString = .T.
+                  IF lGetString
                      //msginfo( ::aDBContent[nAlias,2][2] )
                      //msginfo( ::nDBFRecord )
                      //::nDBFRecord := 1
@@ -2416,8 +2415,8 @@ METHOD DBSum( cDatabase, cField, nLen, nDec, cFor, lPrevious, lCount ) CLASS VRD
 
       IF lCount = .F.
 
-         IF .NOT. EMPTY( cFor )
-            IF lPrevious = .T. .AND. RECNO() > 1
+         IF !EMPTY( cFor )
+            IF lPrevious .AND. RECNO() > 1
                DBSKIP(-1)
             ENDIF
             cForValue := &( cFor )
@@ -2645,7 +2644,7 @@ FUNCTION GetIniSection( cSection, cIniFile, lSort )
       cBuffer = SubStr( cBuffer, p + 1 )
    ENDDO
 
-   IF lSort = .T.
+   IF lSort
       ASORT( aEntries,,, {|x,y| VAL( SUBSTR( x, 1, AT( "=", x ) - 1 ) ) < ;
                                 VAL( SUBSTR( y, 1, AT( "=", y ) - 1 ) ) } )
    ENDIF
@@ -2725,13 +2724,13 @@ FUNCTION VRD_PrReport( cReportName, lPreview, cPrinter, oWnd, lModal, lPrintIDs,
 
    oInfo:AddMember( "nPages",, 0 )
 
-   IF lCheck = .T.
+   IF lCheck
 
       oVRD := VRD():New( cReportName,,, oWnd,,,,,,,, lCheck,,, cTitle, cPreviewDir, lAutoBreak )
 
       EVAL( bReportSource, oVRD )
 
-      IF oVRD:lDialogCancel = .T.
+      IF oVRD:lDialogCancel
          RETURN( .F. )
       ENDIF
 
@@ -2742,7 +2741,7 @@ FUNCTION VRD_PrReport( cReportName, lPreview, cPrinter, oWnd, lModal, lPrintIDs,
    oVRD := VRD():New( cReportName, lPreview, cPrinter, oWnd, lModal, lPrintIDs, lNoPrint, ;
                       lNoExpr, cFilePath, lPrintDialog, nCopies,,,,, cPreviewDir, lAutoBreak )
 
-   IF oVRD:lDialogCancel = .T.
+   IF oVRD:lDialogCancel
       RETURN( .F. )
    ENDIF
 

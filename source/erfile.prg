@@ -70,7 +70,6 @@ function OpenFile( cFile, lChange, lAddDelNew )
       aItems    := Array( Len( aWnd ), 1000 )
       aAreaIni  := Array( Len( aWnd ) )
 
-      //Fontobjekte beenden
       for i := 1 TO 20
          if aFonts[i] <> NIL
             aFonts[i]:End()
@@ -88,7 +87,7 @@ function OpenFile( cFile, lChange, lAddDelNew )
       SetGeneralSettings()
 
       DefineFonts()
-      //Areas initieren
+
       //if oCbxArea = NIL
       //else
       //   oCbxArea:End()
