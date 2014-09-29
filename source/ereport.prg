@@ -227,7 +227,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
       MAXIMIZED ;
       ON RESIZE if(!Empty(oER:oTree),oER:oTree:refresh( .T. ), ) ;
       ON INIT ( SetMainWnd(), IniMainWindow(), ;
-                IIF( Empty( oER:cDefIni ), OpenFile(,,.T.), oER:SetScrollBar() ), ;
+                IIF( Empty( oER:cDefIni ), OpenFile(,,.T.), (  OpenFile(oER:cDefIni,,.T.), oER:SetScrollBar() ) ), ;
                 StartMessage(), SetSave( .T. ), ClearUndoRedo(),;
                 oEr:oMainWnd:SetFocus() ) ;
       VALID ( AEVal( aWnd, { |o| if( o <> nil, o:End(), ) } ), AskSaveFiles() )

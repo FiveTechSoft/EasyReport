@@ -23,6 +23,8 @@ function OpenFile( cFile, lChange, lAddDelNew )
    if cFile = NIL
       cLongFile   := GetFile( GL("Designer Files") + " (*.vrd)|*.vrd|" + ;
                               GL("All Files") + " (*.*)|*.*", GL("Open"), 1 )
+   ELSE
+      cLongFile   := cFile
    endif
 
    cLongDefIni := cLongFile
