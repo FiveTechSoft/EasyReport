@@ -294,6 +294,7 @@ RETURN nil
 
 Function DlgTree( nD )
 Local oFont
+Local nItemH
 
 DEFAULT nD  := 2
 
@@ -307,7 +308,12 @@ DEFAULT nD  := 2
    oEr:oTree:SetFont( oFont )
 
    if ValidVersionFwh( 14, 8 )
-      oEr:oTree:SetItemHeight( 24 )   // o  TvSetItemHeight( oER:oTree:hWnd, 24 )
+      if !empty( oEr:oTree:oFont )
+         nItemH := oEr:oTree:oFont:nHeight * 2
+      else
+         nItemH := 24
+      endif
+      oEr:oTree:SetItemHeight( nItemH )  // o  TvSetItemHeight( oER:oTree:hWnd, nItemH )
    endif
    oEr:oTree:bMouseWheel = { | nKey, nDelta, nXPos, nYPos | ;
                         ER_MouseWheelTree( nKey, nDelta, nXPos, nYPos ) }
@@ -733,6 +739,7 @@ return .T.
 Function ValidVersionFwh( nVersion1, nVersion2 )
 Local lVersion   := .T.
 
+if !empty( nVersion1 ) .and. !empty( nVersion2 )
    if GetFwVersion()[ 1 ] < nVersion1
       lVersion := .F.
    else
@@ -742,7 +749,11 @@ Local lVersion   := .T.
          endif
       endif
    endif
-
+else
+   if !empty( nVersion1 ) .and. empty( nVersion2 )
+      lVersion := lValidFwh( nVersion1 )
+   endif
+endif
 Return lVersion
 
 //----------------------------------------------------------------------------//
@@ -752,6 +763,17 @@ Local aVersion := Array( 2 )
       aVersion[ 1 ] := Val( Substr( FWVERSION, 5, 2 ) )
       aVersion[ 2 ] := Val( Right( FWVERSION, 2 ) )
 Return aVersion
+
+//----------------------------------------------------------------------------//
+
+Function lValidFwh( nVersion )
+DEFAULT nVersion := 10.08
+return IF(  nFwVersion() <  nVersion, .F., .T. )
+
+//----------------------------------------------------------------------------//
+
+FUNCTION nFwVersion()
+return Val(Right(AllTrim(FWVERSION),5))
 
 //----------------------------------------------------------------------------//
 
