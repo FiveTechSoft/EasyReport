@@ -282,6 +282,7 @@ Function SwichFldD( oWnd, oFld, lSetVisible  )
   ELSE
      ofld:hide()
      oWnd:oRight:= NIL
+     SysRefresh()
   ENDIF
 
   oWnd:resize()

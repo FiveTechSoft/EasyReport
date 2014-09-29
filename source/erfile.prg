@@ -122,7 +122,7 @@ function OpenFile( cFile, lChange, lAddDelNew )
       oEr:oMainWnd:SetMenu( BuildMenu() )
 
       IF oER:lShowPanel
-         SwichFldD( oEr:oMainWnd, oER:oFldD )
+         //SwichFldD( oEr:oMainWnd, oER:oFldD )
          ER_ReportSettings( 1 )
          //DlgTree( 2 )
          Dlg_Colors( 3 )
@@ -131,6 +131,7 @@ function OpenFile( cFile, lChange, lAddDelNew )
          Er_Databases(,2)
          ER_Expressions(,,1)
          SwichFldD( oEr:oMainWnd, oER:oFldD )
+         //SysRefresh()
       endif
 
       SetSave( .T. )
