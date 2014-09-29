@@ -190,9 +190,6 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
        PIXEL ;
        SEPARATOR 0
 
-       oER:oPanelI:SetColor(  , oEr:nClrPaneTree )
-       oER:oPanelD:SetColor(  , oEr:nClrPaneTree )
-
       else
 
        @ 0.2, 1 FOLDER oER:oFldI ;
@@ -210,7 +207,9 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
        PIXEL
 
       endif
-      //oER:oFldI:SetFont(  )
+
+      oER:oPanelI:SetColor(  , oEr:nClrPaneTree )
+      oER:oPanelD:SetColor(  , oEr:nClrPaneTree )
 
       oEr:oMainWnd:oLeft   :=  oEr:oPanelI   //oER:oFldI
       oEr:oMainWnd:oRight  :=  oEr:oPanelD   //oER:oFldD
