@@ -25,9 +25,9 @@
              [ HELPTOPICS <cnHelpids,...> ] ;
              [ <layout: TOP, LEFT, BOTTOM, RIGHT> ] ;
              [ <lAnimate: ANIMATE> [ SPEED <nSpeed> ] ] ;
-	           [ FONT <oFont> ] ; //-->> byte-one 2010
+              [ FONT <oFont> ] ; //-->> byte-one 2010
              [ <lTransparent: TRANSPARENT> ] ;
-	         [ <dlg: DIALOG, DIALOGS, PAGE, PAGES> <cDlgsName,...> ] ;  
+            [ <dlg: DIALOG, DIALOGS, PAGE, PAGES> <cDlgsName,...> ] ;
        => ;
              [<oFolder> := ] TCFoldereX():New( <nRow>, <nCol>, <nWidth>, <nHeight>,;
              <oWnd>, [\{<cbmps>\}], <.lPixel.>, <.lDesign.>, [\{<cPrompt>\}], ;
@@ -174,13 +174,13 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
               //UPDATE
       */
 
-      
+
       oER:oPanelI := TPanel():New( 0.5, 0, GetSysMetrics( 1 ) - 138, 326, ;
                                    oER:oMainWnd )
       oER:oPanelI:SetColor( , oER:nClrPaneTree )
-      
 
-      
+
+
       if ValidVersionFwh( 10, 8 )
 
        @ 0.5, 1 CFOLDEREX oER:oFldI ;
@@ -4085,19 +4085,21 @@ CLASS TErScript
    DATA oHrb
    DATA cFwHPath, cHarbourPath
 
-   METHOD New( cText ) CONSTRUCTOR
+   METHOD New( cCode ) CONSTRUCTOR
    METHOD Compile()
-   METHOD Run()
+   METHOD Run(p1,p2,p3,p4)
 
 ENDCLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD New( cText ) CLASS TErScript
+METHOD New( cCode, cFwHPath, cHarbourPath  ) CLASS TErScript
+   DEFAULT cFwHPath := "c:\fwh"
+   DEFAULT cHarbourPath := "c:\harbour"
 
-   ::cCode := cText
-   ::cFwHPath := "c:\fwh"
-   ::cHarbourPath := "c:\harbour"
+   ::cCode := cCode
+   ::cFwHPath := cFwHPath
+   ::cHarbourPath := cHarbourPath
 
    IF Empty ( ::cCode )
       Msginfo("no ha definido texto a compilar")
@@ -4119,7 +4121,7 @@ RETURN nil
 
 //----------------------------------------------------------------------------//
 
-METHOD Run() CLASS TErScript
+METHOD Run(p1,p2,p3,p4) CLASS TErScript
    local cResult, bOldError
 
   //  MemoEdit( cCode, "PRG code" )
@@ -4137,7 +4139,7 @@ METHOD Run() CLASS TErScript
    if ! Empty( ::oHrb )
       BEGIN SEQUENCE
       bOldError = ErrorBlock( { | o | DoBreak( o ) } )
-      hb_HrbRun( ::oHrb )
+      hb_HrbRun( ::oHrb, p1,p2,p3,p4 )
       END SEQUENCE
       ErrorBlock( bOldError )
    endif
