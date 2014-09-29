@@ -281,6 +281,7 @@ Function SwichFldD( oWnd, oFld, lSetVisible  )
   ENDIF
 
   oWnd:resize()
+  oWnd:SetFocus()
   //oWnd:oWndClient:oVScroll:Refresh()
 
 RETURN nil
