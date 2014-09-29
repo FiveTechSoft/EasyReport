@@ -223,9 +223,9 @@ function SaveAs( cFile )
          cAltDefIni := VRD_LF2SF( ALLTRIM( cFile ) )
          IIF( AT( "\", cAltDefIni ) = 0, cAltDefIni := ".\" + cAltDefIni, )
          for i := 1 TO Len( aWnd )
-            DelFile( VRD_LF2SF( ALLTRIM( GetPvProfString( "Areas", ALLTRIM(STR(i,5)) , "", cAltDefIni ) ) ) )
+            FErase( VRD_LF2SF( ALLTRIM( GetPvProfString( "Areas", ALLTRIM(STR(i,5)) , "", cAltDefIni ) ) ) )
          next
-         DelFile( cAltDefIni )
+         FErase( cAltDefIni )
       endif
    endif
 
