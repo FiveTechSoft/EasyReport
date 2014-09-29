@@ -1,6 +1,5 @@
 #include "FiveWin.ch"
 #include "ttitle.ch"
-#include "Splitter.ch"
 
 #xcommand @ <nRow>, <nCol> CFOLDEREX [<oFolder>] ;
              [ <of: OF, WINDOW, DIALOG> <oWnd> ] ;
@@ -139,7 +138,8 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
       TITLE MainCaption() ;  //      BRUSH oBrush ;
       MDI ;
       ICON oIcon ;
-      MENU BuildMenu()
+      MENU BuildMenu() ;
+      MENUINFO 4 
 
 
    SET MESSAGE OF oEr:oMainWnd  CENTERED 2010
@@ -155,27 +155,13 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
 
    IF oER:lShowPanel
 
-      /*
-      @ 0.5, Int( ScreenWidth() - ( 2*328 ) ) SPLITTER oSplit ;
-              VERTICAL ;  // PREVIOUS CONTROLS oPnel ;
-              HINDS CONTROLS oER:oPanelD ; //LEFT MARGIN 10 ; // RIGHT MARGIN 10 ;
-              SIZE 0.5, GetSysMetrics( 1 ) - 138 PIXEL ;
-              OF oEr:oMainWnd:oWndClient ;
-              COLOR CLR_WHITE
-              //UPDATE
-      */
-
       oER:oPanelI := TPanel():New( 0.1, 0, GetSysMetrics( 1 ) - 138, ;
                                    Int(GetSysMetrics( 0 )/4), ;          // 326
                                    oER:oMainWnd )
-      //oER:oPanelI:SetColor( , oER:nClrPaneTree )
 
       oER:oPanelD := TPanel():New( 0.1, Int( ScreenWidth() - 2*Int(GetSysMetrics( 0 )/4) ) + 2, ;
                               GetSysMetrics( 1 ) - 138 , 3*Int(GetSysMetrics( 0 )/4), ;
                               oER:oMainWnd )
-      //oER:oPanelD:SetColor( , oER:nClrPaneTree )  //CLR_WHITE )
-      //SetParent( oER:oPanelD:hWnd, oER:oMainWnd:oWndClient:hWnd )
-
 
       if lValidFwh( 10.08 )
 
@@ -235,7 +221,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
                 IIF( Empty( oER:cDefIni ), OpenFile(,,.T.), oER:SetScrollBar() ), ;
                 StartMessage(), SetSave( .T. ), ClearUndoRedo(),;
                 oEr:oMainWnd:SetFocus() ) ;
-      VALID ( AEVal( aWnd, { |o| if( o <> nil, o:End(), ) } ), AskSaveFiles() )
+      VALID ( AEVal( aWnd, { |o| if( o <> nil, o:End(), ) } ), AskSaveFiles() ) 
 
    oEr:oAppFont:End()
    if !empty( oBrush )
@@ -1281,13 +1267,13 @@ return .T.
 function ShowAreasOnBar()
 
    local n
-    local cCbxItem  := aWndTitle[ 1 ]
+   local cCbxItem  := aWndTitle[ 1 ]
 
     aCbxItems := {}
 
     for n := 1 to LEN( aWndTitle )
        if !Empty( aWndTitle[ n ] )
-         AADD( aCbxItems, aWndTitle[ n ] )
+          AADD( aCbxItems, aWndTitle[ n ] )
        endif
     next
 
@@ -1299,13 +1285,13 @@ function ShowAreasOnBar()
       for n = 1 to Len( aWndTitle )
          if ! Empty( aWndTitle[ n ] )
             MENUITEM aWndTitle[ n ] ;
-               ACTION nAktArea:= AScan( aWndTitle, oMenuItem:cPrompt ) , aWnd[ nAktArea ]:SetFocus(),;
-                      SetWinNull()
+               ACTION ( nAktArea:= AScan( aWndTitle, oMenuItem:cPrompt ) , ;
+                        aWnd[ nAktArea ]:SetFocus(), SetWinNull() )
          endif
       next
    ENDMENU
 
-   oBtnAreas:oPopup = oMenuAreas
+   oBtnAreas:oPopup := oMenuAreas
 
    //Fokus auf das erste Fenster legen
    aWnd[ AScan( aWnd, { |x| x != nil } ) ]:SetFocus()
