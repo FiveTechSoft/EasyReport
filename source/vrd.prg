@@ -3088,7 +3088,7 @@ FUNCTION VRD_NewStructure()
          oStruct := TExStruct():New()
       #ENDIF
 
-  
+
 RETURN oStruct
 
 
@@ -3116,14 +3116,9 @@ FUNCTION VRD_XTOC( cValue )
 
 RETURN ( cReturn )
 
+//------------------------------------------------------------------------------
 
-*-- FUNCTION -----------------------------------------------------------------
-* Name........: ERStart
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
+/*
 FUNCTION vrd_ERStart( cRptFile, lPreview ) // FiveTech
 
    DEFAULT lPreview := .F.
@@ -3132,7 +3127,7 @@ FUNCTION vrd_ERStart( cRptFile, lPreview ) // FiveTech
       cRptFile + IIF( lPreview, " PREVIEW", " PRINTDIALOG" ), NIL, 1 )
 
 RETURN ( NIL )
-
+ */
 
 DLL32 Function apiFindFst(lpFilename AS LPSTR, @cWin32DataInfo AS LPSTR) AS LONG PASCAL ;
    FROM "FindFirstFileA" LIB "KERNEL32.DLL"
@@ -3153,8 +3148,8 @@ DLL32 Function FullPathName( lpszFile AS LPSTR, cchPath AS DWORD,;
 DLL32 FUNCTION MoveFile( Source_file AS LPSTR, Target_file AS LPSTR ) ;
    AS BOOL FROM "MoveFileA" LIB "Kernel32.dll"
 
-DLL32 FUNCTION DelFile( cFileName AS LPSTR ) ;
-   AS BOOL PASCAL FROM "DeleteFileA" LIB "kernel32.dll"
+//DLL32 FUNCTION DelFile( cFileName AS LPSTR ) ;
+//   AS BOOL PASCAL FROM "DeleteFileA" LIB "kernel32.dll"
 
 //DLL32 FUNCTION RoundRect( hDC AS LONG, nLeft AS LONG, nTop AS LONG, nRight AS LONG, ;
 //                          nBottom AS LONG, nWidth AS LONG, nHeight AS LONG ) ;

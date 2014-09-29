@@ -134,7 +134,7 @@ function DeleteArea()
 
    if MsgNoYes( GL("Do you really want to delete this area?"), GL("Select an option") ) = .T.
 
-      DelFile( aVRDSave[nAktArea,1] )
+      FErase( aVRDSave[nAktArea,1] )
       DelIniEntry( "Areas", ALLTRIM(STR( nAktArea, 5 )), oER:cDefIni )
 
       OpenFile( oER:cDefIni,, .T. )
@@ -1749,10 +1749,10 @@ return .T.
 
 function CloseUndo()
 
-  DelFile( ".\" + oGenVar:cUndoFileName + ".dbf" )
-  DelFile( ".\" + oGenVar:cUndoFileName + ".dbt" )
-  DelFile( ".\" + oGenVar:cRedoFileName + ".dbf" )
-  DelFile( ".\" + oGenVar:cRedoFileName + ".dbt" )
+  FErase( ".\" + oGenVar:cUndoFileName + ".dbf" )
+  FErase( ".\" + oGenVar:cUndoFileName + ".dbt" )
+  FErase( ".\" + oGenVar:cRedoFileName + ".dbf" )
+  FErase( ".\" + oGenVar:cRedoFileName + ".dbt" )
 
 return .T.
 
@@ -1789,7 +1789,7 @@ return .T.
 
 Function DelTempFiles(cPath)
 Local aDirName := DIRECTORY ( cPath+"*.*"  , "D" )
-   AEVAL ( aDirName, {| aFich |  DelFile( cpath + aFich[1] ) } )
+   AEVAL ( aDirName, {| aFich |  FErase( cpath + aFich[1] ) } )
    SysRefresh ()
 Return nil
 
