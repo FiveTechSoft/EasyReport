@@ -42,8 +42,7 @@ MEMVAR aItems, aAreaIni, aWnd
 MEMVAR cDefaultPath
 MEMVAR nAktArea
 MEMVAR aVRDSave
-MEMVAR lBeta
-MEMVAR lProfi, lPersonal, oGenVar
+MEMVAR lProfi, oGenVar
 MEMVAR oER
 
 //-----------------------------------------------------------------------------//
@@ -840,7 +839,7 @@ return ( aBarcodes )
 function MainCaption()
 
    local cUserApp   := ALLTRIM( oER:GetGeneralIni( "General", "MainAppTitle", "" ) )
-   LOCAL cVersion := IIF ( lBeta , " - Beta Version" , " - Full version" )
+   LOCAL cVersion := IIF ( oEr:lBeta , " - Beta Version" , " - Full version" )
    LOCAL cMainTitle := IIf(  !EMPTY( oER:cDefIni ), ALLTRIM( oER:GetDefIni( "General", "Title", "" ) ), "" )
 
    LOCAL cReturn := IIF( EMPTY( cUserApp ), "EasyReport", cUserApp ) + ;

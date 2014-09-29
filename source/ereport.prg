@@ -55,13 +55,13 @@ MEMVAR nHinCol1, nHinCol2, nHinCol3, oMsgInfo
 MEMVAR aVRDSave, lVRDSave, nDeveloper          //, lFillWindow
 MEMVAR cItemCopy, nCopyEntryNr, nCopyAreaNr, aSelectCopy, aItemCopy, nXMove, nYMove
 MEMVAR cInfoWidth, cInfoHeight, nInfoRow, nInfoCol, aItemPixelPos
-MEMVAR cDefIniPath, lBeta
+MEMVAR cDefIniPath
 MEMVAR lProfi, nDlgTextCol, nDlgBackCol
-MEMVAR lPersonal, oGenVar, oCurDlg
+MEMVAR oGenVar, oCurDlg
 MEMVAR oER
 
 Static oBtnAreas, oMenuAreas, lScrollVert   //, oMenuPreview
-
+STATIC lPersonal
 //----------------------------------------------------------------------------//
 
 function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 )
@@ -940,7 +940,7 @@ return( oMenu )
 
 function StartMessage()
 
-   if lBeta
+   if oER:lBeta
       BetaVersion()
    else
       if lPersonal
@@ -983,10 +983,10 @@ function DeclarePublics( cDefFile )
    local oIni
 
    PUBLIC cDefIniPath
-   PUBLIC lBeta       := .F.
+   oER:lBeta := .F.
    PUBLIC lProfi      := .T.
-   PUBLIC lPersonal   := .F.
-
+   
+   lPersonal   := .F.
 
    if lPersonal
       lProfi := .T.
@@ -4207,6 +4207,7 @@ CLASS TEasyReport
    DATA oPanelD
    DATA oPanelI
    DATA nRedoCount, nUndoCount
+   DATA lBeta
 
    METHOD New() CONSTRUCTOR
    METHOD GetGeneralIni( cSection , cKey, cDefault ) INLINE GetPvProfString( cSection, cKey, cDefault, ::cGeneralIni )
