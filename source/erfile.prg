@@ -78,8 +78,6 @@ function OpenFile( cFile, lChange, lAddDelNew )
       next
       aFonts := Array( 20 )
 
-      //SysRefresh()
-
       oER:cDefIni := cFile
       if AT( "\", oER:cDefIni ) = 0
          oER:cDefIni := ".\" + oER:cDefIni
@@ -89,7 +87,6 @@ function OpenFile( cFile, lChange, lAddDelNew )
 
       SetGeneralSettings()
 
-      //Fonts definieren
       DefineFonts()
       //Areas initieren
       //if oCbxArea = NIL
@@ -97,20 +94,17 @@ function OpenFile( cFile, lChange, lAddDelNew )
       //   oCbxArea:End()
       //endif
 
-      //Designwindows öffnen
       if !lChange
-      ClientWindows()
+         ClientWindows()
       else
-      For i = 1 to Len( aWnd )
-          if !empty( aWnd[ i ] )
-             aWnd[ i ]:Refresh()
-          endif
-      Next i
+         For i = 1 to Len( aWnd )
+             if !empty( aWnd[ i ] )
+                aWnd[ i ]:Refresh()
+             endif
+         Next i
       endif
-      //Areas anzeigen
-      ShowAreasOnBar()
 
-      //SysRefresh()
+      ShowAreasOnBar()
 
       ClearUndoRedo() // and refresh the bar
 
@@ -127,7 +121,6 @@ function OpenFile( cFile, lChange, lAddDelNew )
          //DlgTree( 2 )
          Dlg_Colors( 3 )
          Dlg_Fonts( 4 )
-         //oER:oFldI:Default()
          Er_Databases(,2)
          ER_Expressions(,,1)
          SwichFldD( oEr:oMainWnd, oEr:oPanelD, ) //oER:oFldD )
@@ -158,7 +151,7 @@ function CreateBackup()
 
       for nArea := 1 TO LEN( aAreaIni )
 
-         if .NOT. EMPTY( aAreaIni[nArea] )
+         if !empty( aAreaIni[nArea] )
             CopyFile( aAreaIni[nArea], ;
                STUFF( aAreaIni[nArea], RAT( ".", aAreaIni[nArea] ), 1, "_backup." ) )
          endif
@@ -355,7 +348,7 @@ function FileInfos()
       if VAL( aAreaEntries[i] ) <> 0
          nWnd := EntryNr( aAreaEntries[i] )
          cAreaDef := GetIniEntry( aAreaEntries,, "",, i )
-         if .NOT. EMPTY( cAreaDef )
+         if !EMPTY( cAreaDef )
             AADD( aFiles, { aWndTitle[nWnd], cAreaDef } )
          endif
       endif
