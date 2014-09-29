@@ -139,7 +139,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
       MDI ;
       ICON oIcon ;
       MENU BuildMenu() ;
-      MENUINFO 4 
+      MENUINFO 4
 
 
    SET MESSAGE OF oEr:oMainWnd  CENTERED 2010
@@ -171,10 +171,10 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
        SIZE Int(GetSysMetrics( 0 )/4), GetSysMetrics( 1 ) - 138 ;    //326
        OPTION 2 ;
        TAB HEIGHT 34 ;
-       BITMAPS { "B_EDIT16", "B_ITEMLIST16", "B_ITEMLIST16", "B_EDIT2" } ; 
+       BITMAPS { "B_EDIT16", "B_ITEMLIST16", "B_ITEMLIST16", "B_EDIT2" } ;
        PIXEL ;
        SEPARATOR 0
-       
+
        @ 0.2, 1 CFOLDEREX oER:oFldD ;
        PROMPT GL("&Expressions"), GL("&Databases"), GL("&Fields"), GL("Fil&ters") ;
        OF oEr:oPanelD ; //oEr:oMainWnd ;
@@ -184,7 +184,10 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
        BITMAPS { "B_ITEMLIST16", "B_EDIT2", "B_AREA", "B_AREA" } ;
        PIXEL ;
        SEPARATOR 0
-       
+
+       oER:oPanelI:SetColor(  , oEr:nClrPaneTree )
+       oER:oPanelD:SetColor(  , oEr:nClrPaneTree )
+
       else
 
        @ 0.2, 1 FOLDER oER:oFldI ;
@@ -209,6 +212,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
       oER:oFldI:SetColor(  , oEr:nClrPaneTree )
       oER:oFldD:SetColor(  , oEr:nClrPaneTree )
 
+
       DlgTree( 2 )
 
    ENDIF
@@ -221,7 +225,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
                 IIF( Empty( oER:cDefIni ), OpenFile(,,.T.), oER:SetScrollBar() ), ;
                 StartMessage(), SetSave( .T. ), ClearUndoRedo(),;
                 oEr:oMainWnd:SetFocus() ) ;
-      VALID ( AEVal( aWnd, { |o| if( o <> nil, o:End(), ) } ), AskSaveFiles() ) 
+      VALID ( AEVal( aWnd, { |o| if( o <> nil, o:End(), ) } ), AskSaveFiles() )
 
    oEr:oAppFont:End()
    if !empty( oBrush )
@@ -974,7 +978,7 @@ function DeclarePublics( cDefFile )
    PUBLIC cDefIniPath
    oER:lBeta := .F.
    PUBLIC lProfi      := .T.
-   
+
    lPersonal   := .F.
 
    if lPersonal
