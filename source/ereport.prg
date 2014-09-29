@@ -75,6 +75,11 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
    local aColorSay[30]
    local aColors
 
+   IF !Empty(p1) .and. Left(p1,6) == "REEXEC"
+      p1:= SubStr(p1,7)
+      msginfo("Se reiniciará el programa con los cambios " )
+   endif
+
    CheckRes()
 
    lChDir( cFilePath( GetModuleFileName( GetInstance() ) ) )
@@ -254,7 +259,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
 
    IF oER:lReexec
       oER:lReexec := .F.
-      ShellExecute( 0, "Open", "ereport.exe" ) //+ " " + oGenVar:cLoadFile )
+      ShellExecute( , "Open",  HB_ARGV( 0 ) , "REEXEC"+AllTrim(oER:cDefIni)  )
    endif
 
 return nil
