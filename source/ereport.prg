@@ -56,7 +56,7 @@ MEMVAR aVRDSave, lVRDSave, nDeveloper          //, lFillWindow
 MEMVAR cItemCopy, nCopyEntryNr, nCopyAreaNr, aSelectCopy, aItemCopy, nXMove, nYMove
 MEMVAR cInfoWidth, cInfoHeight, nInfoRow, nInfoCol, aItemPixelPos
 MEMVAR cDefIniPath, lBeta
-MEMVAR lProfi, nUndoCount, nRedoCount, nDlgTextCol, nDlgBackCol
+MEMVAR lProfi, nDlgTextCol, nDlgBackCol
 MEMVAR lPersonal, oGenVar, oCurDlg
 MEMVAR oER
 
@@ -638,7 +638,7 @@ function BarMenu()
       PROMPT FWString( "Undo" ) ;
       TOOLTIP STRTRAN( GL("&Undo"), "&" ) ;
       ACTION Undo() ;
-      WHEN !Empty( oER:cDefIni ) .and. nUndoCount > 0
+      WHEN !Empty( oER:cDefIni ) .and. oER:nUndoCount > 0
       // MENU UndoRedoMenu( 1, aBtn[2] ) ;
 
    DEFINE BUTTON aBtn[3] RESOURCE "B_REDO", "B_REDO", "B_REDO1" ;
@@ -646,7 +646,7 @@ function BarMenu()
       PROMPT FWString( "Redo" ) ;
       TOOLTIP STRTRAN( GL("&Redo"), "&" ) ;
       ACTION Redo() ;
-      WHEN !Empty( oER:cDefIni ) .and. nRedoCount > 0
+      WHEN !Empty( oER:cDefIni ) .and. oER:nRedoCount > 0
       // MENU UndoRedoMenu( 2, aBtn[2] ) ;
 
    DEFINE BUTTON RESOURCE "B_ITEMLIST32", "B_ITEMLIST32", "B_ITEMLIST321"  ;
@@ -1047,8 +1047,8 @@ function DeclarePublics( cDefFile )
    PUBLIC aItemPixelPos := {}
 
    //Undo/Redo
-   PUBLIC nUndoCount := 0
-   PUBLIC nRedoCount := 0
+   oEr:nUndoCount := 0
+   oER:nRedoCount := 0
 
    //Dialog say titles
    PUBLIC nDlgTextCol := RGB( 255, 255, 255 )
@@ -1371,11 +1371,11 @@ function BuildMenu()
    MENUITEM GL("&Undo") + chr(9) + GL("Ctrl+Z") RESOURCE "B_UNDO_16" ;
       ACTION Undo() ;
       ACCELERATOR ACC_CONTROL, ASC( GL("Z") ) ;
-      WHEN !Empty( oER:cDefIni ) .and. nUndoCount > 0
+      WHEN !Empty( oER:cDefIni ) .and. oER:nUndoCount > 0
    MENUITEM GL("&Redo") + chr(9) + GL("Ctrl+Y") RESOURCE "B_REDO_16" ;
       ACTION Redo() ;
       ACCELERATOR ACC_CONTROL, ASC( GL("Y") ) ;
-      WHEN !Empty( oER:cDefIni ) .and. nRedoCount > 0
+      WHEN !Empty( oER:cDefIni ) .and. oER:nRedoCount > 0
    SEPARATOR
 
    MENUITEM GL("Cu&t") + chr(9) + GL("Ctrl+X") ;
@@ -4201,6 +4201,7 @@ CLASS TEasyReport
    DATA lFillWindow
    DATA oPanelD
    DATA oPanelI
+   DATA nRedoCount, nUndoCount
 
    METHOD New() CONSTRUCTOR
    METHOD GetGeneralIni( cSection , cKey, cDefault ) INLINE GetPvProfString( cSection, cKey, cDefault, ::cGeneralIni )

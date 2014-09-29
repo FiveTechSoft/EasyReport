@@ -43,7 +43,7 @@ MEMVAR cDefaultPath
 MEMVAR nAktArea
 MEMVAR aVRDSave
 MEMVAR lBeta
-MEMVAR lProfi, nUndoCount, nRedoCount, lPersonal, oGenVar
+MEMVAR lProfi, lPersonal, oGenVar
 MEMVAR oER
 
 //-----------------------------------------------------------------------------//
@@ -1972,7 +1972,7 @@ return .T.
 
 function RefreshUndo()
 
-   nUndoCount := TMPUNDO->(LASTREC())
+   oER:nUndoCount := TMPUNDO->(LASTREC())
 
 return .T.
 
@@ -1980,7 +1980,7 @@ return .T.
 
 function RefreshRedo()
 
-   nRedoCount := TMPREDO->(LASTREC())
+   oER:nRedoCount := TMPREDO->(LASTREC())
 
 return .T.
 
@@ -2000,8 +2000,8 @@ function ClearUndoRedo()
    TMPREDO->(DBCLOSEAREA())
    SELECT( nSelect )
 
-   nUndoCount := 0
-   nRedoCount := 0
+   oER:nUndoCount := 0
+   oER:nRedoCount := 0
 
    if !empty( oEr:oMainWnd:oBar )
       oEr:oMainWnd:oBar:AEvalWhen()
