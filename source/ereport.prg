@@ -588,8 +588,13 @@ function BarMenu()
    LOCAL oBar
    local aBtn[3]
    local lPrompt := ( GetSysMetrics( 0 ) > 800 )
+   Local oFont
+
+   DEFINE FONT oFont NAME "Tahoma" SIZE 0,-9
 
    DEFINE BUTTONBAR oBar OF oEr:oMainWnd SIZE 70, 70 2010
+   oBar:SetFont( oFont )
+
 
    // oBar:bClrGrad :=  oER:bClrBar
 
@@ -713,12 +718,12 @@ function BarMenu()
          WHEN !Empty( oER:cDefIni )
    endif
 
-   // if Val( GetPvProfString( "General", "ShowExitButton", "0", oER:cGeneralIni ) ) = 1
-
       DEFINE BUTTON RESOURCE "HIDE0", "HIDE1" ;
                  OF oBar GROUP ;
-         ACTION (  swichFldD( oEr:oMainWnd, oER:oFldD ) )
+         PROMPT FWString( "Hide/Show" ) ;
+         ACTION ( SwichFldD( oEr:oMainWnd, oER:oFldD ) )
 
+   // if Val( GetPvProfString( "General", "ShowExitButton", "0", oER:cGeneralIni ) ) = 1
 
       DEFINE BUTTON RESOURCE "B_EXIT" ;
          PROMPT FWString( "Exit" ) ;
