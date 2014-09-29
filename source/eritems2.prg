@@ -44,7 +44,7 @@ FUNCTION ToggleItemSelection( nItem, nArea )
    IF nSelSearch = 0
       AADD( aSelection, { nArea, nItem } )
    ELSE
-      aSelection := ADELETE( aSelection, nSelSearch )
+      aSelection := ADel( aSelection, nSelSearch, .T. )
    ENDIF
 
    MarkItem( aItems[nArea,nItem]:hWnd )
@@ -176,7 +176,7 @@ RETURN (.T.)
 
 FUNCTION MoveSelection( nRow, nCol, oAktWnd )
 
-   IF lBoxDraw 
+   IF lBoxDraw
       RectDotted( oAktWnd:hWnd, nBoxTop, nBoxLeft, nBoxBottom, nBoxRight )
       nBoxBottom = nRow
       nBoxRight  = nCol
@@ -192,7 +192,7 @@ FUNCTION StopSelection( nRow, nCol, oAktWnd )
    LOCAL i, aBoxRect, aItemRect
    LOCAL aSelSearch := {}
 
-   IF lBoxDraw 
+   IF lBoxDraw
 
       nBoxBottom = nRow
       nBoxRight  = nCol

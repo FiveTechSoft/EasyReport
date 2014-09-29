@@ -677,7 +677,7 @@ function IsDivisible( nNr, nDivisor )
 return ( lreturn )
 
 //------------------------------------------------------------------------------
-
+/*
 function ADelete( aArray, nIndex )
 
    local i
@@ -690,7 +690,7 @@ function ADelete( aArray, nIndex )
    NEXT
 
 return ( aNewArray )
-
+*/
 
 //-----------------------------------------------------------------------------
 
@@ -1790,7 +1790,7 @@ return .T.
 Function DelTempFiles(cPath)
 Local aDirName := DIRECTORY ( cPath+"*.*"  , "D" )
    AEVAL ( aDirName, {| aFich |  FErase( cpath + aFich[1] ) } )
-   SysRefresh ()
+ //  SysRefresh()
 Return nil
 
 
