@@ -181,7 +181,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
 
 
 
-      if ValidVersionFwh( 10, 8 )
+      if lValidFwh( 10.08 )
 
        @ 0.5, 1 CFOLDEREX oER:oFldI ;
        PROMPT GL("&Report Settings"), GL("&Items"), GL("Colors"), GL("Fonts") ;
@@ -307,7 +307,7 @@ DEFAULT nD  := 2
    oEr:oTree:l3DLook := .F.
    oEr:oTree:SetFont( oFont )
 
-   if ValidVersionFwh( 14, 8 )
+   if  lValidFwh( 14.08 )
       if !empty( oEr:oTree:oFont )
          nItemH := oEr:oTree:oFont:nHeight * 2
       else
@@ -735,7 +735,7 @@ function BarMenu()
 return .T.
 
 //----------------------------------------------------------------------------//
-
+/*
 Function ValidVersionFwh( nVersion1, nVersion2 )
 Local lVersion   := .T.
 
@@ -763,7 +763,7 @@ Local aVersion := Array( 2 )
       aVersion[ 1 ] := Val( Substr( FWVERSION, 5, 2 ) )
       aVersion[ 2 ] := Val( Right( FWVERSION, 2 ) )
 Return aVersion
-
+ */
 //----------------------------------------------------------------------------//
 
 Function lValidFwh( nVersion )

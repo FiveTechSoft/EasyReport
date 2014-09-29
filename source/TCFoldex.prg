@@ -56,7 +56,7 @@ CLASS TCFolderEx FROM TFolderEx
                aHelps, nRound, bAction, bClrTabs, bClrText, aAlign, ;
                lAdjust, nSeparator, nOption, bPopUp, lStretch, ;
                cLayOut, bBmpAction, nBright, lAnimate, nSpeed, oFont,;
-               lTransparent, aDialogs ) CONSTRUCTOR 
+               lTransparent, aDialogs ) CONSTRUCTOR
 
 ENDCLASS
 
@@ -68,7 +68,7 @@ METHOD New( nTop, nLeft, nWidth, nHeight, oWnd, aBitmaps, lPixel,;
             aHelps, nRound, bAction, bClrTabs, bClrText, aAlign, ;
             lAdjust, nSeparator, nOption, bPopUp, lStretch, ;
             cLayOut, bBmpAction, nBright, lAnimate, nSpeed, oFont,;
-            lTransparent, aDialogs  ) CLASS TCFolderEx 
+            lTransparent, aDialogs  ) CLASS TCFolderEx
 
    LOCAL n, oDlg, nLastRow, nLen, aRect, hRgn, aFontINfo
 
@@ -168,7 +168,7 @@ METHOD New( nTop, nLeft, nWidth, nHeight, oWnd, aBitmaps, lPixel,;
 
 
 //#ifdef OLDCODE   // upto FWH 14.06 : Modified on 2014-07-25
-   if !OldCode( 14, 6 )
+   if !OldCode( 14.06 )
 
       // verify font by user
       if oFont == nil
@@ -257,7 +257,7 @@ METHOD New( nTop, nLeft, nWidth, nHeight, oWnd, aBitmaps, lPixel,;
          oDlg:lTransparent := .T.
 
       next n
-      
+
    else
       // Usar Dialogos en RC en un Folder creado por código
       // En pruebas
@@ -269,7 +269,7 @@ METHOD New( nTop, nLeft, nWidth, nHeight, oWnd, aBitmaps, lPixel,;
             FONT ::oWnd:oFont ;
             HELPID If( Len( ::aHelps ) >= n , ::aHelps[ n ] , NIL ) ;
             BRUSH ::oBrush // STYLE WS_CHILD
-    
+
          ::aDialogs[ n ] := oDlg
 
          oDlg:cVarName := "Page" + AllTrim( Str( n ) )
@@ -298,22 +298,8 @@ return Self
 
 //----------------------------------------------------------------------------//
 
-//----------------------------------------------------------------------------//
-
-Static Function OldCode( nVersion1, nVersion2 )  //ValidVersionFwh( nVersion1, nVersion2 )
-Local lVersion   := .T.
-
-   if GetFwVersion()[ 1 ] < nVersion1
-      lVersion := .F.
-   else
-      if GetFwVersion()[ 1 ] = nVersion1
-         if GetFwVersion()[ 2 ] < nVersion2
-            lVersion := .F.
-         endif
-      endif
-   endif
-
-Return lVersion
+Static Function OldCode( nVersion )
+RETURN IF(  nFwVersion() <  nVersion, .F., .T. )
 
 //----------------------------------------------------------------------------//
 

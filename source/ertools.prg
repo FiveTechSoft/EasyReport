@@ -25,9 +25,9 @@
              [ HELPTOPICS <cnHelpids,...> ] ;
              [ <layout: TOP, LEFT, BOTTOM, RIGHT> ] ;
              [ <lAnimate: ANIMATE> [ SPEED <nSpeed> ] ] ;
-	           [ FONT <oFont> ] ; //-->> byte-one 2010
+              [ FONT <oFont> ] ; //-->> byte-one 2010
              [ <lTransparent: TRANSPARENT> ] ;
-	         [ <dlg: DIALOG, DIALOGS, PAGE, PAGES> <cDlgsName,...> ] ;  
+            [ <dlg: DIALOG, DIALOGS, PAGE, PAGES> <cDlgsName,...> ] ;
        => ;
              [<oFolder> := ] TCFoldereX():New( <nRow>, <nCol>, <nWidth>, <nHeight>,;
              <oWnd>, [\{<cbmps>\}], <.lPixel.>, <.lDesign.>, [\{<cPrompt>\}], ;
@@ -1083,7 +1083,7 @@ function ER_Expressions( lTake, cAltText, nD )
          PIXEL
 
    ELSE
-      if ValidVersionFwh( 10, 8 )
+      if  lValidFwh( 10.08 )
 
          @ 4, 1 CFOLDEREX oFld ;
            PROMPT " " + GL("General") + " ", " " + GL("User defined") + " " ;
