@@ -148,7 +148,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
 
    oEr:oMainWnd:oMsgBar:KeybOn()
    oEr:oMainWnd:oWndClient:bMouseWheel = { | nKey, nDelta, nXPos, nYPos | ;
-                        ER_MouseWheel( nKey, nDelta, nXPos, nYPos ) }
+                           ER_MouseWheel( nKey, nDelta, nXPos, nYPos ) }
 
    BarMenu()
 
@@ -168,12 +168,12 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
       oER:oPanelI := TPanel():New( 0.1, 0, GetSysMetrics( 1 ) - 138, ;
                                    Int(GetSysMetrics( 0 )/4), ;          // 326
                                    oER:oMainWnd )
-      oER:oPanelI:SetColor( , oER:nClrPaneTree )
+      //oER:oPanelI:SetColor( , oER:nClrPaneTree )
 
       oER:oPanelD := TPanel():New( 0.1, Int( ScreenWidth() - 2*Int(GetSysMetrics( 0 )/4) ) + 2, ;
-                              GetSysMetrics( 1 ) - 140 , Int( ScreenWidth() - Int(GetSysMetrics( 0 )/4) ), ;
+                              GetSysMetrics( 1 ) - 138 , 3*Int(GetSysMetrics( 0 )/4), ;
                               oER:oMainWnd )
-      oER:oPanelD:SetColor( , oER:nClrPaneTree )  //CLR_WHITE )
+      //oER:oPanelD:SetColor( , oER:nClrPaneTree )  //CLR_WHITE )
       //SetParent( oER:oPanelD:hWnd, oER:oMainWnd:oWndClient:hWnd )
 
 
@@ -188,7 +188,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
        BITMAPS { "B_EDIT16", "B_ITEMLIST16", "B_ITEMLIST16", "B_EDIT2" } ; 
        PIXEL ;
        SEPARATOR 0
-
+       
        @ 0.2, 1 CFOLDEREX oER:oFldD ;
        PROMPT GL("&Expressions"), GL("&Databases"), GL("&Fields"), GL("Fil&ters") ;
        OF oEr:oPanelD ; //oEr:oMainWnd ;
@@ -198,7 +198,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
        BITMAPS { "B_ITEMLIST16", "B_EDIT2", "B_AREA", "B_AREA" } ;
        PIXEL ;
        SEPARATOR 0
-
+       
       else
 
        @ 0.2, 1 FOLDER oER:oFldI ;
@@ -270,21 +270,22 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
 return nil
 //------------------------------------------------------------------------------
 
-FUNCTION swichFldD(oWnd,oFld, lSetVisible  )
+Function SwichFldD( oWnd, oFld, lSetVisible  )
 
-  LOCAL nWidth :=  GetSysMetrics( 1 ) - 1
+  Local   nWidth      := GetSysMetrics( 1 ) - 1
   DEFAULT lSetVisible := !ofld:isVisible()
 
 
   IF lSetVisible
      ofld:show()
-     oWnd:oRight:=ofld
+     oWnd:oRight:= oFld
   ELSE
      ofld:hide()
      oWnd:oRight:= NIL
   ENDIF
 
   oWnd:resize()
+  //oWnd:oWndClient:oVScroll:Refresh()
 
 RETURN nil
 
@@ -297,7 +298,8 @@ Local nItemH
 DEFAULT nD  := 2
 
    DEFINE FONT oFont NAME "Verdana" SIZE 0, -10
-   oER:oTree := TTreeView():New( 0, 2, oER:oFldI:aDialogs[ nD ] , 0, , .T., .F., 340 ,;
+   oER:oTree := TTreeView():New( 0, 2, oER:oFldI:aDialogs[ nD ] , 0, , .T., .F.,;
+                                 Int(GetSysMetrics( 0 )/4) - 6 ,;
                                  oER:oFldI:aDialogs[ nD ]:nHeight ,"",, )
 
    // oEr:oMainWnd:oLeft  :=   oER:oTree
@@ -721,7 +723,7 @@ function BarMenu()
       DEFINE BUTTON RESOURCE "HIDE0", "HIDE1" ;
                  OF oBar GROUP ;
          PROMPT FWString( "Hide/Show" ) ;
-         ACTION ( SwichFldD( oEr:oMainWnd, oER:oFldD ) )
+         ACTION ( SwichFldD( oEr:oMainWnd, oER:oFldD, ) )
 
    // if Val( GetPvProfString( "General", "ShowExitButton", "0", oER:cGeneralIni ) ) = 1
 
