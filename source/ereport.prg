@@ -134,9 +134,6 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
 
    SetDlgGradient( oER:aClrDialogs )
 
-   //if !ValidVersionFwh( 10, 8 )
-   //   oER:lShowPanel := .F.
-   //endif
 
    DEFINE WINDOW oEr:oMainWnd VSCROLL ; //FROM 0, 0 to 50, 200 VSCROLL ;
       TITLE MainCaption() ;  //      BRUSH oBrush ;
@@ -158,12 +155,6 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
 
    IF oER:lShowPanel
 
-    //  oER:oPanelD := TPanel():New( 0.5, Int( ScreenWidth() - 2*328 ) + 2, ;
-    //                          GetSysMetrics( 1 ) - 140 , Int( ScreenWidth() - 327 ), ;
-    //                          oER:oMainWnd:oWndClient )
-    //  oER:oPanelD:SetColor( , oER:nClrPaneTree )  //CLR_WHITE )
-      //SetParent( oER:oPanelD:hWnd, oER:oMainWnd:oWndClient:hWnd )
-
       /*
       @ 0.5, Int( ScreenWidth() - ( 2*328 ) ) SPLITTER oSplit ;
               VERTICAL ;  // PREVIOUS CONTROLS oPnel ;
@@ -174,29 +165,34 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
               //UPDATE
       */
 
-
-      oER:oPanelI := TPanel():New( 0.5, 0, GetSysMetrics( 1 ) - 138, 326, ;
+      oER:oPanelI := TPanel():New( 0.1, 0, GetSysMetrics( 1 ) - 138, ;
+                                   Int(GetSysMetrics( 0 )/4), ;          // 326
                                    oER:oMainWnd )
       oER:oPanelI:SetColor( , oER:nClrPaneTree )
 
+      oER:oPanelD := TPanel():New( 0.1, Int( ScreenWidth() - 2*Int(GetSysMetrics( 0 )/4) ) + 2, ;
+                              GetSysMetrics( 1 ) - 140 , Int( ScreenWidth() - Int(GetSysMetrics( 0 )/4) ), ;
+                              oER:oMainWnd )
+      oER:oPanelD:SetColor( , oER:nClrPaneTree )  //CLR_WHITE )
+      //SetParent( oER:oPanelD:hWnd, oER:oMainWnd:oWndClient:hWnd )
 
 
       if lValidFwh( 10.08 )
 
-       @ 0.5, 1 CFOLDEREX oER:oFldI ;
+       @ 0.2, 1 CFOLDEREX oER:oFldI ;
        PROMPT GL("&Report Settings"), GL("&Items"), GL("Colors"), GL("Fonts") ;
        OF oEr:oPanelI ; //oEr:oMainWnd ;
-       SIZE 326, GetSysMetrics( 1 ) - 138 ;
+       SIZE Int(GetSysMetrics( 0 )/4), GetSysMetrics( 1 ) - 138 ;    //326
        OPTION 2 ;
        TAB HEIGHT 34 ;
-       BITMAPS { "B_EDIT16", "B_ITEMLIST16", "B_ITEMLIST16", "B_EDIT2" } ; //      BITMAPS { "B_EDIT16", "B_GRAPHIC", "B_ITEMLIST16", "B_ITEMLIST16", "B_AREA", "B_EDIT2" } ;
+       BITMAPS { "B_EDIT16", "B_ITEMLIST16", "B_ITEMLIST16", "B_EDIT2" } ; 
        PIXEL ;
        SEPARATOR 0
 
-       @ 0.5, 1 CFOLDEREX oER:oFldD ;
+       @ 0.2, 1 CFOLDEREX oER:oFldD ;
        PROMPT GL("&Expressions"), GL("&Databases"), GL("&Fields"), GL("Fil&ters") ;
-       OF oEr:oMainWnd ;
-       SIZE 326, GetSysMetrics( 1 ) - 138 ;
+       OF oEr:oPanelD ; //oEr:oMainWnd ;
+       SIZE Int(GetSysMetrics( 0 )/4), GetSysMetrics( 1 ) - 138 ;
        OPTION 1 ;
        TAB HEIGHT 34 ;
        BITMAPS { "B_ITEMLIST16", "B_EDIT2", "B_AREA", "B_AREA" } ;
@@ -205,17 +201,17 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
 
       else
 
-       @ 0.5, 1 FOLDER oER:oFldI ;
+       @ 0.2, 1 FOLDER oER:oFldI ;
        PROMPT GL("&Report Settings"), GL("&Items"), GL("&Databases"), GL("&Expressions") ;
        OF oEr:oPanelI ; //oEr:oMainWnd ;
-       SIZE 326, GetSysMetrics( 1 ) - 138 ;
+       SIZE Int(GetSysMetrics( 0 )/4), GetSysMetrics( 1 ) - 138 ;
        OPTION 2 ;
        PIXEL
 
-       @ 0.5, 1 FOLDER oER:oFldD ;
+       @ 0.2, 1 FOLDER oER:oFldD ;
        PROMPT GL("&Expressions"), GL("&Databases"), GL("&Fields"), GL("Fil&ters") ;
-       OF oEr:oMainWnd ;
-       SIZE 326, GetSysMetrics( 1 ) - 138 ;
+       OF oEr:oPanelD ;  //oEr:oMainWnd ;
+       SIZE Int(GetSysMetrics( 0 )/4), GetSysMetrics( 1 ) - 138 ;
        OPTION 1 ;
        PIXEL
 
@@ -223,8 +219,9 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
       //oER:oFldI:SetFont(  )
 
       oEr:oMainWnd:oLeft   :=  oEr:oPanelI   //oER:oFldI
-      oEr:oMainWnd:oRight  :=  oER:oFldD
+      oEr:oMainWnd:oRight  :=  oEr:oPanelD   //oER:oFldD
       oER:oFldI:SetColor(  , oEr:nClrPaneTree )
+      oER:oFldD:SetColor(  , oEr:nClrPaneTree )
 
       DlgTree( 2 )
 
@@ -266,7 +263,8 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
    lChDir( cOldDir )
 
    IF oER:lReexec
-      ShellExecute( 0, "Open", "ereport.exe" )
+      oER:lReexec := .F.
+      ShellExecute( 0, "Open", "ereport.exe" ) //+ " " + oGenVar:cLoadFile )
    endif
 
 return nil
@@ -4181,7 +4179,9 @@ CLASS TEasyReport
    DATA oMainWnd
    DATA cGeneralIni
    DATA cDefIni
-   DATA cDataPath, cPath, cTmpPath
+   DATA cDataPath
+   DATA cPath
+   DATA cTmpPath
    DATA bClrBar
    DATA aClrDialogs
    DATA nMeasure
@@ -4196,7 +4196,7 @@ CLASS TEasyReport
    DATA nClrPaneTree
    DATA oFldI
    DATA oFldD
-   DATA lReexec
+   DATA lReexec        INIT .F.
    DATA nTotAreas
    DATA lFillWindow
    DATA oPanelD

@@ -57,17 +57,15 @@ function OpenFile( cFile, lChange, lAddDelNew )
       aItems    := NIL
       aAreaIni  := NIL
       if !lChange
-      aWnd      := NIL
-      aWndTitle := NIL
-      aRuler    := NIL
+         aWnd      := NIL
+         aWndTitle := NIL
+         aRuler    := NIL
       endif
-      //MEMORY(-1)
-      //SYSREFRESH()
 
       if !lChange
-      aWnd      := Array( oER:nTotAreas )
-      aWndTitle := Array( Len( aWnd ) )
-      aRuler    := Array( Len( aWnd ), 2 )
+         aWnd      := Array( oER:nTotAreas )
+         aWndTitle := Array( Len( aWnd ) )
+         aRuler    := Array( Len( aWnd ), 2 )
       endif
       aItems    := Array( Len( aWnd ), 1000 )
       aAreaIni  := Array( Len( aWnd ) )
