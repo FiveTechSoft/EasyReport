@@ -8,11 +8,13 @@ MEMVAR oMsgInfo
 MEMVAR nDeveloper         //lFillWindow,
 MEMVAR nRuler, nRulerTop
 MEMVAR cItemCopy, aSelectCopy, aItemCopy, nXMove, nYMove
-MEMVAR cInfoWidth, cInfoHeight, nInfoRow, nInfoCol, aItemPixelPos
+MEMVAR cInfoWidth, cInfoHeight, nInfoRow, nInfoCol
 MEMVAR lProfi, oCurDlg, oGenVar,oER
 
 STATIC aItemPosition
 STATIC nCopyEntryNr, nCopyAreaNr
+
+STATIC aItemPixelPos := {}
 
 //----------------------------------------------------------------------------//
 
@@ -1489,10 +1491,10 @@ function SetItemSize( i, nArea, cAreaIni )
    aItemPosition := { GetField( cItemDef, 7 ), GetField( cItemDef, 8 ), ;
                       GetField( cItemDef, 9 ), GetField( cItemDef, 10 ) }
 
-   aItemPixelPos := { ER_GetPixel( VAL( GetField( cItemDef, 7 ) ) ), ;
-                      ER_GetPixel( VAL( GetField( cItemDef, 8 ) ) ), ;
-                      ER_GetPixel( VAL( GetField( cItemDef, 9 ) ) ), ;
-                      ER_GetPixel( VAL( GetField( cItemDef, 10 ) ) ) }
+ //  aItemPixelPos := { ER_GetPixel( VAL( GetField( cItemDef, 7 ) ) ), ;
+ //                     ER_GetPixel( VAL( GetField( cItemDef, 8 ) ) ), ;
+ //                     ER_GetPixel( VAL( GetField( cItemDef, 9 ) ) ), ;
+ //                     ER_GetPixel( VAL( GetField( cItemDef, 10 ) ) ) }
 
    aItems[nArea,i]:Refresh()
 
@@ -1760,17 +1762,6 @@ function NewItem( cTyp, nArea, nTmpCopyArea, nTmpCopyEntry, cTmpItemCopy )
 
    ShowItem( nFree, nArea, cAreaIni, @aFirst, @nElemente )
    aItems[nArea,nFree]:lDrag := .T.
-
-   /*
-   aItemPosition := { GetField( cItemDef, 7 ), GetField( cItemDef, 8 ), ;
-                      GetField( cItemDef, 9 ), GetField( cItemDef, 10 ) }
-   aItemPixelPos := { ER_GetPixel( VAL( aItemPosition[1] ) ), ;
-                      ER_GetPixel( VAL( aItemPosition[2] ) ), ;
-                      ER_GetPixel( VAL( aItemPosition[3] ) ), ;
-                      ER_GetPixel( VAL( aItemPosition[4] ) ) }
-   aItems[nArea,i]:CheckDots()
-   aItems[nArea,i]:Move( oEr:nRulerTop + aItemPixelPos[1], oER:nRuler + aItemPixelPos[2],,, .T. )
-   */
 
    nInfoRow := 0
    nInfoCol := 0

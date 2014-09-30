@@ -1,6 +1,6 @@
 #include "FiveWin.ch"
 
-MEMVAR aItems, aFonts, aAreaIni, aWnd, aWndTitle, oMru
+MEMVAR aItems, aFonts, aAreaIni, aWnd, aWndTitle
 MEMVAR aRuler, cLongDefIni, cDefaultPath
 MEMVAR oGenVar
 MEMVAR aVRDSave, lVRDSave
@@ -124,7 +124,7 @@ function OpenFile( cFile, lChange, lAddDelNew )
       SetSave( .T. )
 
       if VAL( GetPvProfString( "General", "MruList"  , "4", oER:cGeneralIni ) ) > 0
-         oMru:Save( cLongDefIni )
+         oER:oMru:Save( cLongDefIni )
       endif
 
       CreateBackup()
@@ -268,7 +268,7 @@ function SaveAs( cFile )
       SetSave( .T. )
 
       if VAL( GetPvProfString( "General", "MruList"  , "4", oER:cGeneralIni ) ) > 0
-         oMru:Save( cLongDefIni )
+         oER:oMru:Save( cLongDefIni )
       endif
 
    endif

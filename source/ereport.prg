@@ -47,13 +47,13 @@ STATIC aTmpSource
 //Entscheidet ob die Graphikelemente neu gezeichnet werden sollen
 STATIC lDraGraphic := .T.
 
-MEMVAR aItems, aFonts, aAreaIni, aWnd, aWndTitle, oMru
+MEMVAR aItems, aFonts, aAreaIni, aWnd, aWndTitle
 MEMVAR aRuler, cLongDefIni, cDefaultPath
 MEMVAR nAktItem, nAktArea, nSelArea, aSelection
 MEMVAR nHinCol1, nHinCol2, nHinCol3, oMsgInfo
 MEMVAR aVRDSave, lVRDSave, nDeveloper
 MEMVAR cItemCopy, aSelectCopy, aItemCopy, nXMove, nYMove
-MEMVAR cInfoWidth, cInfoHeight, nInfoRow, nInfoCol, aItemPixelPos
+MEMVAR cInfoWidth, cInfoHeight, nInfoRow, nInfoCol
 MEMVAR cDefIniPath
 MEMVAR lProfi
 MEMVAR oGenVar, oCurDlg
@@ -981,16 +981,16 @@ function DeclarePublics( cDefFile )
    local oIni
 
    PUBLIC cDefIniPath
+   PUBLIC lProfi := .T.
+
    oER:lBeta := .F.
-   PUBLIC lProfi      := .T.
 
-   lPersonal   := .F.
-
+   lPersonal := .F.
    if lPersonal
       lProfi := .T.
    endif
 
-   PUBLIC aItems, aFonts, aAreaIni, aWnd, aWndTitle, oBar, oMru
+   PUBLIC aItems, aFonts, aAreaIni, aWnd, aWndTitle, oBar
    PUBLIC aRuler, cLongDefIni, cDefaultPath
    PUBLIC oCurDlg  := nil
 
@@ -1043,8 +1043,6 @@ function DeclarePublics( cDefFile )
    PUBLIC nInfoRow
    PUBLIC nInfoCol
 
-   PUBLIC aItemPixelPos := {}
-
    //Undo/Redo
    oEr:nUndoCount := 0
    oER:nRedoCount := 0
@@ -1077,7 +1075,7 @@ function DeclarePublics( cDefFile )
    cLongDefIni      := cDefFile
    cDefaultPath     := CheckPath(  oEr:GetGeneralIni( "General", "DefaultPath", "" ) )
 
-   oEr:lShowPanel   := ( oEr:GetGeneralIni( "General", "ShowPanel", "1" ) = "1")
+   oEr:lShowPanel   := ( oEr:GetGeneralIni( "General", "ShowPanel", "1" ) == "1" )
 
    if AT( "\", oER:cDefIni ) = 0 .and. !Empty( oER:cDefIni )
       oER:cDefIni   := ".\" + oER:cDefIni
@@ -1208,7 +1206,6 @@ function SetGeneralSettings()
    nXMove := ER_GetPixel( oGenVar:nGridWidth )
    nYMove := ER_GetPixel( oGenVar:nGridHeight )
 
-
    OpenDatabases()
 
 return .T.
@@ -1223,22 +1220,19 @@ function IniMainWindow()
 
       //Fonts definieren
       DefineFonts()
-      //Areas initieren
-      // IniAreasOnBar()
       //Designwindows
       ClientWindows()
       //Areas anzeigen
       ShowAreasOnBar()
       //Mru erstellen
       if Val( GetPvProfString( "General", "MruList"  , "4", oER:cGeneralIni ) ) > 0
-         oMru:Save( cLongDefIni )
+         oER:oMru:Save( cLongDefIni )
       endif
       CreateBackup()
    endif
 
 return .T.
 
-//----------------------------------------------------------------------------//
 //----------------------------------------------------------------------------//
 
 function SetMainWnd()
@@ -1326,7 +1320,7 @@ function BuildMenu()
       WHEN !Empty( oER:cDefIni )
 
    SEPARATOR
-   if Val( oEr:GetDefIni( "General", "Standalone", "0" ) ) = 1
+   if Val( oEr:GetDefIni( "General", "Standalone", "0" ) ) == 1
       MENUITEM GL("Pre&view") + chr(9) + GL("Ctrl+P") RESOURCE "B_PREVIEW" ;
          ACCELERATOR ACC_CONTROL, ASC( GL("P") ) ;
          ACTION PrintReport( .T. ) ;
@@ -1342,7 +1336,7 @@ function BuildMenu()
          ACTION PrintReport() ;
          WHEN !Empty( oER:cDefIni )
 
-   MRU oMru FILENAME oER:cGeneralIni ;
+   MRU oER:oMru FILENAME oER:cGeneralIni ;
             SECTION  "MRU" ;
             ACTION   OpenFile( cMruItem, , .T. ) ;
             SIZE     Val( oEr:GetGeneralIni( "General", "MruList"  , "4" ) )
@@ -3168,7 +3162,7 @@ function Options()
    REDEFINE COMBOBOX cLanguage ITEMS aLanguage ID 201 OF oDlg
    REDEFINE CHECKBOX aCbx[ 1 ] VAR lMaximize ID 202 OF oDlg
    REDEFINE GET nMruList  ID 203 OF oDlg PICTURE "99" SPINNER MIN 0 VALID nMruList >= 0
-   REDEFINE BUTTON PROMPT GL("Clear list") ID 204 OF oDlg ACTION oMru:Clear()
+   REDEFINE BUTTON PROMPT GL("Clear list") ID 204 OF oDlg ACTION oER:oMru:Clear()
 
    REDEFINE CHECKBOX aCbx[3] VAR lShowBorder ID 205 OF oDlg ;
       ON CHANGE IIF( lInfo = .F., ;
@@ -4184,6 +4178,7 @@ CLASS TEasyReport
    DATA nRedoCount, nUndoCount
    DATA lBeta
    DATA nDlgTextCol, nDlgBackCol
+   DATA oMru
 
    METHOD New() CONSTRUCTOR
    METHOD GetGeneralIni( cSection , cKey, cDefault ) INLINE GetPvProfString( cSection, cKey, cDefault, ::cGeneralIni )
@@ -4285,7 +4280,7 @@ METHOD SetGeneralPreferences() CLASS TEasyReport
    REDEFINE COMBOBOX cLanguage ITEMS aLanguage ID 201 OF oDlg
    REDEFINE CHECKBOX aCbx[ 1 ] VAR lMaximize ID 202 OF oDlg
    REDEFINE GET nMruList  ID 203 OF oDlg PICTURE "99" SPINNER MIN 0 VALID nMruList >= 0
-   REDEFINE BUTTON PROMPT GL("Clear list") ID 204 OF oDlg ACTION oMru:Clear()
+   REDEFINE BUTTON PROMPT GL("Clear list") ID 204 OF oDlg ACTION oER:oMru:Clear()
 
    REDEFINE CHECKBOX aCbx[3] VAR lShowBorder ID 205 OF oDlg ;
       ON CHANGE IIF( lInfo = .F., ;
