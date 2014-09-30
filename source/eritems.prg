@@ -6,13 +6,14 @@ MEMVAR aItems, aFonts, aAreaIni, aWnd, aWndTitle
 MEMVAR oCbxArea, aCbxItems
 MEMVAR nAktItem, nAktArea, nSelArea, aSelection
 MEMVAR oMsgInfo
-MEMVAR nDeveloper         //lFillWindow, 
+MEMVAR nDeveloper         //lFillWindow,
 MEMVAR nRuler, nRulerTop
-MEMVAR cItemCopy, nCopyEntryNr, nCopyAreaNr, aSelectCopy, aItemCopy, nXMove, nYMove
+MEMVAR cItemCopy, nCopyAreaNr, aSelectCopy, aItemCopy, nXMove, nYMove
 MEMVAR cInfoWidth, cInfoHeight, nInfoRow, nInfoCol, aItemPixelPos
 MEMVAR lProfi, oCurDlg, oGenVar,oER
 
 STATIC aItemPosition
+STATIC nCopyEntryNr
 
 //----------------------------------------------------------------------------//
 
@@ -1524,22 +1525,13 @@ function MsgBarItem( nItem, nArea, cAreaIni, nRow, nCol, lResize )
       nLeft := aItems[nArea,nItem]:nLeft + ;
                   ( nHiWord( aItems[nArea,nItem]:nPoint ) - nInfoCol ) - oER:nRuler
 
-      /* FiveTech
-      oMsgInfo:SetText( GL("ID") + ": " + cItemID + "  " + ;
-                        GL("Top:")    + " " + AllTrim(STR( GetCmInch( nTop ), 5, IIF( oER:nMeasure = 2, 2, 0 ) )) + "  " + ;
-                        GL("Left:")   + " " + AllTrim(STR( GetCmInch( nLeft), 5, IIF( oER:nMeasure = 2, 2, 0 ) )) + "  " + ;
-                        GL("Width:")  + " " + AllTrim( cInfoWidth ) + "  " + ;
-                        GL("Height:") + " " + AllTrim( cInfoHeight ) )
-      */
-
-   endif
+  endif
 
 return .T.
 
 //----------------------------------------------------------------------------//
 
 function GetGraphName( nIndex )
-
    local cName := ""
 
    do case
