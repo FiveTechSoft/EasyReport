@@ -49,17 +49,17 @@ STATIC lDraGraphic := .T.
 
 MEMVAR aItems, aFonts, aAreaIni, aWnd, aWndTitle, oMru
 MEMVAR aRuler, cLongDefIni, cDefaultPath
-MEMVAR nAktItem, nAktArea, nSelArea, aSelection //, nTotalHeight, nTotalWidth
+MEMVAR nAktItem, nAktArea, nSelArea, aSelection
 MEMVAR nHinCol1, nHinCol2, nHinCol3, oMsgInfo
-MEMVAR aVRDSave, lVRDSave, nDeveloper          //, lFillWindow
+MEMVAR aVRDSave, lVRDSave, nDeveloper
 MEMVAR cItemCopy, aSelectCopy, aItemCopy, nXMove, nYMove
 MEMVAR cInfoWidth, cInfoHeight, nInfoRow, nInfoCol, aItemPixelPos
 MEMVAR cDefIniPath
-MEMVAR lProfi, nDlgTextCol, nDlgBackCol
+MEMVAR lProfi
 MEMVAR oGenVar, oCurDlg
 MEMVAR oER
 
-Static oBtnAreas, oMenuAreas, lScrollVert   //, oMenuPreview
+Static oBtnAreas, oMenuAreas, lScrollVert
 STATIC lPersonal
 //----------------------------------------------------------------------------//
 
@@ -1048,10 +1048,6 @@ function DeclarePublics( cDefFile )
    //Undo/Redo
    oEr:nUndoCount := 0
    oER:nRedoCount := 0
-
-   //Dialog say titles
-   PUBLIC nDlgTextCol := RGB( 255, 255, 255 )
-   PUBLIC nDlgBackCol := RGB( 150, 150, 150 )
 
    //Structure-Variable
    PUBLIC oGenVar := TExStruct():New()
@@ -4164,15 +4160,12 @@ RETURN nil
 CLASS TEasyReport
 
    DATA oMainWnd
-   DATA cGeneralIni
-   DATA cDefIni
-   DATA cDataPath
-   DATA cPath
+   DATA cGeneralIni, cDefIni
+   DATA cDataPath, cPath
    DATA cTmpPath
    DATA bClrBar
    DATA aClrDialogs
-   DATA nMeasure
-   DATA cMeasure
+   DATA nMeasure, cMeasure
    DATA oAppFont
    DATA lShowPanel
    DATA nRuler
@@ -4183,13 +4176,14 @@ CLASS TEasyReport
    DATA nClrPaneTree
    DATA oFldI
    DATA oFldD
-   DATA lReexec        INIT .F.
+   DATA lReexec INIT .F.
    DATA nTotAreas
    DATA lFillWindow
    DATA oPanelD
    DATA oPanelI
    DATA nRedoCount, nUndoCount
    DATA lBeta
+   DATA nDlgTextCol, nDlgBackCol
 
    METHOD New() CONSTRUCTOR
    METHOD GetGeneralIni( cSection , cKey, cDefault ) INLINE GetPvProfString( cSection, cKey, cDefault, ::cGeneralIni )
@@ -4228,7 +4222,8 @@ METHOD New() CLASS TEasyReport
    ::lFillWindow  := .F.
 
    ::nClrPaneTree:= RGB( 229, 233, 238)
-
+   ::nDlgTextCol := RGB( 255, 255, 255 )
+   ::nDlgBackCol := RGB( 150, 150, 150 )
 
    ::bClrBar =  { | lInvert | If( ! lInvert,;
                                   { { 1, RGB( 255, 255, 255 ), RGB( 229, 233, 238 ) } },;

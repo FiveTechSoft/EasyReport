@@ -5,9 +5,7 @@ MEMVAR aRuler, cLongDefIni, cDefaultPath
 MEMVAR oGenVar
 MEMVAR aVRDSave, lVRDSave
 MEMVAR cDefIniPath
-MEMVAR nDlgTextCol, nDlgBackCol
 MEMVAr oEr
-
 
 //------------------------------------------------------------------------------
 
@@ -483,7 +481,8 @@ function NewReport()
    LOCAL aNames:=  {}
    LOCAL aDataAreas:= {}
    LOCAL aDataItem := {}
-
+   LOCAL nDlgTextCol := oEr:nDlgTextCol
+   LOCAL nDlgBackCol := oEr:nDlgBackCol
    LOCAL nAt
    LOCAL nArea:= 1
 
@@ -493,7 +492,6 @@ function NewReport()
 
    DEFINE FONT oFont NAME "Arial" SIZE 0, -12
 
-   nDlgTextCol = CLR_BLACK
 
    DEFINE DIALOG oDlg NAME "NEWREPORT" TITLE GL("New Report")
 
