@@ -48,7 +48,7 @@ STATIC aTmpSource
 STATIC lDraGraphic := .T.
 
 MEMVAR aItems, aFonts, aAreaIni, aWnd, aWndTitle, oMru
-MEMVAR oCbxArea, aCbxItems, aRuler, cLongDefIni, cDefaultPath
+MEMVAR aRuler, cLongDefIni, cDefaultPath
 MEMVAR nAktItem, nAktArea, nSelArea, aSelection //, nTotalHeight, nTotalWidth
 MEMVAR nHinCol1, nHinCol2, nHinCol3, oMsgInfo
 MEMVAR aVRDSave, lVRDSave, nDeveloper          //, lFillWindow
@@ -991,8 +991,7 @@ function DeclarePublics( cDefFile )
    endif
 
    PUBLIC aItems, aFonts, aAreaIni, aWnd, aWndTitle, oBar, oMru
-   PUBLIC aCbxItems, aRuler, cLongDefIni, cDefaultPath
-   PUBLIC oCbxArea := nil
+   PUBLIC aRuler, cLongDefIni, cDefaultPath
    PUBLIC oCurDlg  := nil
 
    //
@@ -1275,15 +1274,6 @@ return .T.
 function ShowAreasOnBar()
 
    local n
-   local cCbxItem  := aWndTitle[ 1 ]
-
-    aCbxItems := {}
-
-    for n := 1 to LEN( aWndTitle )
-       if !Empty( aWndTitle[ n ] )
-          AADD( aCbxItems, aWndTitle[ n ] )
-       endif
-    next
 
    if oMenuAreas != nil
       oMenuAreas:End()
@@ -1301,7 +1291,6 @@ function ShowAreasOnBar()
 
    oBtnAreas:oPopup := oMenuAreas
 
-   //Fokus auf das erste Fenster legen
    aWnd[ AScan( aWnd, { |x| x != nil } ) ]:SetFocus()
 
 return .T.
@@ -3885,10 +3874,6 @@ function AreaChange( nArea, cAreaTitle, nOldWidth, nWidth, nOldHeight, nHeight )
    aWndTitle[ nArea ]   := cAreaTitle
    aWnd[ nArea ]:cTitle := cAreaTitle
    oGenVar:aAreaTitle[ nAktArea ]:Refresh()
-
-  // aCbxItems[oCbxArea:nAt] := cAreaTitle
-  // oCbxArea:Modify( cAreaTitle, oCbxArea:nAt )
-  // oCbxArea:Set( AllTrim( cAreaTitle ) )
 
   oMenuAreas:DelItems()
    for n = 1 to Len( aWndTitle )

@@ -1,7 +1,7 @@
 #include "FiveWin.ch"
 
 MEMVAR aItems, aFonts, aAreaIni, aWnd, aWndTitle, oMru
-MEMVAR oCbxArea, aRuler, cLongDefIni, cDefaultPath
+MEMVAR aRuler, cLongDefIni, cDefaultPath
 MEMVAR oGenVar
 MEMVAR aVRDSave, lVRDSave
 MEMVAR cDefIniPath
@@ -89,11 +89,6 @@ function OpenFile( cFile, lChange, lAddDelNew )
       SetGeneralSettings()
 
       DefineFonts()
-
-      //if oCbxArea = NIL
-      //else
-      //   oCbxArea:End()
-      //endif
 
       if !lChange
          ClientWindows()

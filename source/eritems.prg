@@ -3,7 +3,6 @@
 #INCLUDE "FiveWin.ch"
 
 MEMVAR aItems, aFonts, aAreaIni, aWnd, aWndTitle
-MEMVAR oCbxArea, aCbxItems
 MEMVAR nAktItem, nAktArea, nSelArea, aSelection
 MEMVAR oMsgInfo
 MEMVAR nDeveloper         //lFillWindow,
