@@ -51,7 +51,7 @@ MEMVAR aItems, aFonts, aAreaIni, aWnd, aWndTitle
 MEMVAR aRuler, cLongDefIni, cDefaultPath
 MEMVAR nAktItem, nAktArea, nSelArea, aSelection
 MEMVAR nHinCol1, nHinCol2, nHinCol3, oMsgInfo
-MEMVAR aVRDSave, lVRDSave, nDeveloper
+MEMVAR aVRDSave, lVRDSave
 MEMVAR cItemCopy, aSelectCopy, aItemCopy, nXMove, nYMove
 MEMVAR cInfoWidth, cInfoHeight, nInfoRow, nInfoCol
 MEMVAR cDefIniPath
@@ -584,7 +584,7 @@ RETURN nil
 
 function BarMenu()
    LOCAL oBar
-   local aBtn[3]
+   local aBtn[4]
    local lPrompt := ( GetSysMetrics( 0 ) > 800 )
    Local oFont
 
@@ -596,11 +596,15 @@ function BarMenu()
 
    // oBar:bClrGrad :=  oER:bClrBar
 
-   DEFINE BUTTON RESOURCE "New" ;
+ //  IF oER:nDeveloper == 1
+
+   DEFINE BUTTON aBtn[ 4 ] RESOURCE "New" ;
       OF oBar ;
       PROMPT FWString( "New" ) ;
       TOOLTIP GL("New report") ;
       ACTION NewReport()
+
+//  ENDIF
 
    DEFINE BUTTON RESOURCE "B_OPEN" ;
       OF oBar ;
@@ -733,7 +737,7 @@ function BarMenu()
    oBar:bLClicked := {|| nil }
    oBar:bRClicked := {|| nil }
 
-return .T.
+return oBar
 
 //----------------------------------------------------------------------------//
 /*
@@ -1031,7 +1035,7 @@ function DeclarePublics( cDefFile )
    PUBLIC aItemCopy    := {}
 
    //developer mode
-   PUBLIC nDeveloper := 0
+   oER:nDeveloper := 0
 
    //Items bewegen
    PUBLIC nXMove := 0
@@ -1107,7 +1111,7 @@ function DeclarePublics( cDefFile )
    aRuler       := Array( Len( aWnd ), 2 )
    aFonts       := Array( 20 )
 
-   nDeveloper := Val( oEr:GetGeneralIni( "General", "DeveloperMode", "0" ) )
+   oEr:nDeveloper := Val( oEr:GetGeneralIni( "General", "DeveloperMode", "0" ) )
 
    oGenVar:AddMember( "nClrReticule" ,, IniColor(  oEr:GetGeneralIni( "General", "ReticuleColor", " 50,  50,  50" ) ) )
    oGenVar:AddMember( "lShowReticule",, ( oEr:GetGeneralIni( "General", "ShowReticule", "1" ) = "1" ) )
@@ -1197,7 +1201,7 @@ function SetGeneralSettings()
 
    oER:cMeasure := aMeasure [ oER:nMeasure ]
 
-   nDeveloper := Val( oEr:GetDefIni( "General", "DeveloperMode", STR( nDeveloper, 1 )  ) )
+   oEr:nDeveloper := Val( oEr:GetDefIni( "General", "DeveloperMode", STR( oER:nDeveloper, 1 )  ) )
 
    oGenVar:lStandalone := ( oEr:GetDefIni( "General", "Standalone"   , "0" ) = "1" )
    oGenVar:lShowGrid   := ( oEr:GetDefIni( "General", "ShowGrid"     , "0" ) = "1" )
@@ -1295,7 +1299,7 @@ function BuildMenu()
    MENU oMenu 2007
    MENUITEM GL("&File")
    MENU
-   if nDeveloper = 1
+   if oER:nDeveloper = 1
       MENUITEM GL("&New") ;
          ACTION NewReport()
    endif
@@ -1326,7 +1330,7 @@ function BuildMenu()
          ACTION PrintReport( .T. ) ;
          WHEN !Empty( oER:cDefIni )
    endif
-   if nDeveloper = 1
+   if oER:nDeveloper = 1
       MENUITEM GL("&Developer Preview") ;
          ACTION PrintReport( .T., .T. ) ;
          WHEN !Empty( oER:cDefIni )
@@ -1550,7 +1554,7 @@ function PopupMenu( nArea, oItem, nRow, nCol, lItem )
       MENUITEM GL("&Help Topics") + CHR(9) + GL("F1") ACTION WinHelp( "VRD.HLP" )
    endif
 
-   if nDeveloper = 1
+   if oER:nDeveloper = 1
       SEPARATOR
       MENUITEM GL("&Generate Source Code") ACTION GenerateSource( nArea )
    endif
@@ -4176,7 +4180,7 @@ CLASS TEasyReport
    DATA oPanelD
    DATA oPanelI
    DATA nRedoCount, nUndoCount
-   DATA lBeta
+   DATA lBeta, nDeveloper
    DATA nDlgTextCol, nDlgBackCol
    DATA oMru
 
@@ -4246,7 +4250,6 @@ METHOD New() CLASS TEasyReport
 //------------------------------------------------------------------------------
 
 METHOD SetGeneralPreferences() CLASS TEasyReport
-
    local i, oDlg, oIni, cLanguage, cOldLanguage, cWert, aCbx[5], oRad1
    local lSave         := .F.
    local lInfo         := .F.
@@ -4332,12 +4335,10 @@ METHOD SetGeneralPreferences() CLASS TEasyReport
 
     //  SetSave( .F. )
 
-
       SetSave( .T. )
       msgInfo("el programa se reiniciara para que los cambios tengan efecto")
       oEr:oMainWnd:END()
       oER:lReexec  := .t.
-
 
    endif
 

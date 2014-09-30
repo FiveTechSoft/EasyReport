@@ -5,7 +5,6 @@
 MEMVAR aItems, aFonts, aAreaIni, aWnd, aWndTitle
 MEMVAR nAktItem, nAktArea, nSelArea, aSelection
 MEMVAR oMsgInfo
-MEMVAR nDeveloper         //lFillWindow,
 MEMVAR nRuler, nRulerTop
 MEMVAR cItemCopy, aSelectCopy, aItemCopy, nXMove, nYMove
 MEMVAR cInfoWidth, cInfoHeight, nInfoRow, nInfoCol
@@ -580,7 +579,7 @@ function TextProperties( i, nArea, cAreaIni, lFromList, lNew )
 
    ACTIVATE DIALOG oCurDlg CENTERED ; // NOMODAL ;
       ON INIT ( GetItemDlgPos(), ;
-                IIF( nDeveloper = 0, ( aGet[5]:Hide(), aSay[4]:Hide(), aGet[4]:nWidth( 329 ), oBtn2:nLeft := 352, oBtn3:nLeft := 374 ), ), ;
+                IIF( oER:nDeveloper = 0, ( aGet[5]:Hide(), aSay[4]:Hide(), aGet[4]:nWidth( 329 ), oBtn2:nLeft := 352, oBtn3:nLeft := 374 ), ), ;
                 IIF( oVar:cShowExpr = "0" .OR. lProfi = .F., oBtn3:Hide(), ), ;
                 IIF( lFromList = .T. .OR. oItem:nItemID > 0, oBtn:Hide(), ), ;
                 IIF( lFromList = .T., aCbx[3]:Hide(), ), ;
@@ -937,7 +936,7 @@ function ImageProperties( i, nArea, cAreaIni, lFromList, lNew )
 
    ACTIVATE DIALOG oCurDlg CENTERED ; //NOMODAL ;
       ON INIT ( GetItemDlgPos(), ;
-                IIF( nDeveloper = 0, ( aGet[3]:Hide(), aSay[1]:Hide(), aGet[2]:nWidth( 328 ) ), ), ;
+                IIF( oER:nDeveloper = 0, ( aGet[3]:Hide(), aSay[1]:Hide(), aGet[2]:nWidth( 328 ) ), ), ;
                 IIF( lFromList .OR. oItem:nItemID > 0, aBtn[1]:Hide(), ), ;
                 IIF( oVar:cShowExpr = "0" .OR. !lProfi, aBtn[3]:Hide(), ), ;
                 aGrp[1]:SetText( GL("Image") ), ;
@@ -1155,7 +1154,7 @@ function GraphicProperties( i, nArea, cAreaIni, lFromList, lNew )
 
    ACTIVATE DIALOG oCurDlg CENTERED ; // NOMODAL ;
       ON INIT ( GetItemDlgPos(), ;
-                IIF( nDeveloper = 0, EVAL( {|| aGet[3]:Hide(), aSay[3]:Hide() }), ), ;
+                IIF( oER:nDeveloper = 0, EVAL( {|| aGet[3]:Hide(), aSay[3]:Hide() }), ), ;
                 IIF( lFromList = .T. .OR. oItem:nItemID > 0, oBtn:Hide(), ), ;
                 aGrp[1]:SetText( GL("Graphic") ), ;
                 aGrp[2]:SetText( GL("Position / Size") ), ;
@@ -1343,7 +1342,7 @@ function BarcodeProperties( i, nArea, cAreaIni, lFromList, lNew )
 
    ACTIVATE DIALOG oCurDlg CENTERED ; // NOMODAL ;
       ON INIT ( GetItemDlgPos(), ;
-                IIF( nDeveloper = 0, ( aGet[5]:Hide(), aSay[4]:Hide() ), ), ;
+                IIF( oER:nDeveloper == 0, ( aGet[5]:Hide(), aSay[4]:Hide() ), ), ;
                 IIF( oVar:cShowExpr = "0" .OR. lProfi = .F., aBtn[2]:Hide(), ), ;
                 IIF( lFromList = .T. .OR. oItem:nItemID > 0, aBtn[1]:Hide(), ), ;
                 IIF( lFromList = .T., aCbx[1]:Hide(), ), ;

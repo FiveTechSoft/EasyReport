@@ -10,7 +10,6 @@ MEMVAr oEr
 //------------------------------------------------------------------------------
 
 function OpenFile( cFile, lChange, lAddDelNew )
-
    local i
    local cLongFile     := cFile
    local cMainTitle    := ""
