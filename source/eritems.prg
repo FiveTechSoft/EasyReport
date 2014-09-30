@@ -8,12 +8,12 @@ MEMVAR nAktItem, nAktArea, nSelArea, aSelection
 MEMVAR oMsgInfo
 MEMVAR nDeveloper         //lFillWindow,
 MEMVAR nRuler, nRulerTop
-MEMVAR cItemCopy, nCopyAreaNr, aSelectCopy, aItemCopy, nXMove, nYMove
+MEMVAR cItemCopy, aSelectCopy, aItemCopy, nXMove, nYMove
 MEMVAR cInfoWidth, cInfoHeight, nInfoRow, nInfoCol, aItemPixelPos
 MEMVAR lProfi, oCurDlg, oGenVar,oER
 
 STATIC aItemPosition
-STATIC nCopyEntryNr
+STATIC nCopyEntryNr, nCopyAreaNr
 
 //----------------------------------------------------------------------------//
 

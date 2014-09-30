@@ -52,7 +52,7 @@ MEMVAR oCbxArea, aCbxItems, aRuler, cLongDefIni, cDefaultPath
 MEMVAR nAktItem, nAktArea, nSelArea, aSelection //, nTotalHeight, nTotalWidth
 MEMVAR nHinCol1, nHinCol2, nHinCol3, oMsgInfo
 MEMVAR aVRDSave, lVRDSave, nDeveloper          //, lFillWindow
-MEMVAR cItemCopy, nCopyAreaNr, aSelectCopy, aItemCopy, nXMove, nYMove
+MEMVAR cItemCopy, aSelectCopy, aItemCopy, nXMove, nYMove
 MEMVAR cInfoWidth, cInfoHeight, nInfoRow, nInfoCol, aItemPixelPos
 MEMVAR cDefIniPath
 MEMVAR lProfi, nDlgTextCol, nDlgBackCol
@@ -1028,7 +1028,6 @@ function DeclarePublics( cDefFile )
    //cut, copy and paste
    PUBLIC cItemCopy    := ""
 
-   PUBLIC nCopyAreaNr  := 0
    PUBLIC aSelectCopy  := {}
    PUBLIC aItemCopy    := {}
 
