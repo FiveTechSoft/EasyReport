@@ -181,26 +181,26 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
        SEPARATOR 0
 
        @ 0.2, 1 CFOLDEREX oER:oFldD ;
-       PROMPT GL("&Expressions"), GL("&Databases"), GL("&Fields"), GL("Fil&ters") ;
+       PROMPT GL("&Expressions"), GL("&Databases") ; //, GL("&Fields"), GL("Fil&ters") ;
        OF oEr:oPanelD ; //oEr:oMainWnd ;
        SIZE Int(GetSysMetrics( 0 )/4), GetSysMetrics( 1 ) - 138 ;
        OPTION 1 ;
        TAB HEIGHT 34 ;
-       BITMAPS { "B_ITEMLIST16", "B_EDIT2", "B_AREA", "B_AREA" } ;
+       BITMAPS { "B_ITEMLIST16", "B_EDIT2" } ; //, "B_AREA", "B_AREA" } ;
        PIXEL ;
        SEPARATOR 0
 
       else
 
        @ 0.2, 1 FOLDER oER:oFldI ;
-       PROMPT GL("&Report Settings"), GL("&Items"), GL("&Databases"), GL("&Expressions") ;
+       PROMPT GL("&Report Settings"), GL("&Items"), , GL("Colors"), GL("Fonts") ;
        OF oEr:oPanelI ; //oEr:oMainWnd ;
        SIZE Int(GetSysMetrics( 0 )/4), GetSysMetrics( 1 ) - 138 ;
        OPTION 2 ;
        PIXEL
 
        @ 0.2, 1 FOLDER oER:oFldD ;
-       PROMPT GL("&Expressions"), GL("&Databases"), GL("&Fields"), GL("Fil&ters") ;
+       PROMPT GL("&Expressions"), GL("&Databases") ; //, GL("&Fields"), GL("Fil&ters") ;
        OF oEr:oPanelD ;  //oEr:oMainWnd ;
        SIZE Int(GetSysMetrics( 0 )/4), GetSysMetrics( 1 ) - 138 ;
        OPTION 1 ;
@@ -3277,7 +3277,7 @@ function SetGrid()
    local nGridWidth    := oGenVar:nGridWidth
    local nGridHeight   := oGenVar:nGridHeight
    local lShowGrid     := oGenVar:lShowGrid
-   LOCAL nDecimals     :=   IIF( oER:nMeasure = 2, 2, 0 )
+   LOCAL nDecimals     := IIF( oER:nMeasure = 2, 2, 0 )
 
 
    DEFINE DIALOG oDlg NAME "GRIDSETUP" TITLE GL("Grid Setup")
@@ -3333,8 +3333,7 @@ function SetGrid()
       oGenVar:nGridWidth  := nGridWidth
       oGenVar:nGridHeight := nGridHeight
 
-    //  SetSave( .F. )
-
+      //  SetSave( .F. )
       SetSave( .T. )
 
    endif
@@ -3353,7 +3352,7 @@ function ItemList()
 
     IF !oEr:lShowPanel
 
-       DEFINE DIALOG oDlg RESOURCE "Itemlist" TITLE GL("Item List")
+      DEFINE DIALOG oDlg RESOURCE "Itemlist" TITLE GL("Item List")
 
       oTree := TTreeView():ReDefine( 201, oDlg, 0, , .F. ,"" )
 
@@ -3372,7 +3371,9 @@ function ItemList()
            oEr:oTree:bLDblClick  = { | nRow, nCol, nKeyFlags | ClickListTree( oEr:oTree ) }
            FillTree( oEr:oTree, oEr:oMainWnd )
            //  oEr:oTree:show()
-           oER:oFldI:Show()
+           oER:oPanelI:Show()   //oFldI:Show()
+        else
+           // Recargar oTree ?
         endif
      endif
 
@@ -3630,6 +3631,7 @@ return aWerte
 
 function ClickListTree( oTree )
    local nArea , nItem, oLinkArea, cItemDef,  lWert
+   local nLevel  := 0
    local cPrompt := oTree:GetSelText()
    local oItem   := oTree:GetSelected()
 
@@ -3641,9 +3643,62 @@ function ClickListTree( oTree )
 
    endif
 
+   Do Case
+      Case cPrompt = GL("Area Properties")
+           nArea     := Val( oItem:GetParent():cPrompt )
+           //nAktArea  := nArea
+           AreaProperties( nArea )
+
+      Case cPrompt = GL("Item Properties")
+           oLinkArea:SetText( ItemProperties( nItem, nArea, .T. ) )
+           cItemDef := AllTrim( GetPvProfString( "Items", AllTrim(STR(nItem,5)) , "", aAreaIni[ nArea ] ) )
+           if IsGraphic( UPPER(AllTrim( GetField( cItemDef, 1 ) )) )
+              oLinkArea:set( ,  SetGraphTreeBmp( nItem, aAreaIni[ nArea ] ) )
+           endif
+      
+      Case cPrompt = GL("Visible")
+           cItemDef := AllTrim( GetPvProfString( "Items", AllTrim(STR(nItem,5)) , "", aAreaIni[ nArea ] ) )
+           lWert    := if( Val( GetField( cItemDef, 4 ) ) = 0, .F., .T. )
+           oItem:Set( , IF( lWert , 4  , 3   )    )
+           DeleteItem( nItem, nArea, .T., lWert )
+
+      Otherwise
+           if oEr:lDClkProperties
+              nLevel  := oItem:ItemLevel()
+              //? oItem:Cargo, oItem:cPrompt, oItem:oParent
+              Do Case
+                 Case nLevel = 0
+                    if !empty( oItem:oParent )
+                       nArea     := Val( oItem:GetParent():cPrompt )
+                    else
+                       nArea     := Val( oItem:cPrompt )
+                    endif
+                    //nAktArea  := nArea
+                    AreaProperties( nArea )
+
+                 Case nLevel = 1
+                    oLinkArea  := oItem
+                    if !empty( oItem:oParent )
+                       nArea     := Val( oItem:GetParent():cPrompt )
+                       nItem     := Val( oItem:cPrompt )
+                    endif
+                    //nAktArea  := nArea
+                    oLinkArea:SetText( ItemProperties( nItem, nArea, .T. ) )
+                    cItemDef := AllTrim( GetPvProfString( "Items", AllTrim(STR(nItem,5)) , "", aAreaIni[ nArea ] ) )
+                    if IsGraphic( UPPER(AllTrim( GetField( cItemDef, 1 ) )) )
+                       oLinkArea:set( ,  SetGraphTreeBmp( nItem, aAreaIni[ nArea ] ) )
+                    endif
+
+                 Otherwise
+              EndCase
+           endif
+   EndCase
+
+/*
    if cPrompt = GL("Area Properties") //.or. !empty( At( ("[ " + GL("Area") + " ]"), cPrompt ) )
 
       nArea     := Val( oItem:GetParent():cPrompt )
+      //nAktArea  := nArea
       AreaProperties( nArea )
 
    endif
@@ -3673,6 +3728,7 @@ function ClickListTree( oTree )
      endif
 
    endif
+*/
 
 return .T.
 
@@ -4183,6 +4239,7 @@ CLASS TEasyReport
    DATA lBeta, nDeveloper
    DATA nDlgTextCol, nDlgBackCol
    DATA oMru
+   DATA lDClkProperties
 
    METHOD New() CONSTRUCTOR
    METHOD GetGeneralIni( cSection , cKey, cDefault ) INLINE GetPvProfString( cSection, cKey, cDefault, ::cGeneralIni )
@@ -4241,6 +4298,8 @@ METHOD New() CLASS TEasyReport
 
   //   ::aColorDlg :=  { { 0.60,  nRGB( 221, 227, 233) ,  nRGB( 221, 227, 233 ) }, ;
   //                        { 0.40,nRGB( 221, 227, 233), nRGB( 221, 227, 233) } }
+
+  ::lDClkProperties   := .F.    // Seleccionar edicion de propiedades Areas o Items
 
    DEFINE FONT ::oAppFont NAME "Arial" SIZE 0, -12
 
