@@ -38,7 +38,7 @@
              <.lAnimate.>, [<nSpeed>], <oFont>, <.lTransparent.>, [\{<cDlgsName>\}] )
 
 
-MEMVAR aItems, aAreaIni, aWnd
+MEMVAR aItems, aWnd
 MEMVAR cDefaultPath
 MEMVAR nAktArea
 MEMVAR aVRDSave
@@ -1814,20 +1814,20 @@ function Undo()
 
    APPEND BLANK
    REPLACE TMPREDO->ENTRYTEXT WITH ALLTRIM( GetPvProfString( ;
-      "Items", ALLTRIM(STR(TMPUNDO->ENTRYNR,5)) , "", aAreaIni[ TMPUNDO->AREANR ] ) )
+      "Items", ALLTRIM(STR(TMPUNDO->ENTRYNR,5)) , "", oER:aAreaIni[ TMPUNDO->AREANR ] ) )
    REPLACE TMPREDO->ENTRYNR   WITH TMPUNDO->ENTRYNR
    REPLACE TMPREDO->AREANR    WITH TMPUNDO->AREANR
-   REPLACE TMPREDO->AREATEXT  WITH MEMOREAD( aAreaIni[ TMPUNDO->AREANR ] )
+   REPLACE TMPREDO->AREATEXT  WITH MEMOREAD( oER:aAreaIni[ TMPUNDO->AREANR ] )
 
    SELECT TMPUNDO
 
    if TMPUNDO->ENTRYNR = 0
 
       //Area undo
-      nOldWidth  := VAL( GetPvProfString( "General", "Width", "600", aAreaIni[ TMPUNDO->AREANR ] ) )
-      nOldHeight := VAL( GetPvProfString( "General", "Height", "300", aAreaIni[ TMPUNDO->AREANR ] ) )
+      nOldWidth  := VAL( GetPvProfString( "General", "Width", "600", oER:aAreaIni[ TMPUNDO->AREANR ] ) )
+      nOldHeight := VAL( GetPvProfString( "General", "Height", "300", oER:aAreaIni[ TMPUNDO->AREANR ] ) )
 
-      MEMOWRIT( aAreaIni[ TMPUNDO->AREANR ], TMPUNDO->AREATEXT )
+      MEMOWRIT( oER:aAreaIni[ TMPUNDO->AREANR ], TMPUNDO->AREATEXT )
 
       MEMOWRIT( ".\TMPAREA.INI", TMPUNDO->AREATEXT )
 
@@ -1844,7 +1844,7 @@ function Undo()
 
       //New item was build
       DeleteItem( TMPUNDO->ENTRYNR, TMPUNDO->AREANR, .T.,, .T. )
-      DelIniEntry( "Items", ALLTRIM(STR(TMPUNDO->ENTRYNR,5)), aAreaIni[ TMPUNDO->AREANR ] )
+      DelIniEntry( "Items", ALLTRIM(STR(TMPUNDO->ENTRYNR,5)), oER:aAreaIni[ TMPUNDO->AREANR ] )
 
    ELSE
 
@@ -1852,7 +1852,7 @@ function Undo()
          DeleteItem( TMPUNDO->ENTRYNR, TMPUNDO->AREANR, .T.,, .T. )
       endif
 
-      INI oIni FILE aAreaIni[ TMPUNDO->AREANR ]
+      INI oIni FILE oER:aAreaIni[ TMPUNDO->AREANR ]
          SET SECTION "Items" ENTRY ALLTRIM(STR(TMPUNDO->ENTRYNR,5)) TO TMPUNDO->ENTRYTEXT OF oIni
       ENDINI
 
@@ -1860,7 +1860,7 @@ function Undo()
 
       if oItemInfo:nShow = 1
          aItems[ TMPUNDO->AREANR, TMPUNDO->ENTRYNR ] := NIL
-         ShowItem( TMPUNDO->ENTRYNR, TMPUNDO->AREANR, aAreaIni[ TMPUNDO->AREANR ], aFirst, nElemente )
+         ShowItem( TMPUNDO->ENTRYNR, TMPUNDO->AREANR, oER:aAreaIni[ TMPUNDO->AREANR ], aFirst, nElemente )
          aItems[ TMPUNDO->AREANR, TMPUNDO->ENTRYNR ]:lDrag := .T.
       endif
 
@@ -1901,20 +1901,20 @@ function Redo()
 
    APPEND BLANK
    REPLACE TMPUNDO->ENTRYTEXT WITH ALLTRIM( GetPvProfString( ;
-      "Items", ALLTRIM(STR(TMPREDO->ENTRYNR,5)) , "", aAreaIni[ TMPREDO->AREANR ] ) )
+      "Items", ALLTRIM(STR(TMPREDO->ENTRYNR,5)) , "", oER:aAreaIni[ TMPREDO->AREANR ] ) )
    REPLACE TMPUNDO->ENTRYNR   WITH TMPREDO->ENTRYNR
    REPLACE TMPUNDO->AREANR    WITH TMPREDO->AREANR
-   REPLACE TMPUNDO->AREATEXT  WITH MEMOREAD( aAreaIni[ TMPREDO->AREANR ] )
+   REPLACE TMPUNDO->AREATEXT  WITH MEMOREAD( oER:aAreaIni[ TMPREDO->AREANR ] )
 
    SELECT TMPREDO
 
    if TMPREDO->ENTRYNR = 0
 
       //Area redo
-      nOldWidth  := VAL( GetPvProfString( "General", "Width", "600", aAreaIni[ TMPREDO->AREANR ] ) )
-      nOldHeight := VAL( GetPvProfString( "General", "Height", "300", aAreaIni[ TMPREDO->AREANR ] ) )
+      nOldWidth  := VAL( GetPvProfString( "General", "Width", "600", oER:aAreaIni[ TMPREDO->AREANR ] ) )
+      nOldHeight := VAL( GetPvProfString( "General", "Height", "300", oER:aAreaIni[ TMPREDO->AREANR ] ) )
 
-      MEMOWRIT( aAreaIni[ TMPREDO->AREANR ], TMPREDO->AREATEXT )
+      MEMOWRIT( oER:aAreaIni[ TMPREDO->AREANR ], TMPREDO->AREATEXT )
       MEMOWRIT( ".\TMPAREA.INI", TMPREDO->AREATEXT )
 
       AreaChange( TMPREDO->AREANR, ;
@@ -1930,7 +1930,7 @@ function Redo()
 
       //New item was build
       DeleteItem( TMPREDO->ENTRYNR, TMPREDO->AREANR, .T.,, .T. )
-      DelIniEntry( "Items", ALLTRIM(STR(TMPREDO->ENTRYNR,5)), aAreaIni[ TMPREDO->AREANR ] )
+      DelIniEntry( "Items", ALLTRIM(STR(TMPREDO->ENTRYNR,5)), oER:aAreaIni[ TMPREDO->AREANR ] )
 
    ELSE
 
@@ -1938,7 +1938,7 @@ function Redo()
          DeleteItem( TMPREDO->ENTRYNR, TMPREDO->AREANR, .T.,, .T. )
       endif
 
-      INI oIni FILE aAreaIni[ TMPREDO->AREANR ]
+      INI oIni FILE oER:aAreaIni[ TMPREDO->AREANR ]
          SET SECTION "Items" ENTRY ALLTRIM(STR(TMPREDO->ENTRYNR,5)) TO TMPREDO->ENTRYTEXT OF oIni
       ENDINI
 
@@ -1946,7 +1946,7 @@ function Redo()
 
       if oItemInfo:nShow = 1
          aItems[ TMPREDO->AREANR, TMPREDO->ENTRYNR ] := NIL
-         ShowItem( TMPREDO->ENTRYNR, TMPREDO->AREANR, aAreaIni[ TMPREDO->AREANR ], aFirst, nElemente )
+         ShowItem( TMPREDO->ENTRYNR, TMPREDO->AREANR, oER:aAreaIni[ TMPREDO->AREANR ], aFirst, nElemente )
          aItems[ TMPREDO->AREANR, TMPREDO->ENTRYNR ]:lDrag := .T.
       endif
 

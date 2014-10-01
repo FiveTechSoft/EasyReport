@@ -2,7 +2,7 @@
 #INCLUDE "Folder.ch"
 #INCLUDE "FiveWin.ch"
 
-MEMVAR aItems, aAreaIni, aWnd
+MEMVAR aItems, aWnd
 MEMVAR nAktItem, nAktArea, nSelArea, aSelection
 MEMVAR nRuler, nRulerTop
 MEMVAR cItemCopy, aSelectCopy, aItemCopy, nXMove, nYMove
@@ -140,7 +140,7 @@ function DeleteItem( i, nArea, lFromList, lRemove, lFromUndoRedo )
    local cItemDef, cOldDef, oIni, cWert
    local aFirst    := { .F., 0, 0, 0, 0, 0 }
    local nElemente := 0
-   local cAreaIni  := aAreaIni[nArea]
+   local cAreaIni  := oER:aAreaIni[nArea]
 
    DEFAULT lFromList := .F.
    DEFAULT lRemove   := .T.
@@ -200,7 +200,7 @@ function DeleteAllItems( nTyp )
 
    FOR i := 1 TO nLen
 
-      cDef := AllTrim( GetPvProfString( "Items", AllTrim(STR(i,5)) , "", aAreaIni[nAktArea] ) )
+      cDef := AllTrim( GetPvProfString( "Items", AllTrim(STR(i,5)) , "", oER:aAreaIni[nAktArea] ) )
 
       if !EMPTY( cDef )
 
@@ -229,13 +229,13 @@ return .T.
 
 function DelItemWithKey( nItem, nArea )
 
-   local cItemDef  := AllTrim( GetPvProfString( "Items", AllTrim(STR( nItem,5)), "", aAreaIni[nArea] ) )
+   local cItemDef  := AllTrim( GetPvProfString( "Items", AllTrim(STR( nItem,5)), "", oER:aAreaIni[nArea] ) )
    local oItemInfo := VRDItem():New( cItemDef )
 
    DeleteItem( nItem, nArea, .T. )
 
    if oItemInfo:nItemID < 0
-      DelIniEntry( "Items", AllTrim(STR(nItem,5)), aAreaIni[nArea] )
+      DelIniEntry( "Items", AllTrim(STR(nItem,5)), oER:aAreaIni[nArea] )
    endif
 
    nAktItem := 0
@@ -247,7 +247,7 @@ return .T.
 function ItemPopupMenu( oItem, nItem, nArea, nRow, nCol )
 
    local oMenu
-   local cItemDef  := AllTrim( GetPvProfString( "Items", AllTrim(STR(nItem,5)), "", aAreaIni[nArea] ) )
+   local cItemDef  := AllTrim( GetPvProfString( "Items", AllTrim(STR(nItem,5)), "", oER:aAreaIni[nArea] ) )
    local oItemInfo := VRDItem():New( cItemDef )
 
    MENU oMenu POPUP
@@ -288,7 +288,7 @@ return .T.
 function ItemProperties( i, nArea, lFromList, lNew )
 
    local cOldDef, cItemDef, cTyp, cName
-   local cAreaIni := aAreaIni[nArea]
+   local cAreaIni := oER:aAreaIni[nArea]
 
    DEFAULT lFromList := .F.
    DEFAULT lNew      := .F.
@@ -340,7 +340,7 @@ function MultiItemProperties()
 
    local oDlg, aCbx[1], aGrp[1]
    local cItemDef  := AllTrim( GetPvProfString( "Items", AllTrim(STR( aSelection[1,2], 5 )), ;
-                      "", aAreaIni[ aSelection[1,1] ] ) )
+                      "", oER:aAreaIni[ aSelection[1,1] ] ) )
    local nTop      := VAL( GetField( cItemDef, 7 ) )
    local nLeft     := VAL( GetField( cItemDef, 8 ) )
    local nWidth    := VAL( GetField( cItemDef, 9 ) )
@@ -1584,7 +1584,7 @@ return IIF( EMPTY( cFile ), cOldFile, cFile )
 function ItemCopy( lCut )
 
    local i, oItemInfo
-   local cAreaIni := aAreaIni[nAktArea]
+   local cAreaIni := oER:aAreaIni[nAktArea]
 
    DEFAULT lCut := .F.
 
@@ -1606,7 +1606,7 @@ function ItemCopy( lCut )
       FOR i := 1 TO LEN( aSelection )
 
          cItemCopy := AllTrim( GetPvProfString( "Items", ;
-                      AllTrim(STR( aSelection[i,2], 5 )) , "", aAreaIni[ aSelection[i,1] ] ) )
+                      AllTrim(STR( aSelection[i,2], 5 )) , "", oER:aAreaIni[ aSelection[i,1] ] ) )
          AADD( aItemCopy, cItemCopy )
 
          oItemInfo := VRDItem():New( cItemCopy )
@@ -1615,7 +1615,7 @@ function ItemCopy( lCut )
             DeleteItem( aSelection[i,2], aSelection[i,1], .T. )
             if oItemInfo:nItemID < 0
                DelIniEntry( "Items", AllTrim(STR(aSelection[i,2],5)), ;
-                            aAreaIni[ aSelection[i,1] ] )
+                            oER:aAreaIni[ aSelection[i,1] ] )
             endif
          endif
 
@@ -1633,7 +1633,7 @@ function ItemCopy( lCut )
       if lCut
          DeleteItem( nAktItem, nAktArea, .T. )
          if oItemInfo:nItemID < 0
-            DelIniEntry( "Items", AllTrim(STR(nAktItem,5)), aAreaIni[nAktArea] )
+            DelIniEntry( "Items", AllTrim(STR(nAktItem,5)), oER:aAreaIni[nAktArea] )
          endif
       endif
 
@@ -1670,7 +1670,7 @@ function NewItem( cTyp, nArea, nTmpCopyArea, nTmpCopyEntry, cTmpItemCopy )
    local nPlusLeft  := 0
    local aFirst     := { .F., 0, 0, 0, 0, 0 }
    local nElemente  := 0
-   local cAreaIni   := aAreaIni[nArea]
+   local cAreaIni   := oER:aAreaIni[nArea]
    local nGesWidth  := VAL( GetPvProfString( "General", "Width", "600", cAreaIni ) )
    local nGesHeight := VAL( GetPvProfString( "General", "Height", "300", cAreaIni ) )
    local cTop       := IIF( oER:nMeasure = 2, "0.10", "2" )

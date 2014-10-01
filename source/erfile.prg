@@ -1,6 +1,6 @@
 #include "FiveWin.ch"
 
-MEMVAR aItems, aAreaIni, aWnd
+MEMVAR aItems, aWnd
 MEMVAR aRuler, cLongDefIni, cDefaultPath
 MEMVAR oGenVar
 MEMVAR aVRDSave, lVRDSave
@@ -54,7 +54,7 @@ function OpenFile( cFile, lChange, lAddDelNew )
       */
 
       aItems    := NIL
-      aAreaIni  := NIL
+      oER:aAreaIni  := NIL
       if !lChange
          aWnd      := NIL
          oER:aWndTitle := NIL
@@ -67,7 +67,7 @@ function OpenFile( cFile, lChange, lAddDelNew )
          aRuler    := Array( Len( aWnd ), 2 )
       endif
       aItems    := Array( Len( aWnd ), 1000 )
-      aAreaIni  := Array( Len( aWnd ) )
+      oER:aAreaIni  := Array( Len( aWnd ) )
 
       for i := 1 TO 20
          if oER:aFonts[i] <> NIL
@@ -142,11 +142,11 @@ function CreateBackup()
 
       CopyFile( oER:cDefIni, STUFF( oER:cDefIni, RAT( ".", oER:cDefIni ), 1, "_backup." ) )
 
-      for nArea := 1 TO LEN( aAreaIni )
+      for nArea := 1 TO LEN( oER:aAreaIni )
 
-         if !empty( aAreaIni[nArea] )
-            CopyFile( aAreaIni[nArea], ;
-               STUFF( aAreaIni[nArea], RAT( ".", aAreaIni[nArea] ), 1, "_backup." ) )
+         if !empty( oER:aAreaIni[nArea] )
+            CopyFile( oER:aAreaIni[nArea], ;
+               STUFF( oER:aAreaIni[nArea], RAT( ".", oER:aAreaIni[nArea] ), 1, "_backup." ) )
          endif
 
       next
@@ -168,10 +168,10 @@ function SaveFile()
    aVRDSave[102,1] := oER:cGeneralIni
    aVRDSave[102,2] := MEMOREAD( oER:cGeneralIni )
 
-   for nArea := 1 TO LEN( aAreaIni )
+   for nArea := 1 TO LEN( oER:aAreaIni )
 
-      aVRDSave[nArea,1] := aAreaIni[nArea]
-      aVRDSave[nArea,2] := MEMOREAD( aAreaIni[nArea] )
+      aVRDSave[nArea,1] := oER:aAreaIni[nArea]
+      aVRDSave[nArea,2] := MEMOREAD( oER:aAreaIni[nArea] )
 
    next
 
@@ -240,7 +240,7 @@ function SaveAs( cFile )
       DelIniSection( "Areas", oER:cDefIni )
 
       //Areas abspeichern
-      for nArea := 1 TO LEN( aAreaIni )
+      for nArea := 1 TO LEN( oER:aAreaIni )
 
          if ! EMPTY( aVRDSave[nArea,1] )
 
@@ -252,7 +252,7 @@ function SaveAs( cFile )
             //                  PADL( ALLTRIM( STR( nArea, 2) ), 2, "0" )
             MEMOWRIT( aVRDSave[nArea,1], aVRDSave[nArea,2] )
 
-            aAreaIni[nArea] := aVRDSave[nArea,1]
+            oER:aAreaIni[nArea] := aVRDSave[nArea,1]
 
             //Areas in General Ini File ablegen
             WritePProString( "Areas", ALLTRIM(STR( nArea, 3)), cFileName( cAreaFile ), oER:cDefIni )
@@ -291,7 +291,7 @@ function AskSaveFiles()
       if nSave = 7
          MEMOWRIT( aVRDSave[101,1], aVRDSave[101,2] )
          MEMOWRIT( aVRDSave[102,1], aVRDSave[102,2] )
-         for nArea := 1 TO LEN( aAreaIni )
+         for nArea := 1 TO LEN( oER:aAreaIni )
             MEMOWRIT( aVRDSave[nArea,1], aVRDSave[nArea,2] )
          next
       elseif nSave = 6

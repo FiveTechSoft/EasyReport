@@ -4,7 +4,7 @@
 
 STATIC  nBoxTop, nBoxLeft, nBoxRight, nBoxBottom
 
-MEMVAR aItems, aAreaIni, aWnd
+MEMVAR aItems, aWnd
 MEMVAR cDefaultPath
 MEMVAR nAktItem, nAktArea, nSelArea, aSelection //, nTotalHeight, nTotalWidth
 MEMVAR oGenVar
