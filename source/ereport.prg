@@ -1066,6 +1066,9 @@ function DeclarePublics( cDefFile )
 
    oEr:lShowPanel   := ( oEr:GetGeneralIni( "General", "ShowPanel", "1" ) == "1" )
 
+   oER:lDClkProperties := oEr:lShowPanel
+
+
    if AT( "\", oER:cDefIni ) = 0 .and. !Empty( oER:cDefIni )
       oER:cDefIni   := ".\" + oER:cDefIni
    endif
@@ -3362,13 +3365,26 @@ function ItemList()
         endif
      endif
 
+
    endif
 
- return nil
+return nil
 
 //------------------------------------------------------------------------------
 
-static Function FillTree( oTree, oDlg )
+FUNCTION RefreshPanelTree()
+
+  IF oEr:lShowPanel
+     oER:oTree:DeleteAll()
+    msginfo(1)
+     FillTree( oEr:oTree, oEr:oMainWnd )
+  ENDIF
+
+RETURN nil
+
+//------------------------------------------------------------------------------
+
+STATIC Function FillTree( oTree, oDlg )
 
    local lFirstArea    := .T.
    local aIniEntries   := GetIniSection( "Areas", oER:cDefIni )
@@ -3406,8 +3422,9 @@ static Function FillTree( oTree, oDlg )
             cItemDef := IIF( AT( "\", cItemDef ) = 0, ".\", "" ) + cItemDef
 
             aElemente := GetAllItems( cItemDef )
-            oTr1:Add( GL("Area Properties"),2 )
-
+            IF !oER:lDClkProperties
+                oTr1:Add( GL("Area Properties"),2 )
+            endif
             for y := 1 to LEN( aElemente )
 
                //oTr2 := oTr1:Add( aElemente[y, 2 ] + " - [ " + GL("Item") + " ]", aElemente[y,3], aElemente[y,3] )
@@ -3417,7 +3434,9 @@ static Function FillTree( oTree, oDlg )
                   ele:Set( , IF( !GetItemVisible( ele ) , 4  , 3   )    )
 
                endif
-               oTr2:Add( GL("Item Properties"),5 )
+               IF !oER:lDClkProperties
+                  oTr2:Add( GL("Item Properties"),5 )
+               endif
 
             next
 

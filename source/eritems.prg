@@ -92,6 +92,7 @@ function KeyDownAction( nKey, nItem, nArea, cAreaIni )
    //Delete item
    if nKey == VK_DELETE
       DelItemWithKey( nItem, nArea )
+
    endif
 
    //return to edit properties
@@ -241,6 +242,8 @@ function DelItemWithKey( nItem, nArea )
    endif
 
    nAktItem := 0
+
+   RefreshPanelTree()
 
 return .T.
 
@@ -1775,6 +1778,8 @@ function NewItem( cTyp, nArea, nTmpCopyArea, nTmpCopyEntry, cTmpItemCopy )
    ELSE
       Add2Undo( "", nFree, nArea )
    endif
+
+    RefreshPanelTree()
 
 return .T.
 
