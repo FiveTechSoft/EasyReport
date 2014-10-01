@@ -4,7 +4,6 @@
 
 MEMVAR aItems, aFonts, aAreaIni, aWnd, aWndTitle
 MEMVAR nAktItem, nAktArea, nSelArea, aSelection
-MEMVAR oMsgInfo
 MEMVAR nRuler, nRulerTop
 MEMVAR cItemCopy, aSelectCopy, aItemCopy, nXMove, nYMove
 MEMVAR cInfoWidth, cInfoHeight, nInfoRow, nInfoCol
@@ -1511,7 +1510,7 @@ function MsgBarItem( nItem, nArea, cAreaIni, nRow, nCol, lResize )
 
    if lResize .AND. LEN( aItemPosition ) <> 0
 
-      oMsgInfo:SetText( GL("ID") + ": " + cItemID + "  " + ;
+      oER:oMsgInfo:SetText( GL("ID") + ": " + cItemID + "  " + ;
                         GL("Top:")    + " " + AllTrim( aItemPosition[1] ) + "  " + ;
                         GL("Left:")   + " " + AllTrim( aItemPosition[2] ) + "  " + ;
                         GL("Width:")  + " " + AllTrim( aItemPosition[3] ) + "  " + ;

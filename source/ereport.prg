@@ -50,7 +50,7 @@ STATIC lDraGraphic := .T.
 MEMVAR aItems, aFonts, aAreaIni, aWnd, aWndTitle
 MEMVAR aRuler, cLongDefIni, cDefaultPath
 MEMVAR nAktItem, nAktArea, nSelArea, aSelection
-MEMVAR nHinCol1, nHinCol2, nHinCol3, oMsgInfo
+MEMVAR nHinCol1, nHinCol2, nHinCol3
 MEMVAR aVRDSave, lVRDSave
 MEMVAR cItemCopy, aSelectCopy, aItemCopy, nXMove, nYMove
 MEMVAR cInfoWidth, cInfoHeight, nInfoRow, nInfoCol
@@ -149,7 +149,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
 
    SET MESSAGE OF oEr:oMainWnd  CENTERED 2010
 
-   DEFINE MSGITEM oMsgInfo OF oEr:oMainWnd:oMsgBar SIZE 280
+   DEFINE MSGITEM oER:oMsgInfo OF oEr:oMainWnd:oMsgBar SIZE 280
 
    oEr:oMainWnd:oMsgBar:KeybOn()
    oEr:oMainWnd:oWndClient:bMouseWheel = { | nKey, nDelta, nXPos, nYPos | ;
@@ -1019,9 +1019,6 @@ function DeclarePublics( cDefFile )
    //Ruler anzeigen
    //PUBLIC nRuler    := 20
    //PUBLIC nRulerTop := 37
-
-   //Infos in MsgBar
-   PUBLIC oMsgInfo
 
    //Sichern
    PUBLIC aVRDSave[102, 2 ]
@@ -1969,7 +1966,7 @@ function MsgBarInfos( nRow, nCol, nArea )
 
    nTotRow += ( nRow - ( oEr:nRulerTop ) * nArea )
 
-   oMsgInfo:SetText( GL("Row:")    + " [ " + AllTrim( Str( GetCmInch( nTotRow ), 5, nDecimals ) ) + " ] / " + ;
+   oER:oMsgInfo:SetText( GL("Row:")    + " [ " + AllTrim( Str( GetCmInch( nTotRow ), 5, nDecimals ) ) + " ] / " + ;
                      if( GetCmInch( nRow - oEr:nRulerTop ) < 0, AllTrim( Str( 0, 5, nDecimals ) ) ,;
                      AllTrim( Str( GetCmInch( nRow - oEr:nRulerTop ), 5, nDecimals ) ) ) + "    " + ;
                      GL("Column:") + " " + AllTrim( Str( GetCmInch( nCol - oEr:nRuler ), 5, nDecimals ) ) )
@@ -3655,7 +3652,7 @@ function ClickListTree( oTree )
            if IsGraphic( UPPER(AllTrim( GetField( cItemDef, 1 ) )) )
               oLinkArea:set( ,  SetGraphTreeBmp( nItem, aAreaIni[ nArea ] ) )
            endif
-      
+
       Case cPrompt = GL("Visible")
            cItemDef := AllTrim( GetPvProfString( "Items", AllTrim(STR(nItem,5)) , "", aAreaIni[ nArea ] ) )
            lWert    := if( Val( GetField( cItemDef, 4 ) ) = 0, .F., .T. )
@@ -4215,31 +4212,27 @@ CLASS TEasyReport
 
    DATA oMainWnd
    DATA cGeneralIni, cDefIni
-   DATA cDataPath, cPath
-   DATA cTmpPath
+   DATA cDataPath, cPath, cTmpPath
    DATA bClrBar
-   DATA aClrDialogs
+   DATA aClrDialogs, nDlgTextCol, nDlgBackCol
+   DATA nClrPaneTree
    DATA nMeasure, cMeasure
    DATA oAppFont
    DATA lShowPanel
    DATA nRuler
    DATA nRulerTop
-   DATA nTotalHeight
-   DATA nTotalWidth
+   DATA nTotalHeight, nTotalWidth
    DATA oTree
-   DATA nClrPaneTree
-   DATA oFldI
-   DATA oFldD
+   DATA oFldI, oFldD
+   DATA oPanelD, oPanelI
    DATA lReexec INIT .F.
    DATA nTotAreas
    DATA lFillWindow
-   DATA oPanelD
-   DATA oPanelI
    DATA nRedoCount, nUndoCount
    DATA lBeta, nDeveloper
-   DATA nDlgTextCol, nDlgBackCol
    DATA oMru
    DATA lDClkProperties
+   DATA oMsgInfo
 
    METHOD New() CONSTRUCTOR
    METHOD GetGeneralIni( cSection , cKey, cDefault ) INLINE GetPvProfString( cSection, cKey, cDefault, ::cGeneralIni )
@@ -4299,7 +4292,7 @@ METHOD New() CLASS TEasyReport
   //   ::aColorDlg :=  { { 0.60,  nRGB( 221, 227, 233) ,  nRGB( 221, 227, 233 ) }, ;
   //                        { 0.40,nRGB( 221, 227, 233), nRGB( 221, 227, 233) } }
 
-  ::lDClkProperties   := .F.    // Seleccionar edicion de propiedades Areas o Items
+  ::lDClkProperties   := .t.    // Seleccionar edicion de propiedades Areas o Items
 
    DEFINE FONT ::oAppFont NAME "Arial" SIZE 0, -12
 
