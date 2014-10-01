@@ -53,7 +53,6 @@ MEMVAR nAktItem, nAktArea, nSelArea, aSelection
 MEMVAR nHinCol1, nHinCol2, nHinCol3
 MEMVAR aVRDSave, lVRDSave
 MEMVAR cItemCopy, aSelectCopy, aItemCopy, nXMove, nYMove
-MEMVAR cInfoWidth, cInfoHeight, nInfoRow, nInfoCol
 MEMVAR cDefIniPath
 MEMVAR lProfi
 MEMVAR oGenVar
@@ -1030,12 +1029,6 @@ function DeclarePublics( cDefFile )
    //Items bewegen
    PUBLIC nXMove := 0
    PUBLIC nYMove := 0
-
-   //Msgbar
-   PUBLIC cInfoWidth
-   PUBLIC cInfoHeight
-   PUBLIC nInfoRow
-   PUBLIC nInfoCol
 
    //Undo/Redo
    oEr:nUndoCount := 0
