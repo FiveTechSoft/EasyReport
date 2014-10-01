@@ -47,7 +47,7 @@ STATIC aTmpSource
 //Entscheidet ob die Graphikelemente neu gezeichnet werden sollen
 STATIC lDraGraphic := .T.
 
-MEMVAR aItems, aFonts, aAreaIni, aWnd
+MEMVAR aItems, aAreaIni, aWnd
 MEMVAR aRuler, cLongDefIni, cDefaultPath
 MEMVAR nAktItem, nAktArea, nSelArea, aSelection
 MEMVAR nHinCol1, nHinCol2, nHinCol3
@@ -245,7 +245,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
    endif
 
    AEval( oGenVar:aAppFonts, {|x| x:End() } )
-   AEval( aFonts, {|x| IIF( x <> nil, x:End(), ) } )
+   AEval( oER:aFonts, {|x| IIF( x <> nil, x:End(), ) } )
 
   // CloseUndo()
 
@@ -463,17 +463,17 @@ Function Dlg_Fonts( i )
          OF oER:oFldI:aDialogs[ i ] FONT oFont PIXEL TRANSPARENT
 
    @ Int( oER:oFldI:aDialogs[ i ]:nHeight / 2 ) + 26, 70 SAY oSay1 PROMPT "    " ;
-         OF oER:oFldI:aDialogs[ i ] UPDATE FONT aFonts[ 1 ] ;
+         OF oER:oFldI:aDialogs[ i ] UPDATE FONT oER:aFonts[ 1 ] ;
          SIZE oER:oFldI:aDialogs[ i ]:nWidth - 76, 76 ;
          PIXEL BOX TRANSPARENT
 
    @ Int( oER:oFldI:aDialogs[ i ]:nHeight / 2 ) + 32, 72 SAY oSay1 PROMPT GL("Test 123") ;
-         OF oER:oFldI:aDialogs[ i ] UPDATE FONT aFonts[ 1 ] ;
+         OF oER:oFldI:aDialogs[ i ] UPDATE FONT oER:aFonts[ 1 ] ;
          SIZE oER:oFldI:aDialogs[ i ]:nWidth - 84, 68 ;
          PIXEL TRANSPARENT CENTER
 
    @ Int( oER:oFldI:aDialogs[ i ]:nHeight / 2 ) + 110, 8 GET oGet1 VAR cFontText OF oER:oFldI:aDialogs[ i ] ;
-            UPDATE FONT aFonts[ 1 ] MEMO ;
+            UPDATE FONT oER:aFonts[ 1 ] MEMO ;
             SIZE oER:oFldI:aDialogs[ i ]:nWidth - 15, 116 PIXEL
 
    @ oER:oFldI:aDialogs[ i ]:nHeight - 40 , oER:oFldI:aDialogs[ i ]:nWidth - 110 BTNBMP oBtn1 ;
@@ -570,12 +570,12 @@ Function Dlg_Fonts( i )
               SIZE 300,30
 
   @ 430, 10 SAY oSay1 PROMPT "  " OF oDlg ;
-                 SIZE 300,100 pixel UPDATE FONT aFonts[ 1 ] TRANSPARENT box
+                 SIZE 300,100 pixel UPDATE FONT oER:aFonts[ 1 ] TRANSPARENT box
 
   @ 440 ,20 SAY oSay1 PROMPT  GL("Test 123") OF oDlg ;
-                 SIZE 280,80 pixel UPDATE FONT aFonts[ 1 ] TRANSPARENT CENTER
+                 SIZE 280,80 pixel UPDATE FONT oER:aFonts[ 1 ] TRANSPARENT CENTER
 
-   @ 540,10 GET oGet1 VAR cFontText OF oDlg UPDATE FONT aFonts[ 1 ] MEMO  ;
+   @ 540,10 GET oGet1 VAR cFontText OF oDlg UPDATE FONT oER:aFonts[ 1 ] MEMO  ;
             SIZE 300, 160 pixel
 
 
@@ -996,7 +996,7 @@ function DeclarePublics( cDefFile )
       lProfi := .T.
    endif
 
-   PUBLIC aItems, aFonts, aAreaIni, aWnd, oBar
+   PUBLIC aItems, aAreaIni, aWnd, oBar
    PUBLIC aRuler, cLongDefIni, cDefaultPath
    PUBLIC oCurDlg  := nil
 
@@ -1108,7 +1108,7 @@ function DeclarePublics( cDefFile )
    aItems       := Array( Len( aWnd ), 1000 )
    aAreaIni     := Array( Len( aWnd ) )
    aRuler       := Array( Len( aWnd ), 2 )
-   aFonts       := Array( 20 )
+   oER:aFonts       := Array( 20 )
 
    oEr:nDeveloper := Val( oEr:GetGeneralIni( "General", "DeveloperMode", "0" ) )
 
@@ -2020,9 +2020,9 @@ function ShowFontChoice( nCurrentFont )
    oLbx:nDlgCode = DLGC_WANTALLKEYS
 
    REDEFINE SAY oSay1 PROMPT CRLF + CRLF + GL("Test 123") ;
-      ID 301 OF oDlg UPDATE FONT aFonts[ 1 ]
+      ID 301 OF oDlg UPDATE FONT oER:aFonts[ 1 ]
 
-   REDEFINE GET oGet1 VAR cFontText ID 311 OF oDlg UPDATE FONT aFonts[ 1 ] MEMO
+   REDEFINE GET oGet1 VAR cFontText ID 311 OF oDlg UPDATE FONT oER:aFonts[ 1 ] MEMO
 
    ACTIVATE DIALOG oDlg CENTERED ON INIT PreviewRefresh( oSay1, oLbx, oGet1 )
 
@@ -2206,11 +2206,11 @@ function DefineFonts()
    local i, cFontDef
    local aGetFonts := GetFonts()
 
-   aFonts := nil
-   aFonts := Array( 50 )
+   oER:aFonts := nil
+   oER:aFonts := Array( 50 )
 
    for i := 1 to 20
-      aFonts[ i ] := TFont():New( aGetFonts[i, 1], ;   // cFaceName
+      oER:aFonts[ i ] := TFont():New( aGetFonts[i, 1], ;   // cFaceName
                                 aGetFonts[i, 2], ;   // nWidth
                                 aGetFonts[i, 3], ;   // nHeight
                                 , ;                  // lFromUser
@@ -2249,13 +2249,13 @@ Local nFonts
       RndMsg( FwString("Deleting Font ") )
 
       DelIniEntry(  "Fonts", AllTrim(STR(nID,3)) ,oER:cDefIni  )
-      aFonts[nID]:= nil
+      oER:aFonts[nID]:= nil
    else
       RndMsg( FwString("Deleting Font ") )
-      For x = 1 to Len( aFonts )
+      For x = 1 to Len( oER:aFonts )
           nID  := x
           DelIniEntry(  "Fonts", AllTrim(STR(nID,3)) ,oER:cDefIni  )
-          aFonts[nID]:= nil
+          oER:aFonts[nID]:= nil
       Next x
    endif
    aGetFonts  := GetFonts()
@@ -2346,9 +2346,9 @@ function FontsAndColors()
    REDEFINE SAY PROMPT GL("Doubleclick to edit the font properties") ID 172 OF oFld:aDialogs[ i ]
 
    REDEFINE SAY oSay1 PROMPT CRLF + CRLF + GL("Test 123") ;
-      ID 301 OF oFld:aDialogs[ i ] UPDATE FONT aFonts[ 1 ]
+      ID 301 OF oFld:aDialogs[ i ] UPDATE FONT oER:aFonts[ 1 ]
 
-   REDEFINE GET oGet1 VAR cFontText ID 311 OF oFld:aDialogs[ i ] UPDATE FONT aFonts[ 1 ] MEMO
+   REDEFINE GET oGet1 VAR cFontText ID 311 OF oFld:aDialogs[ i ] UPDATE FONT oER:aFonts[ 1 ] MEMO
 
    i := 2
    REDEFINE SAY PROMPT GL("Nr.")   ID 170 OF oFld:aDialogs[ i ]
@@ -2538,12 +2538,12 @@ function PreviewRefresh( oSay, oLbx, oGet )
        endif
    endif
 
-   if !empty( aFonts[nID] ) .and. Valtype( aFonts[nID] ) = "O"
+   if !empty( oER:aFonts[nID] ) .and. Valtype( oER:aFonts[nID] ) = "O"
       oSay:Default()
-      oSay:SetFont( aFonts[nID] )
+      oSay:SetFont( oER:aFonts[nID] )
       oSay:Refresh()
 
-      oGet:SetFont( aFonts[nID] )
+      oGet:SetFont( oER:aFonts[nID] )
       oGet:Refresh()
    endif
 
@@ -2659,7 +2659,7 @@ function SelectFont( oSay, oLbx, oGet )
          SET SECTION "Fonts" ENTRY AllTrim(STR(nID,5)) to cFontDef OF oIni
       ENDINI
 
-      aFonts[nID] := TFont():New( AllTrim( cFontGet ), nWidth, -1 * nHeight,, lBold, ;
+      oER:aFonts[nID] := TFont():New( AllTrim( cFontGet ), nWidth, -1 * nHeight,, lBold, ;
                                   nEscapement, nOrient,, lItalic, lUnderline, lStrikeOut, ;
                                   nCharSet )
 
@@ -2698,7 +2698,7 @@ function SelectFont( oSay, oLbx, oGet )
                   if UPPER(AllTrim( GetField( cItemDef, 1 ) )) = "TEXT" .and. ;
                         Val( GetField( cItemDef, 11 ) ) = nID
 
-                     aItems[i,nEntry]:SetFont( aFonts[nID] )
+                     aItems[i,nEntry]:SetFont( oER:aFonts[nID] )
                      aItems[i,nEntry]:Refresh()
 
                   endif
@@ -4236,6 +4236,7 @@ CLASS TEasyReport
    DATA oMru
    DATA lDClkProperties
    DATA oMsgInfo
+   DATA aFonts
 
    METHOD New() CONSTRUCTOR
    METHOD GetGeneralIni( cSection , cKey, cDefault ) INLINE GetPvProfString( cSection, cKey, cDefault, ::cGeneralIni )

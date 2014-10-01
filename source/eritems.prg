@@ -2,7 +2,7 @@
 #INCLUDE "Folder.ch"
 #INCLUDE "FiveWin.ch"
 
-MEMVAR aItems, aFonts, aAreaIni, aWnd
+MEMVAR aItems, aAreaIni, aWnd
 MEMVAR nAktItem, nAktArea, nSelArea, aSelection
 MEMVAR nRuler, nRulerTop
 MEMVAR cItemCopy, aSelectCopy, aItemCopy, nXMove, nYMove
@@ -762,7 +762,7 @@ function SaveTextItem( oVar, oItem )
       SET SECTION "Items" ENTRY AllTrim(STR(oVar:i,5)) TO oVar:cItemDef OF oIni
    ENDINI
 
-   oFont := IIF( oItem:nFont = 0, oEr:oAppFont, aFonts[oItem:nFont] )
+   oFont := IIF( oItem:nFont = 0, oEr:oAppFont, oER:aFonts[oItem:nFont] )
    lCenter := IIF( oItem:nOrient = 2, .T., .F. )
    lRight  := IIF( oItem:nOrient = 3,  .T., .F. )
 
@@ -1818,7 +1818,7 @@ function ShowItem( i, nArea, cAreaIni, aFirst, nElemente, aIniEntries, nIndex )
          nBorder  := VAL( GetField( cItemDef, 15 ) )
          nTrans   := VAL( GetField( cItemDef, 16 ) )
 
-         oFont:= IIF( nFont = 0, oEr:oAppFont, aFonts[nFont] )
+         oFont:= IIF( nFont = 0, oEr:oAppFont, oER:aFonts[nFont] )
          lCenter := IIF( nOrient = 2, .T. , .F. )
          lRight := IIF( nOrient = 3, .T. , .F. )
 

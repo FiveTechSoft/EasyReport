@@ -1,6 +1,6 @@
 #include "FiveWin.ch"
 
-MEMVAR aItems, aFonts, aAreaIni, aWnd
+MEMVAR aItems, aAreaIni, aWnd
 MEMVAR aRuler, cLongDefIni, cDefaultPath
 MEMVAR oGenVar
 MEMVAR aVRDSave, lVRDSave
@@ -70,11 +70,11 @@ function OpenFile( cFile, lChange, lAddDelNew )
       aAreaIni  := Array( Len( aWnd ) )
 
       for i := 1 TO 20
-         if aFonts[i] <> NIL
-            aFonts[i]:End()
+         if oER:aFonts[i] <> NIL
+            oER:aFonts[i]:End()
          endif
       next
-      aFonts := Array( 20 )
+      oER:aFonts := Array( 20 )
 
       oER:cDefIni := cFile
       if AT( "\", oER:cDefIni ) = 0
