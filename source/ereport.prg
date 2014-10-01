@@ -169,7 +169,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
                               GetSysMetrics( 1 ) - 138 , 3*Int(GetSysMetrics( 0 )/4), ;
                               oER:oMainWnd )
 
-      if lValidFwh( 10.08 )
+      if lValidFwh()
 
        @ 0.2, 1 CFOLDEREX oER:oFldI ;
        PROMPT GL("&Report Settings"), GL("&Items"), GL("Colors"), GL("Fonts") ;

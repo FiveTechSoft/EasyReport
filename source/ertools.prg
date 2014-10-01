@@ -1082,7 +1082,7 @@ function ER_Expressions( lTake, cAltText, nD )
          PIXEL
 
    ELSE
-      if  lValidFwh( 10.08 )
+      if  lValidFwh()
 
          @ 4, 1 CFOLDEREX oFld ;
            PROMPT " " + GL("General") + " ", " " + GL("User defined") + " " ;
