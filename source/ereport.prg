@@ -37,6 +37,8 @@
              <.lAnimate.>, [<nSpeed>], <oFont>, <.lTransparent.>, [\{<cDlgsName>\}] )
 
 
+#define MINVERSIONFW   10.08
+
 //Areazugabe
 STATIC nAreaZugabe  := 42
 STATIC nAreaZugabe2 := 10
@@ -773,7 +775,7 @@ Return aVersion
 //----------------------------------------------------------------------------//
 
 Function lValidFwh( nVersion )
-DEFAULT nVersion := 10.08
+DEFAULT nVersion := MINVERSIONFW     //10.08
 return IF(  nFwVersion() <  nVersion, .F., .T. )
 
 //----------------------------------------------------------------------------//
