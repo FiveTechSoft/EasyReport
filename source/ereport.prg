@@ -47,7 +47,7 @@ STATIC aTmpSource
 //Entscheidet ob die Graphikelemente neu gezeichnet werden sollen
 STATIC lDraGraphic := .T.
 
-MEMVAR aItems, aFonts, aAreaIni, aWnd, aWndTitle
+MEMVAR aItems, aFonts, aAreaIni, aWnd
 MEMVAR aRuler, cLongDefIni, cDefaultPath
 MEMVAR nAktItem, nAktArea, nSelArea, aSelection
 MEMVAR nHinCol1, nHinCol2, nHinCol3
@@ -156,6 +156,8 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
                            ER_MouseWheel( nKey, nDelta, nXPos, nYPos ) }
 
    BarMenu()
+
+
 
 
    IF oER:lShowPanel
@@ -994,7 +996,7 @@ function DeclarePublics( cDefFile )
       lProfi := .T.
    endif
 
-   PUBLIC aItems, aFonts, aAreaIni, aWnd, aWndTitle, oBar
+   PUBLIC aItems, aFonts, aAreaIni, aWnd, oBar
    PUBLIC aRuler, cLongDefIni, cDefaultPath
    PUBLIC oCurDlg  := nil
 
@@ -1102,7 +1104,7 @@ function DeclarePublics( cDefFile )
    nHinCol2     := RGB( 0, 128, 255 )
    nHinCol3     := RGB( 255, 255, 255 )
    aWnd         := Array( oER:nTotAreas )
-   aWndTitle    := Array( Len( aWnd ) )
+   oER:aWndTitle:= Array( Len( aWnd ) )
    aItems       := Array( Len( aWnd ), 1000 )
    aAreaIni     := Array( Len( aWnd ) )
    aRuler       := Array( Len( aWnd ), 2 )
@@ -1271,10 +1273,10 @@ function ShowAreasOnBar()
    endif
 
    MENU oMenuAreas POPUP
-      for n = 1 to Len( aWndTitle )
-         if ! Empty( aWndTitle[ n ] )
-            MENUITEM aWndTitle[ n ] ;
-               ACTION ( nAktArea:= AScan( aWndTitle, oMenuItem:cPrompt ) , ;
+      for n = 1 to Len( oER:aWndTitle )
+         if ! Empty( oER:aWndTitle[ n ] )
+            MENUITEM oER:aWndTitle[ n ] ;
+               ACTION ( nAktArea:= AScan( oER:aWndTitle, oMenuItem:cPrompt ) , ;
                         aWnd[ nAktArea ]:SetFocus(), SetWinNull() )
          endif
       next
@@ -1748,7 +1750,7 @@ function ClientWindows()
 
          aWnd[ nWnd ]:nArea = nWnd
 
-         aWndTitle[ nWnd ] = cTitle
+         oER:aWndTitle[ nWnd ] = cTitle
 
          lReticule = oGenVar:lShowReticule
          oGenVar:lShowReticule = .F.
@@ -3401,7 +3403,7 @@ static Function FillTree( oTree, oDlg )
    for i := 1 to LEN( aIniEntries )
       nEntry := EntryNr( aIniEntries[ i ] )
       if nEntry != 0
-           cTitle := aWndTitle[nEntry] //+ " - [ " + GL("Area" ) + " ]"
+           cTitle := oER:aWndTitle[nEntry] //+ " - [ " + GL("Area" ) + " ]"
            oTr1 := oTree:Add( AllTrim(STR(nEntry,5)) + ". " + cTitle , 0 )
            oTr1:Set( , IF( oTr1:IsExpanded() , 1  , 0   )    )
 
@@ -3526,9 +3528,9 @@ function ListTrees( oTree )
 
       nEntry := EntryNr( aIniEntries[ i ] )
 
-      if nEntry <> 0 //.and. !Empty( aWndTitle[nEntry] )
+      if nEntry <> 0 //.and. !Empty( oER:aWndTitle[nEntry] )
 
-         cTitle := aWndTitle[nEntry]
+         cTitle := oER:aWndTitle[nEntry]
 
          if lFirstArea
             oTr1 := oTr1:AddLastChild( AllTrim(STR(nEntry,5)) + ". " + cTitle, nClose, nOpen )
@@ -3761,7 +3763,7 @@ function AreaProperties( nArea )
    local nOldWidth      := nWidth
    local nOldHeight     := nHeight
    local cPicture       := IIF( oER:nMeasure = 2, "999.99", "99999" )
-   local cAreaTitle     := aWndTitle[ nArea ]
+   local cAreaTitle     := oER:aWndTitle[ nArea ]
    local cOldAreaText   := MEMOREAD( aAreaIni[ nArea ] )
    LOCAL nDecimals    := IIF( oER:nMeasure = 2, 2, 0 )
 
@@ -3912,21 +3914,21 @@ function AreaChange( nArea, cAreaTitle, nOldWidth, nWidth, nOldHeight, nHeight )
    local i
    local n
    local oMenuItem
-   local cOldTitle   := aWndTitle[ nArea ]    // aWnd[ nArea ]:cTitle  // da igual
+   local cOldTitle   := oER:aWndTitle[ nArea ]    // aWnd[ nArea ]:cTitle  // da igual
    local cTemp1
    local cTemp2
    local nElem
    local oItem
 
-   aWndTitle[ nArea ]   := cAreaTitle
+   oER:aWndTitle[ nArea ]   := cAreaTitle
    aWnd[ nArea ]:cTitle := cAreaTitle
    oGenVar:aAreaTitle[ nAktArea ]:Refresh()
 
   oMenuAreas:DelItems()
-   for n = 1 to Len( aWndTitle )
-      if ! Empty( aWndTitle[ n ] )
-         oMenuAreas:Add( oMenuitem:=TmenuItem():New( aWndTitle[ n ],,,,;
-         {|| nAktArea:= AScan( aWndTitle, oMenuItem:cPrompt ), aWnd[ nAktArea ]:SetFocus(), SetWinNull() }  )  )
+   for n = 1 to Len( oER:aWndTitle )
+      if ! Empty( oER:aWndTitle[ n ] )
+         oMenuAreas:Add( oMenuitem:=TmenuItem():New( oER:aWndTitle[ n ],,,,;
+         {|| nAktArea:= AScan( oER:aWndTitle, oMenuItem:cPrompt ), aWnd[ nAktArea ]:SetFocus(), SetWinNull() }  )  )
 
       endif
    next
@@ -4211,6 +4213,7 @@ RETURN nil
 CLASS TEasyReport
 
    DATA oMainWnd
+   DATA aWndTitle
    DATA cGeneralIni, cDefIni
    DATA cDataPath, cPath, cTmpPath
    DATA bClrBar

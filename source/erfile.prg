@@ -1,6 +1,6 @@
 #include "FiveWin.ch"
 
-MEMVAR aItems, aFonts, aAreaIni, aWnd, aWndTitle
+MEMVAR aItems, aFonts, aAreaIni, aWnd
 MEMVAR aRuler, cLongDefIni, cDefaultPath
 MEMVAR oGenVar
 MEMVAR aVRDSave, lVRDSave
@@ -57,13 +57,13 @@ function OpenFile( cFile, lChange, lAddDelNew )
       aAreaIni  := NIL
       if !lChange
          aWnd      := NIL
-         aWndTitle := NIL
+         oER:aWndTitle := NIL
          aRuler    := NIL
       endif
 
       if !lChange
          aWnd      := Array( oER:nTotAreas )
-         aWndTitle := Array( Len( aWnd ) )
+         oER:aWndTitle := Array( Len( aWnd ) )
          aRuler    := Array( Len( aWnd ), 2 )
       endif
       aItems    := Array( Len( aWnd ), 1000 )
@@ -342,7 +342,7 @@ function FileInfos()
          nWnd := EntryNr( aAreaEntries[i] )
          cAreaDef := GetIniEntry( aAreaEntries,, "",, i )
          if !EMPTY( cAreaDef )
-            AADD( aFiles, { aWndTitle[nWnd], cAreaDef } )
+            AADD( aFiles, { oER:aWndTitle[nWnd], cAreaDef } )
          endif
       endif
    next

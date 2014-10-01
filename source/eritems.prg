@@ -2,7 +2,7 @@
 #INCLUDE "Folder.ch"
 #INCLUDE "FiveWin.ch"
 
-MEMVAR aItems, aFonts, aAreaIni, aWnd, aWndTitle
+MEMVAR aItems, aFonts, aAreaIni, aWnd
 MEMVAR nAktItem, nAktArea, nSelArea, aSelection
 MEMVAR nRuler, nRulerTop
 MEMVAR cItemCopy, aSelectCopy, aItemCopy, nXMove, nYMove
