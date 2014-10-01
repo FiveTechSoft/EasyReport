@@ -56,7 +56,7 @@ MEMVAR cItemCopy, aSelectCopy, aItemCopy, nXMove, nYMove
 MEMVAR cInfoWidth, cInfoHeight, nInfoRow, nInfoCol
 MEMVAR cDefIniPath
 MEMVAR lProfi
-MEMVAR oGenVar, oCurDlg
+MEMVAR oGenVar
 MEMVAR oER
 
 Static oBtnAreas, oMenuAreas, lScrollVert
@@ -998,9 +998,7 @@ function DeclarePublics( cDefFile )
 
    PUBLIC aItems, aAreaIni, aWnd, oBar
    PUBLIC aRuler, cLongDefIni, cDefaultPath
-   PUBLIC oCurDlg  := nil
 
-   //
    //PUBLIC nTotalHeight := 0
    //PUBLIC nTotalWidth  := 0
 
@@ -1014,13 +1012,6 @@ function DeclarePublics( cDefFile )
    PUBLIC nHinCol1  //Allgemeine Hintergrundfarbe
    PUBLIC nHinCol2  //Cursoranzeige auf dem Lineal
    PUBLIC nHinCol3  //Bedruckbarer Bereich
-
-   //Selection box
-   //PUBLIC lBoxDraw := .F.
-
-   //Ruler anzeigen
-   //PUBLIC nRuler    := 20
-   //PUBLIC nRulerTop := 37
 
    //Sichern
    PUBLIC aVRDSave[102, 2 ]
@@ -1430,7 +1421,7 @@ function BuildMenu()
       ENDMENU
 
 
-      if Val( oEr:GetDefIni( "General", "InsertAreas", "1" ) ) = 1
+   if Val( oEr:GetDefIni( "General", "InsertAreas", "1" ) ) = 1
       MENUITEM GL("&Areas")
       MENU
       MENUITEM GL("Insert Area &before") ACTION InsertArea( .T., STRTRAN( GL("Insert Area &before"), "&" ) )

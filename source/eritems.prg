@@ -7,10 +7,11 @@ MEMVAR nAktItem, nAktArea, nSelArea, aSelection
 MEMVAR nRuler, nRulerTop
 MEMVAR cItemCopy, aSelectCopy, aItemCopy, nXMove, nYMove
 MEMVAR cInfoWidth, cInfoHeight, nInfoRow, nInfoCol
-MEMVAR lProfi, oCurDlg, oGenVar,oER
+MEMVAR lProfi, oGenVar,oER
 
 STATIC aItemPosition
 STATIC nCopyEntryNr, nCopyAreaNr
+STATIC oCurDlg
 
 STATIC aItemPixelPos := {}
 
