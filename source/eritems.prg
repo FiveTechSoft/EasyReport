@@ -1523,6 +1523,7 @@ function MsgBarItem( nItem, nArea, cAreaIni, nRow, nCol, lResize )
                         GL("Height:") + " " + AllTrim( aItemPosition[4] ) )
 
    ELSE
+
       nInfoRow := 0; nInfoCol := 0 // oEr:nRulerTop := 0; oER:nRuler := 0 // FiveTech
 
       nTop  := aItems[nArea,nItem]:nTop  + ;

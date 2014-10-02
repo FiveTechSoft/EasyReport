@@ -139,7 +139,6 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
 
    SetDlgGradient( oER:aClrDialogs )
 
-
    DEFINE WINDOW oEr:oMainWnd VSCROLL ; //FROM 0, 0 to 50, 200 VSCROLL ;
       TITLE MainCaption() ;  //      BRUSH oBrush ;
       MDI ;
@@ -157,8 +156,6 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
                            ER_MouseWheel( nKey, nDelta, nXPos, nYPos ) }
 
    BarMenu()
-
-
 
 
    IF oER:lShowPanel
@@ -184,7 +181,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
        SEPARATOR 0
 
        @ 0.2, 1 CFOLDEREX oER:oFldD ;
-       PROMPT GL("&Expressions"), GL("&Databases") ; //, GL("&Fields"), GL("Fil&ters") ;
+       PROMPT GL("&Expressions"), GL("&Databases"), GL("&Inspector") ; //, GL("&Fields"), GL("Fil&ters") ;
        OF oEr:oPanelD ; //oEr:oMainWnd ;
        SIZE Int(GetSysMetrics( 0 )/4), GetSysMetrics( 1 ) - 138 ;
        OPTION 1 ;
@@ -221,6 +218,9 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
 
 
       DlgTree( 2 )
+      ER_Inspector(3 )
+
+      //oER:oInspector  = TInspector():New()
 
    ENDIF
 
@@ -3669,6 +3669,7 @@ function ClickListTree( oTree )
                        nArea     := Val( oItem:cPrompt )
                     endif
                     //nAktArea  := nArea
+
                     oItem:setText( AreaProperties( nArea ) )
 
                  Case nLevel = 1
@@ -3741,6 +3742,35 @@ function SetGraphTreeBmp( nItem, cAreaIni )
 return ( nIndex + 9 )
 
 //----------------------------------------------------------------------------//
+
+FUNCTION getAreaProperties(nArea)
+   LOCAL aProp:= {}
+   local cAreaTitle     := oER:aWndTitle[ nArea ]
+   local nTop1   := Val( GetPvProfString( "General", "Top1", "0", oER:aAreaIni[ nArea ] ) )
+   local nTop2   := Val( GetPvProfString( "General", "Top2", "0", oER:aAreaIni[ nArea ] ) )
+   local lTop    := ( GetPvProfString( "General", "TopVariable", "1", oER:aAreaIni[ nArea ] ) = "1" )
+   local nWidth  := Val( GetPvProfString( "General", "Width", "600", oER:aAreaIni[ nArea ] ) )
+   local nHeight := Val( GetPvProfString( "General", "Height", "300", oER:aAreaIni[ nArea ] ) )
+   local nCondition     := Val( GetPvProfString( "General", "Condition", "1", oER:aAreaIni[ nArea ] ) )
+   local lDelSpace      := ( GetPvProfString( "General", "DelEmptySpace", "0", oER:aAreaIni[ nArea ] ) = "1" )
+   local lBreakBefore   := ( GetPvProfString( "General", "BreakBefore"  , "0", oER:aAreaIni[ nArea ] ) = "1" )
+   local lBreakAfter    := ( GetPvProfString( "General", "BreakAfter"   , "0", oER:aAreaIni[ nArea ] ) = "1" )
+   local lPrBeforeBreak := ( GetPvProfString( "General", "PrintBeforeBreak", "0", oER:aAreaIni[ nArea ] ) = "1" )
+   local lPrAfterBreak  := ( GetPvProfString( "General", "PrintAfterBreak" , "0", oER:aAreaIni[ nArea ] ) = "1" )
+
+   aProp:= { {"Title",cAreaTitle },{ "Top1",ntop1  }, { "Top2",nTop2  } ,  { "Width", nWidth  } }
+
+RETURN aProp
+
+FUNCTION RefreshAreaBrw(nArea)
+
+   oER:oBrw:setArray(getAreaProperties(nArea))
+   oEr:oBrw:refresh()
+
+RETURN nil
+
+
+//------------------------------------------------------------------------------
 
 function AreaProperties( nArea )
 
@@ -3978,7 +4008,7 @@ function AreaChange( nArea, cAreaTitle, nOldWidth, nWidth, nOldHeight, nHeight )
 
          TVSetItemText( oER:oTree:hWnd, oER:oTree:aItems[ nElem ][ 2 ], cTemp1 + " " + cAreaTitle )
       endif
-   endif
+   ENDIF
 
 return .T.
 
@@ -4240,6 +4270,7 @@ CLASS TEasyReport
    DATA oMsgInfo
    DATA aFonts
    DATA aAreaIni
+   DATA oInspector,oBrw
 
    METHOD New() CONSTRUCTOR
    METHOD GetGeneralIni( cSection , cKey, cDefault ) INLINE GetPvProfString( cSection, cKey, cDefault, ::cGeneralIni )
@@ -4631,7 +4662,7 @@ METHOD FillWindow( nArea, cAreaIni ) CLASS TEasyReport
 
    aWnd[ nArea ]:bPainted   = {| hDC, cPS | ZeichneHintergrund( nArea ) }
 
-   aWnd[ nArea ]:bGotFocus  = { || SetTitleColor( .F., nArea ) }
+   aWnd[ nArea ]:bGotFocus  = { || SetTitleColor( .F., nArea ), RefreshAreaBrw(nArea) }
    aWnd[ nArea ]:bLostFocus = { || SetTitleColor( .T., nArea ) }
 
    aWnd[ nArea ]:bMMoved = {|nRow,nCol,nFlags| ;
