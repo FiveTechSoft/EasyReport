@@ -52,7 +52,6 @@ STATIC lDraGraphic := .T.
 MEMVAR aItems, aWnd
 MEMVAR aRuler, cLongDefIni, cDefaultPath
 MEMVAR nAktItem, nAktArea, nSelArea, aSelection
-MEMVAR nHinCol1, nHinCol2, nHinCol3
 MEMVAR aVRDSave, lVRDSave
 MEMVAR cItemCopy, aSelectCopy, aItemCopy, nXMove, nYMove
 MEMVAR cDefIniPath
@@ -62,6 +61,7 @@ MEMVAR oER
 
 Static oBtnAreas, oMenuAreas, lScrollVert
 STATIC lPersonal
+
 //----------------------------------------------------------------------------//
 
 function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 )
@@ -1009,11 +1009,6 @@ function DeclarePublics( cDefFile )
    PUBLIC nSelArea := 0
    PUBLIC aSelection := {}
 
-   //Standardfarben
-   PUBLIC nHinCol1  //Allgemeine Hintergrundfarbe
-   PUBLIC nHinCol2  //Cursoranzeige auf dem Lineal
-   PUBLIC nHinCol3  //Bedruckbarer Bereich
-
    //Sichern
    PUBLIC aVRDSave[102, 2 ]
    PUBLIC lVRDSave    := .T.
@@ -1086,13 +1081,6 @@ function DeclarePublics( cDefFile )
    //Sprachdatei
    OpenLanguage()
 
-   nHinCol1 := IniColor(  oEr:GetGeneralIni( "General", "BackgroundColor", "0" ) )
-   if nHinCol1 = 0
-      nHinCol1 := RGB( 255, 255, 225 )
-   endif
-
-   nHinCol2     := RGB( 0, 128, 255 )
-   nHinCol3     := RGB( 255, 255, 255 )
    aWnd         := Array( oER:nTotAreas )
    oER:aWndTitle:= Array( Len( aWnd ) )
    aItems       := Array( Len( aWnd ), 1000 )
@@ -3649,7 +3637,7 @@ function ClickListTree( oTree )
    endif
 
    Do Case
-   Case cPrompt = GL("Area Properties")
+       Case cPrompt = GL("Area Properties")
 
            nArea     := Val( oItem:GetParent():cPrompt )
            //nAktArea  := nArea
@@ -3699,7 +3687,7 @@ function ClickListTree( oTree )
                     endif
 
                  Otherwise
-                 EndCase
+              EndCase
 
            endif
    EndCase
