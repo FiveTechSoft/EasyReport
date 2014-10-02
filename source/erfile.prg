@@ -117,7 +117,6 @@ function OpenFile( cFile, lChange, lAddDelNew )
          Er_Databases(,2)
          ER_Expressions(,,1)
          SwichFldD( oEr:oMainWnd, oEr:oPanelD, ) //oER:oFldD )
-         //SysRefresh(
 
       endif
 
