@@ -1068,6 +1068,7 @@ function DeclarePublics( cDefFile )
 
    oER:lDClkProperties := oEr:lShowPanel
 
+  // oER:lDClkProperties := .f.
 
    if AT( "\", oER:cDefIni ) = 0 .and. !Empty( oER:cDefIni )
       oER:cDefIni   := ".\" + oER:cDefIni
@@ -3648,7 +3649,8 @@ function ClickListTree( oTree )
    endif
 
    Do Case
-      Case cPrompt = GL("Area Properties")
+   Case cPrompt = GL("Area Properties")
+
            nArea     := Val( oItem:GetParent():cPrompt )
            //nAktArea  := nArea
            AreaProperties( nArea )
@@ -3667,7 +3669,8 @@ function ClickListTree( oTree )
            DeleteItem( nItem, nArea, .T., lWert )
 
       Otherwise
-           if oEr:lDClkProperties
+         if oEr:lDClkProperties
+
               nLevel  := oItem:ItemLevel()
               //? oItem:Cargo, oItem:cPrompt, oItem:oParent
               Do Case
@@ -3678,7 +3681,7 @@ function ClickListTree( oTree )
                        nArea     := Val( oItem:cPrompt )
                     endif
                     //nAktArea  := nArea
-                    AreaProperties( nArea )
+                    oItem:setText( AreaProperties( nArea ) )
 
                  Case nLevel = 1
                     oLinkArea  := oItem
@@ -3687,14 +3690,17 @@ function ClickListTree( oTree )
                        nItem     := Val( oItem:cPrompt )
                     endif
                     //nAktArea  := nArea
+
                     oLinkArea:SetText( ItemProperties( nItem, nArea, .T. ) )
+
                     cItemDef := AllTrim( GetPvProfString( "Items", AllTrim(STR(nItem,5)) , "", oER:aAreaIni[ nArea ] ) )
                     if IsGraphic( UPPER(AllTrim( GetField( cItemDef, 1 ) )) )
                        oLinkArea:set( ,  SetGraphTreeBmp( nItem, oER:aAreaIni[ nArea ] ) )
                     endif
 
                  Otherwise
-              EndCase
+                 EndCase
+
            endif
    EndCase
 
@@ -3772,8 +3778,9 @@ function AreaProperties( nArea )
    local cOldAreaText   := MEMOREAD( oER:aAreaIni[ nArea ] )
    LOCAL nDecimals    := IIF( oER:nMeasure = 2, 2, 0 )
 
-
    aTmpSource := {}
+
+ //  msginfo(aItems[nArea,nItem])
 
    for i := 1 to 13
       AADD( aTmpSource, ;
@@ -3890,11 +3897,11 @@ function AreaProperties( nArea )
          Add2Undo( "", 0, nArea, cOldAreaText )
       endif
 
-      OpenFile( oER:cDefIni, .T., )
+    //  OpenFile( oER:cDefIni, .T., )
 
    endif
 
-return .T.
+RETURN cAreaTitle
 
 //----------------------------------------------------------------------------//
 
@@ -3924,6 +3931,7 @@ function AreaChange( nArea, cAreaTitle, nOldWidth, nWidth, nOldHeight, nHeight )
    local cTemp2
    local nElem
    local oItem
+
 
    oER:aWndTitle[ nArea ]   := cAreaTitle
    aWnd[ nArea ]:cTitle := cAreaTitle
@@ -3979,6 +3987,7 @@ function AreaChange( nArea, cAreaTitle, nOldWidth, nWidth, nOldHeight, nHeight )
       if !empty( nElem )
          // 2 -> hWnd   3 -> Object   4 -> Array   5 -> Caption
          //? TVGetText( oER:oTree:hWnd, oER:oTree:aItems[ nElem ][ 2 ] )
+
          TVSetItemText( oER:oTree:hWnd, oER:oTree:aItems[ nElem ][ 2 ], cTemp1 + " " + cAreaTitle )
       endif
    endif
