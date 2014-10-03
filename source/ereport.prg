@@ -3735,8 +3735,177 @@ function SetGraphTreeBmp( nItem, cAreaIni )
 
 return ( nIndex + 9 )
 
+//------------------------------------------------------------------------------
+
+FUNCTION GetAreaProperties( nArea )
+   LOCAL aAreaProp := {=>}
+   local cAreaTitle     := oER:aWndTitle[ nArea ]
+
+    aAreaProp[1] := cAreaTitle
+    aAreaProp[2] := Val( GetPvProfString( "General", "Top1", "0", oER:aAreaIni[ nArea ] ) )
+    aAreaProp[3] := Val( GetPvProfString( "General", "Top2", "0", oER:aAreaIni[ nArea ] ) )
+    aAreaProp[4] := ( GetPvProfString( "General", "TopVariable", "1", oER:aAreaIni[ nArea ] ) = "1" )
+    aAreaProp[5] := Val( GetPvProfString( "General", "Width", "600", oER:aAreaIni[ nArea ] ) )
+    aAreaProp[6]:= Val( GetPvProfString( "General", "Height", "300", oER:aAreaIni[ nArea ] ) )
+    aAreaProp[7] := Val( GetPvProfString( "General", "Condition", "1", oER:aAreaIni[ nArea ] ) )
+    aAreaProp[8] :=  ( GetPvProfString( "General", "DelEmptySpace", "0", oER:aAreaIni[ nArea ] ) = "1" )
+    aAreaProp[9] := ( GetPvProfString( "General", "BreakBefore"  , "0", oER:aAreaIni[ nArea ] ) = "1" )
+    aAreaProp[10]  := ( GetPvProfString( "General", "BreakAfter"   , "0", oER:aAreaIni[ nArea ] ) = "1" )
+    aAreaProp[11] := ( GetPvProfString( "General", "PrintBeforeBreak", "0", oER:aAreaIni[ nArea ] ) = "1" )
+    aAreaProp[12] := ( GetPvProfString( "General", "PrintAfterBreak" , "0", oER:aAreaIni[ nArea ] ) = "1" )
+    aAreaProp[13] :=  AllTrim( GetPvProfString( "General", "ControlDBF", GL("none"), oER:aAreaIni[ nArea ] ) )
+
+RETURN aAreaProp
+
+//------------------------------------------------------------------------------
+
+FUNCTION SetAreaProperties( nArea, aAreaProp, aTmpSource, cOldAreaText )
+   LOCAL oIni
+   LOCAL nDecimals    := IIF( oER:nMeasure = 2, 2, 0 )
+   LOCAL i
+   local nOldWidth      := Val( GetPvProfString( "General", "Width", "600", oER:aAreaIni[ nArea ] ) )
+   local nOldHeight     := Val( GetPvProfString( "General", "Height", "300", oER:aAreaIni[ nArea ] ) )
+
+   INI oIni FILE oER:aAreaIni[ nArea ]
+         SET SECTION "General" ENTRY "Title"            to AllTrim( aAreaProp[1] ) OF oIni
+         SET SECTION "General" ENTRY "Top1"             to AllTrim(STR( aAreaProp[2], 5, nDecimals )) OF oIni
+         SET SECTION "General" ENTRY "Top2"             to AllTrim(STR( aAreaProp[3], 5, nDecimals )) OF oIni
+         SET SECTION "General" ENTRY "TopVariable"      to IIF( !aAreaProp[4] , "0", "1") OF oIni
+         SET SECTION "General" ENTRY "Condition"        to AllTrim(STR( aAreaProp[7], 1 )) OF oIni
+         SET SECTION "General" ENTRY "Width"            to AllTrim(STR( aAreaProp[5], 5, nDecimals )) OF oIni
+         SET SECTION "General" ENTRY "Height"           to AllTrim(STR( aAreaProp[6], 5 ,nDecimals )) OF oIni
+         SET SECTION "General" ENTRY "DelEmptySpace"    to IIF( !aAreaProp[8] , "0", "1") OF oIni
+         SET SECTION "General" ENTRY "BreakBefore"      to IIF( !aAreaProp[9] , "0", "1") OF oIni
+         SET SECTION "General" ENTRY "BreakAfter"       to IIF( !aAreaProp[10] , "0", "1") OF oIni
+         SET SECTION "General" ENTRY "PrintBeforeBreak" to IIF( !aAreaProp[11] , "0", "1") OF oIni
+         SET SECTION "General" ENTRY "PrintAfterBreak"  to IIF( !aAreaProp[12] , "0", "1") OF oIni
+         SET SECTION "General" ENTRY "ControlDBF"       to AllTrim( aAreaProp[13] ) OF oIni
+
+         for i := 1 to 12
+            SET SECTION "General" ENTRY "Formula" + AllTrim(STR(i,2)) to AllTrim( aTmpSource[ i ] ) OF oIni
+         next
+
+      ENDINI
+
+      oGenVar:aAreaSizes[ nArea, 1 ] := aAreaProp[5]
+      oGenVar:aAreaSizes[ nArea, 2 ] := aAreaProp[6]
+
+      AreaChange( nArea,  aAreaProp[1], nOldWidth, aAreaProp[5], nOldHeight,  aAreaProp[6] )
+
+      SetSave( .T. )   // .F.
+
+      if cOldAreaText <> MEMOREAD( oER:aAreaIni[ nArea ] )
+         Add2Undo( "", 0, nArea, cOldAreaText )
+      endif
+
+ RETURN NIL
+
+//------------------------------------------------------------------------------
+
+  function AreaProperties( nArea )
+
+   local i, oDlg, oIni, oBtn, oRad1, aCbx[6], aGrp[5], oSay1
+   local aDbase  := { GL("none") }
+   local lSave   := .F.
+   LOCAL aAreaProp := GetAreaProperties( nArea )
+   local cPicture       := IIF( oER:nMeasure = 2, "999.99", "99999" )
+   local cAreaTitle     := oER:aWndTitle[ nArea ]
+   local cOldAreaText   := MEMOREAD( oER:aAreaIni[ nArea ] )
+   LOCAL nDecimals    := IIF( oER:nMeasure = 2, 2, 0 )
+
+   aTmpSource := {}
+
+   for i := 1 to 13
+      AADD( aTmpSource, ;
+         AllTrim( GetPvProfString( "General", "Formula" + AllTrim(STR(i,2)), "", oER:aAreaIni[ nArea ] ) ) )
+   next
+
+   AEval( oGenVar:aDBFile, {|x| IIF( Empty( x[2] ),, AADD( aDbase, AllTrim( x[2] ) ) ) } )
+
+   DEFINE DIALOG oDlg RESOURCE "AREAPROPERTY" TITLE GL("Area Properties")
+
+   REDEFINE GET aAreaProp[1] ID 201 OF oDlg MEMO
+   REDEFINE GET aAreaProp[2] ID 301 OF oDlg PICTURE cPicture SPINNER MIN 0 UPDATE
+   REDEFINE GET aAreaProp[3] ID 302 OF oDlg PICTURE cPicture SPINNER MIN 0 UPDATE
+
+   REDEFINE CHECKBOX aCbx[4] VAR aAreaProp[4] ID 303 OF oDlg ;
+      ON CHANGE oSay1:SetText( IIF( lTop, GL("Minimum top") + ":", GL("Top:") ) )
+
+   REDEFINE GET aAreaProp[5] ID 401 OF oDlg PICTURE cPicture SPINNER MIN 0
+   REDEFINE GET aAreaProp[6] ID 402 OF oDlg PICTURE cPicture SPINNER MIN 0
+
+   REDEFINE RADIO oRad1 VAR aAreaProp[7] ID 501, 502, 503, 504 OF oDlg
+
+   REDEFINE COMBOBOX aAreaProp[13] ITEMS aDbase ID 511 OF oDlg
+
+   REDEFINE CHECKBOX aCbx[1] VAR aAreaProp[8]  ID 601 OF oDlg
+   REDEFINE CHECKBOX aCbx[2] VAR aAreaProp[9]  ID 602 OF oDlg
+   REDEFINE CHECKBOX aCbx[3] VAR aAreaProp[10] ID 603 OF oDlg
+   REDEFINE CHECKBOX aCbx[5] VAR aAreaProp[11] ID 604 OF oDlg
+   REDEFINE CHECKBOX aCbx[6] VAR aAreaProp[12] ID 605 OF oDlg
+
+   SetAreaFormulaBtn( 10,  1, oDlg )
+   SetAreaFormulaBtn( 11,  2, oDlg )
+   SetAreaFormulaBtn( 12,  3, oDlg )
+   SetAreaFormulaBtn( 13,  4, oDlg )
+   SetAreaFormulaBtn( 14,  5, oDlg )
+   SetAreaFormulaBtn( 15,  6, oDlg )
+   SetAreaFormulaBtn( 16,  7, oDlg )
+   SetAreaFormulaBtn( 17,  8, oDlg )
+   SetAreaFormulaBtn( 18,  9, oDlg )
+   SetAreaFormulaBtn( 19, 10, oDlg )
+   SetAreaFormulaBtn( 20, 11, oDlg )
+   SetAreaFormulaBtn( 21, 12, oDlg )
+
+   REDEFINE SAY PROMPT oER:cMeasure ID 121 OF oDlg
+   REDEFINE SAY PROMPT oER:cMeasure ID 122 OF oDlg
+   REDEFINE SAY PROMPT oER:cMeasure ID 123 OF oDlg
+   REDEFINE SAY PROMPT oER:cMeasure ID 124 OF oDlg
+
+   REDEFINE BUTTON PROMPT GL("&OK")     ID 101 OF oDlg ACTION ( lSave := .T., oDlg:End() )
+   REDEFINE BUTTON PROMPT GL("&Cancel") ID 102 OF oDlg ACTION oDlg:End()
+
+   REDEFINE SAY oSay1 PROMPT IIF( aAreaProp[4] , GL("Minimum top") + ":", GL("Top:") ) ID 172 OF oDlg
+
+   REDEFINE SAY PROMPT GL("Page = 1:")                     ID 170 OF oDlg
+   REDEFINE SAY PROMPT GL("Page > 1:")                     ID 171 OF oDlg
+   REDEFINE SAY PROMPT GL("Width:")                        ID 175 OF oDlg
+   REDEFINE SAY PROMPT GL("Height:")                       ID 176 OF oDlg
+   REDEFINE SAY PROMPT GL("Print area for each record of") ID 177 OF oDlg
+
+   REDEFINE GROUP aGrp[1] ID 190 OF oDlg
+   REDEFINE GROUP aGrp[2] ID 191 OF oDlg
+   REDEFINE GROUP aGrp[3] ID 192 OF oDlg
+   REDEFINE GROUP aGrp[4] ID 193 OF oDlg
+   REDEFINE GROUP aGrp[5] ID 194 OF oDlg
+
+   ACTIVATE DIALOG oDlg CENTERED ;
+      ON INIT ( oRad1:aItems[ 1 ]:SetText( GL("always") ), ;
+                oRad1:aItems[2]:SetText( GL("never") ), ;
+                oRad1:aItems[3]:SetText( GL("page = 1") ), ;
+                oRad1:aItems[4]:SetText( GL("page > 1") ), ;
+                aGrp[1]:SetText( GL("Title") ), ;
+                aGrp[2]:SetText( GL("Position") ), ;
+                aGrp[3]:SetText( GL("Size") ), ;
+                aGrp[4]:SetText( GL("Print Condition") ), ;
+                aGrp[5]:SetText( GL("Options") ), ;
+                aCbx[1]:SetText( GL("Delete Empty space after last row") ), ;
+                aCbx[2]:SetText( GL("New page before printing this area") ), ;
+                aCbx[3]:SetText( GL("New page after printing this area") ), ;
+                aCbx[5]:SetText( GL("Print this area before every page break") ), ;
+                aCbx[6]:SetText( GL("Print this area after every page break") ), ;
+                aCbx[4]:SetText( GL("Top depends on previous area") ) )
+
+   if lSave
+      SetAreaProperties( nArea, aAreaProp, aTmpSource, cOldAreaText )
+   endif
+
+RETURN cAreaTitle
+
 //----------------------------------------------------------------------------//
 
+//----------------------------------------------------------------------------//
+ /*
 function AreaProperties( nArea )
 
    local i, oDlg, oIni, oBtn, oRad1, aCbx[6], aGrp[5], oSay1
@@ -3754,6 +3923,7 @@ function AreaProperties( nArea )
    local lPrBeforeBreak := ( GetPvProfString( "General", "PrintBeforeBreak", "0", oER:aAreaIni[ nArea ] ) = "1" )
    local lPrAfterBreak  := ( GetPvProfString( "General", "PrintAfterBreak" , "0", oER:aAreaIni[ nArea ] ) = "1" )
    local cDatabase      := AllTrim( GetPvProfString( "General", "ControlDBF", GL("none"), oER:aAreaIni[ nArea ] ) )
+
    local nOldWidth      := nWidth
    local nOldHeight     := nHeight
    local cPicture       := IIF( oER:nMeasure = 2, "999.99", "99999" )
@@ -3778,6 +3948,7 @@ function AreaProperties( nArea )
 
    REDEFINE GET nTop1   ID 301 OF oDlg PICTURE cPicture SPINNER MIN 0 UPDATE
    REDEFINE GET nTop2   ID 302 OF oDlg PICTURE cPicture SPINNER MIN 0 UPDATE
+
    REDEFINE CHECKBOX aCbx[4] VAR lTop ID 303 OF oDlg ;
       ON CHANGE oSay1:SetText( IIF( lTop, GL("Minimum top") + ":", GL("Top:") ) )
 
@@ -3885,6 +4056,7 @@ function AreaProperties( nArea )
    endif
 
 RETURN cAreaTitle
+ */
 
 //----------------------------------------------------------------------------//
 
@@ -4025,18 +4197,9 @@ Next i
 Return nMax
 
 //------------------------------------------------------------------------------
-
-//function EasyPreview()
-
-//   MsgInfo( "EasyPreview Not linked yet" )
-
-//return nil
-
-//------------------------------------------------------------------------------
-
 Function DlgStatusBar(oDlg, nHeight, nCorrec , lColor )
    local nDlgHeight:= oDlg:nHeight
-   local acolor:={ { 0.40, nRGB( 200, 200, 200 ), nRGB( 184, 184, 184 ) },;
+   local aColor:={ { 0.40, nRGB( 200, 200, 200 ), nRGB( 184, 184, 184 ) },;
                                     { 0.60, nRGB( 184, 184, 184 ), nRGB( 150, 150, 150 ) } }
 DEFAULT  nHeight := 72
 DEFAULT nCorrec:= 0
@@ -4084,7 +4247,6 @@ FUNCTION DlgBarTitle( oWnd, cTitle, cBmp ,nHeight )
     oTitle:nClrLine1 := nrgb(0,0,0)
     oTitle:nClrLine2 := RGB( 229, 233, 238 )
     oWnd:oTop:= oTitle
-
 
 RETURN oTitle
 
