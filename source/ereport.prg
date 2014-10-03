@@ -50,11 +50,10 @@ STATIC aTmpSource
 STATIC lDraGraphic := .T.
 
 MEMVAR aItems, aWnd
-MEMVAR aRuler, cLongDefIni, cDefaultPath
+MEMVAR cLongDefIni, cDefaultPath
 MEMVAR nAktItem, nAktArea, nSelArea, aSelection
 MEMVAR aVRDSave, lVRDSave
 MEMVAR cItemCopy, aSelectCopy, aItemCopy, nXMove, nYMove
-MEMVAR cDefIniPath
 MEMVAR lProfi
 MEMVAR oGenVar
 MEMVAR oER
@@ -984,7 +983,6 @@ return NIL
 function DeclarePublics( cDefFile )
    local oIni
 
-   PUBLIC cDefIniPath
    PUBLIC lProfi := .T.
 
    oER:lBeta := .F.
@@ -995,7 +993,7 @@ function DeclarePublics( cDefFile )
    endif
 
    PUBLIC aItems, aWnd, oBar
-   PUBLIC aRuler, cLongDefIni, cDefaultPath
+   PUBLIC cLongDefIni, cDefaultPath
 
    //PUBLIC nTotalHeight := 0
    //PUBLIC nTotalWidth  := 0
@@ -1066,7 +1064,7 @@ function DeclarePublics( cDefFile )
       oER:cDefIni   := ".\" + oER:cDefIni
    endif
 
-   cDefIniPath := CheckPath( cFilePath( oER:cDefIni ) )
+   oER:cDefIniPath := CheckPath( cFilePath( oER:cDefIni ) )
 
    oGenVar:AddMember( "cRelease"  ,, "2.1.1" )
    oGenVar:AddMember( "cCopyright",, "2000-2014" )
@@ -1082,7 +1080,7 @@ function DeclarePublics( cDefFile )
    oER:aWndTitle:= Array( Len( aWnd ) )
    aItems       := Array( Len( aWnd ), 1000 )
    oER:aAreaIni     := Array( Len( aWnd ) )
-   aRuler       := Array( Len( aWnd ), 2 )
+   oER:aRuler       := Array( Len( aWnd ), 2 )
    oER:aFonts       := Array( 20 )
 
    oEr:nDeveloper := Val( oEr:GetGeneralIni( "General", "DeveloperMode", "0" ) )
@@ -1677,7 +1675,7 @@ function ClientWindows()
             cAreaFilesDir := cDefaultPath
          endif
          if Empty( cAreaFilesDir )
-            cAreaFilesDir := cDefIniPath
+            cAreaFilesDir := oER:cDefIniPath
          endif
 
          cItemDef := VRD_LF2SF( AllTrim( cAreaFilesDir + cItemDef ) )
@@ -3399,7 +3397,7 @@ STATIC Function FillTree( oTree, oDlg )
               cAreaFilesDir := cDefaultPath
            endif
            if Empty( cAreaFilesDir )
-               cAreaFilesDir := cDefIniPath
+               cAreaFilesDir := oER:cDefIniPath
            endif
            cItemDef := VRD_LF2SF( cAreaFilesDir + ;
             AllTrim( GetIniEntry( aIniEntries, AllTrim(STR(nEntry,5)) , "" ) ) )
@@ -3534,7 +3532,7 @@ function ListTrees( oTree )
             cAreaFilesDir := cDefaultPath
          endif
          if Empty( cAreaFilesDir )
-            cAreaFilesDir := cDefIniPath
+            cAreaFilesDir := oER:cDefIniPath
          endif
 
          cItemDef := VRD_LF2SF( cAreaFilesDir + ;
@@ -4214,7 +4212,7 @@ CLASS TEasyReport
    DATA oMainWnd
    DATA aWndTitle
    DATA cGeneralIni, cDefIni
-   DATA cDataPath, cPath, cTmpPath
+   DATA cDataPath, cPath, cTmpPath, cDefIniPath
    DATA bClrBar
    DATA aClrDialogs, nDlgTextCol, nDlgBackCol
    DATA nClrPaneTree
@@ -4237,6 +4235,7 @@ CLASS TEasyReport
    DATA oMsgInfo
    DATA aFonts
    DATA aAreaIni
+   DATA aRuler
 
    METHOD New() CONSTRUCTOR
    METHOD GetGeneralIni( cSection , cKey, cDefault ) INLINE GetPvProfString( cSection, cKey, cDefault, ::cGeneralIni )
@@ -4620,12 +4619,6 @@ METHOD FillWindow( nArea, cAreaIni ) CLASS TEasyReport
    oRulerBmp1:bLClicked := { |nRow,nCol,nFlags| nAktArea := aWnd[ nArea ]:nArea, ::oMainWnd:SetFocus() }
    oRulerBmp2:bLClicked := oRulerBmp1:bLClicked
 
-   // @ oEr:nRulerTop-oER:nRuler, 20 SAY aRuler[ nArea, 1 ] PROMPT "" SIZE  1, 20 PIXEL ;
-   //    COLORS oGenVar:nClrReticule, oGenVar:nClrReticule OF aWnd[ nArea ]
-
-   // @ 20, 0 SAY aRuler[ nArea, 2 ] PROMPT "" SIZE 20,  1 PIXEL ;
-   //    COLORS oGenVar:nClrReticule, oGenVar:nClrReticule OF aWnd[ nArea ]
-
    aWnd[ nArea ]:bPainted   = {| hDC, cPS | ZeichneHintergrund( nArea ) }
 
    aWnd[ nArea ]:bGotFocus  = { || SetTitleColor( .F., nArea ) }
@@ -4653,8 +4646,8 @@ METHOD FillWindow( nArea, cAreaIni ) CLASS TEasyReport
    oRulerBmp1:bRClicked    := aWnd[ nArea ]:bRClicked
    oRulerBmp2:bRClicked    := aWnd[ nArea ]:bRClicked
 
-   aRuler[ nArea , 1 ]     := oRulerBmp1
-   aRuler[ nArea , 2 ]     := oRulerBmp2
+   ::aRuler[ nArea , 1 ]     := oRulerBmp1
+   ::aRuler[ nArea , 2 ]     := oRulerBmp2
 
    for i := 1 to LEN( aIniEntries )
       nEntry := EntryNr( aIniEntries[ i ] )

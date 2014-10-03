@@ -1,10 +1,9 @@
 #include "FiveWin.ch"
 
 MEMVAR aItems, aWnd
-MEMVAR aRuler, cLongDefIni, cDefaultPath
+MEMVAR cLongDefIni, cDefaultPath
 MEMVAR oGenVar
 MEMVAR aVRDSave, lVRDSave
-MEMVAR cDefIniPath
 MEMVAr oEr
 
 //------------------------------------------------------------------------------
@@ -58,13 +57,13 @@ function OpenFile( cFile, lChange, lAddDelNew )
       if !lChange
          aWnd      := NIL
          oER:aWndTitle := NIL
-         aRuler    := NIL
+         oER:aRuler    := NIL
       endif
 
       if !lChange
          aWnd      := Array( oER:nTotAreas )
          oER:aWndTitle := Array( Len( aWnd ) )
-         aRuler    := Array( Len( aWnd ), 2 )
+         oER:aRuler    := Array( Len( aWnd ), 2 )
       endif
       aItems    := Array( Len( aWnd ), 1000 )
       oER:aAreaIni  := Array( Len( aWnd ) )
@@ -81,7 +80,7 @@ function OpenFile( cFile, lChange, lAddDelNew )
          oER:cDefIni := ".\" + oER:cDefIni
       endif
 
-      cDefIniPath := CheckPath( cFilePath( oER:cDefIni ) )
+      oER:cDefIniPath := CheckPath( cFilePath( oER:cDefIni ) )
 
       SetGeneralSettings()
 

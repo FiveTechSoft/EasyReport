@@ -277,7 +277,7 @@ function ItemPopupMenu( oItem, nItem, nArea, nRow, nCol )
       ACTION ItemCopy( .F. )
    MENUITEM GL("&Paste") + chr(9) + GL("Ctrl+V") ;
       ACTION ItemPaste() ;
-      WHEN .NOT. EMPTY( cItemCopy )
+      WHEN !EMPTY( cItemCopy )
 
    ENDMENU
 
