@@ -1792,6 +1792,14 @@ function ShowItem( i, nArea, cAreaIni, aFirst, nElemente, aIniEntries, nIndex )
    local nRndWidth, nRndHeight, nBarcode, nPinWidth, cItemDef
    local lRight  := .F.
    local lCenter := .F.
+   local cTool   := ""
+
+/*
+// Text   : say| name| ID| show| deleteable| editable| top| left| width| height| font| text color| background color| orientation | border | transparent
+// Image  : say| name| ID| show| deleteable| editable| top| left| width| height| filename| border
+// Graphic: say| style| ID| show| deleteable| editable| top| left| width| height| color | fill color | Style | Pen Size
+// Barcode: say| value| ID| show| deleteable| editable| top| left| width| height| barcode font | color | fill color | orientation | transparent | Pin width
+*/
 
    if aIniEntries = NIL
       cItemDef := AllTrim( GetPvProfString( "Items", AllTrim(STR(i,5)) , "", cAreaIni ) )
@@ -1808,7 +1816,7 @@ function ShowItem( i, nArea, cAreaIni, aFirst, nElemente, aIniEntries, nIndex )
       nWidth    := ER_GetPixel( VAL( GetField( cItemDef, 9 ) ) )
       nHeight   := ER_GetPixel( VAL( GetField( cItemDef, 10 ) ) )
 
-      if aFirst[1] = .F.
+      if !aFirst[1] 
          aFirst[2] := nTop
          aFirst[3] := nLeft
          aFirst[4] := nWidth
@@ -1846,6 +1854,20 @@ function ShowItem( i, nArea, cAreaIni, aFirst, nElemente, aIniEntries, nIndex )
 
          SetBKMode( oEr:oMainWnd:hDC, 0 )
 
+         cTool := " Tipo:        " + Chr( 9 ) + "TSAY" + CRLF + ;
+                  " Top:         " + Chr( 9 ) + Str( nTop, 10 ) + CRLF + ;
+                  " Left:        " + Chr( 9 ) + Str( nLeft, 10 ) + CRLF + ;
+                  " Width:       " + Chr( 9 ) + Str( nWidth, 10 ) + CRLF + ;
+                  " Height:      " + Chr( 9 ) + Str( nHeight, 10 ) + CRLF + ;
+                  " Contenido    " + Chr( 9 ) + cName  + CRLF + ;
+                  " Font:        " + Chr( 9 ) + oFont:cFaceName + CRLF + ;
+                  " Font:        " + Chr( 9 ) + Str( oFont:nHeight, 10 ) + CRLF + ;
+                  " Color Texto: " + Chr( 9 ) + Str( oER:GetColor( nColText ), 10 ) + CRLF + ;
+                  " Color Fondo: " + Chr( 9 ) + Str( oER:GetColor( nColPane ), 10 ) + CRLF + ;
+                  " Alineacion:  " + Chr( 9 ) + if( nOrient = 1, "LEFT",if( nOrient = 2, "CENTER", "RIGHT") ) + CRLF + ;
+                  " Border:      " + Chr( 9 ) + if( ( nBorder = 1 .OR. oGenVar:lShowBorder ), " SI ", " NO ") + CRLF + ;
+                  " Transparente:" + Chr( 9 ) + iif( nTrans = 1, " SI ", " NO " ) + CRLF 
+
          /*
          [ <oSay> := ] TSay():New( <nRow>, <nCol>, <{cText}>,;
             [<oWnd>], [<cPict>], <oFont>, <.lCenter.>, <.lRight.>, <.lBorder.>,;
@@ -1862,6 +1884,15 @@ function ShowItem( i, nArea, cAreaIni, aFirst, nElemente, aIniEntries, nIndex )
             IIF( nBorder = 1, .F., .T.), aWnd[nArea],,, .F., .T.,,, .T.,, .T. )
          aItems[nArea,i]:Progress(.F.)
          aItems[nArea,i]:LoadBmp( VRD_LF2SF( cFile ) )
+
+         cTool := " Tipo:        " + Chr( 9 ) + "TIMAGE" + CRLF + ;
+                  " Top:         " + Chr( 9 ) + Str( nTop, 10 ) + CRLF + ;
+                  " Left:        " + Chr( 9 ) + Str( nLeft, 10 ) + CRLF + ;
+                  " Width:       " + Chr( 9 ) + Str( nWidth, 10 ) + CRLF + ;
+                  " Height:      " + Chr( 9 ) + Str( nHeight, 10 ) + CRLF + ;
+                  " Contenido    " + Chr( 9 ) + cFile  + CRLF + ;
+                  " Border:      " + Chr( 9 ) + if( ( nBorder = 1 .OR. oGenVar:lShowBorder ), " SI ", " NO ") + CRLF
+
 
          /*
          [ <oBmp> := ] TImage():New( <nRow>, <nCol>, <nWidth>, <nHeight>,;
@@ -1889,6 +1920,17 @@ function ShowItem( i, nArea, cAreaIni, aFirst, nElemente, aIniEntries, nIndex )
             DrawGraphic( hDC, cTyp, nWidth, nHeight, oER:GetColor( nColor ), oER:GetColor( nColFill ), ;
                          nStyle, nPenWidth, nRndWidth, nRndHeight ) }
 
+         cTool := " Tipo:        " + Chr( 9 ) + "GRAPHIC" + CRLF + ;
+                  " Top:         " + Chr( 9 ) + Str( nTop, 10 ) + CRLF + ;
+                  " Left:        " + Chr( 9 ) + Str( nLeft, 10 ) + CRLF + ;
+                  " Width:       " + Chr( 9 ) + Str( nWidth, 10 ) + CRLF + ;
+                  " Height:      " + Chr( 9 ) + Str( nHeight, 10 ) + CRLF + ;
+                  " Contenido    " + Chr( 9 ) + "    " + CRLF + ;
+                  " Color:       " + Chr( 9 ) + Str( oER:GetColor( nColor ), 10 ) + CRLF + ;
+                  " Color Fondo: " + Chr( 9 ) + Str( oER:GetColor( nColFill ), 10 ) + CRLF + ;
+                  " Border:      " + Chr( 9 ) + if( ( nBorder = 1 .OR. oGenVar:lShowBorder ), " SI ", " NO ") + CRLF + ;
+                  " Transparente:" + Chr( 9 ) + if( aItems[nArea,i]:lTransparent, " SI ", " NO " ) + CRLF 
+
       ELSEif cTyp = "BARCODE" .AND. lProfi
 
          nBarcode    := VAL( GetField( cItemDef, 11 ) )
@@ -1906,6 +1948,17 @@ function ShowItem( i, nArea, cAreaIni, aFirst, nElemente, aIniEntries, nIndex )
             DrawBarcode( hDC, cName, 0, 0, nWidth, nHeight, nBarCode, oER:GetColor( nColText ), ;
                          oER:GetColor( nColPane ), nOrient, lTrans, nPinWidth ) }
 
+         cTool := " Tipo:        " + Chr( 9 ) + "BARCODE" + CRLF + ;
+                  " Top:         " + Chr( 9 ) + Str( nTop, 10 ) + CRLF + ;
+                  " Left:        " + Chr( 9 ) + Str( nLeft, 10 ) + CRLF + ;
+                  " Width:       " + Chr( 9 ) + Str( nWidth, 10 ) + CRLF + ;
+                  " Height:      " + Chr( 9 ) + Str( nHeight, 10 ) + CRLF + ;
+                  " Contenido    " + Chr( 9 ) + cName  + CRLF + ;
+                  " Color:       " + Chr( 9 ) + Str( oER:GetColor( nColText ), 10 ) + CRLF + ;
+                  " Color Fondo: " + Chr( 9 ) + Str( oER:GetColor( nColPane ), 10 ) + CRLF + ;
+                  " Border:      " + Chr( 9 ) + if( ( nBorder = 1 .OR. oGenVar:lShowBorder ), " SI ", " NO ") + CRLF + ;
+                  " Transparente:" + Chr( 9 ) + if( lTrans, " SI ", " NO " ) + CRLF 
+
       endif
 
       if cTyp = "BARCODE" .AND. lProfi = .F.
@@ -1917,6 +1970,12 @@ function ShowItem( i, nArea, cAreaIni, aFirst, nElemente, aIniEntries, nIndex )
 
       ++nElemente
 
+   endif
+
+   if Valtype( aItems[nArea,i] ) = "O"
+      if oER:lShowToolTip
+         aItems[nArea,i]:cToolTip := cTool
+      endif
    endif
 
 return .T.

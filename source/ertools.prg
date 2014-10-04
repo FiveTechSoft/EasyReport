@@ -1003,8 +1003,33 @@ function Expressions( lTake, cAltText )
    aUndo := {}
 
 return ( creturn )
+//------------------------------------------------------------------------------
 
+Function ER_Inspector( nD )
 
+   LOCAL oDlg   := oER:oFldD:aDialogs[ nD ]
+   LOCAL aProps := getAreaProperties( nAktArea )
+   Local oBrw
+
+    @ 0.5, 1 XBROWSE oBrw ;
+      SIZE oER:oFldD:aDialogs[nD]:nWidth - 1, oEr:oFldD:aDialogs[nD]:nHeight - 20 ;
+      COLSIZES 95, 195 ;
+      AUTOCOLS ;
+      HEADERS " " + GL("Property"), " " + GL("Value") ;
+      ARRAY aProps OF oDlg ;
+      PIXEL
+    //  ON CHANGE SetEditType( oER:oBrw )
+
+   oBrw:nMarqueeStyle    = MARQSTYLE_HIGHLROW
+   oBrw:nColDividerStyle = LINESTYLE_DARKGRAY
+  // oBrw:aCols[ 1 ]:bLDClickData = { || oER:oBrw:aCols[ 2 ]:Edit() }
+  // oBrw:oCol( "Property" ):bLDClickData := { || oER:oBrw:Value:Edit() }
+   oBrw:lRecordSelector = .T.
+
+   oBrw:CreateFromCode()
+   oBrw:SetColor( 0, RGB( 224, 236, 255 ) )
+
+RETURN oBrw
 
 //------------------------------------------------------------------------------
 
@@ -2151,4 +2176,6 @@ Function RndMsg( cCaption, cBmp ,nExpRow  )
    DeleteObject( hRgn )
 
 return nil
+
+//----------------------------------------------------------------------------//
 

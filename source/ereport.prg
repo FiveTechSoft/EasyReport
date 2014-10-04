@@ -180,7 +180,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
        SEPARATOR 0
 
        @ 0.2, 1 CFOLDEREX oER:oFldD ;
-       PROMPT GL("&Expressions"), GL("&Databases") ; //, GL("&Fields"), GL("Fil&ters") ;
+       PROMPT GL("&Expressions"), GL("&Databases"), GL("&Inspector") ; //, GL("&Fields"), GL("Fil&ters") ;
        OF oEr:oPanelD ; //oEr:oMainWnd ;
        SIZE Int(GetSysMetrics( 0 )/4), GetSysMetrics( 1 ) - 138 ;
        OPTION 1 ;
@@ -217,9 +217,11 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
 
 
       DlgTree( 2 )
+      ER_Inspector(3 )
+
+      //oER:oInspector  = TInspector():New()
 
    ENDIF
-
 
    ACTIVATE WINDOW oEr:oMainWnd ;
       MAXIMIZED ;
@@ -1056,6 +1058,8 @@ function DeclarePublics( cDefFile )
 
    oEr:lShowPanel   := ( oEr:GetGeneralIni( "General", "ShowPanel", "1" ) == "1" )
 
+   oEr:lShowToolTip := .T.
+
    oER:lDClkProperties := oEr:lShowPanel
 
   // oER:lDClkProperties := .f.
@@ -1194,9 +1198,8 @@ function IniMainWindow()
 
       oGenVar:lFirstFile := .F.
 
-      //Fonts definieren
       DefineFonts()
-      //Designwindows
+      //Design windows
       ClientWindows()
       //Areas anzeigen
       ShowAreasOnBar()
@@ -1730,8 +1733,7 @@ function ClientWindows()
 
          oER:FillWindow( nWnd, oER:aAreaIni[nWnd] )
 
-         ACTIVATE WINDOW aWnd[ nWnd ] ;
-         VALID !GETKEYSTATE( VK_ESCAPE )
+         ACTIVATE WINDOW aWnd[ nWnd ] VALID !GETKEYSTATE( VK_ESCAPE )
 
          oGenVar:lShowReticule := lReticule
 
@@ -3360,7 +3362,7 @@ FUNCTION RefreshPanelTree()
 
   IF oEr:lShowPanel
      oER:oTree:DeleteAll()
-    msginfo(1)
+     //msginfo(1)
      FillTree( oEr:oTree, oEr:oMainWnd )
   ENDIF
 
@@ -4198,14 +4200,15 @@ Return nMax
 
 //------------------------------------------------------------------------------
 Function DlgStatusBar(oDlg, nHeight, nCorrec , lColor )
-   local nDlgHeight:= oDlg:nHeight
-   local aColor:={ { 0.40, nRGB( 200, 200, 200 ), nRGB( 184, 184, 184 ) },;
-                                    { 0.60, nRGB( 184, 184, 184 ), nRGB( 150, 150, 150 ) } }
-DEFAULT  nHeight := 72
-DEFAULT nCorrec:= 0
-DEFAULT lColor := .F.
+Local nDlgHeight := oDlg:nHeight
+Local aColor     := { { 0.40, nRGB( 200, 200, 200 ), nRGB( 184, 184, 184 ) },;
+                    { 0.60, nRGB( 184, 184, 184 ), nRGB( 150, 150, 150 ) } }
 
-  nDlgHeight:= nDlgHeight+ncorrec
+DEFAULT nHeight  := 72
+DEFAULT nCorrec  := 0
+DEFAULT lColor   := .F.
+
+nDlgHeight:= nDlgHeight+ncorrec
 IF lColor
    GradienTfill(oDlg:hDC,nDlgHeight-( nHeight-2 ),0,nDlgHeight-20,oDlg:nWidth, aColor ,.t.)
    WndBoxIn( oDlg:hDc,nDlgHeight-( nHeight-1 ),0,nDlgHeight-( nHeight ),oDlg:nWidth )
@@ -4398,6 +4401,7 @@ CLASS TEasyReport
    DATA aFonts
    DATA aAreaIni
    DATA aRuler
+   DATA lShowToolTip
 
    METHOD New() CONSTRUCTOR
    METHOD GetGeneralIni( cSection , cKey, cDefault ) INLINE GetPvProfString( cSection, cKey, cDefault, ::cGeneralIni )
@@ -4429,15 +4433,16 @@ METHOD New() CLASS TEasyReport
 
    MakeDir(::cTmpPath )
 
-  // ::lShowPanel := .T.
+   //::lShowPanel   := .T.
+   //::lShowToolTip := .T.
 
    ::nTotAreas    := 100
 
    ::lFillWindow  := .F.
 
-   ::nClrPaneTree:= RGB( 229, 233, 238)
-   ::nDlgTextCol := RGB( 255, 255, 255 )
-   ::nDlgBackCol := RGB( 150, 150, 150 )
+   ::nClrPaneTree := RGB( 229, 233, 238)
+   ::nDlgTextCol  := RGB( 255, 255, 255 )
+   ::nDlgBackCol  := RGB( 150, 150, 150 )
 
    ::bClrBar =  { | lInvert | If( ! lInvert,;
                                   { { 1, RGB( 255, 255, 255 ), RGB( 229, 233, 238 ) } },;
@@ -4750,6 +4755,8 @@ METHOD FillWindow( nArea, cAreaIni ) CLASS TEasyReport
    local oRulerBmp2
    local oRulerBmp3
 
+// cTool  := if( nRow < 34, "Propiedades Area: " + Str( aWnd[ nArea ]:nArea, 10 ), "" ), ;
+
    ::nMeasure  := if( empty( ::nMeasure ), 1, ::nMeasure )
    //Ruler anzeigen
    if ::nMeasure = 1 ; cRuler1 := "RULER1_MM" ; cRuler2 := "RULER2_MM" ; endif
@@ -4825,6 +4832,13 @@ METHOD FillWindow( nArea, cAreaIni ) CLASS TEasyReport
       aItems[ nArea,aFirst[6]]:Move( aFirst[2], aFirst[3], aFirst[4], aFirst[5], .T. )
       ::lFillWindow := .F.
    endif
+
+   //aWnd[ nArea ]:oToolTip := ER_TooltipAr( nArea, cRuler1 )
+   /*
+   aWnd[ nArea ]:cToolTip := "Titulo:           " + Chr( 9 ) + Left( oGenVar:aAreaTitle[ nArea ]:cCaption, 28 ) + CRLF + ;
+                  "Unidad Medida:    " + Chr( 9 ) + Right( RTrim( cRuler1 ), 2 ) + CRLF + ;
+                  "Top:              " + Chr( 9 ) + Str( aWnd[ nArea ]:nTop, 10 ) + CRLF
+   */
 
    //Memory(-1)
    //SysRefresh()
@@ -4923,6 +4937,31 @@ CLASS ER_ScrollBar FROM TScrollBar
                  nPos, ::lReDraw )
 
 ENDCLASS
+
+//----------------------------------------------------------------------------//
+
+Function ER_TooltipAr( nArea, cRuler1 )
+   local cTool  := ""
+   local oTT
+   
+   oTT    := TC5Tooltip():New( 100, 100, 250, 150, aWnd[ nArea ] , .T., CLR_CYAN, CLR_WHITE )
+
+   cTool       := "Titulo:           " + Chr( 9 ) + Left( oGenVar:aAreaTitle[ nArea ]:cCaption, 28 ) + CRLF + ;
+                  "Unidad Medida:    " + Chr( 9 ) + Right( RTrim( cRuler1 ), 2 ) + CRLF + ;
+                  "Top:              " + Chr( 9 ) + Str( aWnd[ nArea ]:nTop, 10 ) + CRLF
+   
+   oTT:cHeader  := "Propiedades Area: " + Chr( 9 ) + Str( aWnd[ nArea ]:nArea, 10 ) //+ CRLF + ;
+   oTT:cBody    := cTool
+   oTT:cFoot    := " "
+   //oTT:cBmpFoot := "..\bitmaps\16x16\help.bmp"
+   //oTT:cBmpLeft := "..\bitmaps\32x32\calendar.bmp"
+
+   oTT:lLineHeader = .T.
+   oTT:lBtnClose   = .T.
+   oTT:lSplitHdr   = .T. 
+   oTT:lBorder     = .T.
+
+Return oTT
 
 //----------------------------------------------------------------------------//
 
