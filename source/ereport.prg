@@ -3479,7 +3479,7 @@ local  lWert
 
 RETURN lWert
 
-//----------------------------------------------------------------------------//
+//------------------------------------------------------------------------------
 /*
 function ItemList()
 
@@ -3545,7 +3545,9 @@ function ListTrees( oTree )
             cItemDef := IIF( AT( "\", cItemDef ) = 0, ".\", "" ) + cItemDef
 
             aElemente := GetAllItems( cItemDef )
-            oTr1:AddLastChild( GL("Area Properties") )
+            IF !oER:lDClkProperties
+               oTr1:AddLastChild( GL("Area Properties") )
+            ENDIF
 
             for y := 1 to LEN( aElemente )
 
@@ -3556,7 +3558,9 @@ function ListTrees( oTree )
                if aElemente[y,6] <> 0
                   oTr2:AddLastChild( GL("Visible"), aElemente[y,5], aElemente[y,4] )
                endif
-               oTr2:AddLastChild( GL("Item Properties") )
+               IF !oER:lDClkProperties
+                  oTr2:AddLastChild( GL("Item Properties") )
+               ENDIF
 
             next
 

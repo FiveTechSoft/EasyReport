@@ -1010,14 +1010,22 @@ Function ER_Inspector( nD )
    LOCAL oDlg   := oER:oFldD:aDialogs[ nD ]
    LOCAL aProps := getAreaProperties( nAktArea )
    Local oBrw
+   Local oFont
+   Local oTree
 
+   DEFINE FONT oFont NAME "Verdana" SIZE 0, -14  //"Segoe UI BOLD"
+
+
+
+
+   
     @ 0.5, 1 XBROWSE oBrw ;
       SIZE oER:oFldD:aDialogs[nD]:nWidth - 1, oEr:oFldD:aDialogs[nD]:nHeight - 20 ;
       COLSIZES 95, 195 ;
       AUTOCOLS ;
       HEADERS " " + GL("Property"), " " + GL("Value") ;
       ARRAY aProps OF oDlg ;
-      PIXEL
+      FONT oFont CELL PIXEL NOBORDER
     //  ON CHANGE SetEditType( oER:oBrw )
 
    oBrw:nMarqueeStyle    = MARQSTYLE_HIGHLROW
@@ -1025,11 +1033,29 @@ Function ER_Inspector( nD )
   // oBrw:aCols[ 1 ]:bLDClickData = { || oER:oBrw:aCols[ 2 ]:Edit() }
   // oBrw:oCol( "Property" ):bLDClickData := { || oER:oBrw:Value:Edit() }
    oBrw:lRecordSelector = .T.
+   
+
+   /*
+   @ 0.5, 1 XBROWSE oBrw ;
+     SIZE oER:oFldD:aDialogs[nD]:nWidth - 1, oEr:oFldD:aDialogs[nD]:nHeight - 20 ;
+     HEADERS " " + GL("Property"), " " + GL("Value") ;
+     FONT oFont CELL PIXEL OF oDlg NOBORDER
+  */
+
+  /*
+  oBrw:SetTree( oEr:oTree, { "FoldOpen", "FoldClose", "Checked", "Unchecked", "Property", ;
+               "Typ_Text", "Typ_Image", "Typ_Graphic", "Typ_Barcode", ;
+               "TreeGraph1", "TreeGraph2", "TreeGraph3", "TreeGraph4", ;
+               "TreeGraph5", "TreeGraph6" } )
+  */
 
    oBrw:CreateFromCode()
    oBrw:SetColor( 0, RGB( 224, 236, 255 ) )
 
 RETURN oBrw
+
+//------------------------------------------------------------------------------
+
 
 //------------------------------------------------------------------------------
 
