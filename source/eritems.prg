@@ -26,12 +26,15 @@ function ElementActions( oItem, i, cName, nArea, cAreaIni, cTyp )
 
    //oItems:bGotFocus  := {|| SelectItem( i, nArea, cAreaIni ), MsgBarInfos( i, cAreaIni ) }
 
+   oItem:bGotFocus  := {||   SelectItem( i, nArea, cAreaIni ),  RefreshBrwTextProp( i, nArea, cAreaIni )  }
+
    oItem:bLClicked = { | nRow, nCol, nFlags | ;
       If( oGenVar:lItemDlg, ( If( GetKeyState( VK_SHIFT ), MultiItemProperties(), ;
                             ( ItemProperties( i, nArea ), oCurDlg:SetFocus() ) ) ), ;
                             ( SelectItem( i, nArea, cAreaIni ), ;
                               nInfoRow := nRow, nInfoCol := nCol, ;
-                              MsgBarItem( i, nArea, cAreaIni, nRow, nCol ) ) ) }
+                              MsgBarItem( i, nArea, cAreaIni, nRow, nCol ) ;
+                              ) ) }
 
    // AEVAL( oItems:aDots, {|x| x:Show(), BringWindowToTop( x:hWnd ), x:Refresh() } ) }
 
@@ -439,7 +442,51 @@ function UpdateItems( nValue, nTyp, lAddValue, aOldValue )
 
    UnSelectAll( .F. )
 
-return .T.
+   return .T.
+
+//------------------------------------------------------------------------------
+
+FUNCTION GetTextProperties( nItem, nArea, cAreaIni )
+   LOCAL aTextProp := Array(7)
+   LOCAL cItemDef := ALLTRIM( GetPvProfString( "Items", ALLTRIM(STR(nItem,5)) , "", cAreaIni ) )
+
+   cInfoWidth  := GetField( cItemDef, 9 )
+   cInfoHeight := GetField( cItemDef, 10 )
+
+
+    aTextProp[1] := { GL( "Title" ),;
+                    GetField( cItemDef, 2 ) }
+
+    aTextProp[2] := { GL( "ItemID" ),;
+                    GetField( cItemDef, 3 ) }
+
+    aTextProp[3] := { GL( "Show" ),;
+                     GetField( cItemDef, 4 ) }
+
+
+    aTextProp[4] := { GL( "Top" ),;
+                      GetField( cItemDef, 7 )}
+
+    aTextProp[5] := { GL( "Left" ),;
+                    GetField( cItemDef, 8 ) }
+
+    aTextProp[6] := { GL( "Width" ),;
+                     GetField( cItemDef, 9 ) }
+
+    aTextProp[7] := { GL( "Height" ),;
+                     GetField( cItemDef, 10 ) }
+
+
+RETURN aTextProp
+
+//------------------------------------------------------------------------------
+
+FUNCTION RefreshBrwTextProp( nItem, nArea, cAreaIni )
+   LOCAL aProps:=GetTextProperties( nItem, nArea, cAreaIni )
+   oER:oBrwProp:setArray(aProps)
+   oER:oBrwProp:refresh(.t.)
+   oER:oSaySelectedItem:setText( aProps[1,2] )
+Return
 
 //----------------------------------------------------------------------------//
 
@@ -1816,7 +1863,7 @@ function ShowItem( i, nArea, cAreaIni, aFirst, nElemente, aIniEntries, nIndex )
       nWidth    := ER_GetPixel( VAL( GetField( cItemDef, 9 ) ) )
       nHeight   := ER_GetPixel( VAL( GetField( cItemDef, 10 ) ) )
 
-      if !aFirst[1] 
+      if !aFirst[1]
          aFirst[2] := nTop
          aFirst[3] := nLeft
          aFirst[4] := nWidth
@@ -1866,7 +1913,7 @@ function ShowItem( i, nArea, cAreaIni, aFirst, nElemente, aIniEntries, nIndex )
                   " Color Fondo: " + Chr( 9 ) + Str( oER:GetColor( nColPane ), 10 ) + CRLF + ;
                   " Alineacion:  " + Chr( 9 ) + if( nOrient = 1, "LEFT",if( nOrient = 2, "CENTER", "RIGHT") ) + CRLF + ;
                   " Border:      " + Chr( 9 ) + if( ( nBorder = 1 .OR. oGenVar:lShowBorder ), " SI ", " NO ") + CRLF + ;
-                  " Transparente:" + Chr( 9 ) + iif( nTrans = 1, " SI ", " NO " ) + CRLF 
+                  " Transparente:" + Chr( 9 ) + iif( nTrans = 1, " SI ", " NO " ) + CRLF
 
          /*
          [ <oSay> := ] TSay():New( <nRow>, <nCol>, <{cText}>,;
@@ -1929,7 +1976,7 @@ function ShowItem( i, nArea, cAreaIni, aFirst, nElemente, aIniEntries, nIndex )
                   " Color:       " + Chr( 9 ) + Str( oER:GetColor( nColor ), 10 ) + CRLF + ;
                   " Color Fondo: " + Chr( 9 ) + Str( oER:GetColor( nColFill ), 10 ) + CRLF + ;
                   " Border:      " + Chr( 9 ) + if( ( nBorder = 1 .OR. oGenVar:lShowBorder ), " SI ", " NO ") + CRLF + ;
-                  " Transparente:" + Chr( 9 ) + if( aItems[nArea,i]:lTransparent, " SI ", " NO " ) + CRLF 
+                  " Transparente:" + Chr( 9 ) + if( aItems[nArea,i]:lTransparent, " SI ", " NO " ) + CRLF
 
       ELSEif cTyp = "BARCODE" .AND. lProfi
 
@@ -1957,7 +2004,7 @@ function ShowItem( i, nArea, cAreaIni, aFirst, nElemente, aIniEntries, nIndex )
                   " Color:       " + Chr( 9 ) + Str( oER:GetColor( nColText ), 10 ) + CRLF + ;
                   " Color Fondo: " + Chr( 9 ) + Str( oER:GetColor( nColPane ), 10 ) + CRLF + ;
                   " Border:      " + Chr( 9 ) + if( ( nBorder = 1 .OR. oGenVar:lShowBorder ), " SI ", " NO ") + CRLF + ;
-                  " Transparente:" + Chr( 9 ) + if( lTrans, " SI ", " NO " ) + CRLF 
+                  " Transparente:" + Chr( 9 ) + if( lTrans, " SI ", " NO " ) + CRLF
 
       endif
 
