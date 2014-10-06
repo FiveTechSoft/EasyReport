@@ -1009,17 +1009,15 @@ Function ER_Inspector( nD )
 
    LOCAL oDlg   := oER:oFldD:aDialogs[ nD ]
    LOCAL aProps := getAreaProperties( nAktArea )
-   Local oBrw
+   Local oSay
    Local oFont
    Local oTree
 
    DEFINE FONT oFont NAME "Verdana" SIZE 0, -14  //"Segoe UI BOLD"
 
+    @ 5, 1 SAY oSay PROMPT aProps[1,2] FONT oFont
 
-
-
-   
-    @ 0.5, 1 XBROWSE oBrw ;
+    @ 35.5, 1 XBROWSE oER:oBrwProp ;
       SIZE oER:oFldD:aDialogs[nD]:nWidth - 1, oEr:oFldD:aDialogs[nD]:nHeight - 20 ;
       COLSIZES 95, 195 ;
       AUTOCOLS ;
@@ -1028,12 +1026,12 @@ Function ER_Inspector( nD )
       FONT oFont CELL PIXEL NOBORDER
     //  ON CHANGE SetEditType( oER:oBrw )
 
-   oBrw:nMarqueeStyle    = MARQSTYLE_HIGHLROW
-   oBrw:nColDividerStyle = LINESTYLE_DARKGRAY
+   oER:oBrwProp:nMarqueeStyle    = MARQSTYLE_HIGHLROW
+   oER:oBrwProp:nColDividerStyle = LINESTYLE_DARKGRAY
   // oBrw:aCols[ 1 ]:bLDClickData = { || oER:oBrw:aCols[ 2 ]:Edit() }
   // oBrw:oCol( "Property" ):bLDClickData := { || oER:oBrw:Value:Edit() }
-   oBrw:lRecordSelector = .T.
-   
+   oER:oBrwProp:lRecordSelector = .T.
+
 
    /*
    @ 0.5, 1 XBROWSE oBrw ;
@@ -1049,13 +1047,17 @@ Function ER_Inspector( nD )
                "TreeGraph5", "TreeGraph6" } )
   */
 
-   oBrw:CreateFromCode()
-   oBrw:SetColor( 0, RGB( 224, 236, 255 ) )
+   oER:oBrwProp:CreateFromCode()
+   oER:oBrwProp:SetColor( 0, RGB( 224, 236, 255 ) )
 
-RETURN oBrw
+RETURN oER:oBrwProp
 
 //------------------------------------------------------------------------------
 
+FUNCTION RefreshBrwAreaProp(nArea)
+    oER:oBrwProp:setArray(getAreaProperties(nArea))
+    oER:oBrwProp:refresh()
+Return
 
 //------------------------------------------------------------------------------
 

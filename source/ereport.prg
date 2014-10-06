@@ -219,6 +219,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
       DlgTree( 2 )
       ER_Inspector(3 )
 
+
       //oER:oInspector  = TInspector():New()
 
    ENDIF
@@ -3670,6 +3671,7 @@ function ClickListTree( oTree )
                        nArea     := Val( oItem:cPrompt )
                     endif
                     //nAktArea  := nArea
+                    RefreshBrwAreaProp(nArea)
                     oItem:setText( AreaProperties( nArea ) )
 
                  Case nLevel = 1
@@ -3744,22 +3746,47 @@ return ( nIndex + 9 )
 //------------------------------------------------------------------------------
 
 FUNCTION GetAreaProperties( nArea )
-   LOCAL aAreaProp := {=>}
+   LOCAL aAreaProp := Array(13)
    local cAreaTitle     := oER:aWndTitle[ nArea ]
 
-    aAreaProp[1] := cAreaTitle
-    aAreaProp[2] := Val( GetPvProfString( "General", "Top1", "0", oER:aAreaIni[ nArea ] ) )
-    aAreaProp[3] := Val( GetPvProfString( "General", "Top2", "0", oER:aAreaIni[ nArea ] ) )
-    aAreaProp[4] := ( GetPvProfString( "General", "TopVariable", "1", oER:aAreaIni[ nArea ] ) = "1" )
-    aAreaProp[5] := Val( GetPvProfString( "General", "Width", "600", oER:aAreaIni[ nArea ] ) )
-    aAreaProp[6]:= Val( GetPvProfString( "General", "Height", "300", oER:aAreaIni[ nArea ] ) )
-    aAreaProp[7] := Val( GetPvProfString( "General", "Condition", "1", oER:aAreaIni[ nArea ] ) )
-    aAreaProp[8] :=  ( GetPvProfString( "General", "DelEmptySpace", "0", oER:aAreaIni[ nArea ] ) = "1" )
-    aAreaProp[9] := ( GetPvProfString( "General", "BreakBefore"  , "0", oER:aAreaIni[ nArea ] ) = "1" )
-    aAreaProp[10]  := ( GetPvProfString( "General", "BreakAfter"   , "0", oER:aAreaIni[ nArea ] ) = "1" )
-    aAreaProp[11] := ( GetPvProfString( "General", "PrintBeforeBreak", "0", oER:aAreaIni[ nArea ] ) = "1" )
-    aAreaProp[12] := ( GetPvProfString( "General", "PrintAfterBreak" , "0", oER:aAreaIni[ nArea ] ) = "1" )
-    aAreaProp[13] :=  AllTrim( GetPvProfString( "General", "ControlDBF", GL("none"), oER:aAreaIni[ nArea ] ) )
+   aAreaProp[1] := { GL( "Title" ),;
+                     cAreaTitle }
+
+   aAreaProp[2] := { GL( "Top1" ),;
+                     Val( GetPvProfString( "General", "Top1", "0", oER:aAreaIni[ nArea ] ) ) }
+
+   aAreaProp[3] := { GL( "Top2" ),;
+                     Val( GetPvProfString( "General", "Top2", "0", oER:aAreaIni[ nArea ] ) ) }
+
+   aAreaProp[4] := { GL( "TopVariable" ),;
+                     ( GetPvProfString( "General", "TopVariable", "1", oER:aAreaIni[ nArea ] ) = "1" ) }
+
+   aAreaProp[5] := { GL( "Width" ) ,;
+                     Val( GetPvProfString( "General", "Width", "600", oER:aAreaIni[ nArea ] ) ) }
+
+   aAreaProp[6] := { GL( "Height" ) ,;
+                    Val( GetPvProfString( "General", "Height", "300", oER:aAreaIni[ nArea ] ) ) }
+
+   aAreaProp[7] := { GL( "Condition" ) ,;
+                    Val( GetPvProfString( "General", "Condition", "1", oER:aAreaIni[ nArea ] ) ) }
+
+   aAreaProp[8] := { GL( "DelEmptySpace" ) ,;
+                    ( GetPvProfString( "General", "DelEmptySpace", "0", oER:aAreaIni[ nArea ] ) = "1" ) }
+
+   aAreaProp[9] := { GL( "BreakBefore" ) ,;
+                     ( GetPvProfString( "General", "BreakBefore"  , "0", oER:aAreaIni[ nArea ] ) = "1" ) }
+
+   aAreaProp[10] := { GL( "BreakAfter" ) ,;
+                     ( GetPvProfString( "General", "BreakAfter"   , "0", oER:aAreaIni[ nArea ] ) = "1" ) }
+
+   aAreaProp[11] := { GL( "PrintBeforeBreak") ,;
+                     ( GetPvProfString( "General", "PrintBeforeBreak", "0", oER:aAreaIni[ nArea ] ) = "1" ) }
+
+   aAreaProp[12] := { GL ("PrintAfterBreak") ,;
+                     ( GetPvProfString( "General", "PrintAfterBreak" , "0", oER:aAreaIni[ nArea ] ) = "1" ) }
+
+   aAreaProp[13] := { GL("ControlDBF") ,;
+                     AllTrim( GetPvProfString( "General", "ControlDBF", GL("none"), oER:aAreaIni[ nArea ] ) ) }
 
 RETURN aAreaProp
 
@@ -3773,19 +3800,19 @@ FUNCTION SetAreaProperties( nArea, aAreaProp, aTmpSource, cOldAreaText )
    local nOldHeight     := Val( GetPvProfString( "General", "Height", "300", oER:aAreaIni[ nArea ] ) )
 
    INI oIni FILE oER:aAreaIni[ nArea ]
-         SET SECTION "General" ENTRY "Title"            to AllTrim( aAreaProp[1] ) OF oIni
-         SET SECTION "General" ENTRY "Top1"             to AllTrim(STR( aAreaProp[2], 5, nDecimals )) OF oIni
-         SET SECTION "General" ENTRY "Top2"             to AllTrim(STR( aAreaProp[3], 5, nDecimals )) OF oIni
-         SET SECTION "General" ENTRY "TopVariable"      to IIF( !aAreaProp[4] , "0", "1") OF oIni
-         SET SECTION "General" ENTRY "Condition"        to AllTrim(STR( aAreaProp[7], 1 )) OF oIni
-         SET SECTION "General" ENTRY "Width"            to AllTrim(STR( aAreaProp[5], 5, nDecimals )) OF oIni
-         SET SECTION "General" ENTRY "Height"           to AllTrim(STR( aAreaProp[6], 5 ,nDecimals )) OF oIni
-         SET SECTION "General" ENTRY "DelEmptySpace"    to IIF( !aAreaProp[8] , "0", "1") OF oIni
-         SET SECTION "General" ENTRY "BreakBefore"      to IIF( !aAreaProp[9] , "0", "1") OF oIni
-         SET SECTION "General" ENTRY "BreakAfter"       to IIF( !aAreaProp[10] , "0", "1") OF oIni
-         SET SECTION "General" ENTRY "PrintBeforeBreak" to IIF( !aAreaProp[11] , "0", "1") OF oIni
-         SET SECTION "General" ENTRY "PrintAfterBreak"  to IIF( !aAreaProp[12] , "0", "1") OF oIni
-         SET SECTION "General" ENTRY "ControlDBF"       to AllTrim( aAreaProp[13] ) OF oIni
+         SET SECTION "General" ENTRY "Title"            to AllTrim( aAreaProp[1,2] ) OF oIni
+         SET SECTION "General" ENTRY "Top1"             to AllTrim(STR( aAreaProp[2,2], 5, nDecimals )) OF oIni
+         SET SECTION "General" ENTRY "Top2"             to AllTrim(STR( aAreaProp[3,2], 5, nDecimals )) OF oIni
+         SET SECTION "General" ENTRY "TopVariable"      to IIF( !aAreaProp[4,2] , "0", "1") OF oIni
+         SET SECTION "General" ENTRY "Condition"        to AllTrim(STR( aAreaProp[7,2], 1 )) OF oIni
+         SET SECTION "General" ENTRY "Width"            to AllTrim(STR( aAreaProp[5,2], 5, nDecimals )) OF oIni
+         SET SECTION "General" ENTRY "Height"           to AllTrim(STR( aAreaProp[6,2], 5 ,nDecimals )) OF oIni
+         SET SECTION "General" ENTRY "DelEmptySpace"    to IIF( !aAreaProp[8,2] , "0", "1") OF oIni
+         SET SECTION "General" ENTRY "BreakBefore"      to IIF( !aAreaProp[9,2] , "0", "1") OF oIni
+         SET SECTION "General" ENTRY "BreakAfter"       to IIF( !aAreaProp[10,2] , "0", "1") OF oIni
+         SET SECTION "General" ENTRY "PrintBeforeBreak" to IIF( !aAreaProp[11,2] , "0", "1") OF oIni
+         SET SECTION "General" ENTRY "PrintAfterBreak"  to IIF( !aAreaProp[12,2] , "0", "1") OF oIni
+         SET SECTION "General" ENTRY "ControlDBF"       to AllTrim( aAreaProp[13,2] ) OF oIni
 
          for i := 1 to 12
             SET SECTION "General" ENTRY "Formula" + AllTrim(STR(i,2)) to AllTrim( aTmpSource[ i ] ) OF oIni
@@ -3793,10 +3820,10 @@ FUNCTION SetAreaProperties( nArea, aAreaProp, aTmpSource, cOldAreaText )
 
       ENDINI
 
-      oGenVar:aAreaSizes[ nArea, 1 ] := aAreaProp[5]
-      oGenVar:aAreaSizes[ nArea, 2 ] := aAreaProp[6]
+      oGenVar:aAreaSizes[ nArea, 1 ] := aAreaProp[5,2]
+      oGenVar:aAreaSizes[ nArea, 2 ] := aAreaProp[6,2]
 
-      AreaChange( nArea,  aAreaProp[1], nOldWidth, aAreaProp[5], nOldHeight,  aAreaProp[6] )
+      AreaChange( nArea,  aAreaProp[1,2], nOldWidth, aAreaProp[5,2], nOldHeight,  aAreaProp[6,2] )
 
       SetSave( .T. )   // .F.
 
@@ -3830,25 +3857,25 @@ FUNCTION SetAreaProperties( nArea, aAreaProp, aTmpSource, cOldAreaText )
 
    DEFINE DIALOG oDlg RESOURCE "AREAPROPERTY" TITLE GL("Area Properties")
 
-   REDEFINE GET aAreaProp[1] ID 201 OF oDlg MEMO
-   REDEFINE GET aAreaProp[2] ID 301 OF oDlg PICTURE cPicture SPINNER MIN 0 UPDATE
-   REDEFINE GET aAreaProp[3] ID 302 OF oDlg PICTURE cPicture SPINNER MIN 0 UPDATE
+   REDEFINE GET aAreaProp[1,2] ID 201 OF oDlg MEMO
+   REDEFINE GET aAreaProp[2,2] ID 301 OF oDlg PICTURE cPicture SPINNER MIN 0 UPDATE
+   REDEFINE GET aAreaProp[3,2] ID 302 OF oDlg PICTURE cPicture SPINNER MIN 0 UPDATE
 
-   REDEFINE CHECKBOX aCbx[4] VAR aAreaProp[4] ID 303 OF oDlg ;
-      ON CHANGE oSay1:SetText( IIF( lTop, GL("Minimum top") + ":", GL("Top:") ) )
+   REDEFINE CHECKBOX aCbx[4] VAR aAreaProp[4,2] ID 303 OF oDlg ;
+      ON CHANGE oSay1:SetText( IIF( aAreaProp[4,2], GL("Minimum top") + ":", GL("Top:") ) )
 
-   REDEFINE GET aAreaProp[5] ID 401 OF oDlg PICTURE cPicture SPINNER MIN 0
-   REDEFINE GET aAreaProp[6] ID 402 OF oDlg PICTURE cPicture SPINNER MIN 0
+   REDEFINE GET aAreaProp[5,2] ID 401 OF oDlg PICTURE cPicture SPINNER MIN 0
+   REDEFINE GET aAreaProp[6,2] ID 402 OF oDlg PICTURE cPicture SPINNER MIN 0
 
-   REDEFINE RADIO oRad1 VAR aAreaProp[7] ID 501, 502, 503, 504 OF oDlg
+   REDEFINE RADIO oRad1 VAR aAreaProp[7,2] ID 501, 502, 503, 504 OF oDlg
 
-   REDEFINE COMBOBOX aAreaProp[13] ITEMS aDbase ID 511 OF oDlg
+   REDEFINE COMBOBOX aAreaProp[13,2] ITEMS aDbase ID 511 OF oDlg
 
-   REDEFINE CHECKBOX aCbx[1] VAR aAreaProp[8]  ID 601 OF oDlg
-   REDEFINE CHECKBOX aCbx[2] VAR aAreaProp[9]  ID 602 OF oDlg
-   REDEFINE CHECKBOX aCbx[3] VAR aAreaProp[10] ID 603 OF oDlg
-   REDEFINE CHECKBOX aCbx[5] VAR aAreaProp[11] ID 604 OF oDlg
-   REDEFINE CHECKBOX aCbx[6] VAR aAreaProp[12] ID 605 OF oDlg
+   REDEFINE CHECKBOX aCbx[1] VAR aAreaProp[8,2]  ID 601 OF oDlg
+   REDEFINE CHECKBOX aCbx[2] VAR aAreaProp[9,2]  ID 602 OF oDlg
+   REDEFINE CHECKBOX aCbx[3] VAR aAreaProp[10,2] ID 603 OF oDlg
+   REDEFINE CHECKBOX aCbx[5] VAR aAreaProp[11,2] ID 604 OF oDlg
+   REDEFINE CHECKBOX aCbx[6] VAR aAreaProp[12,2] ID 605 OF oDlg
 
    SetAreaFormulaBtn( 10,  1, oDlg )
    SetAreaFormulaBtn( 11,  2, oDlg )
@@ -3871,7 +3898,7 @@ FUNCTION SetAreaProperties( nArea, aAreaProp, aTmpSource, cOldAreaText )
    REDEFINE BUTTON PROMPT GL("&OK")     ID 101 OF oDlg ACTION ( lSave := .T., oDlg:End() )
    REDEFINE BUTTON PROMPT GL("&Cancel") ID 102 OF oDlg ACTION oDlg:End()
 
-   REDEFINE SAY oSay1 PROMPT IIF( aAreaProp[4] , GL("Minimum top") + ":", GL("Top:") ) ID 172 OF oDlg
+   REDEFINE SAY oSay1 PROMPT IIF( aAreaProp[4,2] , GL("Minimum top") + ":", GL("Top:") ) ID 172 OF oDlg
 
    REDEFINE SAY PROMPT GL("Page = 1:")                     ID 170 OF oDlg
    REDEFINE SAY PROMPT GL("Page > 1:")                     ID 171 OF oDlg
@@ -3904,6 +3931,7 @@ FUNCTION SetAreaProperties( nArea, aAreaProp, aTmpSource, cOldAreaText )
 
    if lSave
       SetAreaProperties( nArea, aAreaProp, aTmpSource, cOldAreaText )
+      RefreshBrwAreaProp( nArea )
    endif
 
 RETURN cAreaTitle
@@ -4406,6 +4434,7 @@ CLASS TEasyReport
    DATA aAreaIni
    DATA aRuler
    DATA lShowToolTip
+   DATA oBrwProp
 
    METHOD New() CONSTRUCTOR
    METHOD GetGeneralIni( cSection , cKey, cDefault ) INLINE GetPvProfString( cSection, cKey, cDefault, ::cGeneralIni )
@@ -4794,7 +4823,7 @@ METHOD FillWindow( nArea, cAreaIni ) CLASS TEasyReport
 
    aWnd[ nArea ]:bPainted   = {| hDC, cPS | ZeichneHintergrund( nArea ) }
 
-   aWnd[ nArea ]:bGotFocus  = { || SetTitleColor( .F., nArea ) }
+   aWnd[ nArea ]:bGotFocus  = { || SetTitleColor( .F., nArea ), RefreshBrwAreaProp(nArea) }
    aWnd[ nArea ]:bLostFocus = { || SetTitleColor( .T., nArea ) }
 
    aWnd[ nArea ]:bMMoved = {|nRow,nCol,nFlags| ;
@@ -4947,13 +4976,13 @@ ENDCLASS
 Function ER_TooltipAr( nArea, cRuler1 )
    local cTool  := ""
    local oTT
-   
+
    oTT    := TC5Tooltip():New( 100, 100, 250, 150, aWnd[ nArea ] , .T., CLR_CYAN, CLR_WHITE )
 
    cTool       := "Titulo:           " + Chr( 9 ) + Left( oGenVar:aAreaTitle[ nArea ]:cCaption, 28 ) + CRLF + ;
                   "Unidad Medida:    " + Chr( 9 ) + Right( RTrim( cRuler1 ), 2 ) + CRLF + ;
                   "Top:              " + Chr( 9 ) + Str( aWnd[ nArea ]:nTop, 10 ) + CRLF
-   
+
    oTT:cHeader  := "Propiedades Area: " + Chr( 9 ) + Str( aWnd[ nArea ]:nArea, 10 ) //+ CRLF + ;
    oTT:cBody    := cTool
    oTT:cFoot    := " "
@@ -4962,7 +4991,7 @@ Function ER_TooltipAr( nArea, cRuler1 )
 
    oTT:lLineHeader = .T.
    oTT:lBtnClose   = .T.
-   oTT:lSplitHdr   = .T. 
+   oTT:lSplitHdr   = .T.
    oTT:lBorder     = .T.
 
 Return oTT
