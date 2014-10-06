@@ -217,8 +217,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
 
 
       DlgTree( 2 )
-      ER_Inspector(3 )
-
+      ER_Inspector( 3 )
 
       //oER:oInspector  = TInspector():New()
 
@@ -289,35 +288,52 @@ RETURN nil
 
 //----------------------------------------------------------------------------//
 
-Function DlgTree( nD )
+Function DlgTree( nD, nD1 )
 Local oFont
 Local nItemH
+Local oFoldnD
 
 DEFAULT nD  := 2
 
-   DEFINE FONT oFont NAME "Verdana" SIZE 0, -10
-   oER:oTree := TTreeView():New( 0, 2, oER:oFldI:aDialogs[ nD ] , 0, , .T., .F.,;
+   if empty( nD1 )
+      DEFINE FONT oFont NAME "Verdana" SIZE 0, -10
+      oER:oTree := TTreeView():New( 0, 2, oER:oFldI:aDialogs[ nD ] , 0, , .T., .F.,;
                                  Int(GetSysMetrics( 0 )/4) - 6 ,;
-                                 oER:oFldI:aDialogs[ nD ]:nHeight ,"",, )
+                                 Int(oER:oFldI:aDialogs[ nD ]:nHeight/2) ,"",, )
 
-   // oEr:oMainWnd:oLeft  :=   oER:oTree
-   oEr:oTree:SetColor( ,  oEr:nClrPaneTree )
-   oEr:oTree:l3DLook := .F.
-   oEr:oTree:SetFont( oFont )
+      // oEr:oMainWnd:oLeft  :=   oER:oTree
+      oEr:oTree:SetColor( ,  oEr:nClrPaneTree )
+      oEr:oTree:l3DLook := .F.
+      oEr:oTree:SetFont( oFont )
 
-   if  lValidFwh( 14.08 )
-      if !empty( oEr:oTree:oFont )
-         nItemH := oEr:oTree:oFont:nHeight * 2
-      else
-         nItemH := 24
+      if lValidFwh( 14.08 )
+         if !empty( oEr:oTree:oFont )
+            nItemH := oEr:oTree:oFont:nHeight * 2
+         else
+            nItemH := 24
+         endif
+         oEr:oTree:SetItemHeight( nItemH )  // o  TvSetItemHeight( oER:oTree:hWnd, nItemH )
       endif
-      oEr:oTree:SetItemHeight( nItemH )  // o  TvSetItemHeight( oER:oTree:hWnd, nItemH )
-   endif
-   oEr:oTree:bMouseWheel = { | nKey, nDelta, nXPos, nYPos | ;
+      oEr:oTree:bMouseWheel = { | nKey, nDelta, nXPos, nYPos | ;
                         ER_MouseWheelTree( nKey, nDelta, nXPos, nYPos ) }
 
-   //oER:oFldI:aDialogs[ nD ]:SetControl( oEr:oTree )
-   //oER:oFldI:Hide()
+      //oER:oFldI:aDialogs[ nD ]:SetControl( oEr:oTree )
+      //oER:oFldI:Hide()
+   endif
+
+   @ Int(oER:oFldI:aDialogs[ nD ]:nHeight/2)+10, 1 CFOLDEREX oFoldnD ;
+       PROMPT GL("&Areas"), GL("&Items") ;
+       OF oER:oFldI:aDialogs[ nD ] ;
+       SIZE Int(GetSysMetrics( 0 )/4), Int(oER:oFldI:aDialogs[ nD ]:nHeight/2) - 10 ;    //326
+       OPTION 1 ;
+       TAB HEIGHT 24 ;
+       BITMAPS { "B_EDIT16", "B_ITEMLIST16" } ;
+       PIXEL ;
+       FONT oFont ;
+       SEPARATOR 0
+
+   ER_Inspector( , oFoldnD:aDialogs[ 1 ] )
+
 
 Return oEr:oTree
 

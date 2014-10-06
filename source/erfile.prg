@@ -115,7 +115,8 @@ function OpenFile( cFile, lChange, lAddDelNew )
          Dlg_Fonts( 4 )
          Er_Databases(,2)
          ER_Expressions(,,1)
-         SwichFldD( oEr:oMainWnd, oEr:oPanelD, )  //oER:oFldD )
+         ER_Inspector1(3 )
+         SwichFldD( oEr:oMainWnd, oEr:oPanelD, ) //oER:oFldD )
 
       endif
 

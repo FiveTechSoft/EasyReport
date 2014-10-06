@@ -1005,51 +1005,36 @@ function Expressions( lTake, cAltText )
 return ( creturn )
 //------------------------------------------------------------------------------
 
-Function ER_Inspector( nD )
+Function ER_Inspector( nD, oDlg )
 
-   LOCAL oDlg   := oER:oFldD:aDialogs[ nD ]
+   //LOCAL oDlg   := oER:oFldD:aDialogs[ nD ]
    LOCAL aProps := getAreaProperties( nAktArea )
-   Local oSay
    Local oFont
-   Local oTree
 
-   DEFINE FONT oFont NAME "Verdana" SIZE 0, -14  //"Segoe UI BOLD"
+    DEFAULT oDlg   := oER:oFldD:aDialogs[ nD ]
 
+    DEFINE FONT oFont NAME "Verdana" SIZE 0, -11  //"Segoe UI BOLD"
 
-    @ 8, 3 SAY oER:oSaySelectedItem PROMPT "hola" SIZE 140, 20 OF oDlg FONT oFont pixel //(+ aProps[1,2] FONT oFont
+    @ 8, 3 SAY oER:oSaySelectedItem PROMPT "hola" SIZE 140, 20 OF oDlg FONT oFont pixel //COLOR CLR_BLACK//TRANSPARENT //(+ aProps[1,2] FONT oFont
 
-    @ 35.5, 1 XBROWSE oER:oBrwProp ;
-      SIZE oER:oFldD:aDialogs[nD]:nWidth - 1, oEr:oFldD:aDialogs[nD]:nHeight - 20 ;
+    @ 34.5, 1 XBROWSE oER:oBrwProp ;
+      SIZE oDlg:nWidth - 1, if( !empty( nD ), Int(oDlg:nHeight/2) - 25, oDlg:nHeight - 25) ;
       COLSIZES 95, 195 ;
       AUTOCOLS ;
       HEADERS " " + GL("Property"), " " + GL("Value") ;
       ARRAY aProps OF oDlg ;
-      FONT oFont CELL PIXEL NOBORDER
-    //  ON CHANGE SetEditType( oER:oBrw )
+      FONT oFont CELL PIXEL //NOBORDER
+   // ON CHANGE SetEditType( oER:oBrw )
 
    oER:oBrwProp:nMarqueeStyle    = MARQSTYLE_HIGHLROW
    oER:oBrwProp:nColDividerStyle = LINESTYLE_DARKGRAY
-  // oBrw:aCols[ 1 ]:bLDClickData = { || oER:oBrw:aCols[ 2 ]:Edit() }
-  // oBrw:oCol( "Property" ):bLDClickData := { || oER:oBrw:Value:Edit() }
+   // oBrw:aCols[ 1 ]:bLDClickData = { || oER:oBrw:aCols[ 2 ]:Edit() }
+   // oBrw:oCol( "Property" ):bLDClickData := { || oER:oBrw:Value:Edit() }
    oER:oBrwProp:lRecordSelector = .T.
-
-
-   /*
-   @ 0.5, 1 XBROWSE oBrw ;
-     SIZE oER:oFldD:aDialogs[nD]:nWidth - 1, oEr:oFldD:aDialogs[nD]:nHeight - 20 ;
-     HEADERS " " + GL("Property"), " " + GL("Value") ;
-     FONT oFont CELL PIXEL OF oDlg NOBORDER
-  */
-
-  /*
-  oBrw:SetTree( oEr:oTree, { "FoldOpen", "FoldClose", "Checked", "Unchecked", "Property", ;
-               "Typ_Text", "Typ_Image", "Typ_Graphic", "Typ_Barcode", ;
-               "TreeGraph1", "TreeGraph2", "TreeGraph3", "TreeGraph4", ;
-               "TreeGraph5", "TreeGraph6" } )
-  */
-
-   oER:oBrwProp:CreateFromCode()
    oER:oBrwProp:SetColor( 0, RGB( 224, 236, 255 ) )
+   oER:oBrwProp:lHScroll            := .F.
+   oER:oBrwProp:CreateFromCode()
+
 
 RETURN oER:oBrwProp
 
@@ -1060,7 +1045,31 @@ FUNCTION RefreshBrwAreaProp(nArea)
    oER:oBrwProp:setArray(aProps)
    oER:oBrwProp:refresh()
    oER:oSaySelectedItem:setText( aProps[1,2] )
-Return
+Return .T.
+
+//------------------------------------------------------------------------------
+
+Function CargaItems( aTree, aElem, aBmps )
+   Local x
+   Local n
+   Local aTemp  := {}
+
+  //? Len( aItems ), Len( aItems[ 1 ] )
+  For x = 1 to Len( aElem )
+      if !empty( aElem[ x ] )
+         if Valtype( aElem[ x ] ) = "O"
+            AAdd( aTemp, Space( aElem[ x ]:ItemLevel() * 5 ) + aElem[ x ]:cPrompt )
+            AAdd( aTemp, aElem[ x ]:ItemLevel() )
+            AAdd( aTree, aTemp )
+            aTemp := {}
+            if !empty( aElem[ x ]:aItems )
+               CargaItems( aTree, aElem[ x ]:aItems, aBmps )
+            endif
+         endif
+      endif
+  Next x
+
+Return aTree
 
 //------------------------------------------------------------------------------
 
@@ -2209,4 +2218,107 @@ Function RndMsg( cCaption, cBmp ,nExpRow  )
 return nil
 
 //----------------------------------------------------------------------------//
+
+Function GetbBmpData( oBrw )
+Local nBmp  := 1
+
+ If empty( oBrw:aCols[ 3 ]:Value() )
+    nBmp := 1
+ else
+    If oBrw:aCols[ 3 ]:Value() = 1
+       nBmp := 1
+    else
+       if !empty( At( Upper( GL("Visible") ), Upper( oBrw:aCols[ 2 ]:Value() ) ) )
+          nBmp := 3
+       else
+       nBmp := 10
+       endif
+    endif
+ endif
+
+Return nBmp
+
+//------------------------------------------------------------------------------
+
+Function ER_Inspector1( nD )
+
+   LOCAL oDlg   := oER:oFldD:aDialogs[ nD ]
+   LOCAL aProps := GetAreaProperties( nAktArea )
+   Local oFont
+   Local oBrw
+   Local oCol
+   Local oTree
+   Local aTree := {}
+   Local aT    := {}
+   Local aBmps := { "FoldOpen", "FoldClose", "Checked", "Unchecked", "Property", ;
+                    "Typ_Text", "Typ_Image", "Typ_Graphic", "Typ_Barcode", ;
+                    "TreeGraph1", "TreeGraph2", "TreeGraph3", "TreeGraph4", ;
+                    "TreeGraph5", "TreeGraph6" } 
+
+   DEFINE FONT oFont NAME "Verdana" SIZE 0, -11  //"Segoe UI BOLD"
+
+   if !empty( oEr:oTree:aItems )
+   aTree := CargaItems( aTree, oEr:oTree:aItems, aBmps )   
+
+   @ Int( oEr:oFldD:aDialogs[nD]:nHeight/2 ) + 15, 1 XBROWSE oBrw ;
+     SIZE oER:oFldD:aDialogs[nD]:nWidth - 1, Int(oEr:oFldD:aDialogs[nD]:nHeight/2) - 20;
+     ARRAY aT  ;  //     HEADERS " " + GL("Property"), " " + GL("Level") ;//     COLSIZES 195, 95 ;
+     FONT oFont PIXEL OF oDlg CELL //NOBORDER
+
+     oBrw:SetArray( aTree )
+     
+     oBrw:aCols[ 1 ]:nWidth   := 240
+     oBrw:aCols[ 1 ]:cHeader  := GL("Property")
+     oBrw:aCols[ 2 ]:nWidth   := 290
+     oBrw:aCols[ 2 ]:cHeader  := GL("Level")
+
+     oBrw:lHScroll            := .F.
+
+     oCol  := oBrw:InsCol( 1 )
+     //oCol:bEditValue   := { |x| If( x == nil, ::oTreeItem:cPrompt, ::oTreeItem:cPrompt := x ) }
+
+     oCol:cHeader       := GL("Level")
+     oCol:nWidth        := 50
+     oCol:nDataStrAlign := AL_LEFT
+     oCol:nDataBmpAlign := AL_LEFT
+     //oCol:bLDClickData := { || If( ::oTreeItem:oTree != nil,( ::oTreeItem:Toggle(), ::Refresh() ),) }
+     oCol:bIndent      := { || oBrw:aCols[ 3 ]:Value() * 20 } //nLevel * 20 - 20 }
+
+   if ValType( aBmps ) == 'A'
+      oCol:AddBitmap( aBmps )
+   endif
+   oCol:bBmpData   := { || GetbBmpData( oBrw ) }
+
+   oBrw:nFreeze         := 1
+   oBrw:aCols[3]:Hide()
+  
+   /*
+   if !empty( oEr:oTree )
+      if !empty( oEr:oTree:aItems )
+         oBrw:SetTree( oEr:oTree, ;
+             { "FoldOpen", "FoldClose", "Checked", "Unchecked", "Property", ;
+               "Typ_Text", "Typ_Image", "Typ_Graphic", "Typ_Barcode", ;
+               "TreeGraph1", "TreeGraph2", "TreeGraph3", "TreeGraph4", ;
+               "TreeGraph5", "TreeGraph6" } )
+      endif
+   endif
+   */
+
+   else
+   @ Int( oEr:oFldD:aDialogs[nD]:nHeight/2 ) + 15, 1 XBROWSE oBrw ;
+     SIZE oER:oFldD:aDialogs[nD]:nWidth - 1, Int(oEr:oFldD:aDialogs[nD]:nHeight/2) - 20 ;
+     ARRAY aT  ;  
+     HEADERS " " + GL("Property"), " " + GL("Level") ;//     COLSIZES 195, 95 ;
+     FONT oFont PIXEL OF oDlg CELL //NOBORDER
+
+     oBrw:lHScroll            := .F.
+
+   endif
+   oBrw:CreateFromCode()
+   oBrw:SetColor( 0, RGB( 224, 236, 255 ) )
+
+
+RETURN oBrw
+
+//------------------------------------------------------------------------------
 
