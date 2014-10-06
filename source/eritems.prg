@@ -26,7 +26,7 @@ function ElementActions( oItem, i, cName, nArea, cAreaIni, cTyp )
 
    //oItems:bGotFocus  := {|| SelectItem( i, nArea, cAreaIni ), MsgBarInfos( i, cAreaIni ) }
 
-   oItem:bGotFocus  := {||   SelectItem( i, nArea, cAreaIni ),  RefreshBrwTextProp( i, nArea, cAreaIni )  }
+   oItem:bGotFocus  := {||   SelectItem( i, nArea, cAreaIni ),  RefreshBrwProp( i, nArea, cAreaIni )  }
 
    oItem:bLClicked = { | nRow, nCol, nFlags | ;
       If( oGenVar:lItemDlg, ( If( GetKeyState( VK_SHIFT ), MultiItemProperties(), ;
@@ -478,6 +478,20 @@ FUNCTION GetTextProperties( nItem, nArea, cAreaIni )
 
 
 RETURN aTextProp
+
+//------------------------------------------------------------------------------
+
+FUNCTION RefreshBrwProp( i , nArea, cAreaIni )
+   LOCAL cOldDef := AllTrim( GetPvProfString( "Items", AllTrim(STR(i,5)) , "", cAreaIni ) )
+   LOCAL cTyp    := UPPER(AllTrim( GetField( cOldDef, 1 ) ))
+   LOCAL aProps
+
+   IF cTyp == "TEXT"
+      RefreshBrwTextProp( i , nArea, cAreaIni )
+  endif
+
+Return
+
 
 //------------------------------------------------------------------------------
 
