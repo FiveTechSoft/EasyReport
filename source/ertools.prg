@@ -1015,7 +1015,8 @@ Function ER_Inspector( nD )
 
    DEFINE FONT oFont NAME "Verdana" SIZE 0, -14  //"Segoe UI BOLD"
 
-    @ 5, 1 SAY oSay PROMPT aProps[1,2] FONT oFont
+
+    @ 8, 3 SAY oER:oSaySelectedItem PROMPT "hola" SIZE 140, 20 OF oDlg FONT oFont pixel //(+ aProps[1,2] FONT oFont
 
     @ 35.5, 1 XBROWSE oER:oBrwProp ;
       SIZE oER:oFldD:aDialogs[nD]:nWidth - 1, oEr:oFldD:aDialogs[nD]:nHeight - 20 ;
@@ -1055,8 +1056,10 @@ RETURN oER:oBrwProp
 //------------------------------------------------------------------------------
 
 FUNCTION RefreshBrwAreaProp(nArea)
-    oER:oBrwProp:setArray(getAreaProperties(nArea))
-    oER:oBrwProp:refresh()
+   LOCAL aProps:= getAreaProperties(nArea)
+   oER:oBrwProp:setArray(aProps)
+   oER:oBrwProp:refresh()
+   oER:oSaySelectedItem:setText( aProps[1,2] )
 Return
 
 //------------------------------------------------------------------------------

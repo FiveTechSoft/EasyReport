@@ -4434,7 +4434,7 @@ CLASS TEasyReport
    DATA aAreaIni
    DATA aRuler
    DATA lShowToolTip
-   DATA oBrwProp
+   DATA oBrwProp,oSaySelectedItem
 
    METHOD New() CONSTRUCTOR
    METHOD GetGeneralIni( cSection , cKey, cDefault ) INLINE GetPvProfString( cSection, cKey, cDefault, ::cGeneralIni )
