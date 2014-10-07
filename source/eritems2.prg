@@ -6,7 +6,7 @@ STATIC  nBoxTop, nBoxLeft, nBoxRight, nBoxBottom
 
 MEMVAR aItems, aWnd
 MEMVAR cDefaultPath
-MEMVAR nAktItem, nAktArea, nSelArea, aSelection //, nTotalHeight, nTotalWidth
+MEMVAR nAktItem, nAktArea, nSelArea //, aSelection //, nTotalHeight, nTotalWidth
 MEMVAR oGenVar
 //MEMVAR lBoxDraw
 MEMVAR cInfoWidth, cInfoHeight
@@ -39,12 +39,12 @@ RETURN (.T.)
 
 FUNCTION ToggleItemSelection( nItem, nArea )
 
-   LOCAL nSelSearch := ASCAN( aSelection, {| aVal | aVal[1] = nArea .AND. aVal[2] = nItem } )
+   LOCAL nSelSearch := ASCAN( oER:aSelection, {| aVal | aVal[1] = nArea .AND. aVal[2] = nItem } )
 
    IF nSelSearch = 0
-      AADD( aSelection, { nArea, nItem } )
+      AADD( oER:aSelection, { nArea, nItem } )
    ELSE
-      aSelection := ADel( aSelection, nSelSearch, .T. )
+      oER:aSelection := ADel( oER:aSelection, nSelSearch, .T. )
    ENDIF
 
    MarkItem( aItems[nArea,nItem]:hWnd )
@@ -58,10 +58,10 @@ FUNCTION RefreshSelection()
 
    LOCAL i
 
-   FOR i := 1 TO LEN( aSelection )
-      MarkItem( aItems[ aSelection[i,1], aSelection[i,2] ]:hWnd )
-      aItems[ aSelection[i,1], aSelection[i,2] ]:Refresh()
-      MarkItem( aItems[ aSelection[i,1], aSelection[i,2] ]:hWnd )
+   FOR i := 1 TO LEN( oER:aSelection )
+      MarkItem( aItems[ oER:aSelection[i,1], oER:aSelection[i,2] ]:hWnd )
+      aItems[ oER:aSelection[i,1], oER:aSelection[i,2] ]:Refresh()
+      MarkItem( aItems[ oER:aSelection[i,1], oER:aSelection[i,2] ]:hWnd )
    NEXT
 
    //UnSelectAll( .F. )
@@ -77,14 +77,14 @@ FUNCTION UnSelectAll( lDelSelection )
 
    DEFAULT lDelSelection := .T.
 
-   FOR i := 1 TO LEN( aSelection )
-      IF aItems[ aSelection[i,1], aSelection[i,2] ] <> NIL
-         MarkItem( aItems[ aSelection[i,1], aSelection[i,2] ]:hWnd )
+   FOR i := 1 TO LEN( oER:aSelection )
+      IF aItems[ oER:aSelection[i,1], oER:aSelection[i,2] ] <> NIL
+         MarkItem( aItems[ oER:aSelection[i,1], oER:aSelection[i,2] ]:hWnd )
       ENDIF
    NEXT
 
    IF lDelSelection
-      aSelection := {}
+      oER:aSelection := {}
    ENDIF
 
    RETURN (.T.)
@@ -111,7 +111,7 @@ FUNCTION SelectAllItems( lCurArea )
 
                MarkItem( aItems[ nCurArea, i ]:hWnd )
 
-               AADD( aSelection, { nCurArea, i } )
+               AADD( oER:aSelection, { nCurArea, i } )
 
             ENDIF
 
@@ -230,8 +230,8 @@ FUNCTION MsgSelected()
 
    LOCAL i, cSel := ""
 
-   FOR i := 1 TO LEN( aSelection )
-      cSel += STR( aSelection[i,1] ) + "  " + STR( aSelection[i,2] ) + CRLF
+   FOR i := 1 TO LEN( oER:aSelection )
+      cSel += STR( oER:aSelection[i,1] ) + "  " + STR( oER:aSelection[i,2] ) + CRLF
    NEXT
 
    Msginfo( cSel )

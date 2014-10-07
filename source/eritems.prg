@@ -3,7 +3,7 @@
 #INCLUDE "FiveWin.ch"
 
 MEMVAR aItems, aWnd
-MEMVAR nAktItem, nAktArea, nSelArea, aSelection
+MEMVAR nAktItem, nAktArea, nSelArea //, aSelection
 MEMVAR nRuler, nRulerTop
 MEMVAR cItemCopy, aSelectCopy, aItemCopy, nXMove, nYMove
 
@@ -87,7 +87,7 @@ function KeyDownAction( nKey, nItem, nArea, cAreaIni )
    local nRight   := 0
    local nBottom  := 0
 
-   if LEN( aSelection ) <> 0
+   if LEN( oER:aSelection ) <> 0
       WndKeyDownAction( nKey, nArea, cAreaIni )
       return .T.
    endif
@@ -347,8 +347,8 @@ return ( cName )
 function MultiItemProperties()
 
    local oDlg, aCbx[1], aGrp[1]
-   local cItemDef  := AllTrim( GetPvProfString( "Items", AllTrim(STR( aSelection[1,2], 5 )), ;
-                      "", oER:aAreaIni[ aSelection[1,1] ] ) )
+   local cItemDef  := AllTrim( GetPvProfString( "Items", AllTrim(STR( oER:aSelection[1,2], 5 )), ;
+                      "", oER:aAreaIni[ oER:aSelection[1,1] ] ) )
    local nTop      := VAL( GetField( cItemDef, 7 ) )
    local nLeft     := VAL( GetField( cItemDef, 8 ) )
    local nWidth    := VAL( GetField( cItemDef, 9 ) )
@@ -417,9 +417,9 @@ function UpdateItems( nValue, nTyp, lAddValue, aOldValue )
 
    UnSelectAll( .F. )
 
-   FOR i := 1 TO LEN( aSelection )
+   FOR i := 1 TO LEN( oER:aSelection )
 
-      aWerte  := GetCoors( aItems[ aSelection[i,1], aSelection[i,2] ]:hWnd )
+      aWerte  := GetCoors( aItems[ oER:aSelection[i,1], oER:aSelection[i,2] ]:hWnd )
       nTop    := aWerte[1]
       nLeft   := aWerte[2]
       nHeight := aWerte[3] - aWerte[1]
@@ -434,9 +434,9 @@ function UpdateItems( nValue, nTyp, lAddValue, aOldValue )
 
       aOldValue[nTyp] := nValue
 
-      aItems[ aSelection[i,1], aSelection[i,2]] :Move( nTop, nLeft, nWidth, nHeight, .T. ) //, .T. )
+      aItems[ oER:aSelection[i,1], oER:aSelection[i,2]] :Move( nTop, nLeft, nWidth, nHeight, .T. ) //, .T. )
 
-      aItems[ aSelection[i,1], aSelection[i,2] ]:Refresh()
+      aItems[ oER:aSelection[i,1], oER:aSelection[i,2] ]:Refresh()
 
    NEXT
 
@@ -1654,7 +1654,7 @@ function ItemCopy( lCut )
 
    DEFAULT lCut := .F.
 
-   if nAktItem = 0 .AND. LEN( aSelection ) = 0
+   if nAktItem = 0 .AND. LEN( oER:aSelection ) = 0
       MsgStop( GL("Please select an item first."), GL("Stop!") )
       return (.F.)
    endif
@@ -1663,25 +1663,25 @@ function ItemCopy( lCut )
    nCopyEntryNr := 0
    nCopyAreaNr  := 0
 
-   if LEN( aSelection ) <> 0
+   if LEN( oER:aSelection ) <> 0
 
       //Multiselection
-      aSelectCopy := aSelection
+      aSelectCopy := oER:aSelection
       aItemCopy   := {}
 
-      FOR i := 1 TO LEN( aSelection )
+      FOR i := 1 TO LEN( oER:aSelection )
 
          cItemCopy := AllTrim( GetPvProfString( "Items", ;
-                      AllTrim(STR( aSelection[i,2], 5 )) , "", oER:aAreaIni[ aSelection[i,1] ] ) )
+                      AllTrim(STR( oER:aSelection[i,2], 5 )) , "", oER:aAreaIni[ oER:aSelection[i,1] ] ) )
          AADD( aItemCopy, cItemCopy )
 
          oItemInfo := VRDItem():New( cItemCopy )
 
          if lCut
-            DeleteItem( aSelection[i,2], aSelection[i,1], .T. )
+            DeleteItem( oER:aSelection[i,2], oER:aSelection[i,1], .T. )
             if oItemInfo:nItemID < 0
-               DelIniEntry( "Items", AllTrim(STR(aSelection[i,2],5)), ;
-                            oER:aAreaIni[ aSelection[i,1] ] )
+               DelIniEntry( "Items", AllTrim(STR(oER:aSelection[i,2],5)), ;
+                            oER:aAreaIni[ oER:aSelection[i,1] ] )
             endif
          endif
 

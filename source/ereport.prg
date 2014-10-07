@@ -51,7 +51,7 @@ STATIC lDraGraphic := .T.
 
 MEMVAR aItems, aWnd
 MEMVAR cLongDefIni, cDefaultPath
-MEMVAR nAktItem, nAktArea, nSelArea, aSelection
+MEMVAR nAktItem, nAktArea, nSelArea //, aSelection
 MEMVAR aVRDSave, lVRDSave
 MEMVAR cItemCopy, aSelectCopy, aItemCopy, nXMove, nYMove
 MEMVAR lProfi
@@ -705,7 +705,7 @@ function BarMenu()
       OF oBar ;
       PROMPT FWString( "Properties" ) ;
       TOOLTIP GL("Item Properties") ;
-      ACTION IIF( LEN( aSelection ) <> 0, MultiItemProperties(), ItemProperties( nAktItem, nAktArea ) ) ;
+      ACTION IIF( LEN( oER:aSelection ) <> 0, MultiItemProperties(), ItemProperties( nAktItem, nAktArea ) ) ;
       WHEN !Empty( oER:cDefIni )
 
    if Val( oEr:GetDefIni( "General", "InsertMode", "1" ) ) = 1
@@ -1021,7 +1021,7 @@ function DeclarePublics( cDefFile )
    PUBLIC nAktItem := 0
    PUBLIC nAktArea := 1
    PUBLIC nSelArea := 0
-   PUBLIC aSelection := {}
+   //PUBLIC aSelection := {}
 
    //Sichern
    PUBLIC aVRDSave[102, 2 ]
@@ -1097,11 +1097,12 @@ function DeclarePublics( cDefFile )
    //Sprachdatei
    OpenLanguage()
 
-   aWnd         := Array( oER:nTotAreas )
-   oER:aWndTitle:= Array( Len( aWnd ) )
-   aItems       := Array( Len( aWnd ), 1000 )
+   aWnd             := Array( oER:nTotAreas )
+   oER:aWndTitle    := Array( Len( aWnd ) )
+   aItems           := Array( Len( aWnd ), 1000 )
    oER:aAreaIni     := Array( Len( aWnd ) )
    oER:aRuler       := Array( Len( aWnd ), 2 )
+   oER:aSelection   := {}   // Array( Len( aWnd ), 2 )
    oER:aFonts       := Array( 20 )
 
    oEr:nDeveloper := Val( oEr:GetGeneralIni( "General", "DeveloperMode", "0" ) )
@@ -1417,7 +1418,7 @@ function BuildMenu()
          WHEN !Empty( oER:cDefIni )
       SEPARATOR
       MENUITEM GL("&Item Properties") + chr(9) + GL("Ctrl+I") RESOURCE "B_EDIT" ;
-         ACTION IIF( LEN( aSelection ) <> 0, MultiItemProperties(), ItemProperties( nAktItem, nAktArea ) ) ;
+         ACTION IIF( LEN( oER:aSelection ) <> 0, MultiItemProperties(), ItemProperties( nAktItem, nAktArea ) ) ;
          ACCELERATOR ACC_CONTROL, ASC( GL("I") ) ;
          WHEN !Empty( oER:cDefIni )
       ENDMENU
@@ -1509,12 +1510,12 @@ function PopupMenu( nArea, oItem, nRow, nCol, lItem )
 
    MENU oMenu POPUP
 
-   if LEN( aSelection ) <> 0 .OR. nAktItem <> 0
+   if LEN( oER:aSelection ) <> 0 .OR. nAktItem <> 0
       MENUITEM GL("&Item Properties") + chr(9) + GL("Ctrl+I") RESOURCE "B_EDIT" ;
-      ACTION IIF( LEN( aSelection ) <> 0, MultiItemProperties(), ItemProperties( nAktItem, nAktArea ) )
+      ACTION IIF( LEN( oER:aSelection ) <> 0, MultiItemProperties(), ItemProperties( nAktItem, nAktArea ) )
    endif
 
-   if LEN( aSelection ) <> 0
+   if LEN( oER:aSelection ) <> 0
       MENUITEM GL("&Delete selected Items") + CHR(9) + GL("Del") ;
       ACTION DelselectItems()
       SEPARATOR
@@ -1850,7 +1851,7 @@ function WndKeyDownAction( nKey, nArea, cAreaIni )
    local nRight   := 0
    local nBottom  := 0
 
-   if LEN( aSelection ) = 0
+   if LEN( oER:aSelection ) = 0
       return(.F.)
    endif
 
@@ -1860,7 +1861,7 @@ function WndKeyDownAction( nKey, nArea, cAreaIni )
    endif
 
    //return to edit properties
-   if nKey == VK_RETURN .and. LEN( aSelection ) <> 0
+   if nKey == VK_RETURN .and. LEN( oER:aSelection ) <> 0
       MultiItemProperties()
    endif
 
@@ -1897,17 +1898,17 @@ function WndKeyDownAction( nKey, nArea, cAreaIni )
 
       UnSelectAll( .F. )
 
-      for i := 1 to LEN( aSelection )
+      for i := 1 to LEN( oER:aSelection )
 
-         if aItems[ aSelection[i, 1 ], aSelection[i, 2 ] ] <> nil
+         if aItems[ oER:aSelection[i, 1 ], oER:aSelection[i, 2 ] ] <> nil
 
-            aWerte   := GetCoors( aItems[ aSelection[i, 1 ], aSelection[i, 2 ] ]:hWnd )
+            aWerte   := GetCoors( aItems[ oER:aSelection[i, 1 ], oER:aSelection[i, 2 ] ]:hWnd )
             nTop     := aWerte[ 1 ]
             nLeft    := aWerte[2]
             nHeight  := aWerte[3] - aWerte[ 1 ]
             nWidth   := aWerte[4] - aWerte[2]
 
-            aItems[ aSelection[i, 1 ], aSelection[i, 2 ] ]:Move( nTop + nY, nLeft + nX, nWidth + nRight, nHeight + nBottom, .T. )
+            aItems[ oER:aSelection[i, 1 ], oER:aSelection[i, 2 ] ]:Move( nTop + nY, nLeft + nX, nWidth + nRight, nHeight + nBottom, .T. )
 
          endif
 
@@ -1927,12 +1928,12 @@ function DelselectItems()
 
    if MsgNoYes( GL("Delete the selected items?"), GL("Select an option") )
 
-      for i := 1 to LEN( aSelection )
+      for i := 1 to LEN( oER:aSelection )
 
-         if aItems[ aSelection[i, 1 ], aSelection[i, 2 ] ] != nil
+         if aItems[ oER:aSelection[i, 1 ], oER:aSelection[i, 2 ] ] != nil
 
-            MarkItem( aItems[ aSelection[i, 1 ], aSelection[i, 2 ] ]:hWnd )
-            DelItemWithKey( aSelection[i, 2 ], aSelection[i, 1 ] )
+            MarkItem( aItems[ oER:aSelection[i, 1 ], oER:aSelection[i, 2 ] ]:hWnd )
+            DelItemWithKey( oER:aSelection[i, 2 ], oER:aSelection[i, 1 ] )
 
          endif
 
@@ -4451,6 +4452,7 @@ CLASS TEasyReport
    DATA aRuler
    DATA lShowToolTip
    DATA oBrwProp,oSaySelectedItem
+   DATA aSelection
 
    METHOD New() CONSTRUCTOR
    METHOD GetGeneralIni( cSection , cKey, cDefault ) INLINE GetPvProfString( cSection, cKey, cDefault, ::cGeneralIni )

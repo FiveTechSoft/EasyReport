@@ -1015,9 +1015,11 @@ Function ER_Inspector( nD, oDlg )
 
     DEFINE FONT oFont NAME "Verdana" SIZE 0, -11  //"Segoe UI BOLD"
 
+    if !empty( nD )
     @ 8, 3 SAY oER:oSaySelectedItem PROMPT "hola" SIZE 140, 20 OF oDlg FONT oFont pixel //COLOR CLR_BLACK//TRANSPARENT //(+ aProps[1,2] FONT oFont
+    endif
 
-    @ 34.5, 1 XBROWSE oER:oBrwProp ;
+    @ if( !empty( nD ), 34.5, 2.5 ), 1 XBROWSE oER:oBrwProp ;
       SIZE oDlg:nWidth - 1, if( !empty( nD ), Int(oDlg:nHeight/2) - 25, oDlg:nHeight - 25) ;
       COLSIZES 95, 195 ;
       AUTOCOLS ;
