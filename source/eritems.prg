@@ -252,6 +252,28 @@ return .T.
 
 //----------------------------------------------------------------------------//
 
+function swichItemsArea( nArea, lDisable )
+   LOCAL nLen:= Len(aItems[nArea])
+   LOCAL  i
+   DEFAULT lDisable:= .t.
+
+   IF nLen>0
+
+      FOR i=1 TO nLen
+       	IF  !Empty(aItems[nArea, i ])
+            IF ldisable
+        			 aItems[nArea, i ]:disable()
+     				else
+        			aItems[nArea, i ]:enable()
+      			ENDIF
+      	endif
+      next
+ 	endif
+ 	
+RETURN nil
+
+//----------------------------------------------------------------------------//
+
 function ItemPopupMenu( oItem, nItem, nArea, nRow, nCol )
 
    local oMenu

@@ -4857,7 +4857,11 @@ METHOD FillWindow( nArea, cAreaIni ) CLASS TEasyReport
     aWnd[ nArea ]:bLClicked = {|nRow,nCol,nFlags| DeactivateItem(), ;
                               IIF( GetKeyState( VK_SHIFT ),, UnSelectAll() ), ;
                               StartSelection( nRow, nCol, aWnd[ nArea ] ), ;
-                              nAktArea := aWnd[ nArea ]:nArea, ::oMainWnd:SetFocus()  }
+                              nAktArea := aWnd[ nArea ]:nArea,;
+                              swichItemsArea( nArea, .t. ) ,;
+                              ::oMainWnd:SetFocus() ,;
+                              swichItemsArea( nArea, .f. )  }
+                              
 
    aWnd[ nArea ]:bLButtonUp = {|nRow,nCol,nFlags| StopSelection( nRow, nCol, aWnd[ nArea ] ) }
 
