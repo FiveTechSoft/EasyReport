@@ -1,6 +1,6 @@
 #include "FiveWin.ch"
 
-MEMVAR aItems, aWnd
+MEMVAR aWnd
 MEMVAR cLongDefIni, cDefaultPath
 MEMVAR oGenVar
 MEMVAR aVRDSave, lVRDSave
@@ -52,7 +52,7 @@ function OpenFile( cFile, lChange, lAddDelNew )
       Next i
       */
 
-      aItems    := NIL
+      oER:aItems    := NIL
       oER:aAreaIni  := NIL
       if !lChange
          aWnd      := NIL
@@ -65,7 +65,7 @@ function OpenFile( cFile, lChange, lAddDelNew )
          oER:aWndTitle := Array( Len( aWnd ) )
          oER:aRuler    := Array( Len( aWnd ), 2 )
       endif
-      aItems    := Array( Len( aWnd ), 1000 )
+      oER:aItems    := Array( Len( aWnd ), 1000 )
       oER:aAreaIni  := Array( Len( aWnd ) )
 
       for i := 1 TO 20
@@ -349,8 +349,8 @@ function FileInfos()
 
    AEval( aWnd, {|x| IIF( x <> NIL, ++nNrAreas, ) } )
    for i := 1 TO Len( aWnd )
-      if aItems[i] <> NIL
-         AEval( aItems[i], {|x| IIF( x <> NIL, ++nNrItems, ) } )
+      if oER:aItems[i] <> NIL
+         AEval( oER:aItems[i], {|x| IIF( x <> NIL, ++nNrItems, ) } )
       endif
    next
 

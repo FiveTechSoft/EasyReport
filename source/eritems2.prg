@@ -4,7 +4,7 @@
 
 STATIC  nBoxTop, nBoxLeft, nBoxRight, nBoxBottom
 
-MEMVAR aItems, aWnd
+MEMVAR aWnd
 MEMVAR cDefaultPath
 MEMVAR nAktItem, nAktArea, nSelArea //, aSelection //, nTotalHeight, nTotalWidth
 MEMVAR oGenVar
@@ -47,7 +47,7 @@ FUNCTION ToggleItemSelection( nItem, nArea )
       oER:aSelection := ADel( oER:aSelection, nSelSearch, .T. )
    ENDIF
 
-   MarkItem( aItems[nArea,nItem]:hWnd )
+   MarkItem( oER:aItems[nArea,nItem]:hWnd )
    nAktItem := 0
 
 RETURN (.T.)
@@ -59,9 +59,9 @@ FUNCTION RefreshSelection()
    LOCAL i
 
    FOR i := 1 TO LEN( oER:aSelection )
-      MarkItem( aItems[ oER:aSelection[i,1], oER:aSelection[i,2] ]:hWnd )
-      aItems[ oER:aSelection[i,1], oER:aSelection[i,2] ]:Refresh()
-      MarkItem( aItems[ oER:aSelection[i,1], oER:aSelection[i,2] ]:hWnd )
+      MarkItem( oER:aItems[ oER:aSelection[i,1], oER:aSelection[i,2] ]:hWnd )
+      oER:aItems[ oER:aSelection[i,1], oER:aSelection[i,2] ]:Refresh()
+      MarkItem( oER:aItems[ oER:aSelection[i,1], oER:aSelection[i,2] ]:hWnd )
    NEXT
 
    //UnSelectAll( .F. )
@@ -78,8 +78,8 @@ FUNCTION UnSelectAll( lDelSelection )
    DEFAULT lDelSelection := .T.
 
    FOR i := 1 TO LEN( oER:aSelection )
-      IF aItems[ oER:aSelection[i,1], oER:aSelection[i,2] ] <> NIL
-         MarkItem( aItems[ oER:aSelection[i,1], oER:aSelection[i,2] ]:hWnd )
+      IF oER:aItems[ oER:aSelection[i,1], oER:aSelection[i,2] ] <> NIL
+         MarkItem( oER:aItems[ oER:aSelection[i,1], oER:aSelection[i,2] ]:hWnd )
       ENDIF
    NEXT
 
@@ -105,11 +105,11 @@ FUNCTION SelectAllItems( lCurArea )
 
          nCurArea := IIF( lCurArea, nAktArea, y )
 
-         FOR i := 1 TO LEN( aItems[ nCurArea ] )
+         FOR i := 1 TO LEN( oER:aItems[ nCurArea ] )
 
-            IF aItems[ nCurArea, i ] <> NIL
+            IF oER:aItems[ nCurArea, i ] <> NIL
 
-               MarkItem( aItems[ nCurArea, i ]:hWnd )
+               MarkItem( oER:aItems[ nCurArea, i ]:hWnd )
 
                AADD( oER:aSelection, { nCurArea, i } )
 
@@ -139,9 +139,9 @@ FUNCTION InvertSelection( lCurArea )
 
          nCurArea := IIF( lCurArea, nAktArea, y )
 
-         FOR i := 1 TO LEN( aItems[ nCurArea ] )
+         FOR i := 1 TO LEN( oER:aItems[ nCurArea ] )
 
-            IF aItems[ nCurArea, i ] <> NIL
+            IF oER:aItems[ nCurArea, i ] <> NIL
 
                ToggleItemSelection( i, nCurArea )
 
@@ -200,13 +200,13 @@ FUNCTION StopSelection( nRow, nCol, oAktWnd )
       lBoxDraw = .F.
       ReleaseCapture()
 
-      FOR i := 1 TO LEN( aItems[ nAktArea ] )
+      FOR i := 1 TO LEN( oER:aItems[ nAktArea ] )
 
-         IF aItems[nAktArea,i] <> NIL
+         IF oER:aItems[nAktArea,i] <> NIL
 
             aBoxRect  := { nBoxTop, nBoxLeft, nBoxBottom, nBoxRight }
-            aItemRect := { aItems[nAktArea,i]:nTop, aItems[nAktArea,i]:nLeft, ;
-                           aItems[nAktArea,i]:nBottom, aItems[nAktArea,i]:nRight }
+            aItemRect := { oER:aItems[nAktArea,i]:nTop, oER:aItems[nAktArea,i]:nLeft, ;
+                           oER:aItems[nAktArea,i]:nBottom, oER:aItems[nAktArea,i]:nRight }
 
             IF IsIntersectRect( aItemRect, aBoxRect )
 

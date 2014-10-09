@@ -49,7 +49,7 @@ STATIC aTmpSource
 //Entscheidet ob die Graphikelemente neu gezeichnet werden sollen
 STATIC lDraGraphic := .T.
 
-MEMVAR aItems, aWnd
+MEMVAR  aWnd
 MEMVAR cLongDefIni, cDefaultPath
 MEMVAR nAktItem, nAktArea, nSelArea //, aSelection
 MEMVAR aVRDSave, lVRDSave
@@ -1011,7 +1011,7 @@ function DeclarePublics( cDefFile )
       lProfi := .T.
    endif
 
-   PUBLIC aItems, aWnd, oBar
+   PUBLIC aWnd, oBar
    PUBLIC cLongDefIni, cDefaultPath
 
    //PUBLIC nTotalHeight := 0
@@ -1099,7 +1099,7 @@ function DeclarePublics( cDefFile )
 
    aWnd             := Array( oER:nTotAreas )
    oER:aWndTitle    := Array( Len( aWnd ) )
-   aItems           := Array( Len( aWnd ), 1000 )
+   oEr:aItems       := Array( Len( aWnd ), 1000 )
    oER:aAreaIni     := Array( Len( aWnd ) )
    oER:aRuler       := Array( Len( aWnd ), 2 )
    oER:aSelection   := {}   // Array( Len( aWnd ), 2 )
@@ -1900,15 +1900,15 @@ function WndKeyDownAction( nKey, nArea, cAreaIni )
 
       for i := 1 to LEN( oER:aSelection )
 
-         if aItems[ oER:aSelection[i, 1 ], oER:aSelection[i, 2 ] ] <> nil
+         if oER:aItems[ oER:aSelection[i, 1 ], oER:aSelection[i, 2 ] ] <> nil
 
-            aWerte   := GetCoors( aItems[ oER:aSelection[i, 1 ], oER:aSelection[i, 2 ] ]:hWnd )
+            aWerte   := GetCoors( oER:aItems[ oER:aSelection[i, 1 ], oER:aSelection[i, 2 ] ]:hWnd )
             nTop     := aWerte[ 1 ]
             nLeft    := aWerte[2]
             nHeight  := aWerte[3] - aWerte[ 1 ]
             nWidth   := aWerte[4] - aWerte[2]
 
-            aItems[ oER:aSelection[i, 1 ], oER:aSelection[i, 2 ] ]:Move( nTop + nY, nLeft + nX, nWidth + nRight, nHeight + nBottom, .T. )
+            oER:aItems[ oER:aSelection[i, 1 ], oER:aSelection[i, 2 ] ]:Move( nTop + nY, nLeft + nX, nWidth + nRight, nHeight + nBottom, .T. )
 
          endif
 
@@ -1930,9 +1930,9 @@ function DelselectItems()
 
       for i := 1 to LEN( oER:aSelection )
 
-         if aItems[ oER:aSelection[i, 1 ], oER:aSelection[i, 2 ] ] != nil
+         if oER:aItems[ oER:aSelection[i, 1 ], oER:aSelection[i, 2 ] ] != nil
 
-            MarkItem( aItems[ oER:aSelection[i, 1 ], oER:aSelection[i, 2 ] ]:hWnd )
+            MarkItem( oER:aItems[ oER:aSelection[i, 1 ], oER:aSelection[i, 2 ] ]:hWnd )
             DelItemWithKey( oER:aSelection[i, 2 ], oER:aSelection[i, 1 ] )
 
          endif
@@ -2684,15 +2684,15 @@ function SelectFont( oSay, oLbx, oGet )
 
                nEntry := EntryNr( aIniEntries[y] )
 
-               if nEntry <> 0 .and. aItems[i,nEntry] <> nil
+               if nEntry <> 0 .and. oER:aItems[i,nEntry] <> nil
 
                   cItemDef := GetIniEntry( aIniEntries, AllTrim(STR(nEntry,5)) , "" )
 
                   if UPPER(AllTrim( GetField( cItemDef, 1 ) )) = "TEXT" .and. ;
                         Val( GetField( cItemDef, 11 ) ) = nID
 
-                     aItems[i,nEntry]:SetFont( oER:aFonts[nID] )
-                     aItems[i,nEntry]:Refresh()
+                     oER:aItems[i,nEntry]:SetFont( oER:aFonts[nID] )
+                     oER:aItems[i,nEntry]:Refresh()
 
                   endif
 
@@ -4453,6 +4453,7 @@ CLASS TEasyReport
    DATA lShowToolTip
    DATA oBrwProp,oSaySelectedItem
    DATA aSelection
+   DATA aItems
 
    METHOD New() CONSTRUCTOR
    METHOD GetGeneralIni( cSection , cKey, cDefault ) INLINE GetPvProfString( cSection, cKey, cDefault, ::cGeneralIni )
@@ -4861,7 +4862,7 @@ METHOD FillWindow( nArea, cAreaIni ) CLASS TEasyReport
                               swichItemsArea( nArea, .t. ) ,;
                               ::oMainWnd:SetFocus() ,;
                               swichItemsArea( nArea, .f. )  }
-                              
+
 
    aWnd[ nArea ]:bLButtonUp = {|nRow,nCol,nFlags| StopSelection( nRow, nCol, aWnd[ nArea ] ) }
 
@@ -4883,8 +4884,8 @@ METHOD FillWindow( nArea, cAreaIni ) CLASS TEasyReport
    //Durch diese Anweisung werden alle Controls resizable
    if nElemente <> 0
       ::lFillWindow := .T.
-      aItems[ nArea,aFirst[6]]:CheckDots()
-      aItems[ nArea,aFirst[6]]:Move( aFirst[2], aFirst[3], aFirst[4], aFirst[5], .T. )
+      ::aItems[ nArea,aFirst[6]]:CheckDots()
+      ::aItems[ nArea,aFirst[6]]:Move( aFirst[2], aFirst[3], aFirst[4], aFirst[5], .T. )
       ::lFillWindow := .F.
    endif
 

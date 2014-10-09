@@ -2,7 +2,7 @@
 #INCLUDE "Folder.ch"
 #INCLUDE "FiveWin.ch"
 
-MEMVAR aItems, aWnd
+MEMVAR aWnd
 MEMVAR nAktItem, nAktArea, nSelArea //, aSelection
 MEMVAR nRuler, nRulerTop
 MEMVAR cItemCopy, aSelectCopy, aItemCopy, nXMove, nYMove
@@ -76,7 +76,7 @@ return .T.
 
 function KeyDownAction( nKey, nItem, nArea, cAreaIni )
 
-   local aWerte   := GetCoors( aItems[nArea,nItem]:hWnd )
+   local aWerte   := GetCoors( oER:aItems[nArea,nItem]:hWnd )
    local nTop     := aWerte[1]
    local nLeft    := aWerte[2]
    local nHeight  := aWerte[3] - aWerte[1]
@@ -133,8 +133,8 @@ function KeyDownAction( nKey, nItem, nArea, cAreaIni )
    endif
 
    if lMove
-      aItems[nArea,nItem]:Move( nTop + nY, nLeft + nX, nWidth + nRight, nHeight + nBottom, .T. )
-      aItems[nArea,nItem]:ShowDots( .T. )
+      oER:aItems[nArea,nItem]:Move( nTop + nY, nLeft + nX, nWidth + nRight, nHeight + nBottom, .T. )
+      oER:aItems[nArea,nItem]:ShowDots( .T. )
    endif
 
 return .T.
@@ -177,12 +177,12 @@ function DeleteItem( i, nArea, lFromList, lRemove, lFromUndoRedo )
    ENDINI
 
    if lRemove
-      aItems[nArea,i]:lDrag := .F.
-      aItems[nArea,i]:HideDots()
-      aItems[nArea,i]:End()
+      oER:aItems[nArea,i]:lDrag := .F.
+      oER:aItems[nArea,i]:HideDots()
+      oER:aItems[nArea,i]:End()
    ELSE
       ShowItem( i, nArea, cAreaIni, @aFirst, @nElemente )
-      aItems[nArea,i]:lDrag := .T.
+      oER:aItems[nArea,i]:lDrag := .T.
    endif
 
    if !lFromUndoRedo
@@ -198,7 +198,7 @@ return .T.
 function DeleteAllItems( nTyp )
 
    local i, cTyp, cDef, oItem
-   local nLen := LEN( aItems[nAktArea] )
+   local nLen := LEN( oER:aItems[nAktArea] )
 
    if MsgYesNo( GL("Remove items?"), GL("Select an option") ) = .F.
       return (.F.)
@@ -253,23 +253,23 @@ return .T.
 //----------------------------------------------------------------------------//
 
 function swichItemsArea( nArea, lDisable )
-   LOCAL nLen:= Len(aItems[nArea])
+   LOCAL nLen:= Len(oER:aItems[nArea])
    LOCAL  i
    DEFAULT lDisable:= .t.
 
    IF nLen>0
 
       FOR i=1 TO nLen
-       	IF  !Empty(aItems[nArea, i ])
+          IF  !Empty(oER:aItems[nArea, i ])
             IF ldisable
-        			 aItems[nArea, i ]:disable()
-     				else
-        			aItems[nArea, i ]:enable()
-      			ENDIF
-      	endif
+                  oER:aItems[nArea, i ]:disable()
+                 else
+                 oER:aItems[nArea, i ]:enable()
+               ENDIF
+         endif
       next
- 	endif
- 	
+    endif
+
 RETURN nil
 
 //----------------------------------------------------------------------------//
@@ -441,7 +441,7 @@ function UpdateItems( nValue, nTyp, lAddValue, aOldValue )
 
    FOR i := 1 TO LEN( oER:aSelection )
 
-      aWerte  := GetCoors( aItems[ oER:aSelection[i,1], oER:aSelection[i,2] ]:hWnd )
+      aWerte  := GetCoors( oER:aItems[ oER:aSelection[i,1], oER:aSelection[i,2] ]:hWnd )
       nTop    := aWerte[1]
       nLeft   := aWerte[2]
       nHeight := aWerte[3] - aWerte[1]
@@ -456,9 +456,9 @@ function UpdateItems( nValue, nTyp, lAddValue, aOldValue )
 
       aOldValue[nTyp] := nValue
 
-      aItems[ oER:aSelection[i,1], oER:aSelection[i,2]] :Move( nTop, nLeft, nWidth, nHeight, .T. ) //, .T. )
+      oER:aItems[ oER:aSelection[i,1], oER:aSelection[i,2]] :Move( nTop, nLeft, nWidth, nHeight, .T. ) //, .T. )
 
-      aItems[ oER:aSelection[i,1], oER:aSelection[i,2] ]:Refresh()
+      oER:aItems[ oER:aSelection[i,1], oER:aSelection[i,2] ]:Refresh()
 
    NEXT
 
@@ -857,8 +857,8 @@ function SaveTextItem( oVar, oItem )
 
    if oItem:lVisible
 
-      aItems[oVar:nArea,oVar:i]:End()
-      aItems[oVar:nArea,oVar:i] := ;
+      oER:aItems[oVar:nArea,oVar:i]:End()
+      oER:aItems[oVar:nArea,oVar:i] := ;
          TSay():New( oEr:nRulerTop + ER_GetPixel( oItem:nTop ), oER:nRuler + ER_GetPixel( oItem:nLeft ), ;
                      {|| oItem:cText }, aWnd[oVar:nArea],, ;
                      oFont, lCenter, lRight, ( oItem:lBorder .OR. oGenVar:lShowBorder ), ;
@@ -866,9 +866,9 @@ function SaveTextItem( oVar, oItem )
                      ER_GetPixel( oItem:nWidth ), ER_GetPixel( oItem:nHeight ), ;
                      .F., .T., .F., .F., .F. )
 
-      aItems[oVar:nArea,oVar:i]:lDrag := .T.
-      ElementActions( aItems[oVar:nArea,oVar:i], oVar:i, oItem:cText, oVar:nArea, oVar:cAreaIni )
-      aItems[oVar:nArea,oVar:i]:SetFocus()
+      oER:aItems[oVar:nArea,oVar:i]:lDrag := .T.
+      ElementActions( oER:aItems[oVar:nArea,oVar:i], oVar:i, oItem:cText, oVar:nArea, oVar:cAreaIni )
+      oER:aItems[oVar:nArea,oVar:i]:SetFocus()
 
    endif
 
@@ -877,10 +877,10 @@ function SaveTextItem( oVar, oItem )
    // Der Funktionsinhalt muﬂ direkt angeh‰ngt werden.
    //SaveItemGeneral( oVar, oItem )
 
-   if !oItem:lVisible .AND. aItems[oVar:nArea,oVar:i] <> NIL
-      aItems[oVar:nArea,oVar:i]:lDrag := .F.
-      aItems[oVar:nArea,oVar:i]:HideDots()
-      aItems[oVar:nArea,oVar:i]:End()
+   if !oItem:lVisible .AND. oER:aItems[oVar:nArea,oVar:i] <> NIL
+      oER:aItems[oVar:nArea,oVar:i]:lDrag := .F.
+      oER:aItems[oVar:nArea,oVar:i]:HideDots()
+      oER:aItems[oVar:nArea,oVar:i]:End()
    endif
 
    if oVar:lRemoveItem
@@ -903,7 +903,7 @@ return ( .T. )
 
 function SaveItemGeneral( oVar, oItem )
 
-   LOCAL xItem := aItems[oVar:nArea,oVar:i]
+   LOCAL xItem := oER:aItems[oVar:nArea,oVar:i]
 
    if !oItem:lVisible .AND. !Empty( xItem )
       xItem:lDrag := .F.
@@ -1078,16 +1078,16 @@ function SaveImgItem( oVar, oItem )
 
    if oItem:nShow = 1
 
-      aItems[oVar:nArea,oVar:i]:End()
-      aItems[oVar:nArea,oVar:i] := TImage():New( oEr:nRulerTop + ER_GetPixel( oItem:nTop ), ;
+      oER:aItems[oVar:nArea,oVar:i]:End()
+      oER:aItems[oVar:nArea,oVar:i] := TImage():New( oEr:nRulerTop + ER_GetPixel( oItem:nTop ), ;
          oER:nRuler + ER_GetPixel( oItem:nLeft ), ER_GetPixel( oItem:nWidth ), ER_GetPixel( oItem:nHeight ),,, ;
          IIF( oItem:lBorder, .F., .T. ), aWnd[oVar:nArea],,, .F., .T.,,, .T.,, .T. )
-      aItems[oVar:nArea,oVar:i]:Progress(.F.)
-      aItems[oVar:nArea,oVar:i]:LoadBmp( VRD_LF2SF( oItem:cFile ) )
+      oER:aItems[oVar:nArea,oVar:i]:Progress(.F.)
+      oER:aItems[oVar:nArea,oVar:i]:LoadBmp( VRD_LF2SF( oItem:cFile ) )
 
-      aItems[oVar:nArea,oVar:i]:lDrag := .T.
-      ElementActions( aItems[oVar:nArea,oVar:i], oVar:i, oItem:cText, oVar:nArea, oVar:cAreaIni )
-      aItems[oVar:nArea,oVar:i]:SetFocus()
+      oER:aItems[oVar:nArea,oVar:i]:lDrag := .T.
+      ElementActions( oER:aItems[oVar:nArea,oVar:i], oVar:i, oItem:cText, oVar:nArea, oVar:cAreaIni )
+      oER:aItems[oVar:nArea,oVar:i]:SetFocus()
 
    endif
 
@@ -1275,23 +1275,23 @@ function SaveGraItem( oVar, oItem )
 
    if oItem:nShow = 1
 
-      aItems[oVar:nArea,oVar:i]:End()
+      oER:aItems[oVar:nArea,oVar:i]:End()
 
-      aItems[oVar:nArea,oVar:i] := TBitmap():New( oEr:nRulerTop + ER_GetPixel( oItem:nTop ), ;
+      oER:aItems[oVar:nArea,oVar:i] := TBitmap():New( oEr:nRulerTop + ER_GetPixel( oItem:nTop ), ;
           oER:nRuler + ER_GetPixel( oItem:nLeft ), ER_GetPixel( oItem:nWidth ), ER_GetPixel( oItem:nHeight ), ;
           "GRAPHIC",, .T., aWnd[oVar:nArea],,, .F., .T.,,, .T.,, .T. )
-      aItems[oVar:nArea,oVar:i]:lTransparent := .T.
+      oER:aItems[oVar:nArea,oVar:i]:lTransparent := .T.
 
-      aItems[oVar:nArea,oVar:i]:bPainted = {| hDC, cPS | ;
+      oER:aItems[oVar:nArea,oVar:i]:bPainted = {| hDC, cPS | ;
          DrawGraphic( hDC, AllTrim(UPPER( oItem:cType )), ;
                       ER_GetPixel( oItem:nWidth ), ER_GetPixel( oItem:nHeight ), ;
                       oER:GetColor( oItem:nColor ), oER:GetColor( oItem:nColFill ), ;
                       oItem:nStyle, oItem:nPenWidth, ;
                       ER_GetPixel( oItem:nRndWidth ), ER_GetPixel( oItem:nRndHeight ) ) }
 
-      aItems[oVar:nArea,oVar:i]:lDrag := .T.
-      ElementActions( aItems[oVar:nArea,oVar:i], oVar:i, "", oVar:nArea, oVar:cAreaIni )
-      aItems[oVar:nArea,oVar:i]:SetFocus()
+      oER:aItems[oVar:nArea,oVar:i]:lDrag := .T.
+      ElementActions( oER:aItems[oVar:nArea,oVar:i], oVar:i, "", oVar:nArea, oVar:cAreaIni )
+      oER:aItems[oVar:nArea,oVar:i]:SetFocus()
 
    endif
 
@@ -1466,22 +1466,22 @@ function SaveBarItem( oVar, oItem )
 
    if oItem:nShow = 1
 
-      aItems[oVar:nArea,oVar:i]:End()
+      oER:aItems[oVar:nArea,oVar:i]:End()
 
-         aItems[oVar:nArea,oVar:i] := TBitmap():New( oEr:nRulerTop + ER_GetPixel( oItem:nTop ), ;
+         oER:aItems[oVar:nArea,oVar:i] := TBitmap():New( oEr:nRulerTop + ER_GetPixel( oItem:nTop ), ;
              oER:nRuler + ER_GetPixel( oItem:nLeft ), ER_GetPixel( oItem:nWidth ), ER_GetPixel( oItem:nHeight ), ;
              "GRAPHIC",, .T., aWnd[oVar:nArea],,, .F., .T.,,, .T.,, .T. )
-         aItems[oVar:nArea,oVar:i]:lTransparent := .T.
+         oER:aItems[oVar:nArea,oVar:i]:lTransparent := .T.
 
-         aItems[oVar:nArea,oVar:i]:bPainted = {| hDC, cPS | ;
+         oER:aItems[oVar:nArea,oVar:i]:bPainted = {| hDC, cPS | ;
             DrawBarcode( hDC, AllTrim( oItem:cText ), 0, 0, ;
                          ER_GetPixel( oItem:nWidth ), ER_GetPixel( oItem:nHeight ), ;
                          oItem:nBCodeType, oER:GetColor( oItem:nColText ), oER:GetColor( oItem:nColPane ), ;
                          oItem:nOrient, oItem:lTrans, ER_GetPixel( oItem:nPinWidth ) ) }
 
-      aItems[oVar:nArea,oVar:i]:lDrag := .T.
-      ElementActions( aItems[oVar:nArea,oVar:i], oVar:i, "", oVar:nArea, oVar:cAreaIni )
-      aItems[oVar:nArea,oVar:i]:SetFocus()
+      oER:aItems[oVar:nArea,oVar:i]:lDrag := .T.
+      ElementActions( oER:aItems[oVar:nArea,oVar:i], oVar:i, "", oVar:nArea, oVar:cAreaIni )
+      oER:aItems[oVar:nArea,oVar:i]:SetFocus()
 
    endif
 
@@ -1496,7 +1496,7 @@ function SetItemSize( i, nArea, cAreaIni )
    local oIni, nColor, nColFill, nStyle, nPenWidth, nRndWidth, nRndHeight, oItem
    local cItemDef   := AllTrim( GetPvProfString( "Items", AllTrim(STR(i,5)) , "", cAreaIni ) )
    local cOldDef    := cItemDef
-   local aWerte     := GetCoors( aItems[nArea,i]:hWnd )
+   local aWerte     := GetCoors( oER:aItems[nArea,i]:hWnd )
    local nTop       := GetCmInch( aWerte[1] - oEr:nRulerTop )
    local nLeft      := GetCmInch( aWerte[2] - oER:nRuler )
    local nHeight    := GetCmInch( aWerte[3] - aWerte[1] )
@@ -1530,7 +1530,7 @@ function SetItemSize( i, nArea, cAreaIni )
          nRndWidth  := VAL( GetField( cItemDef, 15 ) )
          nRndHeight := VAL( GetField( cItemDef, 16 ) )
 
-         aItems[nArea,i]:bPainted = {| hDC, cPS | ;
+         oER:aItems[nArea,i]:bPainted = {| hDC, cPS | ;
             DrawGraphic( hDC, cTyp, ;
             ER_GetPixel( nWidth ), ER_GetPixel( nHeight ), ;
             oER:GetColor( nColor ), oER:GetColor( nColFill ), ;
@@ -1540,7 +1540,7 @@ function SetItemSize( i, nArea, cAreaIni )
 
          oItem := VRDItem():New( cItemDef )
 
-         aItems[nArea,i]:bPainted = {| hDC, cPS | ;
+         oER:aItems[nArea,i]:bPainted = {| hDC, cPS | ;
             DrawBarcode( hDC, oItem:cText, 0, 0, ;
             ER_GetPixel( nWidth ), ER_GetPixel( nHeight ), ;
             oItem:nBCodeType, ;
@@ -1569,7 +1569,7 @@ function SetItemSize( i, nArea, cAreaIni )
    endif
 
    oER:lFillWindow := .T.
-   aItems[nArea,i]:Move( oEr:nRulerTop + ER_GetPixel( VAL( GetField( cItemDef, 7 ) ) ), ;
+   oER:aItems[nArea,i]:Move( oEr:nRulerTop + ER_GetPixel( VAL( GetField( cItemDef, 7 ) ) ), ;
       oER:nRuler + ER_GetPixel( VAL( GetField( cItemDef, 8 ) ) ), ;
       ER_GetPixel( VAL( GetField( cItemDef, 9 ) ) ), ;
       ER_GetPixel( VAL( GetField( cItemDef, 10 ) ) ), .T. )
@@ -1583,7 +1583,7 @@ function SetItemSize( i, nArea, cAreaIni )
  //                     ER_GetPixel( VAL( GetField( cItemDef, 9 ) ) ), ;
  //                     ER_GetPixel( VAL( GetField( cItemDef, 10 ) ) ) }
 
-   aItems[nArea,i]:Refresh()
+   oER:aItems[nArea,i]:Refresh()
 
 return .T.
 
@@ -1608,10 +1608,10 @@ function MsgBarItem( nItem, nArea, cAreaIni, nRow, nCol, lResize )
    ELSE
       nInfoRow := 0; nInfoCol := 0 // oEr:nRulerTop := 0; oER:nRuler := 0 // FiveTech
 
-      nTop  := aItems[nArea,nItem]:nTop  + ;
-                  ( nLoWord( aItems[nArea,nItem]:nPoint ) - nInfoRow ) - oEr:nRulerTop
-      nLeft := aItems[nArea,nItem]:nLeft + ;
-                  ( nHiWord( aItems[nArea,nItem]:nPoint ) - nInfoCol ) - oER:nRuler
+      nTop  := oER:aItems[nArea,nItem]:nTop  + ;
+                  ( nLoWord( oER:aItems[nArea,nItem]:nPoint ) - nInfoRow ) - oEr:nRulerTop
+      nLeft := oER:aItems[nArea,nItem]:nLeft + ;
+                  ( nHiWord( oER:aItems[nArea,nItem]:nPoint ) - nInfoCol ) - oER:nRuler
 
   endif
 
@@ -1765,7 +1765,7 @@ function NewItem( cTyp, nArea, nTmpCopyArea, nTmpCopyEntry, cTmpItemCopy )
    local cLeft      := cTop
 
    FOR i := 400 TO 1000
-      if aItems[ nArea, i ] = NIL
+      if oER:aItems[ nArea, i ] = NIL
          nFree := i
          EXIT
       endif
@@ -1779,7 +1779,7 @@ function NewItem( cTyp, nArea, nTmpCopyArea, nTmpCopyEntry, cTmpItemCopy )
 
       if nTmpCopyEntry < 400
          FOR i := 1 TO 399
-         if aItems[ nArea, i ] = NIL
+         if oER:aItems[ nArea, i ] = NIL
             nFree := i
             EXIT
          endif
@@ -1848,7 +1848,7 @@ function NewItem( cTyp, nArea, nTmpCopyArea, nTmpCopyEntry, cTmpItemCopy )
    ENDINI
 
    ShowItem( nFree, nArea, cAreaIni, @aFirst, @nElemente )
-   aItems[nArea,nFree]:lDrag := .T.
+   oER:aItems[nArea,nFree]:lDrag := .T.
 
    nInfoRow := 0
    nInfoCol := 0
@@ -1924,13 +1924,13 @@ function ShowItem( i, nArea, cAreaIni, aFirst, nElemente, aIniEntries, nIndex )
          SetBKMode( oEr:oMainWnd:hDC, 1 )
 
          /*
-         aItems[nArea,i] := TSSay():New( nTop, nLeft, ;
+         oER:aItems[nArea,i] := TSSay():New( nTop, nLeft, ;
             {|| cName }, aWnd[nArea],, oFont,,, ;
             lCenter, lRight,, .T., .T., nColText, nColPane,, ;
             nWidth, nHeight, .F., .T., .F., .F., .F., IIF( nTrans = 1, .T., .F. ) )
          */
 
-         aItems[nArea,i] := TSay():New( nTop, nLeft, ;
+         oER:aItems[nArea,i] := TSay():New( nTop, nLeft, ;
             {|| cName }, aWnd[nArea], , oFont, ;
             lCenter, lRight, ( nBorder = 1 .OR. oGenVar:lShowBorder ), .T., ;
             oER:GetColor( nColText ), oER:GetColor( nColPane ), nWidth, nHeight, .F., .T., .F., .F., .F. )
@@ -1963,10 +1963,10 @@ function ShowItem( i, nArea, cAreaIni, aFirst, nElemente, aIniEntries, nIndex )
          cFile   := AllTrim( GetField( cItemDef, 11 ) )
          nBorder := VAL( GetField( cItemDef, 12 ) )
 
-         aItems[nArea,i] := TImage():New( nTop, nLeft, nWidth, nHeight,,, ;
+         oER:aItems[nArea,i] := TImage():New( nTop, nLeft, nWidth, nHeight,,, ;
             IIF( nBorder = 1, .F., .T.), aWnd[nArea],,, .F., .T.,,, .T.,, .T. )
-         aItems[nArea,i]:Progress(.F.)
-         aItems[nArea,i]:LoadBmp( VRD_LF2SF( cFile ) )
+         oER:aItems[nArea,i]:Progress(.F.)
+         oER:aItems[nArea,i]:LoadBmp( VRD_LF2SF( cFile ) )
 
          cTool := " Tipo:        " + Chr( 9 ) + "TIMAGE" + CRLF + ;
                   " Top:         " + Chr( 9 ) + Str( nTop, 10 ) + CRLF + ;
@@ -1995,11 +1995,11 @@ function ShowItem( i, nArea, cAreaIni, aFirst, nElemente, aIniEntries, nIndex )
          nRndWidth  := ER_GetPixel( VAL( GetField( cItemDef, 15 ) ) )
          nRndHeight := ER_GetPixel( VAL( GetField( cItemDef, 16 ) ) )
 
-         aItems[nArea,i] := TBitmap():New( nTop, nLeft, nWidth, nHeight, "GRAPHIC",, ;
+         oER:aItems[nArea,i] := TBitmap():New( nTop, nLeft, nWidth, nHeight, "GRAPHIC",, ;
              .T., aWnd[nArea],,, .F., .T.,,, .T.,, .T. )
-         aItems[nArea,i]:lTransparent := .T.
+         oER:aItems[nArea,i]:lTransparent := .T.
 
-         aItems[nArea,i]:bPainted = {| hDC, cPS | ;
+         oER:aItems[nArea,i]:bPainted = {| hDC, cPS | ;
             DrawGraphic( hDC, cTyp, nWidth, nHeight, oER:GetColor( nColor ), oER:GetColor( nColFill ), ;
                          nStyle, nPenWidth, nRndWidth, nRndHeight ) }
 
@@ -2012,7 +2012,7 @@ function ShowItem( i, nArea, cAreaIni, aFirst, nElemente, aIniEntries, nIndex )
                   " Color:       " + Chr( 9 ) + Str( oER:GetColor( nColor ), 10 ) + CRLF + ;
                   " Color Fondo: " + Chr( 9 ) + Str( oER:GetColor( nColFill ), 10 ) + CRLF + ;
                   " Border:      " + Chr( 9 ) + if( ( nBorder = 1 .OR. oGenVar:lShowBorder ), " SI ", " NO ") + CRLF + ;
-                  " Transparente:" + Chr( 9 ) + if( aItems[nArea,i]:lTransparent, " SI ", " NO " ) + CRLF
+                  " Transparente:" + Chr( 9 ) + if( oER:aItems[nArea,i]:lTransparent, " SI ", " NO " ) + CRLF
 
       ELSEif cTyp = "BARCODE" .AND. lProfi
 
@@ -2023,11 +2023,11 @@ function ShowItem( i, nArea, cAreaIni, aFirst, nElemente, aIniEntries, nIndex )
          lTrans      := IIF( VAL( GetField( cItemDef, 15 ) ) = 1, .T., .F. )
          nPinWidth   := ER_GetPixel( VAL( GetField( cItemDef, 16 ) ) )
 
-         aItems[nArea,i] := TBitmap():New( nTop, nLeft, nWidth, nHeight, "GRAPHIC",, ;
+         oER:aItems[nArea,i] := TBitmap():New( nTop, nLeft, nWidth, nHeight, "GRAPHIC",, ;
              .T., aWnd[nArea],,, .F., .T.,,, .T.,, .T. )
-         aItems[nArea,i]:lTransparent := .T.
+         oER:aItems[nArea,i]:lTransparent := .T.
 
-         aItems[nArea,i]:bPainted = {| hDC, cPS | ;
+         oER:aItems[nArea,i]:bPainted = {| hDC, cPS | ;
             DrawBarcode( hDC, cName, 0, 0, nWidth, nHeight, nBarCode, oER:GetColor( nColText ), ;
                          oER:GetColor( nColPane ), nOrient, lTrans, nPinWidth ) }
 
@@ -2047,17 +2047,17 @@ function ShowItem( i, nArea, cAreaIni, aFirst, nElemente, aIniEntries, nIndex )
       if cTyp = "BARCODE" .AND. lProfi = .F.
          //Dummy
       ELSE
-         aItems[nArea,i]:lDrag := .T.
-         ElementActions( aItems[nArea,i], i, cName, nArea, cAreaIni, cTyp )
+         oER:aItems[nArea,i]:lDrag := .T.
+         ElementActions( oER:aItems[nArea,i], i, cName, nArea, cAreaIni, cTyp )
       endif
 
       ++nElemente
 
    endif
 
-   if Valtype( aItems[nArea,i] ) = "O"
+   if Valtype( oER:aItems[nArea,i] ) = "O"
       if oER:lShowToolTip
-         aItems[nArea,i]:cToolTip := cTool
+         oER:aItems[nArea,i]:cToolTip := cTool
       endif
    endif
 
@@ -2068,7 +2068,7 @@ return .T.
 function DeactivateItem()
 
    if nAktItem <> 0
-      aItems[nSelArea,nAktItem]:HideDots()
+      oER:aItems[nSelArea,nAktItem]:HideDots()
       naktItem := 0
    endif
 

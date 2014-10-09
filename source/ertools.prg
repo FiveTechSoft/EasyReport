@@ -38,7 +38,7 @@
              <.lAnimate.>, [<nSpeed>], <oFont>, <.lTransparent.>, [\{<cDlgsName>\}] )
 
 
-MEMVAR aItems, aWnd
+MEMVAR aWnd
 MEMVAR cDefaultPath
 MEMVAR nAktArea
 MEMVAR aVRDSave
@@ -1917,7 +1917,7 @@ function Undo()
 
    ELSE
 
-      if aItems[ TMPUNDO->AREANR, TMPUNDO->ENTRYNR ] <> NIL
+      if oER:aItems[ TMPUNDO->AREANR, TMPUNDO->ENTRYNR ] <> NIL
          DeleteItem( TMPUNDO->ENTRYNR, TMPUNDO->AREANR, .T.,, .T. )
       endif
 
@@ -1928,9 +1928,9 @@ function Undo()
       oItemInfo := VRDItem():New( TMPUNDO->ENTRYTEXT )
 
       if oItemInfo:nShow = 1
-         aItems[ TMPUNDO->AREANR, TMPUNDO->ENTRYNR ] := NIL
+         oER:aItems[ TMPUNDO->AREANR, TMPUNDO->ENTRYNR ] := NIL
          ShowItem( TMPUNDO->ENTRYNR, TMPUNDO->AREANR, oER:aAreaIni[ TMPUNDO->AREANR ], aFirst, nElemente )
-         aItems[ TMPUNDO->AREANR, TMPUNDO->ENTRYNR ]:lDrag := .T.
+         oER:aItems[ TMPUNDO->AREANR, TMPUNDO->ENTRYNR ]:lDrag := .T.
       endif
 
    endif
@@ -2003,7 +2003,7 @@ function Redo()
 
    ELSE
 
-      if aItems[ TMPUNDO->AREANR, TMPUNDO->ENTRYNR ] <> NIL
+      if oER:aItems[ TMPUNDO->AREANR, TMPUNDO->ENTRYNR ] <> NIL
          DeleteItem( TMPREDO->ENTRYNR, TMPREDO->AREANR, .T.,, .T. )
       endif
 
@@ -2014,9 +2014,9 @@ function Redo()
       oItemInfo := VRDItem():New( TMPREDO->ENTRYTEXT )
 
       if oItemInfo:nShow = 1
-         aItems[ TMPREDO->AREANR, TMPREDO->ENTRYNR ] := NIL
+         oER:aItems[ TMPREDO->AREANR, TMPREDO->ENTRYNR ] := NIL
          ShowItem( TMPREDO->ENTRYNR, TMPREDO->AREANR, oER:aAreaIni[ TMPREDO->AREANR ], aFirst, nElemente )
-         aItems[ TMPREDO->AREANR, TMPREDO->ENTRYNR ]:lDrag := .T.
+         oER:aItems[ TMPREDO->AREANR, TMPREDO->ENTRYNR ]:lDrag := .T.
       endif
 
    endif
@@ -2255,12 +2255,12 @@ Function ER_Inspector1( nD )
    Local aBmps := { "FoldOpen", "FoldClose", "Checked", "Unchecked", "Property", ;
                     "Typ_Text", "Typ_Image", "Typ_Graphic", "Typ_Barcode", ;
                     "TreeGraph1", "TreeGraph2", "TreeGraph3", "TreeGraph4", ;
-                    "TreeGraph5", "TreeGraph6" } 
+                    "TreeGraph5", "TreeGraph6" }
 
    DEFINE FONT oFont NAME "Verdana" SIZE 0, -11  //"Segoe UI BOLD"
 
    if !empty( oEr:oTree:aItems )
-   aTree := CargaItems( aTree, oEr:oTree:aItems, aBmps )   
+   aTree := CargaItems( aTree, oEr:oTree:aItems, aBmps )
 
    @ Int( oEr:oFldD:aDialogs[nD]:nHeight/2 ) + 15, 1 XBROWSE oBrw ;
      SIZE oER:oFldD:aDialogs[nD]:nWidth - 1, Int(oEr:oFldD:aDialogs[nD]:nHeight/2) - 20;
@@ -2268,7 +2268,7 @@ Function ER_Inspector1( nD )
      FONT oFont PIXEL OF oDlg CELL //NOBORDER
 
      oBrw:SetArray( aTree )
-     
+
      oBrw:aCols[ 1 ]:nWidth   := 240
      oBrw:aCols[ 1 ]:cHeader  := GL("Property")
      oBrw:aCols[ 2 ]:nWidth   := 290
@@ -2293,7 +2293,7 @@ Function ER_Inspector1( nD )
 
    oBrw:nFreeze         := 1
    oBrw:aCols[3]:Hide()
-  
+
    /*
    if !empty( oEr:oTree )
       if !empty( oEr:oTree:aItems )
@@ -2309,7 +2309,7 @@ Function ER_Inspector1( nD )
    else
    @ Int( oEr:oFldD:aDialogs[nD]:nHeight/2 ) + 15, 1 XBROWSE oBrw ;
      SIZE oER:oFldD:aDialogs[nD]:nWidth - 1, Int(oEr:oFldD:aDialogs[nD]:nHeight/2) - 20 ;
-     ARRAY aT  ;  
+     ARRAY aT  ;
      HEADERS " " + GL("Property"), " " + GL("Level") ;//     COLSIZES 195, 95 ;
      FONT oFont PIXEL OF oDlg CELL //NOBORDER
 
