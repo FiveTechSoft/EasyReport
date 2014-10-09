@@ -1,6 +1,5 @@
 #include "FiveWin.ch"
 
-MEMVAR aWnd
 MEMVAR cLongDefIni, cDefaultPath
 MEMVAR oGenVar
 MEMVAR aVRDSave, lVRDSave
@@ -55,18 +54,18 @@ function OpenFile( cFile, lChange, lAddDelNew )
       oER:aItems    := NIL
       oER:aAreaIni  := NIL
       if !lChange
-         aWnd      := NIL
+         oER:aWnd      := NIL
          oER:aWndTitle := NIL
          oER:aRuler    := NIL
       endif
 
       if !lChange
-         aWnd      := Array( oER:nTotAreas )
-         oER:aWndTitle := Array( Len( aWnd ) )
-         oER:aRuler    := Array( Len( aWnd ), 2 )
+         oER:aWnd      := Array( oER:nTotAreas )
+         oER:aWndTitle := Array( Len( oER:aWnd ) )
+         oER:aRuler    := Array( Len( oER:aWnd ), 2 )
       endif
-      oER:aItems    := Array( Len( aWnd ), 1000 )
-      oER:aAreaIni  := Array( Len( aWnd ) )
+      oER:aItems    := Array( Len( oER:aWnd ), 1000 )
+      oER:aAreaIni  := Array( Len( oER:aWnd ) )
 
       for i := 1 TO 20
          if oER:aFonts[i] <> NIL
@@ -89,9 +88,9 @@ function OpenFile( cFile, lChange, lAddDelNew )
       if !lChange
          ClientWindows()
       else
-         For i = 1 to Len( aWnd )
-             if !empty( aWnd[ i ] )
-                aWnd[ i ]:Refresh()
+         For i = 1 to Len( oER:aWnd )
+             if !empty( oER:aWnd[ i ] )
+                oER:aWnd[ i ]:Refresh()
              endif
          Next i
       endif
@@ -215,7 +214,7 @@ function SaveAs( cFile )
       else
          cAltDefIni := VRD_LF2SF( ALLTRIM( cFile ) )
          IIF( AT( "\", cAltDefIni ) = 0, cAltDefIni := ".\" + cAltDefIni, )
-         for i := 1 TO Len( aWnd )
+         for i := 1 TO Len( oER:aWnd )
             FErase( VRD_LF2SF( ALLTRIM( GetPvProfString( "Areas", ALLTRIM(STR(i,5)) , "", cAltDefIni ) ) ) )
          next
          FErase( cAltDefIni )
@@ -347,8 +346,8 @@ function FileInfos()
       endif
    next
 
-   AEval( aWnd, {|x| IIF( x <> NIL, ++nNrAreas, ) } )
-   for i := 1 TO Len( aWnd )
+   AEval( oER:aWnd, {|x| IIF( x <> NIL, ++nNrAreas, ) } )
+   for i := 1 TO Len( oER:aWnd )
       if oER:aItems[i] <> NIL
          AEval( oER:aItems[i], {|x| IIF( x <> NIL, ++nNrItems, ) } )
       endif

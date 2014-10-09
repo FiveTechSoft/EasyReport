@@ -2,7 +2,6 @@
 #INCLUDE "Folder.ch"
 #INCLUDE "FiveWin.ch"
 
-MEMVAR aWnd
 MEMVAR nAktItem, nAktArea, nSelArea //, aSelection
 MEMVAR nRuler, nRulerTop
 MEMVAR cItemCopy, aSelectCopy, aItemCopy, nXMove, nYMove
@@ -53,7 +52,7 @@ function ElementActions( oItem, i, cName, nArea, cAreaIni, cTyp )
    oItem:bMMoved  = { | nRow, nCol, nFlags, aPoint | ;
                         aPoint := { nRow, nCol },;
                         aPoint := ClientToScreen( oItem:hWnd, aPoint ),;
-                        aPoint := ScreenToClient( aWnd[ nArea ]:hWnd, aPoint ),;
+                        aPoint := ScreenToClient( oER:aWnd[ nArea ]:hWnd, aPoint ),;
                         nRow := aPoint[ 1 ], nCol := aPoint[ 2 ],;
                         oER:SetReticule( nRow, nCol, nArea ),;
                         MsgBarItem( i, nArea, cAreaIni, nRow, nCol ) }
@@ -309,7 +308,7 @@ function ItemPopupMenu( oItem, nItem, nArea, nRow, nCol )
    nRow += oItem:nTop
    nCol += oItem:nLeft
 
-   ACTIVATE POPUP oMenu OF aWnd[nArea] AT nRow, nCol
+   ACTIVATE POPUP oMenu OF oER:aWnd[nArea] AT nRow, nCol
 
 return .T.
 
@@ -860,7 +859,7 @@ function SaveTextItem( oVar, oItem )
       oER:aItems[oVar:nArea,oVar:i]:End()
       oER:aItems[oVar:nArea,oVar:i] := ;
          TSay():New( oEr:nRulerTop + ER_GetPixel( oItem:nTop ), oER:nRuler + ER_GetPixel( oItem:nLeft ), ;
-                     {|| oItem:cText }, aWnd[oVar:nArea],, ;
+                     {|| oItem:cText }, oER:aWnd[oVar:nArea],, ;
                      oFont, lCenter, lRight, ( oItem:lBorder .OR. oGenVar:lShowBorder ), ;
                      .T., oER:GetColor( oItem:nColText ), oER:GetColor( oItem:nColPane ), ;
                      ER_GetPixel( oItem:nWidth ), ER_GetPixel( oItem:nHeight ), ;
@@ -1081,7 +1080,7 @@ function SaveImgItem( oVar, oItem )
       oER:aItems[oVar:nArea,oVar:i]:End()
       oER:aItems[oVar:nArea,oVar:i] := TImage():New( oEr:nRulerTop + ER_GetPixel( oItem:nTop ), ;
          oER:nRuler + ER_GetPixel( oItem:nLeft ), ER_GetPixel( oItem:nWidth ), ER_GetPixel( oItem:nHeight ),,, ;
-         IIF( oItem:lBorder, .F., .T. ), aWnd[oVar:nArea],,, .F., .T.,,, .T.,, .T. )
+         IIF( oItem:lBorder, .F., .T. ), oER:aWnd[oVar:nArea],,, .F., .T.,,, .T.,, .T. )
       oER:aItems[oVar:nArea,oVar:i]:Progress(.F.)
       oER:aItems[oVar:nArea,oVar:i]:LoadBmp( VRD_LF2SF( oItem:cFile ) )
 
@@ -1279,7 +1278,7 @@ function SaveGraItem( oVar, oItem )
 
       oER:aItems[oVar:nArea,oVar:i] := TBitmap():New( oEr:nRulerTop + ER_GetPixel( oItem:nTop ), ;
           oER:nRuler + ER_GetPixel( oItem:nLeft ), ER_GetPixel( oItem:nWidth ), ER_GetPixel( oItem:nHeight ), ;
-          "GRAPHIC",, .T., aWnd[oVar:nArea],,, .F., .T.,,, .T.,, .T. )
+          "GRAPHIC",, .T., oER:aWnd[oVar:nArea],,, .F., .T.,,, .T.,, .T. )
       oER:aItems[oVar:nArea,oVar:i]:lTransparent := .T.
 
       oER:aItems[oVar:nArea,oVar:i]:bPainted = {| hDC, cPS | ;
@@ -1470,7 +1469,7 @@ function SaveBarItem( oVar, oItem )
 
          oER:aItems[oVar:nArea,oVar:i] := TBitmap():New( oEr:nRulerTop + ER_GetPixel( oItem:nTop ), ;
              oER:nRuler + ER_GetPixel( oItem:nLeft ), ER_GetPixel( oItem:nWidth ), ER_GetPixel( oItem:nHeight ), ;
-             "GRAPHIC",, .T., aWnd[oVar:nArea],,, .F., .T.,,, .T.,, .T. )
+             "GRAPHIC",, .T., oER:aWnd[oVar:nArea],,, .F., .T.,,, .T.,, .T. )
          oER:aItems[oVar:nArea,oVar:i]:lTransparent := .T.
 
          oER:aItems[oVar:nArea,oVar:i]:bPainted = {| hDC, cPS | ;
@@ -1925,13 +1924,13 @@ function ShowItem( i, nArea, cAreaIni, aFirst, nElemente, aIniEntries, nIndex )
 
          /*
          oER:aItems[nArea,i] := TSSay():New( nTop, nLeft, ;
-            {|| cName }, aWnd[nArea],, oFont,,, ;
+            {|| cName }, oER:aWnd[nArea],, oFont,,, ;
             lCenter, lRight,, .T., .T., nColText, nColPane,, ;
             nWidth, nHeight, .F., .T., .F., .F., .F., IIF( nTrans = 1, .T., .F. ) )
          */
 
          oER:aItems[nArea,i] := TSay():New( nTop, nLeft, ;
-            {|| cName }, aWnd[nArea], , oFont, ;
+            {|| cName }, oER:aWnd[nArea], , oFont, ;
             lCenter, lRight, ( nBorder = 1 .OR. oGenVar:lShowBorder ), .T., ;
             oER:GetColor( nColText ), oER:GetColor( nColPane ), nWidth, nHeight, .F., .T., .F., .F., .F. )
 
@@ -1964,7 +1963,7 @@ function ShowItem( i, nArea, cAreaIni, aFirst, nElemente, aIniEntries, nIndex )
          nBorder := VAL( GetField( cItemDef, 12 ) )
 
          oER:aItems[nArea,i] := TImage():New( nTop, nLeft, nWidth, nHeight,,, ;
-            IIF( nBorder = 1, .F., .T.), aWnd[nArea],,, .F., .T.,,, .T.,, .T. )
+            IIF( nBorder = 1, .F., .T.), oER:aWnd[nArea],,, .F., .T.,,, .T.,, .T. )
          oER:aItems[nArea,i]:Progress(.F.)
          oER:aItems[nArea,i]:LoadBmp( VRD_LF2SF( cFile ) )
 
@@ -1996,7 +1995,7 @@ function ShowItem( i, nArea, cAreaIni, aFirst, nElemente, aIniEntries, nIndex )
          nRndHeight := ER_GetPixel( VAL( GetField( cItemDef, 16 ) ) )
 
          oER:aItems[nArea,i] := TBitmap():New( nTop, nLeft, nWidth, nHeight, "GRAPHIC",, ;
-             .T., aWnd[nArea],,, .F., .T.,,, .T.,, .T. )
+             .T., oER:aWnd[nArea],,, .F., .T.,,, .T.,, .T. )
          oER:aItems[nArea,i]:lTransparent := .T.
 
          oER:aItems[nArea,i]:bPainted = {| hDC, cPS | ;
@@ -2024,7 +2023,7 @@ function ShowItem( i, nArea, cAreaIni, aFirst, nElemente, aIniEntries, nIndex )
          nPinWidth   := ER_GetPixel( VAL( GetField( cItemDef, 16 ) ) )
 
          oER:aItems[nArea,i] := TBitmap():New( nTop, nLeft, nWidth, nHeight, "GRAPHIC",, ;
-             .T., aWnd[nArea],,, .F., .T.,,, .T.,, .T. )
+             .T., oER:aWnd[nArea],,, .F., .T.,,, .T.,, .T. )
          oER:aItems[nArea,i]:lTransparent := .T.
 
          oER:aItems[nArea,i]:bPainted = {| hDC, cPS | ;

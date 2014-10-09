@@ -4,7 +4,6 @@
 
 STATIC  nBoxTop, nBoxLeft, nBoxRight, nBoxBottom
 
-MEMVAR aWnd
 MEMVAR cDefaultPath
 MEMVAR nAktItem, nAktArea, nSelArea //, aSelection //, nTotalHeight, nTotalWidth
 MEMVAR oGenVar
@@ -99,9 +98,9 @@ FUNCTION SelectAllItems( lCurArea )
 
    UnSelectAll()
 
-   FOR y := 1 TO IIF( lCurArea, 1, Len( aWnd ) )
+   FOR y := 1 TO IIF( lCurArea, 1, Len( oER:aWnd ) )
 
-      IF aWnd[y] <> NIL
+      IF oER:aWnd[y] <> NIL
 
          nCurArea := IIF( lCurArea, nAktArea, y )
 
@@ -133,9 +132,9 @@ FUNCTION InvertSelection( lCurArea )
 
    DEFAULT lCurArea := .F.
 
-   FOR y := 1 TO IIF( lCurArea, 1, Len( aWnd ) )
+   FOR y := 1 TO IIF( lCurArea, 1, Len( oER:aWnd ) )
 
-      IF aWnd[y] <> NIL
+      IF oER:aWnd[y] <> NIL
 
          nCurArea := IIF( lCurArea, nAktArea, y )
 

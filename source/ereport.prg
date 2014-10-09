@@ -49,7 +49,6 @@ STATIC aTmpSource
 //Entscheidet ob die Graphikelemente neu gezeichnet werden sollen
 STATIC lDraGraphic := .T.
 
-MEMVAR  aWnd
 MEMVAR cLongDefIni, cDefaultPath
 MEMVAR nAktItem, nAktArea, nSelArea //, aSelection
 MEMVAR aVRDSave, lVRDSave
@@ -230,7 +229,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
                 IIF( Empty( oER:cDefIni ), OpenFile(,,.T.), (  OpenFile(oER:cDefIni,,.T.), oER:SetScrollBar() ) ), ;
                 StartMessage(), SetSave( .T. ), ClearUndoRedo(),;
                 oEr:oMainWnd:SetFocus() ) ;
-      VALID ( AEVal( aWnd, { |o| if( o <> nil, o:End(), ) } ), AskSaveFiles() )
+      VALID ( AEVal( oER:aWnd, { |o| if( o <> nil, o:End(), ) } ), AskSaveFiles() )
 
    oEr:oAppFont:End()
    if !empty( oBrush )
@@ -1011,7 +1010,7 @@ function DeclarePublics( cDefFile )
       lProfi := .T.
    endif
 
-   PUBLIC aWnd, oBar
+   PUBLIC oBar
    PUBLIC cLongDefIni, cDefaultPath
 
    //PUBLIC nTotalHeight := 0
@@ -1097,11 +1096,11 @@ function DeclarePublics( cDefFile )
    //Sprachdatei
    OpenLanguage()
 
-   aWnd             := Array( oER:nTotAreas )
-   oER:aWndTitle    := Array( Len( aWnd ) )
-   oEr:aItems       := Array( Len( aWnd ), 1000 )
-   oER:aAreaIni     := Array( Len( aWnd ) )
-   oER:aRuler       := Array( Len( aWnd ), 2 )
+   oER:aWnd         := Array( oER:nTotAreas )
+   oER:aWndTitle    := Array( Len( oER:aWnd ) )
+   oEr:aItems       := Array( Len( oER:aWnd ), 1000 )
+   oER:aAreaIni     := Array( Len( oER:aWnd ) )
+   oER:aRuler       := Array( Len( oER:aWnd ), 2 )
    oER:aSelection   := {}   // Array( Len( aWnd ), 2 )
    oER:aFonts       := Array( 20 )
 
@@ -1161,9 +1160,9 @@ function DeclarePublics( cDefFile )
 
    oGenVar:AddMember( "lFixedAreaWidth",, (  oEr:GetGeneralIni( "General", "AreaWidthFixed", "1" ) = "1" ) )
 
-   oGenVar:AddMember( "aAreaTitle",, ARRAY( Len( aWnd ) ) )
-   oGenVar:AddMember( "aAreaHide" ,, ARRAY( Len( aWnd ) ) )
-   oGenVar:AddMember( "aAreaSizes",, ARRAY( Len( aWnd ), 2 ) )
+   oGenVar:AddMember( "aAreaTitle",, ARRAY( Len( oER:aWnd ) ) )
+   oGenVar:AddMember( "aAreaHide" ,, ARRAY( Len( oER:aWnd ) ) )
+   oGenVar:AddMember( "aAreaSizes",, ARRAY( Len( oER:aWnd ), 2 ) )
    AFILL( oGenVar:aAreaHide, .F. )
 
    oGenVar:AddMember( "aAppFonts",, ARRAY(2) )
@@ -1246,11 +1245,11 @@ return .T.
 function SetWinNull()
 
    local i
-   local nAltPos := aWnd[nAktArea]:nTop
+   local nAltPos := oER:aWnd[nAktArea]:nTop
 
-   for i := 1 to Len( aWnd )
-      if aWnd[ i ] <> nil
-         aWnd[ i ]:Move( aWnd[ i ]:nTop - nAltPos, aWnd[ i ]:nLeft, 0, 0, .T. )
+   for i := 1 to Len( oER:aWnd )
+      if oER:aWnd[ i ] <> nil
+         oER:aWnd[ i ]:Move( oER:aWnd[ i ]:nTop - nAltPos, oER:aWnd[ i ]:nLeft, 0, 0, .T. )
       endif
    next
 
@@ -1271,14 +1270,14 @@ function ShowAreasOnBar()
          if ! Empty( oER:aWndTitle[ n ] )
             MENUITEM oER:aWndTitle[ n ] ;
                ACTION ( nAktArea:= AScan( oER:aWndTitle, oMenuItem:cPrompt ) , ;
-                        aWnd[ nAktArea ]:SetFocus(), SetWinNull() )
+                        oER:aWnd[ nAktArea ]:SetFocus(), SetWinNull() )
          endif
       next
    ENDMENU
 
    oBtnAreas:oPopup := oMenuAreas
 
-   aWnd[ AScan( aWnd, { |x| x != nil } ) ]:SetFocus()
+   oER:aWnd[ AScan( oER:aWnd, { |x| x != nil } ) ]:SetFocus()
 
 return .T.
 
@@ -1529,7 +1528,7 @@ function PopupMenu( nArea, oItem, nRow, nCol, lItem )
    SEPARATOR
 
    MENUITEM GL("&Area Properties") + CHR(9) + GL("Ctrl+A")    RESOURCE "B_AREA" ;
-      ACTION ( aWnd[ nArea ]:SetFocus(), AreaProperties( nAktArea ) )
+      ACTION ( oER:aWnd[ nArea ]:SetFocus(), AreaProperties( nAktArea ) )
    MENUITEM GL("Insert Area &before") ACTION InsertArea( .T., STRTRAN( GL("Insert Area &before"), "&" ) )
 
    MENUITEM GL("Insert Area &after" ) ACTION InsertArea( .F., STRTRAN( GL("Insert Area &after" ), "&" ) )
@@ -1560,7 +1559,7 @@ function PopupMenu( nArea, oItem, nRow, nCol, lItem )
 
    ENDMENU
 
-   ACTIVATE POPUP oMenu OF IIF( lItem = .T., oItem, aWnd[ nArea ] ) AT nRow, nCol
+   ACTIVATE POPUP oMenu OF IIF( lItem = .T., oItem, oER:aWnd[ nArea ] ) AT nRow, nCol
 
 return .T.
 
@@ -1721,7 +1720,7 @@ function ClientWindows()
             nWidth += oEr:nRuler + nAreaZugabe2
             nDemoWidth := Max( nDemoWidth, nWidth )
 
-            aWnd[ nWnd ] = ER_MdiChild():New( nTop, oEr:oMainWnd:oWndClient:nLeft + 1 , nHeight + nAreaZugabe,;
+            oER:aWnd[ nWnd ] = ER_MdiChild():New( nTop, oEr:oMainWnd:oWndClient:nLeft + 1 , nHeight + nAreaZugabe,;
                             nDemoWidth, cTitle, nOr( WS_BORDER ),, oEr:oMainWnd,, .F.,,,,;
                             oGenVar:oAreaBrush, .T., .F. ,,, , , , , 1 )
 
@@ -1735,14 +1734,14 @@ function ClientWindows()
                nWidth += oER:nRuler + nAreaZugabe2
             endif
 
-            aWnd[ nWnd ] = ER_MdiChild():New( nTop, 0, nHeight + nAreaZugabe,;
+            oER:aWnd[ nWnd ] = ER_MdiChild():New( nTop, 0, nHeight + nAreaZugabe,;
                             nWidth, cTitle, nOr( WS_BORDER ),, oEr:oMainWnd,, .T.,,,,;
                             oGenVar:oAreaBrush, .T. )
 
          ENDIF
 
 
-         aWnd[ nWnd ]:nArea = nWnd
+         oER:aWnd[ nWnd ]:nArea = nWnd
 
          oER:aWndTitle[ nWnd ] = cTitle
 
@@ -1751,7 +1750,7 @@ function ClientWindows()
 
          oER:FillWindow( nWnd, oER:aAreaIni[nWnd] )
 
-         ACTIVATE WINDOW aWnd[ nWnd ] VALID !GETKEYSTATE( VK_ESCAPE )
+         ACTIVATE WINDOW oER:aWnd[ nWnd ] VALID !GETKEYSTATE( VK_ESCAPE )
 
          oGenVar:lShowReticule := lReticule
 
@@ -1828,12 +1827,12 @@ function ZeichneHintergrund( nArea )
    SetGridSize( ER_GetPixel( oGenVar:nGridWidth ), ER_GetPixel( oGenVar:nGridHeight ) )
 
    //Hintergrund
-   Rectangle( aWnd[ nArea ]:hDC, ;
+   Rectangle( oER:aWnd[ nArea ]:hDC, ;
               oEr:nRulerTop, oEr:nRuler, oEr:nRulerTop + nHeight + 1, oEr:nRuler + nWidth + 1 )
 
    //Grid zeichnen
    if oGenVar:lShowGrid
-      ShowGrid( aWnd[ nArea ]:hDC, aWnd[ nArea ]:cPS, ;
+      ShowGrid( oER:aWnd[ nArea ]:hDC, oER:aWnd[ nArea ]:cPS, ;
                 ER_GetPixel( oGenVar:nGridWidth ), ER_GetPixel( oGenVar:nGridHeight ), ;
                 nWidth, nHeight, oEr:nRulerTop, oEr:nRuler )
    endif
@@ -1954,8 +1953,8 @@ function MsgBarInfos( nRow, nCol, nArea )
    DEFAULT nCol := 0
 
    For x = 1 to nArea - 1
-       if !empty( aWnd[ x ] )
-          nTotRow  += ( aWnd[ x ]:nHeight - 1 )
+       if !empty( oER:aWnd[ x ] )
+          nTotRow  += ( oER:aWnd[ x ]:nHeight - 1 )
        endif
    Next x
 
@@ -2674,9 +2673,9 @@ function SelectFont( oSay, oLbx, oGet )
       PreviewRefresh( oSay, oLbx, oGet )
 
       //Alle Elemente aktualisieren
-      for i := 1 to Len( aWnd )
+      for i := 1 to Len( oER:aWnd )
 
-         if aWnd[ i ] <> nil
+         if oER:aWnd[ i ] <> nil
 
             aIniEntries := GetIniSection( "Items", oER:aAreaIni[ i ] )
 
@@ -3048,9 +3047,9 @@ DEFAULT lSave := .F.
 
       endif
 
-      for i := 1 to Len( aWnd )
-         if aWnd[ i ] <> nil
-            aWnd[ i ]:Refresh()
+      for i := 1 to Len( oER:aWnd )
+         if oER:aWnd[ i ] <> nil
+            oER:aWnd[ i ]:Refresh()
          endif
       next
 
@@ -3228,9 +3227,9 @@ function Options()
 
       ENDINI
 
-      for i := 1 to Len( aWnd )
-         if aWnd[ i ] <> nil
-            aWnd[ i ]:Refresh()
+      for i := 1 to Len( oER:aWnd )
+         if oER:aWnd[ i ] <> nil
+            oER:aWnd[ i ]:Refresh()
          endif
       next
 
@@ -3312,9 +3311,9 @@ function SetGrid()
 
       endif
 
-      for i := 1 to Len( aWnd )
-         if aWnd[ i ] <> nil
-            aWnd[ i ]:Refresh()
+      for i := 1 to Len( oER:aWnd )
+         if oER:aWnd[ i ] <> nil
+            oER:aWnd[ i ]:Refresh()
          endif
       next
 
@@ -4140,23 +4139,23 @@ function AreaChange( nArea, cAreaTitle, nOldWidth, nWidth, nOldHeight, nHeight )
 
 
    oER:aWndTitle[ nArea ]   := cAreaTitle
-   aWnd[ nArea ]:cTitle := cAreaTitle
+   oER:aWnd[ nArea ]:cTitle := cAreaTitle
    oGenVar:aAreaTitle[ nAktArea ]:Refresh()
 
   oMenuAreas:DelItems()
    for n = 1 to Len( oER:aWndTitle )
       if ! Empty( oER:aWndTitle[ n ] )
          oMenuAreas:Add( oMenuitem:=TmenuItem():New( oER:aWndTitle[ n ],,,,;
-         {|| nAktArea:= AScan( oER:aWndTitle, oMenuItem:cPrompt ), aWnd[ nAktArea ]:SetFocus(), SetWinNull() }  )  )
+         {|| nAktArea:= AScan( oER:aWndTitle, oMenuItem:cPrompt ), oER:aWnd[ nAktArea ]:SetFocus(), SetWinNull() }  )  )
 
       endif
    next
 
    if nOldWidth <> nWidth
 
-      for i := 1 to Len( aWnd )
-         if aWnd[ i ] <> nil
-            aWnd[ i ]:Refresh()
+      for i := 1 to Len( oER:aWnd )
+         if oER:aWnd[ i ] <> nil
+            oER:aWnd[ i ]:Refresh()
          endif
       next
 
@@ -4164,14 +4163,14 @@ function AreaChange( nArea, cAreaTitle, nOldWidth, nWidth, nOldHeight, nHeight )
 
    if nOldHeight <> nHeight
 
-      aWnd[ nArea ]:Move( aWnd[ nArea ]:nTop, aWnd[ nArea ]:nLeft, ;
+      oER:aWnd[ nArea ]:Move( oER:aWnd[ nArea ]:nTop, oER:aWnd[ nArea ]:nLeft, ;
          IIF( oGenVar:lFixedAreaWidth, ER_GetPixel(MaxWidthAreas( nArea ))+ oER:nRuler + nAreaZugabe2 , ER_GetPixel( nWidth ) + oER:nRuler + nAreaZugabe2 ), ;
          IIF( oGenVar:aAreaHide[ nArea ], oEr:nRulerTop, ER_GetPixel( nHeight ) + nAreaZugabe ), .T. )
 
-      for i := nArea+1 to Len( aWnd )
-         if aWnd[ i ] <> nil
-            aWnd[ i ]:Move( aWnd[ i ]:nTop + ER_GetPixel( nHeight - nOldHeight ), ;
-               aWnd[ i ]:nLeft,,, .T. )
+      for i := nArea+1 to Len( oER:aWnd )
+         if oER:aWnd[ i ] <> nil
+            oER:aWnd[ i ]:Move( oER:aWnd[ i ]:nTop + ER_GetPixel( nHeight - nOldHeight ), ;
+               oER:aWnd[ i ]:nLeft,,, .T. )
          endif
       next
 
@@ -4214,13 +4213,13 @@ function AreaHide( nArea )
    nDifferenz := ( ER_GetPixel( nAreaHeight ) + nAreaZugabe - 18 ) * ;
                  IIF( oGenVar:aAreaHide[nAktArea], -1, 1 )
 
-   aWnd[ nArea ]:Move( aWnd[ nArea ]:nTop, aWnd[ nArea ]:nLeft, ;
+   oER:aWnd[ nArea ]:Move( oER:aWnd[ nArea ]:nTop, oER:aWnd[ nArea ]:nLeft, ;
       IIF( oGenVar:lFixedAreaWidth, ER_GetPixel(MaxWidthAreas( nArea ))+ oER:nRuler + nAreaZugabe2 , ER_GetPixel( nWidth ) + oER:nRuler + nAreaZugabe2 ), ;
       IIF( oGenVar:aAreaHide[nAktArea], 18, ER_GetPixel( nAreaHeight ) + nAreaZugabe ), .T. )
 
-   for i := nArea+1 to Len( aWnd )
-      if aWnd[ i ] <> nil
-         aWnd[ i ]:Move( aWnd[ i ]:nTop + nDifferenz, aWnd[ i ]:nLeft,,, .T. )
+   for i := nArea+1 to Len( oER:aWnd )
+      if oER:aWnd[ i ] <> nil
+         oER:aWnd[ i ]:Move( oER:aWnd[ i ]:nTop + nDifferenz, oER:aWnd[ i ]:nLeft,,, .T. )
       endif
    next
 
@@ -4233,14 +4232,14 @@ return .T.
 Function MaxWidthAreas( nArea )
 Local nMax   := 0
 Local i
-For i = 1 to Len( aWnd )
-    if !empty( aWnd[ i ] )
+For i = 1 to Len( oER:aWnd )
+    if !empty( oER:aWnd[ i ] )
        nMax := Max( nMax, oGenVar:aAreaSizes[ i, 1 ] )
     endif
 Next i
 /*
-For i = 1 to Len( aWnd )
-    if !empty( aWnd[ i ] )
+For i = 1 to Len( oER:aWnd )
+    if !empty( oER:aWnd[ i ] )
     oGenVar:aAreaSizes[ i, 1 ] := nMax
     endif
 Next i
@@ -4424,7 +4423,7 @@ RETURN nil
 CLASS TEasyReport
 
    DATA oMainWnd
-   DATA aWndTitle
+   DATA aWnd, aWndTitle
    DATA cGeneralIni, cDefIni
    DATA cDataPath, cPath, cTmpPath, cDefIniPath
    DATA bClrBar
@@ -4599,20 +4598,20 @@ METHOD SetGeneralPreferences() CLASS TEasyReport
 
       ENDINI
 
-      for i := 1 to Len( aWnd )
-         if aWnd[ i ] <> nil
-            aWnd[ i ]:Refresh()
+      for i := 1 to Len( ::aWnd )
+         if ::aWnd[ i ] <> nil
+            ::aWnd[ i ]:Refresh()
          endif
       next
 
-      oEr:oMainWnd:SetMenu( BuildMenu() )
+      ::oMainWnd:SetMenu( BuildMenu() )
 
     //  SetSave( .F. )
 
       SetSave( .T. )
       msgInfo("el programa se reiniciara para que los cambios tengan efecto")
-      oEr:oMainWnd:END()
-      oER:lReexec  := .t.
+      ::oMainWnd:END()
+      ::lReexec  := .t.
 
    endif
 
@@ -4676,9 +4675,9 @@ METHOD ScrollV( nPosZugabe, lUp, lDown, lPos ) CLASS TEasyReport
 
    UnSelectAll()
 
-    for i := 1 to Len( aWnd )
-      if aWnd[ i ] <> nil
-         aFirstWndCoors := GetCoors( aWnd[ i ]:hWnd )
+    for i := 1 to Len( ::aWnd )
+      if ::aWnd[ i ] <> nil
+         aFirstWndCoors := GetCoors( ::aWnd[ i ]:hWnd )
          EXIT
       endif
    next
@@ -4710,9 +4709,9 @@ METHOD ScrollV( nPosZugabe, lUp, lDown, lPos ) CLASS TEasyReport
    oVScroll:SetPos( nPosZugabe )
    nZugabe := ::nTotalHeight * ( oVScroll:GetPos() - nAltWert ) / ( (::nTotalHeight) / 100 )
 
-   for i := 1 to Len( aWnd )
-      if aWnd[ i ] <> nil
-         aWnd[ i ]:Move( aWnd[ i ]:nTop - Int(nZugabe/10), aWnd[ i ]:nLeft, 0, 0, .T. )
+   for i := 1 to Len( ::aWnd )
+      if ::aWnd[ i ] <> nil
+         ::aWnd[ i ]:Move( ::aWnd[ i ]:nTop - Int(nZugabe/10), ::aWnd[ i ]:nLeft, 0, 0, .T. )
       endif
    next
 
@@ -4739,9 +4738,9 @@ METHOD ScrollH( lLeft, lRight, lPageLeft, lPageRight, lPos, nPosZugabe ) CLASS T
 
    UnSelectAll()
 
-   for i := 1 to Len( aWnd )
-      if aWnd[ i ] <> nil
-         aFirstWndCoors := GetCoors( aWnd[ i ]:hWnd )
+   for i := 1 to Len( ::aWnd )
+      if ::aWnd[ i ] <> nil
+         aFirstWndCoors := GetCoors( ::aWnd[ i ]:hWnd )
          EXIT
       endif
    next
@@ -4769,16 +4768,16 @@ METHOD ScrollH( lLeft, lRight, lPageLeft, lPageRight, lPos, nPosZugabe ) CLASS T
    endif
 
 
-   for i := 1 to Len( aWnd )
-      if aWnd[ i ] <> nil
+   for i := 1 to Len( oER:aWnd )
+      if oER:aWnd[ i ] <> nil
          if lLeft .OR. lPos
-            aWnd[ i ]:Move( aWnd[ i ]:nTop, aWnd[ i ]:nLeft + nZugabe , 0, 0, .T. )
+            oER:aWnd[ i ]:Move( oER:aWnd[ i ]:nTop, oER:aWnd[ i ]:nLeft + nZugabe , 0, 0, .T. )
          elseif lRight
-            aWnd[ i ]:Move( aWnd[ i ]:nTop, aWnd[ i ]:nLeft - nZugabe , 0, 0, .T. )
+            oER:aWnd[ i ]:Move( oER:aWnd[ i ]:nTop, oER:aWnd[ i ]:nLeft - nZugabe , 0, 0, .T. )
          elseif lPageLeft
-            aWnd[ i ]:Move( aWnd[ i ]:nTop, aWnd[ i ]:nLeft + nPageZugabe, 0, 0, .T. )
+            oER:aWnd[ i ]:Move( oER:aWnd[ i ]:nTop, oER:aWnd[ i ]:nLeft + nPageZugabe, 0, 0, .T. )
          elseif lPageRight
-            aWnd[ i ]:Move( aWnd[ i ]:nTop, aWnd[ i ]:nLeft - nPageZugabe, 0, 0, .T. )
+            oER:aWnd[ i ]:Move( oER:aWnd[ i ]:nTop, oER:aWnd[ i ]:nLeft - nPageZugabe, 0, 0, .T. )
          endif
       endif
    next
@@ -4816,7 +4815,7 @@ METHOD FillWindow( nArea, cAreaIni ) CLASS TEasyReport
    if ::nMeasure = 3 ; cRuler1 := "RULER1_PI" ; cRuler2 := "RULER2_PI" ; endif
 
    @ 0, 0 SAY " " SIZE 1200, ::nRulerTop - ::nRuler PIXEL ;
-      COLORS 0, oGenVar:nBClrAreaTitle OF aWnd[ nArea ]
+      COLORS 0, oGenVar:nBClrAreaTitle OF oER:aWnd[ nArea ]
 
    @ 2,  3 BTNBMP RESOURCE "AREAMINMAX" SIZE 12,12 ACTION  nAktArea:= nArea, AreaHide( nAktArea )
    @ 2, 17 BTNBMP RESOURCE "AREAPROP"   SIZE 12,12 ACTION  nAktArea:= nArea, AreaProperties( nAktArea )
@@ -4826,50 +4825,50 @@ METHOD FillWindow( nArea, cAreaIni ) CLASS TEasyReport
       "Ancho: " + Str( oGenVar:aAreaSizes[ nArea, 1 ] ) + "    " + ;
       "Alto: " + Str( oGenVar:aAreaSizes[ nArea, 2 ] ) ;
       SIZE 400, ::nRulerTop - ::nRuler - 2 PIXEL FONT oGenVar:aAppFonts[ 1 ] ;
-      COLORS oGenVar:nF2ClrAreaTitle, oGenVar:nBClrAreaTitle OF aWnd[ nArea ]
+      COLORS oGenVar:nF2ClrAreaTitle, oGenVar:nBClrAreaTitle OF oER:aWnd[ nArea ]
 
    @ ::nRulerTop - ::nRuler,  0 BITMAP oRulerBmp2 RESOURCE cRuler2 ;
-      OF aWnd[ nArea ] PIXEL NOBORDER
+      OF oER:aWnd[ nArea ] PIXEL NOBORDER
 
    //@ ::nRulerTop - ::nRuler, 20 BITMAP oRulerBmp3 RESOURCE cRuler2 ;
    //   OF aWnd[ nArea ] PIXEL NOBORDER
 
    @ ::nRulerTop - ::nRuler, 20 BITMAP oRulerBmp1 RESOURCE cRuler1 ;
-      OF aWnd[ nArea ] PIXEL NOBORDER
+      OF oER:aWnd[ nArea ] PIXEL NOBORDER
 
-   oRulerBmp1:bLClicked := { |nRow,nCol,nFlags| nAktArea := aWnd[ nArea ]:nArea, ::oMainWnd:SetFocus() }
+   oRulerBmp1:bLClicked := { |nRow,nCol,nFlags| nAktArea := oER:aWnd[ nArea ]:nArea, ::oMainWnd:SetFocus() }
    oRulerBmp2:bLClicked := oRulerBmp1:bLClicked
 
-   aWnd[ nArea ]:bPainted   = {| hDC, cPS | ZeichneHintergrund( nArea ) }
+   oER:aWnd[ nArea ]:bPainted   = {| hDC, cPS | ZeichneHintergrund( nArea ) }
 
-   aWnd[ nArea ]:bGotFocus  = { || SetTitleColor( .F., nArea ), RefreshBrwAreaProp(nArea) }
-   aWnd[ nArea ]:bLostFocus = { || SetTitleColor( .T., nArea ) }
+   oER:aWnd[ nArea ]:bGotFocus  = { || SetTitleColor( .F., nArea ), RefreshBrwAreaProp(nArea) }
+   oER:aWnd[ nArea ]:bLostFocus = { || SetTitleColor( .T., nArea ) }
 
-   aWnd[ nArea ]:bMMoved = {|nRow,nCol,nFlags| ;
+   oER:aWnd[ nArea ]:bMMoved = {|nRow,nCol,nFlags| ;
                            MsgBarInfos( nRow, nCol, nArea ), ;
-                           MoveSelection( nRow, nCol, aWnd[ nArea ] ) ,;
+                           MoveSelection( nRow, nCol, oER:aWnd[ nArea ] ) ,;
                            if(!lScrollVert, ::SetReticule( nRow, nCol, nArea ), ::SetReticule( 0, 0, nArea )),;
                            lScrollVert :=  .F. }
 
-   aWnd[ nArea ]:bRClicked = {|nRow,nCol,nFlags| nAktArea := aWnd[ nArea ]:nArea, ::oMainWnd:SetFocus(),;
+   oER:aWnd[ nArea ]:bRClicked = {|nRow,nCol,nFlags| nAktArea := oER:aWnd[ nArea ]:nArea, ::oMainWnd:SetFocus(),;
                                                  PopupMenu( nArea,, nRow, nCol ) }
 
 
-    aWnd[ nArea ]:bLClicked = {|nRow,nCol,nFlags| DeactivateItem(), ;
+    oER:aWnd[ nArea ]:bLClicked = {|nRow,nCol,nFlags| DeactivateItem(), ;
                               IIF( GetKeyState( VK_SHIFT ),, UnSelectAll() ), ;
-                              StartSelection( nRow, nCol, aWnd[ nArea ] ), ;
-                              nAktArea := aWnd[ nArea ]:nArea,;
+                              StartSelection( nRow, nCol, oER:aWnd[ nArea ] ), ;
+                              nAktArea := oER:aWnd[ nArea ]:nArea,;
                               swichItemsArea( nArea, .t. ) ,;
                               ::oMainWnd:SetFocus() ,;
                               swichItemsArea( nArea, .f. )  }
 
 
-   aWnd[ nArea ]:bLButtonUp = {|nRow,nCol,nFlags| StopSelection( nRow, nCol, aWnd[ nArea ] ) }
+   oER:aWnd[ nArea ]:bLButtonUp = {|nRow,nCol,nFlags| StopSelection( nRow, nCol, oER:aWnd[ nArea ] ) }
 
-   aWnd[ nArea ]:bKeyDown   = {|nKey| WndKeyDownAction( nKey, nArea, cAreaIni ) }
+   oER:aWnd[ nArea ]:bKeyDown   = {|nKey| WndKeyDownAction( nKey, nArea, cAreaIni ) }
 
-   oRulerBmp1:bRClicked    := aWnd[ nArea ]:bRClicked
-   oRulerBmp2:bRClicked    := aWnd[ nArea ]:bRClicked
+   oRulerBmp1:bRClicked    := oER:aWnd[ nArea ]:bRClicked
+   oRulerBmp2:bRClicked    := oER:aWnd[ nArea ]:bRClicked
 
    ::aRuler[ nArea , 1 ]     := oRulerBmp1
    ::aRuler[ nArea , 2 ]     := oRulerBmp2
@@ -4889,11 +4888,11 @@ METHOD FillWindow( nArea, cAreaIni ) CLASS TEasyReport
       ::lFillWindow := .F.
    endif
 
-   //aWnd[ nArea ]:oToolTip := ER_TooltipAr( nArea, cRuler1 )
+   //oER:aWnd[ nArea ]:oToolTip := ER_TooltipAr( nArea, cRuler1 )
    /*
-   aWnd[ nArea ]:cToolTip := "Titulo:           " + Chr( 9 ) + Left( oGenVar:aAreaTitle[ nArea ]:cCaption, 28 ) + CRLF + ;
+   oER:aWnd[ nArea ]:cToolTip := "Titulo:           " + Chr( 9 ) + Left( oGenVar:aAreaTitle[ nArea ]:cCaption, 28 ) + CRLF + ;
                   "Unidad Medida:    " + Chr( 9 ) + Right( RTrim( cRuler1 ), 2 ) + CRLF + ;
-                  "Top:              " + Chr( 9 ) + Str( aWnd[ nArea ]:nTop, 10 ) + CRLF
+                  "Top:              " + Chr( 9 ) + Str( oER:aWnd[ nArea ]:nTop, 10 ) + CRLF
    */
 
    //Memory(-1)
@@ -4922,9 +4921,9 @@ METHOD SetReticule( nRow, nCol, nArea ) CLASS TEasyReport
    endif
 
    if lShow
-      DrawRulerHorzLine( aWnd[ nArea ], nRowPos )
+      DrawRulerHorzLine( oER:aWnd[ nArea ], nRowPos )
 
-      AEval( aWnd, { | oWnd | If( oWnd != nil, DrawRulerVertLine( oWnd, nColPos ),) } )
+      AEval( oER:aWnd, { | oWnd | If( oWnd != nil, DrawRulerVertLine( oWnd, nColPos ),) } )
    endif
 
 return .T.
@@ -5000,13 +4999,13 @@ Function ER_TooltipAr( nArea, cRuler1 )
    local cTool  := ""
    local oTT
 
-   oTT    := TC5Tooltip():New( 100, 100, 250, 150, aWnd[ nArea ] , .T., CLR_CYAN, CLR_WHITE )
+   oTT    := TC5Tooltip():New( 100, 100, 250, 150, oER:aWnd[ nArea ] , .T., CLR_CYAN, CLR_WHITE )
 
    cTool       := "Titulo:           " + Chr( 9 ) + Left( oGenVar:aAreaTitle[ nArea ]:cCaption, 28 ) + CRLF + ;
                   "Unidad Medida:    " + Chr( 9 ) + Right( RTrim( cRuler1 ), 2 ) + CRLF + ;
-                  "Top:              " + Chr( 9 ) + Str( aWnd[ nArea ]:nTop, 10 ) + CRLF
+                  "Top:              " + Chr( 9 ) + Str( oER:aWnd[ nArea ]:nTop, 10 ) + CRLF
 
-   oTT:cHeader  := "Propiedades Area: " + Chr( 9 ) + Str( aWnd[ nArea ]:nArea, 10 ) //+ CRLF + ;
+   oTT:cHeader  := "Propiedades Area: " + Chr( 9 ) + Str( oER:aWnd[ nArea ]:nArea, 10 ) //+ CRLF + ;
    oTT:cBody    := cTool
    oTT:cFoot    := " "
    //oTT:cBmpFoot := "..\bitmaps\16x16\help.bmp"

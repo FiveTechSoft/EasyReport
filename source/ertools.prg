@@ -38,7 +38,7 @@
              <.lAnimate.>, [<nSpeed>], <oFont>, <.lTransparent.>, [\{<cDlgsName>\}] )
 
 
-MEMVAR aWnd
+
 MEMVAR cDefaultPath
 MEMVAR nAktArea
 MEMVAR aVRDSave
@@ -80,7 +80,7 @@ function InsertArea( lBefore, cTitle )
       cDir := cDefaultPath
    endif
 
-   for i := 1 TO Len( aWnd )
+   for i := 1 TO Len( oER:aWnd )
       AADD( aAreaInis, ALLTRIM( GetIniEntry( aIniEntries, ALLTRIM(STR( i, 5 )) , "" ) ) )
    NEXT
 
@@ -120,7 +120,7 @@ function InsertArea( lBefore, cTitle )
 
       OpenFile( oER:cDefIni,, .T. )
 
-      aWnd[ nNewArea ]:SetFocus()
+      oER:aWnd[ nNewArea ]:SetFocus()
 
       AreaProperties( nAktArea )
 
