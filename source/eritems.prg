@@ -25,7 +25,7 @@ function ElementActions( oItem, i, cName, nArea, cAreaIni, cTyp )
 
    //oItems:bGotFocus  := {|| SelectItem( i, nArea, cAreaIni ), MsgBarInfos( i, cAreaIni ) }
 
-   oItem:bGotFocus  := {||   SelectItem( i, nArea, cAreaIni ),  RefreshBrwProp( i, nArea, cAreaIni )  }
+   oItem:bGotFocus  := {||   SelectItem( i, nArea, cAreaIni ),  RefreshBrwProp( i, cAreaIni )  }
 
    oItem:bLClicked = { | nRow, nCol, nFlags | ;
       If( oGenVar:lItemDlg, ( If( GetKeyState( VK_SHIFT ), MultiItemProperties(), ;
@@ -162,7 +162,7 @@ function DeleteItem( i, nArea, lFromList, lRemove, lFromUndoRedo )
       endif
    endif
 
-   cItemDef := AllTrim( GetPvProfString( "Items", AllTrim(STR(i,5)) , "", cAreaIni ) )
+   cItemDef := GetItemDef( i, cAreaIni )
    cOldDef  := cItemDef
 
    cWert:= IIf( lRemove , " 0", " 1" )
@@ -194,9 +194,19 @@ return .T.
 
 //----------------------------------------------------------------------------//
 
+FUNCTION GetItemDef( nItem, cAreaIni )
+RETURN  AllTrim( GetPvProfString( "Items", AllTrim(STR(nItem,5)) , "", cAreaIni ) )
+
+//------------------------------------------------------------------------------
+
+FUNCTION GetaItemProp( nItem, cAreaIni )
+RETURN hb_atokens( GetItemDef( nItem, cAreaIni ) , "|" )
+
+//------------------------------------------------------------------------------
+
 function DeleteAllItems( nTyp )
 
-   local i, cTyp, cDef, oItem
+   local i, cTyp, cDef
    local nLen := LEN( oER:aItems[nAktArea] )
 
    if MsgYesNo( GL("Remove items?"), GL("Select an option") ) = .F.
@@ -205,20 +215,18 @@ function DeleteAllItems( nTyp )
 
    FOR i := 1 TO nLen
 
-      cDef := AllTrim( GetPvProfString( "Items", AllTrim(STR(i,5)) , "", oER:aAreaIni[nAktArea] ) )
+      cDef :=  GetItemDef( i, oER:aItems[nAktArea]  )
 
       if !EMPTY( cDef )
 
-         oItem := VRDItem():New( cDef )
-
          cTyp := UPPER(AllTrim( GetField( cDef, 1 ) ))
 
-         if nTyp = 1 .AND. oItem:cType = "TEXT"           .OR. ;
-            nTyp = 2 .AND. oItem:cType = "IMAGE"          .OR. ;
-            nTyp = 3 .AND. IsGraphic( oItem:cType ) = .T. .OR. ;
-            nTyp = 4 .AND. oItem:cType = "BARCODE"
+        if nTyp = 1 .AND. cTyp = "TEXT"     .OR. ;
+           nTyp = 2 .AND. cTyp = "IMAGE"    .OR. ;
+           nTyp = 3 .AND. IsGraphic( cTyp ) .OR. ;
+           nTyp = 4 .AND. cTyp = "BARCODE"
 
-            if oItem:lVisible
+            IF VAL( GetField( cDef, 4 ) ) != 0
                DeleteItem( i, nAktArea, .T., .T. )
             endif
 
@@ -233,18 +241,14 @@ return .T.
 //----------------------------------------------------------------------------//
 
 function DelItemWithKey( nItem, nArea )
-
-   local cItemDef  := AllTrim( GetPvProfString( "Items", AllTrim(STR( nItem,5)), "", oER:aAreaIni[nArea] ) )
-   local oItemInfo := VRDItem():New( cItemDef )
+   LOCAL cAreaIni :=  oER:aItems[nArea]
+   local cItemDef  :=  GetItemDef( nItem, cAreaIni )
 
    DeleteItem( nItem, nArea, .T. )
-
-   if oItemInfo:nItemID < 0
-      DelIniEntry( "Items", AllTrim(STR(nItem,5)), oER:aAreaIni[nArea] )
+   IF VAL( GetField( cItemDef, 3 ) ) < 0
+      DelIniEntry( "Items", AllTrim(STR(nItem,5) ), cAreaIni )
    endif
-
    nAktItem := 0
-
    RefreshPanelTree()
 
 return .T.
@@ -335,7 +339,7 @@ function ItemProperties( i, nArea, lFromList, lNew )
       oCurDlg := NIL
    endif
 
-   cOldDef := AllTrim( GetPvProfString( "Items", AllTrim(STR(i,5)) , "", cAreaIni ) )
+   cOldDef := GetItemDef( i, cAreaIni  )
    cTyp    := UPPER(AllTrim( GetField( cOldDef, 1 ) ))
 
    if cTyp = "TEXT"
@@ -348,7 +352,7 @@ function ItemProperties( i, nArea, lFromList, lNew )
       BarcodeProperties( i, nArea, cAreaIni, lFromList, lNew )
    endif
 
-   cItemDef := AllTrim( GetPvProfString( "Items", AllTrim(STR(i,5)) , "", cAreaIni ) )
+   cItemDef := GetItemDef( i, cAreaIni  )
 
    cName := AllTrim( GetField( cItemDef, 2 ) )
 
@@ -467,8 +471,21 @@ function UpdateItems( nValue, nTyp, lAddValue, aOldValue )
 
 //------------------------------------------------------------------------------
 
-FUNCTION GetTextProperties( nItem, nArea, cAreaIni )
+FUNCTION GetTextProperties( nItem, cAreaIni )
+
+   LOCAL aProp:=GetaItemProp( nItem, cAreaIni )
    LOCAL aTextProp := Array(7)
+
+    aTextProp[1] := { GL( "Title" ) , aProp[ 2 ] }
+    aTextProp[2] := { GL( "ItemID" ), aProp[ 3 ] }
+    aTextProp[3] := { GL( "Show" )  , aProp[ 4 ] }
+    aTextProp[4] := { GL( "Top" )   , aProp[ 7 ] }
+    aTextProp[5] := { GL( "Left" )  , aProp[ 8 ] }
+    aTextProp[6] := { GL( "Width" ) , aProp[ 9 ] }
+    aTextProp[7] := { GL( "Height" ), aProp[10 ] }
+
+
+  /*
    LOCAL cItemDef := ALLTRIM( GetPvProfString( "Items", ALLTRIM(STR(nItem,5)) , "", cAreaIni ) )
 
    cInfoWidth  := GetField( cItemDef, 9 )
@@ -497,18 +514,17 @@ FUNCTION GetTextProperties( nItem, nArea, cAreaIni )
     aTextProp[7] := { GL( "Height" ),;
                      GetField( cItemDef, 10 ) }
 
-
+      */
 RETURN aTextProp
 
 //------------------------------------------------------------------------------
 
-FUNCTION RefreshBrwProp( i , nArea, cAreaIni )
-   LOCAL cOldDef := AllTrim( GetPvProfString( "Items", AllTrim(STR(i,5)) , "", cAreaIni ) )
+FUNCTION RefreshBrwProp( i , cAreaIni )
+   LOCAL cOldDef := GetItemDef( i, cAreaIni  )
    LOCAL cTyp    := UPPER(AllTrim( GetField( cOldDef, 1 ) ))
-   LOCAL aProps
 
    IF cTyp == "TEXT"
-      RefreshBrwTextProp( i , nArea, cAreaIni )
+      RefreshBrwTextProp( i , cAreaIni )
   endif
 
 Return
@@ -516,8 +532,8 @@ Return
 
 //------------------------------------------------------------------------------
 
-FUNCTION RefreshBrwTextProp( nItem, nArea, cAreaIni )
-   LOCAL aProps:=GetTextProperties( nItem, nArea, cAreaIni )
+FUNCTION RefreshBrwTextProp( nItem, cAreaIni )
+   LOCAL aProps:=GetTextProperties( nItem, cAreaIni )
    oER:oBrwProp:setArray(aProps)
    oER:oBrwProp:refresh(.t.)
    oER:oSaySelectedItem:setText( aProps[1,2] )
@@ -1884,7 +1900,7 @@ function ShowItem( i, nArea, cAreaIni, aFirst, nElemente, aIniEntries, nIndex )
 */
 
    if aIniEntries = NIL
-      cItemDef := AllTrim( GetPvProfString( "Items", AllTrim(STR(i,5)) , "", cAreaIni ) )
+      cItemDef := GetItemDef( i, cAreaIni )
    ELSE
       cItemDef := GetIniEntry( aIniEntries,, "",, nIndex )
    endif
