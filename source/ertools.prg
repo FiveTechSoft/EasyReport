@@ -40,7 +40,7 @@
 
 
 MEMVAR cDefaultPath
-MEMVAR nAktArea
+//MEMVAR nAktArea
 MEMVAR aVRDSave
 MEMVAR lProfi, oGenVar
 MEMVAR oER
@@ -72,7 +72,7 @@ function InsertArea( lBefore, cTitle )
    local lreturn     := .F.
    local cFile       := SPACE( 200 )
    local aIniEntries := GetIniSection( "Areas", oER:cDefIni )
-   local nNewArea    := nAktArea + IIF( lBefore, 0, 1 )
+   local nNewArea    := oER:nAktArea + IIF( lBefore, 0, 1 )
    local cDir        := CheckPath( oER:GetDefIni( "General", "AreaFilesDir", "" ) )
    LOCAL nDecimals   := IIF( oER:nMeasure = 2, 2, 0 )
 
@@ -115,14 +115,14 @@ function InsertArea( lBefore, cTitle )
       MEMOWRIT( cDir + cFile, ;
          "[General]" + CRLF + ;
          "Title=New Area" + CRLF + ;
-         "Width="  + ALLTRIM(STR( oGenVar:aAreaSizes[nAktArea,1], 5, nDecimals )) + CRLF + ;
-         "Height=" + ALLTRIM(STR( oGenVar:aAreaSizes[nAktArea,2], 5, nDecimals )) )
+         "Width="  + ALLTRIM(STR( oGenVar:aAreaSizes[oER:nAktArea,1], 5, nDecimals )) + CRLF + ;
+         "Height=" + ALLTRIM(STR( oGenVar:aAreaSizes[oER:nAktArea,2], 5, nDecimals )) )
 
       OpenFile( oER:cDefIni,, .T. )
 
       oER:aWnd[ nNewArea ]:SetFocus()
 
-      AreaProperties( nAktArea )
+      AreaProperties( oER:nAktArea )
 
    endif
 
@@ -134,8 +134,8 @@ function DeleteArea()
 
    if MsgNoYes( GL("Do you really want to delete this area?"), GL("Select an option") ) = .T.
 
-      FErase( aVRDSave[nAktArea,1] )
-      DelIniEntry( "Areas", ALLTRIM(STR( nAktArea, 5 )), oER:cDefIni )
+      FErase( aVRDSave[oER:nAktArea,1] )
+      DelIniEntry( "Areas", ALLTRIM(STR( oER:nAktArea, 5 )), oER:cDefIni )
 
       OpenFile( oER:cDefIni,, .T. )
 
@@ -1008,7 +1008,7 @@ return ( creturn )
 Function ER_Inspector( nD, oDlg )
 
    //LOCAL oDlg   := oER:oFldD:aDialogs[ nD ]
-   LOCAL aProps := getAreaProperties( nAktArea )
+   LOCAL aProps := GetAreaProperties( oER:nAktArea )
    Local oFont
 
     DEFAULT oDlg   := oER:oFldD:aDialogs[ nD ]
@@ -2241,11 +2241,11 @@ Local nBmp  := 1
 Return nBmp
 
 //------------------------------------------------------------------------------
-
+//aDatas := __objGetMsgList( tTest, .t. )
 Function ER_Inspector1( nD )
 
    LOCAL oDlg   := oER:oFldD:aDialogs[ nD ]
-   LOCAL aProps := GetAreaProperties( nAktArea )
+   LOCAL aProps := GetAreaProperties( oER:nAktArea )
    Local oFont
    Local oBrw
    Local oCol

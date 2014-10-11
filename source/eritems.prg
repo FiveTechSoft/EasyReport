@@ -2,7 +2,7 @@
 #INCLUDE "Folder.ch"
 #INCLUDE "FiveWin.ch"
 
-MEMVAR nAktItem, nAktArea, nSelArea //, aSelection
+MEMVAR nAktItem, nSelArea //, aSelection, nAktArea, 
 MEMVAR nRuler, nRulerTop
 MEMVAR cItemCopy, aSelectCopy, aItemCopy, nXMove, nYMove
 
@@ -65,9 +65,12 @@ function ElementActions( oItem, i, cName, nArea, cAreaIni, cTyp )
    oItem:bKeyDown   = { | nKey | KeyDownAction( nKey, i, nArea, cAreaIni ) }
 
    oItem:bLostFocus = { | nRow, nCol, nFlags | ;
-                        ( SelectItem( i, nArea, cAreaIni ), ;
+                          SelectItem( i, nArea, cAreaIni ), ;
                           nInfoRow := nRow, nInfoCol := nCol, ;
-                          MsgBarItem( i, nArea, cAreaIni, nRow, nCol ) ) }
+                          MsgBarItem( i, nArea, cAreaIni, nRow, nCol ) }
+ 
+//                      ( IIF( GetKeyState( VK_SHIFT ), SelectItem( i, nArea, cAreaIni ), aWnd[ nArea ]:SetFocus() ), ;
+//   oItem:bLostFocus := { || IIF( GetKeyState( VK_SHIFT ), .T., 
 
 return .T.
 
@@ -197,7 +200,7 @@ return .T.
 function DeleteAllItems( nTyp )
 
    local i, cTyp, cDef, oItem
-   local nLen := LEN( oER:aItems[nAktArea] )
+   local nLen := LEN( oER:aItems[oER:nAktArea] )
 
    if MsgYesNo( GL("Remove items?"), GL("Select an option") ) = .F.
       return (.F.)
@@ -205,7 +208,7 @@ function DeleteAllItems( nTyp )
 
    FOR i := 1 TO nLen
 
-      cDef := AllTrim( GetPvProfString( "Items", AllTrim(STR(i,5)) , "", oER:aAreaIni[nAktArea] ) )
+      cDef := AllTrim( GetPvProfString( "Items", AllTrim(STR(i,5)) , "", oER:aAreaIni[oER:nAktArea] ) )
 
       if !EMPTY( cDef )
 
@@ -219,7 +222,7 @@ function DeleteAllItems( nTyp )
             nTyp = 4 .AND. oItem:cType = "BARCODE"
 
             if oItem:lVisible
-               DeleteItem( i, nAktArea, .T., .T. )
+               DeleteItem( i, oER:nAktArea, .T., .T. )
             endif
 
          endif
@@ -511,7 +514,7 @@ FUNCTION RefreshBrwProp( i , nArea, cAreaIni )
       RefreshBrwTextProp( i , nArea, cAreaIni )
   endif
 
-Return
+Return nil
 
 
 //------------------------------------------------------------------------------
@@ -521,7 +524,7 @@ FUNCTION RefreshBrwTextProp( nItem, nArea, cAreaIni )
    oER:oBrwProp:setArray(aProps)
    oER:oBrwProp:refresh(.t.)
    oER:oSaySelectedItem:setText( aProps[1,2] )
-Return
+Return nil
 
 //----------------------------------------------------------------------------//
 
@@ -1671,7 +1674,7 @@ return IIF( EMPTY( cFile ), cOldFile, cFile )
 function ItemCopy( lCut )
 
    local i, oItemInfo
-   local cAreaIni := oER:aAreaIni[nAktArea]
+   local cAreaIni := oER:aAreaIni[oER:nAktArea]
 
    DEFAULT lCut := .F.
 
@@ -1713,14 +1716,14 @@ function ItemCopy( lCut )
       cItemCopy    := AllTrim( GetPvProfString( "Items", AllTrim(STR(nAktItem,5)), ;
                       "", cAreaIni ) )
       nCopyEntryNr := nAktItem
-      nCopyAreaNr  := nAktArea
+      nCopyAreaNr  := oER:nAktArea
 
       oItemInfo := VRDItem():New( cItemCopy )
 
       if lCut
-         DeleteItem( nAktItem, nAktArea, .T. )
+         DeleteItem( nAktItem, oER:nAktArea, .T. )
          if oItemInfo:nItemID < 0
-            DelIniEntry( "Items", AllTrim(STR(nAktItem,5)), oER:aAreaIni[nAktArea] )
+            DelIniEntry( "Items", AllTrim(STR(nAktItem,5)), oER:aAreaIni[oER:nAktArea] )
          endif
       endif
 
@@ -1738,10 +1741,10 @@ function ItemPaste( lCut )
 
    if LEN( aSelectCopy ) <> 0
       FOR i := 1 TO LEN( aSelectCopy )
-         NewItem( "COPY", nAktArea, aSelectCopy[i,1], aSelectCopy[i,2], aItemCopy[i] )
+         NewItem( "COPY", oER:nAktArea, aSelectCopy[i,1], aSelectCopy[i,2], aItemCopy[i] )
       NEXT
    ELSE
-      NewItem( "COPY", nAktArea )
+      NewItem( "COPY", oER:nAktArea )
    endif
 
 return ( .T. )

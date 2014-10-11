@@ -5,7 +5,7 @@
 STATIC  nBoxTop, nBoxLeft, nBoxRight, nBoxBottom
 
 MEMVAR cDefaultPath
-MEMVAR nAktItem, nAktArea, nSelArea //, aSelection //, nTotalHeight, nTotalWidth
+MEMVAR nAktItem, nSelArea //nAktArea, aSelection //, nTotalHeight, nTotalWidth
 MEMVAR oGenVar
 //MEMVAR lBoxDraw
 MEMVAR cInfoWidth, cInfoHeight
@@ -24,7 +24,7 @@ FUNCTION SelectItem( nItem, nArea, cAreaIni )
 
    nAktItem := nItem
    nSelArea := nArea
-   nAktArea := nArea
+   oER:nAktArea := nArea
 
    IF GetKeyState( VK_SHIFT )
       ToggleItemSelection( nItem, nArea )
@@ -102,7 +102,7 @@ FUNCTION SelectAllItems( lCurArea )
 
       IF oER:aWnd[y] <> NIL
 
-         nCurArea := IIF( lCurArea, nAktArea, y )
+         nCurArea := IIF( lCurArea, oER:nAktArea, y )
 
          FOR i := 1 TO LEN( oER:aItems[ nCurArea ] )
 
@@ -136,7 +136,7 @@ FUNCTION InvertSelection( lCurArea )
 
       IF oER:aWnd[y] <> NIL
 
-         nCurArea := IIF( lCurArea, nAktArea, y )
+         nCurArea := IIF( lCurArea, oER:nAktArea, y )
 
          FOR i := 1 TO LEN( oER:aItems[ nCurArea ] )
 
@@ -199,17 +199,17 @@ FUNCTION StopSelection( nRow, nCol, oAktWnd )
       lBoxDraw = .F.
       ReleaseCapture()
 
-      FOR i := 1 TO LEN( oER:aItems[ nAktArea ] )
+      FOR i := 1 TO LEN( oER:aItems[ oER:nAktArea ] )
 
-         IF oER:aItems[nAktArea,i] <> NIL
+         IF oER:aItems[oER:nAktArea,i] <> NIL
 
             aBoxRect  := { nBoxTop, nBoxLeft, nBoxBottom, nBoxRight }
-            aItemRect := { oER:aItems[nAktArea,i]:nTop, oER:aItems[nAktArea,i]:nLeft, ;
-                           oER:aItems[nAktArea,i]:nBottom, oER:aItems[nAktArea,i]:nRight }
+            aItemRect := { oER:aItems[oER:nAktArea,i]:nTop, oER:aItems[oER:nAktArea,i]:nLeft, ;
+                           oER:aItems[oER:nAktArea,i]:nBottom, oER:aItems[oER:nAktArea,i]:nRight }
 
             IF IsIntersectRect( aItemRect, aBoxRect )
 
-               ToggleItemSelection( i, nAktArea )
+               ToggleItemSelection( i, oER:nAktArea )
 
             ENDIF
 

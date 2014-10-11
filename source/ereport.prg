@@ -24,9 +24,9 @@
              [ HELPTOPICS <cnHelpids,...> ] ;
              [ <layout: TOP, LEFT, BOTTOM, RIGHT> ] ;
              [ <lAnimate: ANIMATE> [ SPEED <nSpeed> ] ] ;
-              [ FONT <oFont> ] ; //-->> byte-one 2010
+             [ FONT <oFont> ] ; //-->> byte-one 2010
              [ <lTransparent: TRANSPARENT> ] ;
-            [ <dlg: DIALOG, DIALOGS, PAGE, PAGES> <cDlgsName,...> ] ;
+             [ <dlg: DIALOG, DIALOGS, PAGE, PAGES> <cDlgsName,...> ] ;
        => ;
              [<oFolder> := ] TCFoldereX():New( <nRow>, <nCol>, <nWidth>, <nHeight>,;
              <oWnd>, [\{<cbmps>\}], <.lPixel.>, <.lDesign.>, [\{<cPrompt>\}], ;
@@ -50,7 +50,7 @@ STATIC aTmpSource
 STATIC lDraGraphic := .T.
 
 MEMVAR cLongDefIni, cDefaultPath
-MEMVAR nAktItem, nAktArea, nSelArea //, aSelection
+MEMVAR nAktItem, nSelArea  //, aSelection, nAktArea
 MEMVAR aVRDSave, lVRDSave
 MEMVAR cItemCopy, aSelectCopy, aItemCopy, nXMove, nYMove
 MEMVAR lProfi
@@ -171,7 +171,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
        @ 0.2, 1 CFOLDEREX oER:oFldI ;
        PROMPT GL("&Report Settings"), GL("&Items"), GL("Colors"), GL("Fonts") ;
        OF oEr:oPanelI ; //oEr:oMainWnd ;
-       SIZE Int(GetSysMetrics( 0 )/4), GetSysMetrics( 1 ) - 138 ;    //326
+       SIZE Int(GetSysMetrics( 0 )/4), GetSysMetrics( 1 ) - 138 ;    //326  
        OPTION 2 ;
        TAB HEIGHT 34 ;
        BITMAPS { "B_EDIT16", "B_ITEMLIST16", "B_ITEMLIST16", "B_EDIT2" } ;
@@ -695,7 +695,7 @@ function BarMenu()
          OF oBar ;
          PROMPT FWSTring( "Areas" ) ;
          TOOLTIP GL("Area Properties") ;
-         ACTION AreaProperties( nAktArea ) ;
+         ACTION AreaProperties( oER:nAktArea ) ;
          WHEN !Empty( oER:cDefIni ) ;
          MENU oMenuAreas
    endif
@@ -704,7 +704,7 @@ function BarMenu()
       OF oBar ;
       PROMPT FWString( "Properties" ) ;
       TOOLTIP GL("Item Properties") ;
-      ACTION IIF( LEN( oER:aSelection ) <> 0, MultiItemProperties(), ItemProperties( nAktItem, nAktArea ) ) ;
+      ACTION IIF( LEN( oER:aSelection ) <> 0, MultiItemProperties(), ItemProperties( nAktItem, oER:nAktArea ) ) ;
       WHEN !Empty( oER:cDefIni )
 
    if Val( oEr:GetDefIni( "General", "InsertMode", "1" ) ) = 1
@@ -712,28 +712,28 @@ function BarMenu()
          OF oBar GROUP ;
          PROMPT FWString( "&Text" ) ;
          TOOLTIP STRTRAN( GL("Insert &Text"), "&" ) ;
-         ACTION NewItem( "TEXT", nAktArea ) ;
+         ACTION NewItem( "TEXT", oER:nAktArea ) ;
          WHEN !Empty( oER:cDefIni )
 
       DEFINE BUTTON RESOURCE "B_IMAGE32", "B_IMAGE32", "B_IMAGE321";
          OF oBar ;
          PROMPT FWString( "Image" ) ;
          TOOLTIP STRTRAN( GL("&Image"), "&" ) ;
-         ACTION NewItem( "IMAGE", nAktArea ) ;
+         ACTION NewItem( "IMAGE", oER:nAktArea ) ;
          WHEN !Empty( oER:cDefIni )
 
       DEFINE BUTTON RESOURCE "B_GRAPHIC32", "B_GRAPHIC32", "B_GRAPHIC321" ;
          OF oBar ;
          PROMPT FWString( "Graphic" ) ;
          TOOLTIP STRTRAN( GL("Insert &Graphic"), "&" ) ;
-         ACTION NewItem( "GRAPHIC", nAktArea ) ;
+         ACTION NewItem( "GRAPHIC", oER:nAktArea ) ;
          WHEN !Empty( oER:cDefIni )
 
       DEFINE BUTTON RESOURCE "B_BARCODE32", "B_BARCODE32", "B_BARCODE321" ;
          OF oBar ;
          PROMPT FWString( "Barcode" ) ;
          TOOLTIP STRTRAN( GL("Insert &Barcode"), "&" ) ;
-         ACTION NewItem( "BARCODE", nAktArea ) ;
+         ACTION NewItem( "BARCODE", oER:nAktArea ) ;
          WHEN !Empty( oER:cDefIni )
    endif
 
@@ -1018,9 +1018,11 @@ function DeclarePublics( cDefFile )
 
    //
    PUBLIC nAktItem := 0
-   PUBLIC nAktArea := 1
+   //PUBLIC nAktArea := 1
    PUBLIC nSelArea := 0
    //PUBLIC aSelection := {}
+
+   oER:nAktArea := 1
 
    //Sichern
    PUBLIC aVRDSave[102, 2 ]
@@ -1245,7 +1247,7 @@ return .T.
 function SetWinNull()
 
    local i
-   local nAltPos := oER:aWnd[nAktArea]:nTop
+   local nAltPos := oER:aWnd[oER:nAktArea]:nTop
 
    for i := 1 to Len( oER:aWnd )
       if oER:aWnd[ i ] <> nil
@@ -1269,8 +1271,8 @@ function ShowAreasOnBar()
       for n = 1 to Len( oER:aWndTitle )
          if ! Empty( oER:aWndTitle[ n ] )
             MENUITEM oER:aWndTitle[ n ] ;
-               ACTION ( nAktArea:= AScan( oER:aWndTitle, oMenuItem:cPrompt ) , ;
-                        oER:aWnd[ nAktArea ]:SetFocus(), SetWinNull() )
+               ACTION ( oER:nAktArea:= AScan( oER:aWndTitle, oMenuItem:cPrompt ) , ;
+                        oER:aWnd[ oER:nAktArea ]:SetFocus(), SetWinNull() )
          endif
       next
    ENDMENU
@@ -1370,7 +1372,7 @@ function BuildMenu()
    if Val( oEr:GetDefIni( "General", "InsertAreas", "1" ) ) <> 1
       if Val( oEr:GetDefIni( "General", "EditAreaProperties", "1" ) ) = 1
          MENUITEM GL("&Area Properties") + chr(9) + GL("Ctrl+A") RESOURCE "B_AREA" ;
-            ACTION AreaProperties( nAktArea ) ;
+            ACTION AreaProperties( oER:nAktArea ) ;
             ACCELERATOR ACC_CONTROL, ASC( GL("A") ) ;
             WHEN !Empty( oER:cDefIni )
          SEPARATOR
@@ -1401,23 +1403,23 @@ function BuildMenu()
       MENU
       MENUITEM GL("Insert &Text") + chr(9) + GL("Ctrl+T") RESOURCE "B_TEXT" ;
          ACCELERATOR ACC_CONTROL, ASC( GL("T") ) ;
-         ACTION NewItem( "TEXT", nAktArea ) ;
+         ACTION NewItem( "TEXT", oER:nAktArea ) ;
          WHEN !Empty( oER:cDefIni )
       MENUITEM GL("Insert &Image") + chr(9) + GL("Ctrl+M") RESOURCE "B_IMAGE" ;
          ACCELERATOR ACC_CONTROL, ASC( GL("M") ) ;
-         ACTION NewItem( "IMAGE", nAktArea ) ;
+         ACTION NewItem( "IMAGE", oER:nAktArea ) ;
          WHEN !Empty( oER:cDefIni )
       MENUITEM GL("Insert &Graphic") + chr(9) + GL("Ctrl+G") RESOURCE "B_GRAPHIC" ;
          ACCELERATOR ACC_CONTROL, ASC( GL("G") ) ;
-         ACTION NewItem( "GRAPHIC", nAktArea ) ;
+         ACTION NewItem( "GRAPHIC", oER:nAktArea ) ;
          WHEN !Empty( oER:cDefIni )
       MENUITEM GL("Insert &Barcode") + chr(9) + GL("Ctrl+B") RESOURCE "B_BARCODE" ;
          ACCELERATOR ACC_CONTROL, ASC( ("B") ) ;
-         ACTION NewItem( "BARCODE", nAktArea ) ;
+         ACTION NewItem( "BARCODE", oER:nAktArea ) ;
          WHEN !Empty( oER:cDefIni )
       SEPARATOR
       MENUITEM GL("&Item Properties") + chr(9) + GL("Ctrl+I") RESOURCE "B_EDIT" ;
-         ACTION IIF( LEN( oER:aSelection ) <> 0, MultiItemProperties(), ItemProperties( nAktItem, nAktArea ) ) ;
+         ACTION IIF( LEN( oER:aSelection ) <> 0, MultiItemProperties(), ItemProperties( nAktItem, oER:nAktArea ) ) ;
          ACCELERATOR ACC_CONTROL, ASC( GL("I") ) ;
          WHEN !Empty( oER:cDefIni )
       ENDMENU
@@ -1433,7 +1435,7 @@ function BuildMenu()
       SEPARATOR
       if Val( oEr:GetDefIni( "General", "EditAreaProperties", "1" ) ) = 1
          MENUITEM GL("&Area Properties") + chr(9) + GL("Ctrl+A") RESOURCE "B_AREA" ;
-            ACTION AreaProperties( nAktArea ) ;
+            ACTION AreaProperties( oER:nAktArea ) ;
             ACCELERATOR ACC_CONTROL, ASC( GL("A") ) ;
             WHEN !Empty( oER:cDefIni )
       endif
@@ -1511,7 +1513,7 @@ function PopupMenu( nArea, oItem, nRow, nCol, lItem )
 
    if LEN( oER:aSelection ) <> 0 .OR. nAktItem <> 0
       MENUITEM GL("&Item Properties") + chr(9) + GL("Ctrl+I") RESOURCE "B_EDIT" ;
-      ACTION IIF( LEN( oER:aSelection ) <> 0, MultiItemProperties(), ItemProperties( nAktItem, nAktArea ) )
+      ACTION IIF( LEN( oER:aSelection ) <> 0, MultiItemProperties(), ItemProperties( nAktItem, oER:nAktArea ) )
    endif
 
    if LEN( oER:aSelection ) <> 0
@@ -1528,7 +1530,7 @@ function PopupMenu( nArea, oItem, nRow, nCol, lItem )
    SEPARATOR
 
    MENUITEM GL("&Area Properties") + CHR(9) + GL("Ctrl+A")    RESOURCE "B_AREA" ;
-      ACTION ( oER:aWnd[ nArea ]:SetFocus(), AreaProperties( nAktArea ) )
+      ACTION ( oER:aWnd[ nArea ]:SetFocus(), AreaProperties( oER:nAktArea ) )
    MENUITEM GL("Insert Area &before") ACTION InsertArea( .T., STRTRAN( GL("Insert Area &before"), "&" ) )
 
    MENUITEM GL("Insert Area &after" ) ACTION InsertArea( .F., STRTRAN( GL("Insert Area &after" ), "&" ) )
@@ -1687,7 +1689,7 @@ function ClientWindows()
       if nWnd <> 0 .and. !Empty( cItemDef )
 
          if lFirstWnd = .F.
-            nAktArea := nWnd
+            oER:nAktArea := nWnd
             lFirstWnd := .T.
          endif
 
@@ -1810,7 +1812,7 @@ return nil
 
 function SetTitleColor( lOff, nArea )
 Local nColor := if( lOff, oGenVar:nF2ClrAreaTitle , oGenVar:nF1ClrAreaTitle )
-Local nAr    := if( lOff, nArea, nAktArea )
+Local nAr    := if( lOff, nArea, oER:nAktArea )
 
    oGenVar:aAreaTitle[ nAr ]:SetColor( nColor, oGenVar:nBClrAreaTitle )
    oGenVar:aAreaTitle[ nAr ]:Refresh()
@@ -3658,7 +3660,7 @@ function ClickListTree( oTree )
        Case cPrompt = GL("Area Properties")
 
            nArea     := Val( oItem:GetParent():cPrompt )
-           //nAktArea  := nArea
+           //oER:nAktArea  := nArea
            AreaProperties( nArea )
 
       Case cPrompt = GL("Item Properties")
@@ -3686,7 +3688,7 @@ function ClickListTree( oTree )
                     else
                        nArea     := Val( oItem:cPrompt )
                     endif
-                    //nAktArea  := nArea
+                    //oER:nAktArea  := nArea
                     RefreshBrwAreaProp(nArea)
                     oItem:setText( AreaProperties( nArea ) )
 
@@ -3696,8 +3698,7 @@ function ClickListTree( oTree )
                        nArea     := Val( oItem:GetParent():cPrompt )
                        nItem     := Val( oItem:cPrompt )
                     endif
-                    //nAktArea  := nArea
-
+                    //oER:nAktArea  := nArea
                     oLinkArea:SetText( ItemProperties( nItem, nArea, .T. ) )
 
                     cItemDef := AllTrim( GetPvProfString( "Items", AllTrim(STR(nItem,5)) , "", oER:aAreaIni[ nArea ] ) )
@@ -3715,7 +3716,7 @@ function ClickListTree( oTree )
    if cPrompt = GL("Area Properties") //.or. !empty( At( ("[ " + GL("Area") + " ]"), cPrompt ) )
 
       nArea     := Val( oItem:GetParent():cPrompt )
-      //nAktArea  := nArea
+      //oER:nAktArea  := nArea
       AreaProperties( nArea )
 
    endif
@@ -4140,13 +4141,13 @@ function AreaChange( nArea, cAreaTitle, nOldWidth, nWidth, nOldHeight, nHeight )
 
    oER:aWndTitle[ nArea ]   := cAreaTitle
    oER:aWnd[ nArea ]:cTitle := cAreaTitle
-   oGenVar:aAreaTitle[ nAktArea ]:Refresh()
+   oGenVar:aAreaTitle[ oER:nAktArea ]:Refresh()
 
   oMenuAreas:DelItems()
    for n = 1 to Len( oER:aWndTitle )
       if ! Empty( oER:aWndTitle[ n ] )
          oMenuAreas:Add( oMenuitem:=TmenuItem():New( oER:aWndTitle[ n ],,,,;
-         {|| nAktArea:= AScan( oER:aWndTitle, oMenuItem:cPrompt ), oER:aWnd[ nAktArea ]:SetFocus(), SetWinNull() }  )  )
+         {|| oER:nAktArea:= AScan( oER:aWndTitle, oMenuItem:cPrompt ), oER:aWnd[ oER:nAktArea ]:SetFocus(), SetWinNull() }  )  )
 
       endif
    next
@@ -4208,14 +4209,14 @@ function AreaHide( nArea )
    local nAreaHeight := Val( GetPvProfString( "General", "Height", "300", oER:aAreaIni[ nArea ] ) )
    local nWidth      := Val( GetPvProfString( "General", "Width", "600", oER:aAreaIni[ nArea ] ) )
 
-   oGenVar:aAreaHide[nAktArea] := !oGenVar:aAreaHide[nAktArea]
+   oGenVar:aAreaHide[oER:nAktArea] := !oGenVar:aAreaHide[oER:nAktArea]
 
    nDifferenz := ( ER_GetPixel( nAreaHeight ) + nAreaZugabe - 18 ) * ;
-                 IIF( oGenVar:aAreaHide[nAktArea], -1, 1 )
+                 IIF( oGenVar:aAreaHide[oER:nAktArea], -1, 1 )
 
    oER:aWnd[ nArea ]:Move( oER:aWnd[ nArea ]:nTop, oER:aWnd[ nArea ]:nLeft, ;
       IIF( oGenVar:lFixedAreaWidth, ER_GetPixel(MaxWidthAreas( nArea ))+ oER:nRuler + nAreaZugabe2 , ER_GetPixel( nWidth ) + oER:nRuler + nAreaZugabe2 ), ;
-      IIF( oGenVar:aAreaHide[nAktArea], 18, ER_GetPixel( nAreaHeight ) + nAreaZugabe ), .T. )
+      IIF( oGenVar:aAreaHide[oER:nAktArea], 18, ER_GetPixel( nAreaHeight ) + nAreaZugabe ), .T. )
 
    for i := nArea+1 to Len( oER:aWnd )
       if oER:aWnd[ i ] <> nil
@@ -4453,6 +4454,7 @@ CLASS TEasyReport
    DATA oBrwProp,oSaySelectedItem
    DATA aSelection
    DATA aItems
+   DATA nAktArea
 
    METHOD New() CONSTRUCTOR
    METHOD GetGeneralIni( cSection , cKey, cDefault ) INLINE GetPvProfString( cSection, cKey, cDefault, ::cGeneralIni )
@@ -4817,8 +4819,8 @@ METHOD FillWindow( nArea, cAreaIni ) CLASS TEasyReport
    @ 0, 0 SAY " " SIZE 1200, ::nRulerTop - ::nRuler PIXEL ;
       COLORS 0, oGenVar:nBClrAreaTitle OF oER:aWnd[ nArea ]
 
-   @ 2,  3 BTNBMP RESOURCE "AREAMINMAX" SIZE 12,12 ACTION  nAktArea:= nArea, AreaHide( nAktArea )
-   @ 2, 17 BTNBMP RESOURCE "AREAPROP"   SIZE 12,12 ACTION  nAktArea:= nArea, AreaProperties( nAktArea )
+   @ 2,  3 BTNBMP RESOURCE "AREAMINMAX" SIZE 12,12 ACTION  oEr:nAktArea:= nArea, AreaHide( oEr:nAktArea )
+   @ 2, 17 BTNBMP RESOURCE "AREAPROP"   SIZE 12,12 ACTION  oEr:nAktArea:= nArea, AreaProperties( oEr:nAktArea )
 
    @ 2, 29 SAY oGenVar:aAreaTitle[ nArea ] ;
       PROMPT " " + AllTrim( GetPvProfString( "General", "Title" , "", cAreaIni ) ) + Space( 14 ) + ;
@@ -4836,7 +4838,7 @@ METHOD FillWindow( nArea, cAreaIni ) CLASS TEasyReport
    @ ::nRulerTop - ::nRuler, 20 BITMAP oRulerBmp1 RESOURCE cRuler1 ;
       OF oER:aWnd[ nArea ] PIXEL NOBORDER
 
-   oRulerBmp1:bLClicked := { |nRow,nCol,nFlags| nAktArea := oER:aWnd[ nArea ]:nArea, ::oMainWnd:SetFocus() }
+   oRulerBmp1:bLClicked := { |nRow,nCol,nFlags| oEr:nAktArea := oER:aWnd[ nArea ]:nArea, ::oMainWnd:SetFocus() }
    oRulerBmp2:bLClicked := oRulerBmp1:bLClicked
 
    oER:aWnd[ nArea ]:bPainted   = {| hDC, cPS | ZeichneHintergrund( nArea ) }
@@ -4850,14 +4852,14 @@ METHOD FillWindow( nArea, cAreaIni ) CLASS TEasyReport
                            if(!lScrollVert, ::SetReticule( nRow, nCol, nArea ), ::SetReticule( 0, 0, nArea )),;
                            lScrollVert :=  .F. }
 
-   oER:aWnd[ nArea ]:bRClicked = {|nRow,nCol,nFlags| nAktArea := oER:aWnd[ nArea ]:nArea, ::oMainWnd:SetFocus(),;
+   oER:aWnd[ nArea ]:bRClicked = {|nRow,nCol,nFlags| oEr:nAktArea := oER:aWnd[ nArea ]:nArea, ::oMainWnd:SetFocus(),;
                                                  PopupMenu( nArea,, nRow, nCol ) }
 
 
     oER:aWnd[ nArea ]:bLClicked = {|nRow,nCol,nFlags| DeactivateItem(), ;
                               IIF( GetKeyState( VK_SHIFT ),, UnSelectAll() ), ;
                               StartSelection( nRow, nCol, oER:aWnd[ nArea ] ), ;
-                              nAktArea := oER:aWnd[ nArea ]:nArea,;
+                              oEr:nAktArea := oER:aWnd[ nArea ]:nArea,;
                               swichItemsArea( nArea, .t. ) ,;
                               ::oMainWnd:SetFocus() ,;
                               swichItemsArea( nArea, .f. )  }
