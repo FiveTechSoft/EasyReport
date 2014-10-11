@@ -2,7 +2,7 @@
 #INCLUDE "Folder.ch"
 #INCLUDE "FiveWin.ch"
 
-MEMVAR nAktItem, nSelArea //, aSelection, nAktArea, 
+MEMVAR nAktItem, nSelArea //, aSelection, nAktArea,
 MEMVAR nRuler, nRulerTop
 MEMVAR cItemCopy, aSelectCopy, aItemCopy, nXMove, nYMove
 
@@ -68,9 +68,9 @@ function ElementActions( oItem, i, cName, nArea, cAreaIni, cTyp )
                           SelectItem( i, nArea, cAreaIni ), ;
                           nInfoRow := nRow, nInfoCol := nCol, ;
                           MsgBarItem( i, nArea, cAreaIni, nRow, nCol ) }
- 
+
 //                      ( IIF( GetKeyState( VK_SHIFT ), SelectItem( i, nArea, cAreaIni ), aWnd[ nArea ]:SetFocus() ), ;
-//   oItem:bLostFocus := { || IIF( GetKeyState( VK_SHIFT ), .T., 
+//   oItem:bLostFocus := { || IIF( GetKeyState( VK_SHIFT ), .T.,
 
 return .T.
 
@@ -549,15 +549,28 @@ function TextProperties( i, nArea, cAreaIni, lFromList, lNew )
    local oIni, nColor
    local aCbx[5], aGrp[3], aGet[5], aSay[4]
    local nDefClr, oBtn, oBtn2, oBtn3
-   local oVar  := GetoVar( i, nArea, cAreaIni, lNew )
-   local oItem := VRDItem():New( oVar:cItemDef )
+ //  local oVar  := GetoVar( i, nArea, cAreaIni, lNew )
+   LOCAL hVar  := GetohVar( i, nArea, cAreaIni, lNew )
 
+   local oItem := VRDItem():New( hVar["cItemDef"] )
+
+   /*
+  local oItem := VRDItem():New( oVar:cItemDef )
+  */
+
+   hVar[ "aOrient" ] := { GL("Left"), GL("Center"), GL("Right"), GL("Flush justified"), GL("Line-makeup") }
+   hVar[ "cOrient" ]:=  hVar["aOrient"][ IIF( oItem:nOrient = 0, 1, oItem:nOrient ) ]
+   hVar[ "aColors" ]:= GetAllColors()
+   hVar[ "aBitmaps"]:= { "ALIGN_LEFT", "ALIGN_CENTER", "ALIGN_RIGHT", "ALIGN_BLOCK", "ALIGN_WRAP" }
+
+ /*
    oVar:AddMember( "aOrient"    ,, { GL("Left"), GL("Center"), GL("Right"), ;
                                      GL("Flush justified"), GL("Line-makeup") } )
    oVar:AddMember( "cOrient"    ,, oVar:aOrient[ IIF( oItem:nOrient = 0, 1, oItem:nOrient ) ]                )
    oVar:AddMember( "aColors"    ,, GetAllColors()                                                          )
    oVar:AddMember( "aBitmaps"   ,, { "ALIGN_LEFT", "ALIGN_CENTER", "ALIGN_RIGHT", ;
-                                     "ALIGN_BLOCK", "ALIGN_WRAP" } )
+                                   "ALIGN_BLOCK", "ALIGN_WRAP" } )
+  */
 
    oGenVar:lItemDlg := .T.
 
@@ -578,32 +591,38 @@ function TextProperties( i, nArea, cAreaIni, lFromList, lNew )
 
    REDEFINE SAY aSay[4] ID 121 OF oCurDlg
 
-   REDEFINE GET oItem:nTop      ID 301 OF oCurDlg PICTURE oVar:cPicture ;
-      SPINNER MIN 0 MAX oVar:nGesHeight - oItem:nHeight ;
-      VALID oItem:nTop >= 0 .AND. oItem:nTop + oItem:nHeight <= oVar:nGesHeight
-   REDEFINE GET oItem:nLeft     ID 302 OF oCurDlg PICTURE oVar:cPicture ;
-      SPINNER MIN 0 MAX oVar:nGesWidth - oItem:nWidth ;
-      VALID oItem:nLeft >= 0 .AND. oItem:nLeft + oItem:nWidth <= oVar:nGesWidth
-   REDEFINE GET oItem:nWidth    ID 303 OF oCurDlg PICTURE oVar:cPicture ;
-      SPINNER MIN 0.01 MAX oVar:nGesWidth - oItem:nLeft ;
-      VALID oItem:nWidth > 0 .AND. oItem:nLeft + oItem:nWidth <= oVar:nGesWidth
-   REDEFINE GET oItem:nHeight   ID 304 OF oCurDlg PICTURE oVar:cPicture ;
-      SPINNER MIN 0.01 MAX oVar:nGesHeight - oItem:nTop ;
-      VALID oItem:nHeight > 0 .AND. oItem:nTop + oItem:nHeight <= oVar:nGesHeight
 
-   REDEFINE COMBOBOX oVar:cOrient ITEMS oVar:aOrient BITMAPS oVar:aBitmaps ID 305 OF oCurDlg
+   REDEFINE GET oItem:nTop      ID 301 OF oCurDlg PICTURE hVar["cPicture"] ;
+      SPINNER MIN 0 MAX hVar["nGesHeight"] - oItem:nHeight ;
+      VALID oItem:nTop >= 0 .AND. oItem:nTop + oItem:nHeight <= hVar["nGesHeight"]
+
+   REDEFINE GET oItem:nLeft     ID 302 OF oCurDlg PICTURE hVar["cPicture"] ;
+      SPINNER MIN 0 MAX hVar["nGesWidth"] - oItem:nWidth ;
+      VALID oItem:nLeft >= 0 .AND. oItem:nLeft + oItem:nWidth <= hVar["nGesWidth"]
+
+   REDEFINE GET oItem:nWidth    ID 303 OF oCurDlg PICTURE hVar["cPicture"] ;
+      SPINNER MIN 0.01 MAX hVar["nGesWidth"] - oItem:nLeft ;
+      VALID oItem:nWidth > 0 .AND. oItem:nLeft + oItem:nWidth <= hVar["nGesWidth"]
+
+   REDEFINE GET oItem:nHeight   ID 304 OF oCurDlg PICTURE hVar["cPicture"] ;
+      SPINNER MIN 0.01 MAX hVar["nGesHeight"] - oItem:nTop ;
+      VALID oItem:nHeight > 0 .AND. oItem:nTop + oItem:nHeight <= hVar["nGesHeight"]
+
+   REDEFINE COMBOBOX hVar["cOrient"] ITEMS hVar["aOrient"] BITMAPS hVar["aBitmaps"] ID 305 OF oCurDlg
 
    REDEFINE CHECKBOX aCbx[3] VAR oItem:lVisible    ID 306 OF oCurDlg WHEN oItem:nDelete <> 0
    REDEFINE CHECKBOX aCbx[4] VAR oItem:lMultiLine  ID 307 OF oCurDlg
    REDEFINE CHECKBOX aCbx[5] VAR oItem:lVariHeight ID 308 OF oCurDlg
 
    REDEFINE GET aGet[1] VAR oItem:nColText ID 501 OF oCurDlg PICTURE "9999" SPINNER MIN 1 MAX 30 ;
-      ON CHANGE Set2Color( aSay[1], IIF( oItem:nColText > 0, oVar:aColors[oItem:nColText], ""), nDefClr ) ;
-      VALID     Set2Color( aSay[1], IIF( oItem:nColText > 0, oVar:aColors[oItem:nColText], ""), nDefClr )
+      ON CHANGE Set2Color( aSay[1], IIF( oItem:nColText > 0, hVar["aColors"][oItem:nColText], ""), nDefClr ) ;
+      VALID     Set2Color( aSay[1], IIF( oItem:nColText > 0, hVar["aColors"][oItem:nColText], ""), nDefClr )
+
    REDEFINE GET aGet[2] VAR oItem:nColPane ID 502 OF oCurDlg PICTURE "9999" SPINNER MIN 1 MAX 30 ;
-      ON CHANGE Set2Color( aSay[2], IIF( oItem:nColPane > 0, oVar:aColors[oItem:nColPane], ""), nDefClr ) ;
-      VALID     Set2Color( aSay[2], IIF( oItem:nColPane > 0, oVar:aColors[oItem:nColPane], ""), nDefClr ) ;
+      ON CHANGE Set2Color( aSay[2], IIF( oItem:nColPane > 0,  hVar["aColors"][oItem:nColPane], ""), nDefClr ) ;
+      VALID     Set2Color( aSay[2], IIF( oItem:nColPane > 0,  hVar["aColors"][oItem:nColPane], ""), nDefClr ) ;
       WHEN oItem:lTrans = .F.
+
    REDEFINE GET aGet[3] VAR oItem:nFont    ID 503 OF oCurDlg PICTURE "9999" SPINNER MIN 1 MAX 20 ;
       ON CHANGE aSay[3]:Refresh() ;
       VALID     ( aSay[3]:Refresh(), .T. )
@@ -612,12 +631,12 @@ function TextProperties( i, nArea, cAreaIni, lFromList, lNew )
    REDEFINE CHECKBOX aCbx[2] VAR oItem:lTrans  ID 602 OF oCurDlg
 
    REDEFINE BTNBMP aSay[1] PROMPT "" ID 401 OF oCurDlg NOBORDER ;
-   ACTION GetColorBtn( @oItem:nColText , aSay[1], aGet[1], oVar, nDefClr )
+   ACTION GetHColorBtn( @oItem:nColText , aSay[1], aGet[1], hVar, nDefClr )
    aSay[1]:lBoxSelect := .f.
    aSay[1]:SetColor( oER:GetColor( oItem:nColText ), oER:GetColor( oItem:nColText ) )
 
    REDEFINE BTNBMP aSay[2] PROMPT "" ID 402 OF oCurDlg NOBORDER ;
-     ACTION GetColorBtn( @oItem:nColPane , aSay[2], aGet[2], oVar, nDefClr )
+     ACTION GetHColorBtn( @oItem:nColPane , aSay[2], aGet[2], hVar, nDefClr )
      aSay[2]:SetColor(  oER:GetColor( oItem:nColPane ), oER:GetColor( oItem:nColPane ) )
      aSay[2]:lBoxSelect := .f.
 
@@ -626,10 +645,10 @@ function TextProperties( i, nArea, cAreaIni, lFromList, lNew )
       ID 403 OF oCurDlg
 
    REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 151 OF oCurDlg ;
-      ACTION GetColorBtn(  @oItem:nColText, aSay[1], aGet[1], oVar, nDefClr )
+      ACTION GetHColorBtn(  @oItem:nColText, aSay[1], aGet[1], hVar, nDefClr )
 
    REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 152 OF oCurDlg ;
-      ACTION GetColorBtn( @oItem:nColPane, aSay[2], aGet[2], oVar, nDefClr )
+      ACTION GetHColorBtn( @oItem:nColPane, aSay[2], aGet[2], hVar, nDefClr )
 
    REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 153 OF oCurDlg ;
       ACTION ( oItem:nFont := ShowFontChoice( oItem:nFont ), aGet[3]:Refresh(), aSay[3]:Refresh() )
@@ -641,7 +660,7 @@ function TextProperties( i, nArea, cAreaIni, lFromList, lNew )
       ACTION ( oGenVar:lItemDlg := .F., oCurDlg:End() )
 
    REDEFINE BUTTON oBtn PROMPT GL("&Remove Item") ID 103 OF oCurDlg ;
-      ACTION ( oVar:lRemoveItem := .T., oItem:lVisible := .F., ;
+      ACTION ( hVar["lRemoveItem"] := .T., oItem:lVisible := .F., ;
                oGenVar:lDlgSave := .T., oGenVar:lItemDlg := .F., oCurDlg:End() )
 
    oBtn3 := SetFormulaBtn( 9, oItem )
@@ -663,7 +682,7 @@ function TextProperties( i, nArea, cAreaIni, lFromList, lNew )
       TOOLTIP GL("Set these properties to default") ;
       ACTION SetItemDefault( oItem )
 
-   REDEFINE BUTTON PROMPT GL("&Set") ID 104 OF oCurDlg ACTION SaveTextItem( oVar, oItem )
+   REDEFINE BUTTON PROMPT GL("&Set") ID 104 OF oCurDlg ACTION SaveHTextItem( hVar, oItem )
 
    REDEFINE GROUP aGrp[1] ID 190 OF oCurDlg
    REDEFINE GROUP aGrp[2] ID 191 OF oCurDlg
@@ -686,7 +705,7 @@ function TextProperties( i, nArea, cAreaIni, lFromList, lNew )
    ACTIVATE DIALOG oCurDlg CENTERED ; // NOMODAL ;
       ON INIT ( GetItemDlgPos(), ;
                 IIF( oER:nDeveloper = 0, ( aGet[5]:Hide(), aSay[4]:Hide(), aGet[4]:nWidth( 329 ), oBtn2:nLeft := 352, oBtn3:nLeft := 374 ), ), ;
-                IIF( oVar:cShowExpr = "0" .OR. lProfi = .F., oBtn3:Hide(), ), ;
+                IIF( hVar["cShowExpr"] = "0" .OR. lProfi = .F., oBtn3:Hide(), ), ;
                 IIF( lFromList = .T. .OR. oItem:nItemID > 0, oBtn:Hide(), ), ;
                 IIF( lFromList = .T., aCbx[3]:Hide(), ), ;
                 aGrp[1]:SetText( GL("Text") ), ;
@@ -697,7 +716,7 @@ function TextProperties( i, nArea, cAreaIni, lFromList, lNew )
                 aCbx[3]:SetText( GL("Visible") ), ;
                 aCbx[4]:SetText( GL("Multiline") ), ;
                 aCbx[5]:SetText( GL("Variable height") ) ) ;
-      VALID ( IIF( oGenVar:lDlgSave, SaveTextItem( oVar, oItem ), oGenVar:lItemDlg := .F. ), ;
+      VALID ( IIF( oGenVar:lDlgSave, SaveHTextItem( hVar, oItem ), oGenVar:lItemDlg := .F. ), ;
               oGenVar:lDlgSave := .F., SetItemDlg() )
 
    oCurDlg:bMoved := {|| SetItemDlg() }
@@ -712,6 +731,17 @@ local nColor := ShowColorChoice( cColorItem )
          cColorItem := nColor
          oGet:Refresh()
          Set2Color( oSay, IIF( cColorItem > 0, oVar:aColors[cColorItem], ""), nDefClr )
+      endif
+Return nil
+
+//----------------------------------------------------------------------------//
+
+Function GethColorBtn( cColorItem , oSay, oGet, hVar, nDefClr )
+local nColor := ShowColorChoice( cColorItem )
+      IF  nColor <> 0
+         cColorItem := nColor
+         oGet:Refresh()
+         Set2Color( oSay, IIF( cColorItem > 0, hVar["aColors"][cColorItem], ""), nDefClr )
       endif
 Return nil
 
@@ -854,9 +884,93 @@ return ( oVar )
 
 //----------------------------------------------------------------------------//
 
+function GetohVar( i, nArea, cAreaIni, lNew )
+
+   local hVar :=  { => }
+
+   hVar[ "cItemDef" ]:= GetItemDef( i, cAreaIni )
+   hVar[ "i" ]       := i
+   hVar[ "nArea" ]   := nArea
+   hVar[ "cAreaIni" ]:= cAreaIni
+   hVar[ "cOldDef" ] := hVar["cItemDef"]
+   hVar[ "lNew" ]    := lNew
+   hVar[ "lRemoveItem" ] := .F.
+   hVar[ "cShowExpr" ] := AllTrim( oER:GetDefIni( "General", "Expressions", "0" ) )
+   hVar[ "nGesWidth" ] := VAL( GetPvProfString( "General", "Width", "600", cAreaIni ) )
+   hVar[ "nGesHeight"] := VAL( GetPvProfString( "General", "Height", "300", cAreaIni ) )
+   hVar[ "cPicture" ] := IIF( oER:nMeasure = 2, "999.99", "99999" )
+
+return ( hVar )
+
+//----------------------------------------------------------------------------//
+
+function SaveHTextItem( hVar, oItem )
+
+   local lRight, lCenter, nColor, oFont, oIni
+   LOCAL nArea := hVar["nArea"]
+   LOCAL i :=  hVar["i"]
+
+   oItem:nOrient := ASCAN( hVar["aOrient"], hVar["cOrient"] )
+   oItem:nBorder := IIF( oItem:lBorder , 1, 0 )
+   oItem:nTrans  := IIF( oItem:lTrans  , 1, 0 )
+   oItem:nShow   := IIF( oItem:lVisible, 1, 0 )
+
+   hVar["cItemDef"] := oItem:Set( .F., oER:nMeasure )
+
+   INI oIni FILE hVar["cAreaIni"]
+      SET SECTION "Items" ENTRY AllTrim(STR(i,5)) TO hVar["cItemDef"] OF oIni
+   ENDINI
+
+   oFont := IIF( oItem:nFont = 0, oEr:oAppFont, oER:aFonts[oItem:nFont] )
+   lCenter := IIF( oItem:nOrient = 2, .T., .F. )
+   lRight  := IIF( oItem:nOrient = 3,  .T., .F. )
+
+   if oItem:lVisible
+
+      oER:aItems[nArea,i]:End()
+      oER:aItems[nArea,i] := ;
+         TSay():New( oEr:nRulerTop + ER_GetPixel( oItem:nTop ), oER:nRuler + ER_GetPixel( oItem:nLeft ), ;
+                     {|| oItem:cText }, oER:aWnd[ nArea ],, ;
+                     oFont, lCenter, lRight, ( oItem:lBorder .OR. oGenVar:lShowBorder ), ;
+                     .T., oER:GetColor( oItem:nColText ), oER:GetColor( oItem:nColPane ), ;
+                     ER_GetPixel( oItem:nWidth ), ER_GetPixel( oItem:nHeight ), ;
+                     .F., .T., .F., .F., .F. )
+
+      oER:aItems[nArea,i]:lDrag := .T.
+      ElementActions( oER:aItems[nArea,i],i, oItem:cText, nArea , hVar["cAreaIni"] )
+      oER:aItems[nArea,i]:SetFocus()
+
+   endif
+
+   if !oItem:lVisible .AND. oER:aItems[nArea,i] <> NIL
+      oER:aItems[nArea,i]:lDrag := .F.
+      oER:aItems[nArea,i]:HideDots()
+      oER:aItems[nArea,i]:End()
+   endif
+
+   if hVar["lRemoveItem"]
+      DelIniEntry( "Items", AllTrim(STR(i,5)), hVar["cAreaIni"] )
+   endif
+
+   SetSave( .F. )
+
+   if hVar["lNew"]
+      Add2Undo( "", i, nArea )
+   ELSEif hVar["cOldDef"] != hVar["cItemDef"]
+      Add2Undo( hVar["cOldDef"], i, nArea )
+   endif
+
+   oCurDlg:SetFocus()
+
+return ( .T. )
+
+//------------------------------------------------------------------------------
+/*
 function SaveTextItem( oVar, oItem )
 
    local lRight, lCenter, nColor, oFont, oIni
+   LOCAL nArea := oVar:nArea
+   LOCAL i :=  oVar:i
 
    oItem:nOrient := ASCAN( oVar:aOrient, oVar:cOrient )
    oItem:nBorder := IIF( oItem:lBorder , 1, 0 )
@@ -916,7 +1030,7 @@ function SaveTextItem( oVar, oItem )
    oCurDlg:SetFocus()
 
 return ( .T. )
-
+*/
 //----------------------------------------------------------------------------//
 
 function SaveItemGeneral( oVar, oItem )
