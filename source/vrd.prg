@@ -92,6 +92,8 @@ CLASS VRD
    DATA bTransExpr
    DATA Cargo, Cargo2, Cargo3, Cargo4, Cargo5
 
+   DATA lNewFormat
+
    METHOD New( cReportName, lPreview, cPrinter, oWnd, lModal, lPrintIDs, lNoPrint, ;
                lNoExpr, cFilePath, lPrintDialog, nCopies, lCheck, oPrint, aSize, ;
                cTitle, cPreviewDir, lAutoBreak, lShowInfo ) CONSTRUCTOR
@@ -226,6 +228,8 @@ METHOD New( cReportName, lPreview, cPrinter, oWnd, lModal, lPrintIDs, lNoPrint, 
    ::oTmpWnd     = oWnd
    ::cDefIni     = VRD_LF2SF( ALLTRIM( cReportName ) )
 
+   ::lNewFormat :=  IF( Upper(cFileExt( cReportName )) ==  "ERD" , .T., .F. )
+
    ::oInfo := VRD_NewStructure()
    ::oInfo:AddMember( "nPages",, 0 )
 
@@ -248,7 +252,6 @@ METHOD New( cReportName, lPreview, cPrinter, oWnd, lModal, lPrintIDs, lNoPrint, 
          RETURN( Self )
       ENDIF
    ENDIF
-
 
    IF !FILE( ::cDefIni )
       AADD( ::aErrors, "1" + CHR(9) + "General ini file not found: " + ALLTRIM( cReportName ) )
@@ -274,7 +277,7 @@ METHOD New( cReportName, lPreview, cPrinter, oWnd, lModal, lPrintIDs, lNoPrint, 
       ::lShowInfo := lShowInfo
    ENDIF
 
-   IF .NOT. EMPTY( cAreaPath )
+   IF !EMPTY( cAreaPath )
       ::cAreaFilesDir := ALLTRIM( cAreaPath )
    ELSE
       ::cAreaFilesDir := ALLTRIM( GetIniEntry( aIniEntries, "AreaFilesDir", "" ) )
@@ -407,15 +410,18 @@ METHOD New( cReportName, lPreview, cPrinter, oWnd, lModal, lPrintIDs, lNoPrint, 
 
       cDef := ALLTRIM( GetIniEntry( aIniEntries, ALLTRIM(STR( i, 5)) , "" ) )
 
-      IF .NOT. EMPTY( cDef )
+      IF !EMPTY( cDef )
 
-         cFile := VRD_LF2SF( ::cAreaFilesDir + cDef )
+         IF ::lNewFormat
+            AADD( ::aAreaInis, cDef )
+         else
+            cFile := VRD_LF2SF( ::cAreaFilesDir + cDef )
+            IF FILE( cFile )
+               AADD( ::aErrors, "2" + CHR(9) + "Area ini file not found: " + cDef )
+            ENDIF
+            AADD( ::aAreaInis, cFile )
 
-         IF FILE( cFile ) = .F.
-            AADD( ::aErrors, "2" + CHR(9) + "Area ini file not found: " + cDef )
-         ENDIF
-
-         AADD( ::aAreaInis, cFile )
+         endif
 
       ENDIF
 
@@ -427,7 +433,11 @@ METHOD New( cReportName, lPreview, cPrinter, oWnd, lModal, lPrintIDs, lNoPrint, 
 
    FOR i := 1 TO LEN( ::aAreaInis )
 
-      aIniEntries := GetIniSection( "General", ::aAreaInis[i] )
+      IF ::lNewFormat
+         aIniEntries := GetIniSection( ::aAreaInis[i]+"General", ::cDefIni )
+      ELSE
+         aIniEntries := GetIniSection( "General", ::aAreaInis[i] )
+      ENDIF
 
       aTmpSource := {}
 
@@ -602,9 +612,9 @@ METHOD AreaStart( nArea, lPrintArea, aIDs, aStrings, lPageBreak ) CLASS VRD
 
    LOCAL i
    LOCAL nRecords   := IIF( ::aControlDBF[nArea] = 0, 1, ::aDBRecords[ ::aControlDBF[nArea] ] )
-   LOCAL nCondition := VAL( GetPvProfString( "General", "Condition", "1", ::aAreaInis[nArea] ) )
-   LOCAL nPrBefore  := VAL( GetPvProfString( "General", "PrintBeforeBreak", "0", ::aAreaInis[nArea] ) )
-   LOCAL nPrAfter   := VAL( GetPvProfString( "General", "PrintAfterBreak" , "0", ::aAreaInis[nArea] ) )
+   LOCAL nCondition := VAL( VRD_GetDataArea( "General", "Condition", "1", ::aAreaInis[nArea] ) )
+   LOCAL nPrBefore  := VAL( VRD_GetDataArea( "General", "PrintBeforeBreak", "0", ::aAreaInis[nArea] ) )
+   LOCAL nPrAfter   := VAL( VRD_GetDataArea( "General", "PrintAfterBreak" , "0", ::aAreaInis[nArea] ) )
 
    DEFAULT lPageBreak := .F.
 
@@ -695,7 +705,7 @@ RETURN ( NIL )
 METHOD AreaStart2( nArea, lPrintArea, aIDs, aStrings, lPageBreak ) CLASS VRD
 
    LOCAL i, nAreaTop1, nAreaTop2
-   LOCAL lAreaTop := IIF( VAL( GetPvProfString( "General", "TopVariable", "1", ::aAreaInis[nArea] ) ) = 1, .T., .F. )
+   LOCAL lAreaTop := IIF( VAL( VRD_GetDataArea( "General", "TopVariable", "1", ::aAreaInis[nArea] ) ) = 1, .T., .F. )
 
    DEFAULT lPrintArea := .T.
    DEFAULT aIDs       := {}
@@ -704,8 +714,8 @@ METHOD AreaStart2( nArea, lPrintArea, aIDs, aStrings, lPageBreak ) CLASS VRD
 
    ::EvalAreaSource( @lAreaTop, ::aAreaSource[nArea,AREASOURCE_TOPVARIABLE] )
 
-   nAreaTop1 := VAL( GetPvProfString( "General", "Top1", "0", ::aAreaInis[nArea] ) )
-   nAreaTop2 := VAL( GetPvProfString( "General", "Top2", "0", ::aAreaInis[nArea] ) )
+   nAreaTop1 := VAL( VRD_GetDataArea( "General", "Top1", "0", ::aAreaInis[nArea] ) )
+   nAreaTop2 := VAL( VRD_GetDataArea( "General", "Top2", "0", ::aAreaInis[nArea] ) )
 
    ::EvalAreaSource( @nAreaTop1, ::aAreaSource[nArea,AREASOURCE_TOP1] )
    ::EvalAreaSource( @nAreaTop2, ::aAreaSource[nArea,AREASOURCE_TOP2] )
@@ -783,12 +793,12 @@ METHOD PrintItem( nArea, nItemID, cValue, nAddToTop, lMemo, nEntry ) CLASS VRD
    LOCAL lNewArea       := .F.
    LOCAL lMemoPageBreak := .F.
    LOCAL cEntryNr    := IIF( nEntry = NIL, ::GetEntryNr( nArea, nItemID ), ALLTRIM(STR(nEntry,5)) )
-   LOCAL cItemDef    := ALLTRIM( GetPvProfString( "Items", cEntryNr, "", ::aAreaInis[ nArea ] ) )
+   LOCAL cItemDef    := ALLTRIM( VRD_GetDataArea( "Items", cEntryNr, "", ::aAreaInis[ nArea ] ) )
    LOCAL oItem       := VRDItem():New( cItemDef )
-   LOCAL nAreaTop1   := VAL( GetPvProfString( "General", "Top1"  , "0", ::aAreaInis[nArea] ) )
-   LOCAL nAreaTop2   := VAL( GetPvProfString( "General", "Top2"  , "0", ::aAreaInis[nArea] ) )
-   LOCAL lAreaTop    := IIF( VAL( GetPvProfString( "General", "TopVariable", "1", ::aAreaInis[nArea] ) ) = 1, .T., .F. )
-   LOCAL nCondition  := VAL( GetPvProfString( "General", "Condition", "1", ::aAreaInis[nArea] ) )
+   LOCAL nAreaTop1   := VAL( VRD_GetDataArea( "General", "Top1"  , "0", ::aAreaInis[nArea] ) )
+   LOCAL nAreaTop2   := VAL( VRD_GetDataArea( "General", "Top2"  , "0", ::aAreaInis[nArea] ) )
+   LOCAL lAreaTop    := IIF( VAL( VRD_GetDataArea( "General", "TopVariable", "1", ::aAreaInis[nArea] ) ) = 1, .T., .F. )
+   LOCAL nCondition  := VAL( VRD_GetDataArea( "General", "Condition", "1", ::aAreaInis[nArea] ) )
 
    DEFAULT nAddToTop := 0
    DEFAULT lMemo     := oItem:lMultiLine
@@ -2693,18 +2703,24 @@ FUNCTION GetIniEntry( aEntries, cEntry, uDefault, uVar, nIndex )
 
 RETURN uVar
 
+//------------------------------------------------------------------------------
 
-*-- FUNCTION -----------------------------------------------------------------
-* Name........: EntryNr
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
 FUNCTION EntryNr( cString )
 
 RETURN VAL( SUBSTR( cString, 1, AT( "=", cString ) - 1 ) )
 
+//------------------------------------------------------------------------------
+
+FUNCTION VRD_GetDataArea( cSection, cData,cDefault, cAreaIni )
+   LOCAL cText
+
+   IF oER:lNewFormat
+      cText:=  AllTrim( GetPvProfString( cAreaIni+cSection , cData , cDefault,  oER:cDefIni  ) )
+   ELSE
+      cText:=  AllTrim( GetPvProfString( cSection , cData , cDefault, cAreaIni ) )
+   ENDIF
+
+RETURN cText
 
 *-- FUNCTION -----------------------------------------------------------------
 * Name........: VRD_PrintReport

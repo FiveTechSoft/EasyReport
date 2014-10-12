@@ -198,17 +198,17 @@ return .T.
 //----------------------------------------------------------------------------//
 
 FUNCTION GetItemDef( nItem, cAreaIni )
- RETURN  GetDataArea( "Items", AllTrim(STR(nItem,5)), cAreaIni )
+ RETURN  AllTrim(GetDataArea( "Items", AllTrim(STR(nItem,5)),"", cAreaIni ))
 
 //------------------------------------------------------------------------------
 
-FUNCTION GetDataArea( cSection, cData, cAreaIni )
+FUNCTION GetDataArea( cSection, cData,cDefault, cAreaIni )
    LOCAL cText
 
    IF oER:lNewFormat
-      cText:=  AllTrim( GetPvProfString( cAreaIni+cSection , cData , "",  oER:cDefIni  ) )
+      cText:=  AllTrim( GetPvProfString( cAreaIni+cSection , cData , cDefault,  oER:cDefIni  ) )
    ELSE
-      cText:=  AllTrim( GetPvProfString( cSection , cData , "", cAreaIni ) )
+      cText:=  AllTrim( GetPvProfString( cSection , cData , cDefault, cAreaIni ) )
    ENDIF
 
 RETURN cText
@@ -296,7 +296,7 @@ RETURN nil
 function ItemPopupMenu( oItem, nItem, nArea, nRow, nCol )
 
    local oMenu
-   local cItemDef  := AllTrim( GetPvProfString( "Items", AllTrim(STR(nItem,5)), "", oER:aAreaIni[nArea] ) )
+   LOCAL cItemDef  := AllTrim(GetDataArea(  "Items",  AllTrim(STR(nItem,5)),, oER:aAreaIni[nArea] ))
    local oItemInfo := VRDItem():New( cItemDef )
 
    MENU oMenu POPUP

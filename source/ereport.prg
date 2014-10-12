@@ -1701,7 +1701,7 @@ function ClientWindows()
                   oER:aAreaIni[nWnd] :=  cItemDef
 
 
-           cTitle  :=   GetDataArea( "General", "Title", cItemDef )
+           cTitle  :=   AllTrim(GetDataArea( "General", "Title","", cItemDef ))
 
            oGenVar:aAreaSizes[nWnd] := ;
             { Val( GetPvProfString( cItemDef+"General", "Width", "600", oER:cDefIni ) ), ;
@@ -4913,7 +4913,7 @@ METHOD FillWindow( nArea, cAreaIni ) CLASS TEasyReport
    @ 2, 17 BTNBMP RESOURCE "AREAPROP"   SIZE 12,12 ACTION  oEr:nAktArea:= nArea, AreaProperties( oEr:nAktArea )
 
    @ 2, 29 SAY oGenVar:aAreaTitle[ nArea ] ;
-      PROMPT " " +  GetDataArea( "General", "Title", cAreaIni ) + Space( 14 ) + ;
+      PROMPT " " + AllTrim( GetDataArea( "General", "Title","", cAreaIni ) ) + Space( 14 ) + ;
       "Ancho: " + Str( oGenVar:aAreaSizes[ nArea, 1 ] ) + "    " + ;
       "Alto: " + Str( oGenVar:aAreaSizes[ nArea, 2 ] ) ;
       SIZE 400, ::nRulerTop - ::nRuler - 2 PIXEL FONT oGenVar:aAppFonts[ 1 ] ;
