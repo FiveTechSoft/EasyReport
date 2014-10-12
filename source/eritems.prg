@@ -198,7 +198,20 @@ return .T.
 //----------------------------------------------------------------------------//
 
 FUNCTION GetItemDef( nItem, cAreaIni )
-RETURN  AllTrim( GetPvProfString( "Items", AllTrim(STR(nItem,5)) , "", cAreaIni ) )
+ RETURN  GetDataArea( "Items", AllTrim(STR(nItem,5)), cAreaIni )
+
+//------------------------------------------------------------------------------
+
+FUNCTION GetDataArea( cSection, cData, cAreaIni )
+   LOCAL cText
+
+   IF oER:lNewFormat
+      cText:=  AllTrim( GetPvProfString( cAreaIni+cSection , cData , "",  oER:cDefIni  ) )
+   ELSE
+      cText:=  AllTrim( GetPvProfString( cSection , cData , "", cAreaIni ) )
+   ENDIF
+
+RETURN cText
 
 //------------------------------------------------------------------------------
 
@@ -2022,7 +2035,8 @@ function ShowItem( i, nArea, cAreaIni, aFirst, nElemente, aIniEntries, nIndex )
       cItemDef := GetIniEntry( aIniEntries,, "",, nIndex )
    endif
 
-   if .NOT. EMPTY( cItemDef ) .AND. VAL( GetField( cItemDef, 4 ) ) <> 0
+
+   if !EMPTY( cItemDef ) .AND. VAL( GetField( cItemDef, 4 ) ) <> 0
 
       cTyp      := UPPER(AllTrim( GetField( cItemDef, 1 ) ))
       cName     := GetField( cItemDef, 2 )

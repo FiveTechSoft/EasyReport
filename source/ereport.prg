@@ -171,7 +171,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
        @ 0.2, 1 CFOLDEREX oER:oFldI ;
        PROMPT GL("&Report Settings"), GL("&Items"), GL("Colors"), GL("Fonts") ;
        OF oEr:oPanelI ; //oEr:oMainWnd ;
-       SIZE Int(GetSysMetrics( 0 )/4), GetSysMetrics( 1 ) - 138 ;    //326  
+       SIZE Int(GetSysMetrics( 0 )/4), GetSysMetrics( 1 ) - 138 ;    //326
        OPTION 2 ;
        TAB HEIGHT 34 ;
        BITMAPS { "B_EDIT16", "B_ITEMLIST16", "B_ITEMLIST16", "B_EDIT2" } ;
@@ -1674,14 +1674,92 @@ function ClientWindows()
 
    nDemoWidth := 0
 
-   //Sichern
-   aVRDSave := ARRAY( 102, 2 )
-   aVRDSave[101, 1 ] := oER:cDefIni
-   aVRDSave[101, 2 ] := MEMOREAD( oER:cDefIni )
-   aVRDSave[102, 1 ] := oER:cGeneralIni
-   aVRDSave[102, 2 ] := MEMOREAD( oER:cGeneralIni )
 
-   for i := 1 to LEN( aIniEntries )
+
+      aVRDSave := ARRAY( 102, 2 )
+
+      aVRDSave[101, 1 ] := oER:cDefIni
+      aVRDSave[101, 2 ] := MEMOREAD( oER:cDefIni )
+      aVRDSave[102, 1 ] := oER:cGeneralIni
+      aVRDSave[102, 2 ] := MEMOREAD( oER:cGeneralIni )
+
+
+   IF oER:lNewFormat
+
+        for i := 1 to LEN( aIniEntries )
+           nWnd := EntryNr( aIniEntries[ i ] )
+           cItemDef := GetIniEntry( aIniEntries,, "",, i )
+           if nWnd != 0 .and. !Empty( cItemDef )
+               if lFirstWnd = .F.
+                   oER:nAktArea := nWnd
+                   lFirstWnd := .T.
+                endif
+
+                  aVRDSave[nWnd, 1 ] := cItemDef
+            //    aVRDSave[nWnd, 2 ] := MEMOREAD( cItemDef )
+                  nWindowNr += 1
+                  oER:aAreaIni[nWnd] :=  cItemDef
+
+
+           cTitle  :=   GetDataArea( "General", "Title", cItemDef )
+
+           oGenVar:aAreaSizes[nWnd] := ;
+            { Val( GetPvProfString( cItemDef+"General", "Width", "600", oER:cDefIni ) ), ;
+              Val( GetPvProfString( cItemDef+"General", "Height", "300", oER:cDefIni) ) }
+
+             nWidth  := ER_GetPixel( oGenVar:aAreaSizes[nWnd, 1 ] )
+             nHeight := ER_GetPixel( oGenVar:aAreaSizes[nWnd, 2 ] )
+
+
+         IF oER:lShowPanel
+
+            nWidth += oEr:nRuler + nAreaZugabe2
+            nDemoWidth := Max( nDemoWidth, nWidth )
+
+            oER:aWnd[ nWnd ] = ER_MdiChild():New( nTop, oEr:oMainWnd:oWndClient:nLeft + 1 , nHeight + nAreaZugabe,;
+                            nDemoWidth, cTitle, nOr( WS_BORDER ),, oEr:oMainWnd,, .F.,,,,;
+                            oGenVar:oAreaBrush, .T., .F. ,,, , , , , 1 )
+
+
+         ELSE
+
+            nDemoWidth := nWidth
+            if oGenVar:lFixedAreaWidth
+               nWidth := GetSysMetrics( 0 ) - 342  //1200
+            else
+               nWidth += oER:nRuler + nAreaZugabe2
+            endif
+
+            oER:aWnd[ nWnd ] = ER_MdiChild():New( nTop, 0, nHeight + nAreaZugabe,;
+                            nWidth, cTitle, nOr( WS_BORDER ),, oEr:oMainWnd,, .T.,,,,;
+                            oGenVar:oAreaBrush, .T. )
+
+         ENDIF
+
+
+         oER:aWnd[ nWnd ]:nArea = nWnd
+
+         oER:aWndTitle[ nWnd ] = cTitle
+
+         lReticule = oGenVar:lShowReticule
+         oGenVar:lShowReticule = .F.
+
+         oER:FillWindow( nWnd, oER:aAreaIni[nWnd] )
+
+         ACTIVATE WINDOW oER:aWnd[ nWnd ] VALID !GETKEYSTATE( VK_ESCAPE )
+
+         oGenVar:lShowReticule := lReticule
+
+         nTop += nHeight + nAreaZugabe
+
+       endif
+
+        next
+
+     else
+
+
+     for i := 1 to LEN( aIniEntries )
 
       nWnd := EntryNr( aIniEntries[ i ] )
       cItemDef := GetIniEntry( aIniEntries,, "",, i )
@@ -1699,6 +1777,7 @@ function ClientWindows()
          if Empty( cAreaFilesDir )
             cAreaFilesDir := oER:cDefIniPath
          endif
+
 
          cItemDef := VRD_LF2SF( AllTrim( cAreaFilesDir + cItemDef ) )
 
@@ -1762,6 +1841,7 @@ function ClientWindows()
 
 
    next
+ENDIF
 
    oEr:nTotalHeight := nTop
    oEr:nTotalWidth  := nWidth
@@ -4455,6 +4535,7 @@ CLASS TEasyReport
    DATA aSelection
    DATA aItems
    DATA nAktArea
+   DATA lNewFormat
 
    METHOD New() CONSTRUCTOR
    METHOD GetGeneralIni( cSection , cKey, cDefault ) INLINE GetPvProfString( cSection, cKey, cDefault, ::cGeneralIni )
@@ -4803,10 +4884,19 @@ METHOD FillWindow( nArea, cAreaIni ) CLASS TEasyReport
    local nFirstItem
    local aFirst      := { .F., 0, 0, 0, 0, 0 }
    local nElemente   := 0
-   local aIniEntries := GetIniSection( "Items", cAreaIni )
+   local aIniEntries
    local oRulerBmp1
    local oRulerBmp2
    local oRulerBmp3
+   LOCAL  cTitle
+
+   msginfo(cAreaIni)
+
+   IF ::lNewFormat
+      aIniEntries := GetIniSection( cAreaIni+"Items", oER:cDefIni )
+   ELSE
+      aIniEntries := GetIniSection( "Items", cAreaIni )
+   ENDIF
 
 // cTool  := if( nRow < 34, "Propiedades Area: " + Str( aWnd[ nArea ]:nArea, 10 ), "" ), ;
 
@@ -4823,7 +4913,7 @@ METHOD FillWindow( nArea, cAreaIni ) CLASS TEasyReport
    @ 2, 17 BTNBMP RESOURCE "AREAPROP"   SIZE 12,12 ACTION  oEr:nAktArea:= nArea, AreaProperties( oEr:nAktArea )
 
    @ 2, 29 SAY oGenVar:aAreaTitle[ nArea ] ;
-      PROMPT " " + AllTrim( GetPvProfString( "General", "Title" , "", cAreaIni ) ) + Space( 14 ) + ;
+      PROMPT " " +  GetDataArea( "General", "Title", cAreaIni ) + Space( 14 ) + ;
       "Ancho: " + Str( oGenVar:aAreaSizes[ nArea, 1 ] ) + "    " + ;
       "Alto: " + Str( oGenVar:aAreaSizes[ nArea, 2 ] ) ;
       SIZE 400, ::nRulerTop - ::nRuler - 2 PIXEL FONT oGenVar:aAppFonts[ 1 ] ;

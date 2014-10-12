@@ -17,6 +17,7 @@ function OpenFile( cFile, lChange, lAddDelNew )
 
    if cFile = NIL
       cLongFile   := GetFile( GL("Designer Files") + " (*.vrd)|*.vrd|" + ;
+                              GL("New Designer Files")+ " (*.erd)|*.erd|"+ ;
                               GL("All Files") + " (*.*)|*.*", GL("Open"), 1 )
    ELSE
       cLongFile   := cFile
@@ -24,6 +25,14 @@ function OpenFile( cFile, lChange, lAddDelNew )
 
    cLongDefIni := cLongFile
    cFile       := VRD_LF2SF( cLongFile )
+
+
+
+   IF  Upper(cFileExt( cLongFile )) ==  "ERD"
+      oER:lNewFormat := .T.
+   else
+      oER:lNewFormat := .F.
+   ENDIF
 
    if AT( "[AREAS]", UPPER( MEMOREAD( cFile ) ) ) = 0 .AND. !EMPTY( cFile )
       MsgStop( ALLTRIM( cLongFile ) + CRLF + CRLF + GL("is not a valid file."), GL("Stop!") )
