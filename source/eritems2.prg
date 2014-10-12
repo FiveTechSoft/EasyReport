@@ -17,7 +17,7 @@ STATIC lBoxDraw  := .F.
 
 FUNCTION SelectItem( nItem, nArea, cAreaIni )
 
-   LOCAL cItemDef := ALLTRIM( GetPvProfString( "Items", ALLTRIM(STR(nItem,5)) , "", cAreaIni ) )
+   LOCAL cItemDef := ALLTRIM( GetDataArea( "Items", ALLTRIM(STR(nItem,5)) , "", cAreaIni ) )
 
    cInfoWidth  := GetField( cItemDef, 9 )
    cInfoHeight := GetField( cItemDef, 10 )

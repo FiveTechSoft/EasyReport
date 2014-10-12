@@ -612,9 +612,9 @@ METHOD AreaStart( nArea, lPrintArea, aIDs, aStrings, lPageBreak ) CLASS VRD
 
    LOCAL i
    LOCAL nRecords   := IIF( ::aControlDBF[nArea] = 0, 1, ::aDBRecords[ ::aControlDBF[nArea] ] )
-   LOCAL nCondition := VAL( VRD_GetDataArea( "General", "Condition", "1", ::aAreaInis[nArea] ) )
-   LOCAL nPrBefore  := VAL( VRD_GetDataArea( "General", "PrintBeforeBreak", "0", ::aAreaInis[nArea] ) )
-   LOCAL nPrAfter   := VAL( VRD_GetDataArea( "General", "PrintAfterBreak" , "0", ::aAreaInis[nArea] ) )
+   LOCAL nCondition := VAL( VRD_GetDataArea( "General", "Condition", "1", ::aAreaInis[nArea], self ) )
+   LOCAL nPrBefore  := VAL( VRD_GetDataArea( "General", "PrintBeforeBreak", "0", ::aAreaInis[nArea],self ) )
+   LOCAL nPrAfter   := VAL( VRD_GetDataArea( "General", "PrintAfterBreak" , "0", ::aAreaInis[nArea],self ) )
 
    DEFAULT lPageBreak := .F.
 
@@ -705,7 +705,7 @@ RETURN ( NIL )
 METHOD AreaStart2( nArea, lPrintArea, aIDs, aStrings, lPageBreak ) CLASS VRD
 
    LOCAL i, nAreaTop1, nAreaTop2
-   LOCAL lAreaTop := IIF( VAL( VRD_GetDataArea( "General", "TopVariable", "1", ::aAreaInis[nArea] ) ) = 1, .T., .F. )
+   LOCAL lAreaTop := IIF( VAL( VRD_GetDataArea( "General", "TopVariable", "1", ::aAreaInis[nArea], self ) ) = 1, .T., .F. )
 
    DEFAULT lPrintArea := .T.
    DEFAULT aIDs       := {}
@@ -714,8 +714,8 @@ METHOD AreaStart2( nArea, lPrintArea, aIDs, aStrings, lPageBreak ) CLASS VRD
 
    ::EvalAreaSource( @lAreaTop, ::aAreaSource[nArea,AREASOURCE_TOPVARIABLE] )
 
-   nAreaTop1 := VAL( VRD_GetDataArea( "General", "Top1", "0", ::aAreaInis[nArea] ) )
-   nAreaTop2 := VAL( VRD_GetDataArea( "General", "Top2", "0", ::aAreaInis[nArea] ) )
+   nAreaTop1 := VAL( VRD_GetDataArea( "General", "Top1", "0", ::aAreaInis[nArea] , self ) )
+   nAreaTop2 := VAL( VRD_GetDataArea( "General", "Top2", "0", ::aAreaInis[nArea], self ) )
 
    ::EvalAreaSource( @nAreaTop1, ::aAreaSource[nArea,AREASOURCE_TOP1] )
    ::EvalAreaSource( @nAreaTop2, ::aAreaSource[nArea,AREASOURCE_TOP2] )
@@ -793,12 +793,12 @@ METHOD PrintItem( nArea, nItemID, cValue, nAddToTop, lMemo, nEntry ) CLASS VRD
    LOCAL lNewArea       := .F.
    LOCAL lMemoPageBreak := .F.
    LOCAL cEntryNr    := IIF( nEntry = NIL, ::GetEntryNr( nArea, nItemID ), ALLTRIM(STR(nEntry,5)) )
-   LOCAL cItemDef    := ALLTRIM( VRD_GetDataArea( "Items", cEntryNr, "", ::aAreaInis[ nArea ] ) )
+   LOCAL cItemDef    := ALLTRIM( VRD_GetDataArea( "Items", cEntryNr, "", ::aAreaInis[ nArea ], self ) )
    LOCAL oItem       := VRDItem():New( cItemDef )
-   LOCAL nAreaTop1   := VAL( VRD_GetDataArea( "General", "Top1"  , "0", ::aAreaInis[nArea] ) )
-   LOCAL nAreaTop2   := VAL( VRD_GetDataArea( "General", "Top2"  , "0", ::aAreaInis[nArea] ) )
-   LOCAL lAreaTop    := IIF( VAL( VRD_GetDataArea( "General", "TopVariable", "1", ::aAreaInis[nArea] ) ) = 1, .T., .F. )
-   LOCAL nCondition  := VAL( VRD_GetDataArea( "General", "Condition", "1", ::aAreaInis[nArea] ) )
+   LOCAL nAreaTop1   := VAL( VRD_GetDataArea( "General", "Top1"  , "0", ::aAreaInis[nArea] , self ) )
+   LOCAL nAreaTop2   := VAL( VRD_GetDataArea( "General", "Top2"  , "0", ::aAreaInis[nArea],Self  ) )
+   LOCAL lAreaTop    := IIF( VAL( VRD_GetDataArea( "General", "TopVariable", "1", ::aAreaInis[nArea],self ) ) = 1, .T., .F. )
+   LOCAL nCondition  := VAL( VRD_GetDataArea( "General", "Condition", "1", ::aAreaInis[nArea],self ) )
 
    DEFAULT nAddToTop := 0
    DEFAULT lMemo     := oItem:lMultiLine
@@ -1607,7 +1607,11 @@ METHOD GetIniItems( nArea ) CLASS VRD
    IF nArea = ::nLastIniArea
       aIniEntries := ::aLastItems
    ELSE
-      aIniEntries    := GetIniSection( "Items", ::aAreaInis[ nArea ] )
+      IF ::lNewFormat
+          aIniEntries    := GetIniSection( ::aAreaInis[ nArea ]+"Items", ::cDefIni )
+      ELSE
+          aIniEntries    := GetIniSection( "Items", ::aAreaInis[ nArea ] )
+      ENDIF
       ::nLastIniArea := nArea
       ::aLastItems   := aIniEntries
    ENDIF
@@ -1622,8 +1626,8 @@ RETURN aIniEntries
 *-----------------------------------------------------------------------------
 METHOD GetItem( nArea, nItemID ) CLASS VRD
 
-   LOCAL cItemDef := ALLTRIM( GetPvProfString( "Items", ::GetEntryNr( nArea, nItemID ), ;
-                                               "", ::aAreaInis[ nArea ] ) )
+   LOCAL cItemDef := ALLTRIM( VRD_GetDataArea( "Items", ::GetEntryNr( nArea, nItemID ), ;
+                                               "", ::aAreaInis[ nArea ] , Self ) )
    LOCAL oItem    := VRDItem():New( cItemDef )
 
 RETURN oItem
@@ -1684,7 +1688,7 @@ RETURN aAllFonts
 
 METHOD AreaTitle( nArea ) CLASS VRD
 
-RETURN ALLTRIM( GetPvProfString( "General", "Title" , "", ::aAreaInis[ nArea ] ) )
+   RETURN ALLTRIM( VRD_GetDataArea( "General", "Title" , "", ::aAreaInis[ nArea ], Self  ) )
 
 
 *-- METHOD -------------------------------------------------------------------
@@ -1694,7 +1698,7 @@ RETURN ALLTRIM( GetPvProfString( "General", "Title" , "", ::aAreaInis[ nArea ] )
 *-----------------------------------------------------------------------------
 METHOD AreaWidth( nArea ) CLASS VRD
 
-RETURN VAL( GetPvProfString( "General", "Width", "600", ::aAreaInis[ nArea ] ) )
+RETURN VAL( VRD_GetDataArea( "General", "Width", "600", ::aAreaInis[ nArea ], Self ) )
 
 
 *-- METHOD -------------------------------------------------------------------
@@ -1704,7 +1708,7 @@ RETURN VAL( GetPvProfString( "General", "Width", "600", ::aAreaInis[ nArea ] ) )
 *-----------------------------------------------------------------------------
 METHOD AreaHeight( nArea ) CLASS VRD
 
-RETURN VAL( GetPvProfString( "General", "Height", "300", ::aAreaInis[ nArea ] ) )
+RETURN VAL( VRD_GetDataArea( "General", "Height", "300", ::aAreaInis[ nArea ], Self  ) )
 
 
 *-- METHOD -------------------------------------------------------------------
@@ -2711,24 +2715,35 @@ RETURN VAL( SUBSTR( cString, 1, AT( "=", cString ) - 1 ) )
 
 //------------------------------------------------------------------------------
 
-FUNCTION VRD_GetDataArea( cSection, cData,cDefault, cAreaIni )
+FUNCTION VRD_GetDataArea( cSection, cData,cDefault, cAreaIni, oVrd )
    LOCAL cText
 
-   IF oER:lNewFormat
-      cText:=  AllTrim( GetPvProfString( cAreaIni+cSection , cData , cDefault,  oER:cDefIni  ) )
+   IF oVrd:lNewFormat
+      cText:=  AllTrim( GetPvProfString( cAreaIni+cSection , cData , cDefault,  oVrd:cDefIni  ) )
    ELSE
       cText:=  AllTrim( GetPvProfString( cSection , cData , cDefault, cAreaIni ) )
    ENDIF
 
 RETURN cText
 
-*-- FUNCTION -----------------------------------------------------------------
-* Name........: VRD_PrintReport
-* Beschreibung:
-* Argumente...: None
-* Rückgabewert: .T.
-* Author......: Timm Sodtalbers
-*-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+
+FUNCTION VRD_SetDataArea( cSection, cItem, cItemDef, cAreaIni, oVrd )
+
+ IF oVrd:lNewFormat
+
+  WritePProString( cAreaIni+"Items", cItem, cItemDef, oVrd:cDefIni  )
+
+ELSE
+   WritePProString( "Items", cItem , cItemDef, cAreaIni )
+
+ endif
+
+RETURN nil
+
+//------------------------------------------------------------------------------
+
+
 FUNCTION VRD_PrReport( cReportName, lPreview, cPrinter, oWnd, lModal, lPrintIDs, lNoPrint, ;
                        lNoExpr, cFilePath, lPrintDialog, nCopies, lCheck, bReportSource, ;
                        cTitle, cPreviewDir, lAutoBreak )

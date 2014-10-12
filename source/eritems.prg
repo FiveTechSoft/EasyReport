@@ -174,9 +174,7 @@ function DeleteItem( i, nArea, lFromList, lRemove, lFromUndoRedo )
                cWert + ;
                SUBSTR( cItemDef, StrAtNum( "|", cItemDef, 4 ) )
 
-   INI oIni FILE cAreaIni
-      SET SECTION "Items" ENTRY AllTrim(STR(i,5)) TO cItemDef OF oIni
-   ENDINI
+   SetDataArea( "Items", AllTrim(STR(i,5)), cItemDef, cAreaIni )
 
    if lRemove
       oER:aItems[nArea,i]:lDrag := .F.
@@ -212,6 +210,34 @@ FUNCTION GetDataArea( cSection, cData,cDefault, cAreaIni )
    ENDIF
 
 RETURN cText
+
+//------------------------------------------------------------------------------
+
+FUNCTION SetDataArea( cSection, cItem, cItemDef, cAreaIni )
+   LOCAL cIni
+   LOCAL xSection
+
+   IF oEr:lNewFormat
+      cIni:= oEr:cDefIni
+      xSection := cAreaIni+ cSection
+  else
+     cIni:= cAreaIni
+     xSection := cSection
+   endif
+
+   INI oIni FILE cIni
+       SET SECTION cSection ENTRY cItem TO cItemDef OF oIni
+   ENDINI
+
+ RETURN nil
+//------------------------------------------------------------------------------
+
+FUNCTION DelEntryArea( cSection, cItem, cAreaIni )
+     IF oEr:lNewFormat
+        DelIniEntry( cAreaIni+cSection, cItem, oRE:cDefIni )
+     ELSE
+        DelIniEntry( cSection, cItem, cAreaIni )
+     ENDIF
 
 //------------------------------------------------------------------------------
 
@@ -262,7 +288,7 @@ function DelItemWithKey( nItem, nArea )
 
    DeleteItem( nItem, nArea, .T. )
    IF VAL( GetField( cItemDef, 3 ) ) < 0
-      DelIniEntry( "Items", AllTrim(STR(nItem,5) ), cAreaIni )
+      DelEntryArea( "Items",  AllTrim(STR(nItem,5) ), cAreaIni )
    endif
    nAktItem := 0
    RefreshPanelTree()
@@ -930,9 +956,8 @@ function SaveHTextItem( hVar, oItem )
 
    hVar["cItemDef"] := oItem:Set( .F., oER:nMeasure )
 
-   INI oIni FILE hVar["cAreaIni"]
-      SET SECTION "Items" ENTRY AllTrim(STR(i,5)) TO hVar["cItemDef"] OF oIni
-   ENDINI
+   SetDataArea( "Items", AllTrim(STR(i,5)), hVar["cItemDef"],  hVar["cAreaIni"] )
+
 
    oFont := IIF( oItem:nFont = 0, oEr:oAppFont, oER:aFonts[oItem:nFont] )
    lCenter := IIF( oItem:nOrient = 2, .T., .F. )
@@ -962,7 +987,7 @@ function SaveHTextItem( hVar, oItem )
    endif
 
    if hVar["lRemoveItem"]
-      DelIniEntry( "Items", AllTrim(STR(i,5)), hVar["cAreaIni"] )
+      DelEntryArea( "Items", AllTrim(STR(i,5)), hVar["cAreaIni"] )
    endif
 
    SetSave( .F. )
@@ -1065,7 +1090,7 @@ function SaveItemGeneral( oVar, oItem )
   */
 
    if oVar:lRemoveItem
-      DelIniEntry( "Items", AllTrim(STR(oVar:i,5)), oVar:cAreaIni )
+      DelEntryArea("Items", AllTrim(STR(oVar:i,5)), oVar:cAreaIni )
    endif
 
    SetSave( .F. )
@@ -1847,7 +1872,7 @@ function ItemCopy( lCut )
          if lCut
             DeleteItem( oER:aSelection[i,2], oER:aSelection[i,1], .T. )
             if oItemInfo:nItemID < 0
-               DelIniEntry( "Items", AllTrim(STR(oER:aSelection[i,2],5)), ;
+               DelEntryArea( "Items", AllTrim(STR(oER:aSelection[i,2],5)), ;
                             oER:aAreaIni[ oER:aSelection[i,1] ] )
             endif
          endif
@@ -1866,7 +1891,7 @@ function ItemCopy( lCut )
       if lCut
          DeleteItem( nAktItem, oER:nAktArea, .T. )
          if oItemInfo:nItemID < 0
-            DelIniEntry( "Items", AllTrim(STR(nAktItem,5)), oER:aAreaIni[oER:nAktArea] )
+            DelEntryArea( "Items", AllTrim(STR(nAktItem,5)), oER:aAreaIni[oER:nAktArea] )
          endif
       endif
 
@@ -1904,8 +1929,8 @@ function NewItem( cTyp, nArea, nTmpCopyArea, nTmpCopyEntry, cTmpItemCopy )
    local aFirst     := { .F., 0, 0, 0, 0, 0 }
    local nElemente  := 0
    local cAreaIni   := oER:aAreaIni[nArea]
-   local nGesWidth  := VAL( GetPvProfString( "General", "Width", "600", cAreaIni ) )
-   local nGesHeight := VAL( GetPvProfString( "General", "Height", "300", cAreaIni ) )
+   local nGesWidth  := VAL( GetDataArea( "General", "Width", "600", cAreaIni ) )
+   local nGesHeight := VAL( GetDataArea( "General", "Height", "300", cAreaIni ) )
    local cTop       := IIF( oER:nMeasure = 2, "0.10", "2" )
    local cLeft      := cTop
 
@@ -1915,6 +1940,7 @@ function NewItem( cTyp, nArea, nTmpCopyArea, nTmpCopyEntry, cTmpItemCopy )
          EXIT
       endif
    NEXT
+
 
    if cTyp = "COPY"
 
@@ -1987,11 +2013,15 @@ function NewItem( cTyp, nArea, nTmpCopyArea, nTmpCopyEntry, cTmpItemCopy )
       endif
 
    endif
-
-   INI oIni FILE cAreaIni
-      SET SECTION "Items" ENTRY AllTrim(STR(nFree,5)) TO cItemDef OF oIni
-   ENDINI
-
+   IF oER:lNewFormat
+      INI oIni FILE oER:cDefIni
+         SET SECTION cAreaIni+"Items" ENTRY AllTrim(STR(nFree,5)) TO cItemDef OF oIni
+      ENDINI
+   else
+      INI oIni FILE cAreaIni
+          SET SECTION "Items" ENTRY AllTrim(STR(nFree,5)) TO cItemDef OF oIni
+      ENDINI
+   endif
    ShowItem( nFree, nArea, cAreaIni, @aFirst, @nElemente )
    oER:aItems[nArea,nFree]:lDrag := .T.
 

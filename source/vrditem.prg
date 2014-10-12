@@ -96,8 +96,8 @@ METHOD New( cItemDef, oVRD, nArea, nItemID ) CLASS VRDItem
       ::cArea   := oVRD:aAreaInis[ nArea ]
       ::nArea   := nArea
       ::nItemID := nItemID
-      cItemDef  := ALLTRIM( GetPvProfString( "Items", oVRD:GetEntryNr( nArea, nItemID ), ;
-                                             "", ::cArea ) )
+      cItemDef  := ALLTRIM( VRD_GetDataArea( "Items", oVRD:GetEntryNr( nArea, nItemID ), ;
+                                             "", ::cArea ,oVRD ) )
    ENDIF
 
    ::cType    := UPPER(ALLTRIM( VRD_GetField( cItemDef, 1 ) ))
@@ -318,8 +318,9 @@ METHOD Set( lSaveItem, nMeasure ) CLASS VRDItem
 
    ENDIF
 
-   IF lSaveItem 
-      WritePProString( "Items", ::oVRD:GetEntryNr( ::nArea, ::nItemID ), cItemDef, ::cArea )
+   IF lSaveItem
+      VRD_SetDataArea( "Items", ::oVRD:GetEntryNr( ::nArea, ::nItemID ), cItemDef, cAreaIni, ::oVrd )
+    //  WritePProString( "Items", ::oVRD:GetEntryNr( ::nArea, ::nItemID ), cItemDef, ::cArea )
    ENDIF
 
 RETURN ( cItemDef )

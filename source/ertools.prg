@@ -1913,7 +1913,7 @@ function Undo()
 
       //New item was build
       DeleteItem( TMPUNDO->ENTRYNR, TMPUNDO->AREANR, .T.,, .T. )
-      DelIniEntry( "Items", ALLTRIM(STR(TMPUNDO->ENTRYNR,5)), oER:aAreaIni[ TMPUNDO->AREANR ] )
+      DelEntryArea( "Items", ALLTRIM(STR(TMPUNDO->ENTRYNR,5)), oER:aAreaIni[ TMPUNDO->AREANR ] )
 
    ELSE
 
