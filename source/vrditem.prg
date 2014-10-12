@@ -318,8 +318,8 @@ METHOD Set( lSaveItem, nMeasure ) CLASS VRDItem
 
    ENDIF
 
-   IF lSaveItem
-      VRD_SetDataArea( "Items", ::oVRD:GetEntryNr( ::nArea, ::nItemID ), cItemDef, cAreaIni, ::oVrd )
+   IF lSaveItem                                                                 // cAreaIni
+      VRD_SetDataArea( "Items", ::oVRD:GetEntryNr( ::nArea, ::nItemID ), cItemDef, ::cArea, ::oVrd )
     //  WritePProString( "Items", ::oVRD:GetEntryNr( ::nArea, ::nItemID ), cItemDef, ::cArea )
    ENDIF
 

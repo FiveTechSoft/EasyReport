@@ -216,6 +216,7 @@ RETURN cText
 FUNCTION SetDataArea( cSection, cItem, cItemDef, cAreaIni )
    LOCAL cIni
    LOCAL xSection
+   Local oIni
 
    IF oEr:lNewFormat
       cIni:= oEr:cDefIni
@@ -229,15 +230,18 @@ FUNCTION SetDataArea( cSection, cItem, cItemDef, cAreaIni )
        SET SECTION cSection ENTRY cItem TO cItemDef OF oIni
    ENDINI
 
- RETURN nil
+RETURN nil
+
 //------------------------------------------------------------------------------
 
 FUNCTION DelEntryArea( cSection, cItem, cAreaIni )
      IF oEr:lNewFormat
-        DelIniEntry( cAreaIni+cSection, cItem, oRE:cDefIni )
+        DelIniEntry( cAreaIni+cSection, cItem, oEr:cDefIni )
      ELSE
         DelIniEntry( cSection, cItem, cAreaIni )
      ENDIF
+
+Return nil
 
 //------------------------------------------------------------------------------
 
