@@ -698,6 +698,7 @@ function CreateNewReport( aCheck, cGeneralName, cSourceCode, cReportName, lMakeS
    LOCAL nDecimals
    LOCAL aNewErArea:= {}
    LOCAL cText:= ""
+   LOCAL xIni, xSection, xNameArea
 
    //General ini file
    CreateNewFile( cGeneralName )
@@ -740,9 +741,15 @@ function CreateNewReport( aCheck, cGeneralName, cSourceCode, cReportName, lMakeS
 
       FOR i=1 TO Len( aDataAreas )
 
-           SET SECTION "Areas" ENTRY ALLTRIM(STR( i, 5)) ;
-           TO cFileNoPath( SUBSTR( cLongDefIni, 1, LEN( cLongDefIni ) - 2 ) + ;
-               PADL( ALLTRIM( STR( i, 2 ) ), 2, "0" ) ) OF oIni
+           IF oER:lNewFormat
+              xNameArea :=  cFileNoPath( SUBSTR( cLongDefIni, 1, LEN( cLongDefIni ) - 4 ) + ;
+                            PADL( ALLTRIM( STR( i, 2 ) ), 2, "0" ))
+           ELSE
+              xNameArea :=  cFileNoPath( SUBSTR( cLongDefIni, 1, LEN( cLongDefIni ) - 2 ) + ;
+                            PADL( ALLTRIM( STR( i, 2 ) ), 2, "0" ))
+           ENDIF
+
+           SET SECTION "Areas" ENTRY ALLTRIM(STR( i, 5)) TO xNameArea OF oIni
 
       NEXT
 
@@ -754,27 +761,44 @@ function CreateNewReport( aCheck, cGeneralName, cSourceCode, cReportName, lMakeS
 
     FOR i=1 TO Len( aDataAreas )
 
-         cAreaTmpFile := SUBSTR( cLongDefIni, 1, LEN( cLongDefIni ) - 2 ) + ;
-         PADL( ALLTRIM( STR( i, 2 ) ), 2, "0" )
-        CreateNewFile( cAreaTmpFile )
-        cAreaTmpFile := VRD_LF2SF( ALLTRIM( cAreaTmpFile ) )
+         IF oER:lNewFormat
 
-        INI oIni FILE cAreaTmpFile
+             cAreaTmpFile := AllTrim(SUBSTR( cLongDefIni, 1, LEN( cLongDefIni ) - 4 ) + ;
+                         PADL( ALLTRIM( STR( i, 2 ) ), 2, "0" ) )
 
-         SET SECTION "General" ENTRY "Title"       TO aDataAreas[i,1]  OF oIni
-         SET SECTION "General" ENTRY "Width"       TO ALLTRIM(STR( aDataAreas[i,9], 5, nDecimals )) OF oIni
-         SET SECTION "General" ENTRY "Height"      TO ALLTRIM(STR(aDataAreas[i,10], 5, nDecimals )) OF oIni
-         SET SECTION "General" ENTRY "Top1"        TO ALLTRIM(STR( aDataAreas[i,6], 5, nDecimals )) OF oIni
-         SET SECTION "General" ENTRY "Top2"        TO ALLTRIM(STR(aDataAreas[i,7], 5, nDecimals )) OF oIni
-         SET SECTION "General" ENTRY "TopVariable" TO IIF(aDataAreas[i,8], "1", "0") OF oIni
-         SET SECTION "General" ENTRY "Condition"   TO STR(aDataAreas[i,11], 1 ) OF oIni
+
+             xIni:=  cDefTmpIni
+             xSection :=   cAreaTmpFile+"General"
+
+         ELSE
+
+             cAreaTmpFile := AllTrim(SUBSTR( cLongDefIni, 1, LEN( cLongDefIni ) - 2 ) + ;
+                         PADL( ALLTRIM( STR( i, 2 ) ), 2, "0" ) )
+
+             xIni:=  cAreaTmpFile
+             xSection := "General"
+
+             CreateNewFile( cAreaTmpFile )
+             cAreaTmpFile := VRD_LF2SF( ALLTRIM( cAreaTmpFile ) )
+
+         ENDIF
+
+         INI oIni File xIni
+
+         SET SECTION  xSection ENTRY "Title"       TO aDataAreas[i,1]  OF oIni
+         SET SECTION  xSection ENTRY "Width"       TO ALLTRIM(STR( aDataAreas[i,9], 5, nDecimals )) OF oIni
+         SET SECTION  xSection ENTRY "Height"      TO ALLTRIM(STR(aDataAreas[i,10], 5, nDecimals )) OF oIni
+         SET SECTION  xSection ENTRY "Top1"        TO ALLTRIM(STR( aDataAreas[i,6], 5, nDecimals )) OF oIni
+         SET SECTION  xSection ENTRY "Top2"        TO ALLTRIM(STR(aDataAreas[i,7], 5, nDecimals ))  OF oIni
+         SET SECTION  xSection ENTRY "TopVariable" TO IIF(aDataAreas[i,8], "1", "0") OF oIni
+         SET SECTION  xSection ENTRY "Condition"   TO STR(aDataAreas[i,11], 1 ) OF oIni
 
          nRow := 1
          nCol := 1
          nXRow := 0
          nXCol := 0
 
-        for n := 1 TO aDataAreas[i,2]
+         for n := 1 TO aDataAreas[i,2]
             nXRow := 5 + ( nRow - 1 ) * 24
             nXCol := 5 + ( nCol - 1 ) * 55
             if GetCmInch( nXRow + 48 ) > aDataAreas[i,10]
@@ -787,13 +811,22 @@ function CreateNewReport( aCheck, cGeneralName, cSourceCode, cReportName, lMakeS
             if GetCmInch( nXCol + 55 ) >aDataAreas[i,9]
                EXIT
             endif
-            SET SECTION "Items" ENTRY ALLTRIM(STR(n,3)) ;
+
+            IF oER:lNewFormat
+               xSection :=  cAreaTmpFile + "Items"
+            ELSE
+               xSection := "Items"
+            ENDIF
+
+
+             SET SECTION xSection ENTRY ALLTRIM(STR(n,3)) ;
                TO "Text|" + ALLTRIM(STR(n,3)) + "| " + ALLTRIM(STR(n,3)) + "|1|1|1|" + ;
                ALLTRIM(STR( GetCmInch( nXRow ), 5, nDecimals )) + "|" + ;
                ALLTRIM(STR( GetCmInch( nXCol ), 5, nDecimals )) + "|" + ;
                ALLTRIM(STR( GetCmInch( 50 ), 5, nDecimals )) + "|" + ;
                ALLTRIM(STR( GetCmInch( 20 ), 5, nDecimals )) + "|" + ;
                "1|1|2|0|0|0|" OF oIni
+
          next
 
          if aDataAreas[i,2] > 0
@@ -817,7 +850,7 @@ function CreateNewReport( aCheck, cGeneralName, cSourceCode, cReportName, lMakeS
                EXIT
             endif
 
-            SET SECTION "Items" ENTRY ALLTRIM(STR(100+n,3)) ;
+            SET SECTION xSection ENTRY ALLTRIM(STR(100+n,3)) ;
                TO "Image|| " + ALLTRIM(STR(100+n,3)) + "|1|1|1|" + ;
                ALLTRIM(STR( GetCmInch( nXRow ), 5, nDecimals )) + "|" + ;
                ALLTRIM(STR( GetCmInch( nXCol ), 5, nDecimals )) + "|" + ;
@@ -831,6 +864,7 @@ function CreateNewReport( aCheck, cGeneralName, cSourceCode, cReportName, lMakeS
          else
             nColStart := 5
          endif
+
          nCol := 1
          nRow := 1
 
@@ -847,7 +881,7 @@ function CreateNewReport( aCheck, cGeneralName, cSourceCode, cReportName, lMakeS
                EXIT
             endif
 
-            SET SECTION "Items" ENTRY ALLTRIM(STR(200+n,3)) ;
+            SET SECTION xSection ENTRY ALLTRIM(STR(200+n,3)) ;
                TO "LineHorizontal|" + GL("Line horizontal") + "| " + ALLTRIM(STR(200+n,3)) + "|1|1|1|" + ;
                ALLTRIM(STR( GetCmInch( nXRow ), 5, nDecimals )) + "|" + ;
                ALLTRIM(STR( GetCmInch( nXCol ), 5, nDecimals )) + "|" + ;
@@ -864,7 +898,8 @@ function CreateNewReport( aCheck, cGeneralName, cSourceCode, cReportName, lMakeS
          nCol := 1
          nRow := 1
 
-         for n := 1 TO aDataAreas[i,5]
+
+        for n := 1 TO aDataAreas[i,5]
             nXRow := 5 + ( nRow - 1 ) * 24
             nXCol := nColStart + ( nCol - 1 ) * 175
             if GetCmInch( nXRow + 48 ) > aDataAreas[i,10]
@@ -879,14 +914,16 @@ function CreateNewReport( aCheck, cGeneralName, cSourceCode, cReportName, lMakeS
 
 
 
-            SET SECTION "Items" ENTRY ALLTRIM(STR(300+n,3)) ;
+            SET SECTION xSection ENTRY ALLTRIM(STR(300+n,3)) ;
                TO "Barcode|12345678| " + ALLTRIM(STR(300+n,3)) + "|1|1|1|" + ;
                ALLTRIM(STR( GetCmInch( nXRow ), 5, nDecimals )) + "|" + ;
                ALLTRIM(STR( GetCmInch( nXCol ), 5, nDecimals )) + "|" + ;
                ALLTRIM(STR( GetCmInch( 170 ), 5, nDecimals )) + "|" + ;
                ALLTRIM(STR( GetCmInch( 20 ), 5, nDecimals )) + "|" + ;
                "1|1|2|1|1|0.3|" OF oIni
+
          next
+
 
       ENDINI
 
@@ -943,9 +980,13 @@ function CreateNewReport( aCheck, cGeneralName, cSourceCode, cReportName, lMakeS
 
       cSource += SPACE(3) + "oVRD:End()" + CRLF
 
-      CreateNewFile( cSourceCode )
-      MEMOWRIT( VRD_LF2SF( cSourceCode ), cSource )
+      IF oER:lNewFormat
 
+
+      else
+         CreateNewFile( cSourceCode )
+         MEMOWRIT( VRD_LF2SF( cSourceCode ), cSource )
+      endif
    endif
 
 return .T.
@@ -962,7 +1003,13 @@ function CheckFileName( cGeneralName, cSourceCode, lMakeSource )
       lreturn := .F.
       MsgStop( GL("Please insert a valid file name."), GL("Stop!") )
    elseif AT( ".", cGeneralName ) = 0
-      cGeneralName := ALLTRIM( cGeneralName ) + ".vrd"
+      IF msgYesNo("Quiere usar el nuevo Formato" )
+         cGeneralName := ALLTRIM( cGeneralName ) + ".erd"
+         oEr:lNewFormat:= .T.
+      else
+         cGeneralName := ALLTRIM( cGeneralName ) + ".vrd"
+         oEr:lNewFormat:= .F.
+      endif
    elseif lMakeSource
       if EMPTY( cSourceCode ) .OR. AT( "\\", cSourceCode ) <> 0
          lreturn := .F.
