@@ -1912,6 +1912,8 @@ function ZeichneHintergrund( nArea )
    local nWidth  := ER_GetPixel( oGenVar:aAreaSizes[ nArea, 1 ] )
    local nHeight := ER_GetPixel( oGenVar:aAreaSizes[ nArea, 2 ] )
 
+   IF !Empty(oER:aWnd[ nArea ])
+
    SetGridSize( ER_GetPixel( oGenVar:nGridWidth ), ER_GetPixel( oGenVar:nGridHeight ) )
 
    //Hintergrund
@@ -1925,7 +1927,8 @@ function ZeichneHintergrund( nArea )
                 nWidth, nHeight, oEr:nRulerTop, oEr:nRuler )
    endif
 
-return .T.
+  endif
+ return .T.
 
 //----------------------------------------------------------------------------//
 

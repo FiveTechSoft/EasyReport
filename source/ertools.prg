@@ -130,7 +130,9 @@ function InsertArea( lBefore, cTitle )
 
       oER:aWnd[ nNewArea ]:SetFocus()
 
-      AreaProperties( oER:nAktArea )
+    //  AreaProperties( oER:nAktArea )
+
+       AreaProperties( nNewArea )
 
    endif
 
@@ -144,8 +146,7 @@ FUNCTION ActionDlgInsertArea( cFile, oDlg ,cDir )
 
    IF oEr:lNewFormat
 
-         aIniEntries := GetIniSection( "Areas", oER:cDefIni )
-         FOR i= 1 TO Len( aIniEntries )
+         FOR i= 1 TO Len( oER:aWnd )
             cArea:= AllTrim( GetPvProfString( "Areas", AllTrim(STR(i,2)), "", oER:cDefIni ) )
             IF cArea == AllTrim(cFile)
                MsgStop( GL("The file already exists."), GL("Stop!") )
@@ -170,17 +171,22 @@ return lreturn
 
 function DeleteArea()
  LOCAL cAreaIni
-   if MsgNoYes( GL("Do you really want to delete this area?"), GL("Select an option") ) = .T.
-      IF oER:lNewFormat
-         cArea := GetIniEntry( "Areas", ALLTRIM(STR( oER:nAktArea, 5 )), oER:cDefIni )
-         DelIniSection( cArea+"General", oER:cDefIni )
-         DelIniSection( cArea+"Items", oER:cDefIni )
+ if MsgNoYes( GL("Do you really want to delete this area?"), GL("Select an option") ) = .T.
+
+    IF oER:lNewFormat
+         cAreaIni := AllTrim( GetPvProfString( "Areas", AllTrim(STR(oER:nAktArea,2)), "", oER:cDefIni ) )
+         DelIniSection( cAreaIni+"General", oER:cDefIni )
+         DelIniSection( cAreaIni+"Items", oER:cDefIni )
       ELSE
          FErase( aVRDSave[oER:nAktArea,1] )
       endif
+
       DelIniEntry( "Areas", ALLTRIM(STR( oER:nAktArea, 5 )), oER:cDefIni )
+
       DelallChildWnd()
+
       OpenFile( oER:cDefIni,, .T. )
+
    endif
 
    return .T.
@@ -196,6 +202,7 @@ FUNCTION DelallChildWnd()
          oER:aWnd[ i ]:= nil
       endif
    next
+
 RETURN nil
 
 //-----------------------------------------------------------------------------//
