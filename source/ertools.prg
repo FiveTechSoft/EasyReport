@@ -172,8 +172,7 @@ function GetDBField( oGet, lInsert )
    local nShowDBase := VAL( oER:GetDefIni( "General", "EditDatabases", "1" ) )
    local cGenExpr   := ALLTRIM( oEr:cDataPath + oER:GetDefIni( "General", "GeneralExpressions", "" ) )  // change CDefaultPath
    local cUserExpr  := ALLTRIM( oEr:cDataPath + oER:GetDefIni( "General", "UserExpressions", "" ) )      // change CDefaultPath
-  // local cGenExpr   := ALLTRIM( cDefaultPath + GetPvProfString( "General", "GeneralExpressions", "", oER:cDefIni ) )
-  // local cUserExpr  := ALLTRIM( cDefaultPath + GetPvProfString( "General", "UserExpressions", "", oER:cDefIni ) )
+
    local nLen       := LEN( oGenVar:aDBFile )
    local aDbase     := {}
    local lOK        := .T.
@@ -858,8 +857,7 @@ function Expressions( lTake, cAltText )
    local nShowExpr  := VAL( oER:GetDefIni( "General", "Expressions", "0" ) )
    local cGenExpr   := ALLTRIM( oEr:cDataPath + oER:GetDefIni( "General", "GeneralExpressions", "General.dbf" ) )
    local cUserExpr  := ALLTRIM( oEr:cDataPath + oER:GetDefIni( "General", "UserExpressions", "User.dbf") )
- //  local cGenExpr   := ALLTRIM( cDefaultPath + GetPvProfString( "General", "GeneralExpressions", "", oER:cDefIni ) )
- //  local cUserExpr  := ALLTRIM( cDefaultPath + GetPvProfString( "General", "UserExpressions", "", oER:cDefIni ) )
+
    local aUndo      := {}
    local cErrorFile := ""
    //local aRDD      := { "DBFNTX", "COMIX", "DBFCDX" }
@@ -1697,6 +1695,7 @@ function PrintReport( lPreview, lDeveloper, lPrintDlg, LPrintIDs )
    //      NIL, 1 )
    //   return .T.
  //  ELSE
+
       EASYREPORT oVRD NAME oER:cDefIni OF oEr:oMainWnd PREVIEW lPreview ;
                  PRINTDIALOG IIF( lPreview, .F., lPrintDlg ) PRINTIDS NOEXPR
  //  endif
@@ -1710,8 +1709,7 @@ function PrintReport( lPreview, lDeveloper, lPrintDlg, LPrintIDs )
 
    //erste Seite
    for i := 1 TO LEN( oVRD:aAreaInis )
-
-      if GetPvProfString( "General", "Condition", "0", oVRD:aAreaInis[i] ) <> "4"
+      if GetDataArea( "General", "Condition", "0", oVRD:aAreaInis[i] ) <> "4"
          PRINTAREA i OF oVRD
       endif
 
@@ -1723,7 +1721,7 @@ function PrintReport( lPreview, lDeveloper, lPrintDlg, LPrintIDs )
       oVRD:PageBreak()
 
       for i := 1 TO LEN( oVRD:aAreaInis )
-         cCondition := GetPvProfString( "General", "Condition", "0", oVRD:aAreaInis[i] )
+         cCondition := GetDataArea( "General", "Condition", "0", oVRD:aAreaInis[i] )
          if cCondition = "1" .OR. cCondition = "4"
             PRINTAREA i OF oVRD
          endif
@@ -1747,7 +1745,7 @@ function AltPrintReport( lPreview, cPrinter )
    //erste Seite
    for i := 1 TO LEN( oVRD:aAreaInis )
 
-      if GetPvProfString( "General", "Condition", "0", oVRD:aAreaInis[i] ) <> "4"
+      if GetDataArea( "General", "Condition", "0", oVRD:aAreaInis[i] ) <> "4"
          oVRD:PrintArea( i )
       endif
 
@@ -1759,7 +1757,7 @@ function AltPrintReport( lPreview, cPrinter )
       oVRD:PageBreak()
 
       for i := 1 TO LEN( oVRD:aAreaInis )
-         cCondition := GetPvProfString( "General", "Condition", "0", oVRD:aAreaInis[i] )
+         cCondition := GetDataArea( "General", "Condition", "0", oVRD:aAreaInis[i] )
          if cCondition = "1" .OR. cCondition = "4"
             oVRD:PrintArea( i )
          endif
@@ -1780,7 +1778,7 @@ function IsSecondPage( oVRD )
 
    for i := 1 TO LEN( oVRD:aAreaInis )
 
-      if GetPvProfString( "General", "Condition", "0", oVRD:aAreaInis[i] ) = "4"
+      if GetDataArea( "General", "Condition", "0", oVRD:aAreaInis[i] ) = "4"
          lreturn := .T.
          EXIT
       endif
@@ -1882,7 +1880,7 @@ function Undo()
    USE ( oGenVar:cRedoFileName + ".dbf" ) ALIAS TMPREDO
 
    APPEND BLANK
-   REPLACE TMPREDO->ENTRYTEXT WITH ALLTRIM( GetPvProfString( ;
+   REPLACE TMPREDO->ENTRYTEXT WITH ALLTRIM( GetDataArea( ;
       "Items", ALLTRIM(STR(TMPUNDO->ENTRYNR,5)) , "", oER:aAreaIni[ TMPUNDO->AREANR ] ) )
    REPLACE TMPREDO->ENTRYNR   WITH TMPUNDO->ENTRYNR
    REPLACE TMPREDO->AREANR    WITH TMPUNDO->AREANR
@@ -1893,8 +1891,8 @@ function Undo()
    if TMPUNDO->ENTRYNR = 0
 
       //Area undo
-      nOldWidth  := VAL( GetPvProfString( "General", "Width", "600", oER:aAreaIni[ TMPUNDO->AREANR ] ) )
-      nOldHeight := VAL( GetPvProfString( "General", "Height", "300", oER:aAreaIni[ TMPUNDO->AREANR ] ) )
+      nOldWidth  := VAL( GetDataArea( "General", "Width", "600", oER:aAreaIni[ TMPUNDO->AREANR ] ) )
+      nOldHeight := VAL( GetDataArea( "General", "Height", "300", oER:aAreaIni[ TMPUNDO->AREANR ] ) )
 
       MEMOWRIT( oER:aAreaIni[ TMPUNDO->AREANR ], TMPUNDO->AREATEXT )
 
@@ -1969,7 +1967,7 @@ function Redo()
    USE ( oGenVar:cUndoFileName + ".dbf" ) ALIAS TMPUNDO
 
    APPEND BLANK
-   REPLACE TMPUNDO->ENTRYTEXT WITH ALLTRIM( GetPvProfString( ;
+   REPLACE TMPUNDO->ENTRYTEXT WITH ALLTRIM( GetDataArea( ;
       "Items", ALLTRIM(STR(TMPREDO->ENTRYNR,5)) , "", oER:aAreaIni[ TMPREDO->AREANR ] ) )
    REPLACE TMPUNDO->ENTRYNR   WITH TMPREDO->ENTRYNR
    REPLACE TMPUNDO->AREANR    WITH TMPREDO->AREANR
@@ -1980,8 +1978,8 @@ function Redo()
    if TMPREDO->ENTRYNR = 0
 
       //Area redo
-      nOldWidth  := VAL( GetPvProfString( "General", "Width", "600", oER:aAreaIni[ TMPREDO->AREANR ] ) )
-      nOldHeight := VAL( GetPvProfString( "General", "Height", "300", oER:aAreaIni[ TMPREDO->AREANR ] ) )
+      nOldWidth  := VAL( GetDataArea( "General", "Width", "600", oER:aAreaIni[ TMPREDO->AREANR ] ) )
+      nOldHeight := VAL( GetDataArea( "General", "Height", "300", oER:aAreaIni[ TMPREDO->AREANR ] ) )
 
       MEMOWRIT( oER:aAreaIni[ TMPREDO->AREANR ], TMPREDO->AREATEXT )
       MEMOWRIT( ".\TMPAREA.INI", TMPREDO->AREATEXT )

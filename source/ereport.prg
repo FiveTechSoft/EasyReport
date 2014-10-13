@@ -213,8 +213,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
       oEr:oMainWnd:oRight  :=  oEr:oPanelD   //oER:oFldD
       oER:oFldI:SetColor(  , oEr:nClrPaneTree )
       oER:oFldD:SetColor(  , oEr:nClrPaneTree )
-
-
+      oER:lNewFormat := .f.
       DlgTree( 2 )
       ER_Inspector( 3 )
 
@@ -1608,7 +1607,7 @@ function GenerateSource( nArea )
       cAreaDef := oEr:GetDefIni( "Areas", AllTrim(STR(nArea,5)) , "" )
       cAreaDef := VRD_LF2SF( AllTrim( cAreaDef ) )
 
-      cAreaTitle := AllTrim( GetPvProfString( "General", "Title" , "", oER:aAreaIni[ nArea ] ) )
+      cAreaTitle := AllTrim( GetDataArea( "General", "Title" , "", oER:aAreaIni[ nArea ] ) )
 
       if !Empty( cAreaTitle )
          cSource += SPACE(3) + "//--- Area: " + cAreaTitle + " ---" + CRLF
@@ -1616,7 +1615,7 @@ function GenerateSource( nArea )
 
       for i := 1 to 1000
 
-         cItemDef := AllTrim( GetPvProfString( "Items", AllTrim(STR(i,5)) , "", oER:aAreaIni[ nArea ] ) )
+         cItemDef := AllTrim( GetDataArea( "Items", AllTrim(STR(i,5)) , "", oER:aAreaIni[ nArea ] ) )
 
          if !Empty( cItemDef )
             if nStyle = 1
@@ -1787,11 +1786,11 @@ function ClientWindows()
          nWindowNr += 1
          oER:aAreaIni[nWnd] := IIF( AT( "\", cItemDef ) = 0, ".\", "" ) + cItemDef
 
-         cTitle  := AllTrim( GetPvProfString( "General", "Title" , "", oER:aAreaIni[nWnd] ) )
+         cTitle  := AllTrim( GetDataArea( "General", "Title" , "", oER:aAreaIni[nWnd] ) )
 
          oGenVar:aAreaSizes[nWnd] := ;
-            { Val( GetPvProfString( "General", "Width", "600", oER:aAreaIni[nWnd] ) ), ;
-              Val( GetPvProfString( "General", "Height", "300", oER:aAreaIni[nWnd] ) ) }
+            { Val( GetDataArea( "General", "Width", "600", oER:aAreaIni[nWnd] ) ), ;
+              Val( GetDataArea( "General", "Height", "300", oER:aAreaIni[nWnd] ) ) }
 
          nWidth  := ER_GetPixel( oGenVar:aAreaSizes[nWnd, 1 ] )
          nHeight := ER_GetPixel( oGenVar:aAreaSizes[nWnd, 2 ] )
@@ -1847,7 +1846,9 @@ ENDIF
    oEr:nTotalWidth  := nWidth
 
    IF oER:lShowPanel
-      ItemList()
+
+      ER_Inspector( 3 )
+
    ENDIF
 
 return .T.
@@ -3567,7 +3568,7 @@ STATIC function GetItemVisible( oItem )
 local  oLinkArea := oItem:GetParent()
 local  nItem     := Val( oLinkArea:cPrompt )
 local  nArea     := Val( oLinkArea:GetParent():cPrompt )
-local  cItemDef := AllTrim( GetPvProfString( "Items", AllTrim(STR(nItem,5)) , "", oER:aAreaIni[ nArea ] ) )
+local  cItemDef := AllTrim( GetDataArea( "Items", AllTrim(STR(nItem,5)) , "", oER:aAreaIni[ nArea ] ) )
 local  lWert
 
       if Val( GetField( cItemDef, 4 ) ) = 0
@@ -3745,13 +3746,13 @@ function ClickListTree( oTree )
 
       Case cPrompt = GL("Item Properties")
            oLinkArea:SetText( ItemProperties( nItem, nArea, .T. ) )
-           cItemDef := AllTrim( GetPvProfString( "Items", AllTrim(STR(nItem,5)) , "", oER:aAreaIni[ nArea ] ) )
+           cItemDef := AllTrim( GetDataArea( "Items", AllTrim(STR(nItem,5)) , "", oER:aAreaIni[ nArea ] ) )
            if IsGraphic( UPPER(AllTrim( GetField( cItemDef, 1 ) )) )
               oLinkArea:set( ,  SetGraphTreeBmp( nItem, oER:aAreaIni[ nArea ] ) )
            endif
 
       Case cPrompt = GL("Visible")
-           cItemDef := AllTrim( GetPvProfString( "Items", AllTrim(STR(nItem,5)) , "", oER:aAreaIni[ nArea ] ) )
+           cItemDef := AllTrim( GetDataArea( "Items", AllTrim(STR(nItem,5)) , "", oER:aAreaIni[ nArea ] ) )
            lWert    := if( Val( GetField( cItemDef, 4 ) ) = 0, .F., .T. )
            oItem:Set( , IF( lWert , 4  , 3   )    )
            DeleteItem( nItem, nArea, .T., lWert )
@@ -3781,7 +3782,7 @@ function ClickListTree( oTree )
                     //oER:nAktArea  := nArea
                     oLinkArea:SetText( ItemProperties( nItem, nArea, .T. ) )
 
-                    cItemDef := AllTrim( GetPvProfString( "Items", AllTrim(STR(nItem,5)) , "", oER:aAreaIni[ nArea ] ) )
+                    cItemDef := AllTrim( GetDataArea( "Items", AllTrim(STR(nItem,5)) , "", oER:aAreaIni[ nArea ] ) )
                     if IsGraphic( UPPER(AllTrim( GetField( cItemDef, 1 ) )) )
                        oLinkArea:set( ,  SetGraphTreeBmp( nItem, oER:aAreaIni[ nArea ] ) )
                     endif
@@ -3834,7 +3835,7 @@ return .T.
 
 function SetGraphTreeBmp( nItem, cAreaIni )
 
-   local cItemDef := AllTrim( GetPvProfString( "Items", AllTrim(STR(nItem,5)) , "", cAreaIni ) )
+   local cItemDef := AllTrim( GetDataArea( "Items", AllTrim(STR(nItem,5)) , "", cAreaIni ) )
    local cTyp     := UPPER(AllTrim( GetField( cItemDef, 1 ) ))
    local nIndex   := GetGraphIndex( cTyp )
 
@@ -3846,44 +3847,49 @@ FUNCTION GetAreaProperties( nArea )
    LOCAL aAreaProp := Array(13)
    local cAreaTitle     := oER:aWndTitle[ nArea ]
 
+
+  IF !Empty( oER:aAreaIni[ nArea ] )
+
    aAreaProp[1] := { GL( "Title" ),;
                      cAreaTitle }
 
    aAreaProp[2] := { GL( "Top1" ),;
-                     Val( GetPvProfString( "General", "Top1", "0", oER:aAreaIni[ nArea ] ) ) }
+                     Val( GetDataArea( "General", "Top1", "0", oER:aAreaIni[ nArea ] ) ) }
 
    aAreaProp[3] := { GL( "Top2" ),;
-                     Val( GetPvProfString( "General", "Top2", "0", oER:aAreaIni[ nArea ] ) ) }
+                     Val( GetDataArea( "General", "Top2", "0", oER:aAreaIni[ nArea ] ) ) }
 
    aAreaProp[4] := { GL( "TopVariable" ),;
-                     ( GetPvProfString( "General", "TopVariable", "1", oER:aAreaIni[ nArea ] ) = "1" ) }
+                     ( GetDataArea( "General", "TopVariable", "1", oER:aAreaIni[ nArea ] ) = "1" ) }
 
    aAreaProp[5] := { GL( "Width" ) ,;
-                     Val( GetPvProfString( "General", "Width", "600", oER:aAreaIni[ nArea ] ) ) }
+                     Val( GetDataArea( "General", "Width", "600", oER:aAreaIni[ nArea ] ) ) }
 
    aAreaProp[6] := { GL( "Height" ) ,;
-                    Val( GetPvProfString( "General", "Height", "300", oER:aAreaIni[ nArea ] ) ) }
+                    Val( GetDataArea( "General", "Height", "300", oER:aAreaIni[ nArea ] ) ) }
 
    aAreaProp[7] := { GL( "Condition" ) ,;
-                    Val( GetPvProfString( "General", "Condition", "1", oER:aAreaIni[ nArea ] ) ) }
+                    Val( GetDataArea( "General", "Condition", "1", oER:aAreaIni[ nArea ] ) ) }
 
    aAreaProp[8] := { GL( "DelEmptySpace" ) ,;
-                    ( GetPvProfString( "General", "DelEmptySpace", "0", oER:aAreaIni[ nArea ] ) = "1" ) }
+                    ( GetDataArea( "General", "DelEmptySpace", "0", oER:aAreaIni[ nArea ] ) = "1" ) }
 
    aAreaProp[9] := { GL( "BreakBefore" ) ,;
-                     ( GetPvProfString( "General", "BreakBefore"  , "0", oER:aAreaIni[ nArea ] ) = "1" ) }
+                     ( GetDataArea( "General", "BreakBefore"  , "0", oER:aAreaIni[ nArea ] ) = "1" ) }
 
    aAreaProp[10] := { GL( "BreakAfter" ) ,;
-                     ( GetPvProfString( "General", "BreakAfter"   , "0", oER:aAreaIni[ nArea ] ) = "1" ) }
+                     ( GetDataArea( "General", "BreakAfter"   , "0", oER:aAreaIni[ nArea ] ) = "1" ) }
 
    aAreaProp[11] := { GL( "PrintBeforeBreak") ,;
-                     ( GetPvProfString( "General", "PrintBeforeBreak", "0", oER:aAreaIni[ nArea ] ) = "1" ) }
+                     ( GetDataArea( "General", "PrintBeforeBreak", "0", oER:aAreaIni[ nArea ] ) = "1" ) }
 
    aAreaProp[12] := { GL ("PrintAfterBreak") ,;
-                     ( GetPvProfString( "General", "PrintAfterBreak" , "0", oER:aAreaIni[ nArea ] ) = "1" ) }
+                     ( GetDataArea( "General", "PrintAfterBreak" , "0", oER:aAreaIni[ nArea ] ) = "1" ) }
 
    aAreaProp[13] := { GL("ControlDBF") ,;
-                     AllTrim( GetPvProfString( "General", "ControlDBF", GL("none"), oER:aAreaIni[ nArea ] ) ) }
+                     AllTrim( GetDataArea( "General", "ControlDBF", GL("none"), oER:aAreaIni[ nArea ] ) ) }
+
+   endif
 
 RETURN aAreaProp
 
@@ -3893,26 +3899,35 @@ FUNCTION SetAreaProperties( nArea, aAreaProp, aTmpSource, cOldAreaText )
    LOCAL oIni
    LOCAL nDecimals    := IIF( oER:nMeasure = 2, 2, 0 )
    LOCAL i
-   local nOldWidth      := Val( GetPvProfString( "General", "Width", "600", oER:aAreaIni[ nArea ] ) )
-   local nOldHeight     := Val( GetPvProfString( "General", "Height", "300", oER:aAreaIni[ nArea ] ) )
+   local nOldWidth      := Val( GetDataArea( "General", "Width", "600", oER:aAreaIni[ nArea ] ) )
+   local nOldHeight     := Val( GetDataArea( "General", "Height", "300", oER:aAreaIni[ nArea ] ) )
+   LOCAL xIni, xSection
 
-   INI oIni FILE oER:aAreaIni[ nArea ]
-         SET SECTION "General" ENTRY "Title"            to AllTrim( aAreaProp[1,2] ) OF oIni
-         SET SECTION "General" ENTRY "Top1"             to AllTrim(STR( aAreaProp[2,2], 5, nDecimals )) OF oIni
-         SET SECTION "General" ENTRY "Top2"             to AllTrim(STR( aAreaProp[3,2], 5, nDecimals )) OF oIni
-         SET SECTION "General" ENTRY "TopVariable"      to IIF( !aAreaProp[4,2] , "0", "1") OF oIni
-         SET SECTION "General" ENTRY "Condition"        to AllTrim(STR( aAreaProp[7,2], 1 )) OF oIni
-         SET SECTION "General" ENTRY "Width"            to AllTrim(STR( aAreaProp[5,2], 5, nDecimals )) OF oIni
-         SET SECTION "General" ENTRY "Height"           to AllTrim(STR( aAreaProp[6,2], 5 ,nDecimals )) OF oIni
-         SET SECTION "General" ENTRY "DelEmptySpace"    to IIF( !aAreaProp[8,2] , "0", "1") OF oIni
-         SET SECTION "General" ENTRY "BreakBefore"      to IIF( !aAreaProp[9,2] , "0", "1") OF oIni
-         SET SECTION "General" ENTRY "BreakAfter"       to IIF( !aAreaProp[10,2] , "0", "1") OF oIni
-         SET SECTION "General" ENTRY "PrintBeforeBreak" to IIF( !aAreaProp[11,2] , "0", "1") OF oIni
-         SET SECTION "General" ENTRY "PrintAfterBreak"  to IIF( !aAreaProp[12,2] , "0", "1") OF oIni
-         SET SECTION "General" ENTRY "ControlDBF"       to AllTrim( aAreaProp[13,2] ) OF oIni
+   IF oEr:lNewFormat
+      xIni:= oER:cDefIni
+      xSection :=  oER:aAreaIni[ nArea ]+"General"
+   ELSE
+      xIni:= oER:aAreaIni[ nArea ]
+      xSection := "General"
+   ENDIF
+
+   INI oIni FILE xIni
+         SET SECTION xSection ENTRY "Title"            to AllTrim( aAreaProp[1,2] ) OF oIni
+         SET SECTION xSection ENTRY "Top1"             to AllTrim(STR( aAreaProp[2,2], 5, nDecimals )) OF oIni
+         SET SECTION xSection ENTRY "Top2"             to AllTrim(STR( aAreaProp[3,2], 5, nDecimals )) OF oIni
+         SET SECTION xSection ENTRY "TopVariable"      to IIF( !aAreaProp[4,2] , "0", "1") OF oIni
+         SET SECTION xSection ENTRY "Condition"        to AllTrim(STR( aAreaProp[7,2], 1 )) OF oIni
+         SET SECTION xSection ENTRY "Width"            to AllTrim(STR( aAreaProp[5,2], 5, nDecimals )) OF oIni
+         SET SECTION xSection ENTRY "Height"           to AllTrim(STR( aAreaProp[6,2], 5 ,nDecimals )) OF oIni
+         SET SECTION xSection ENTRY "DelEmptySpace"    to IIF( !aAreaProp[8,2] , "0", "1") OF oIni
+         SET SECTION xSection ENTRY "BreakBefore"      to IIF( !aAreaProp[9,2] , "0", "1") OF oIni
+         SET SECTION xSection ENTRY "BreakAfter"       to IIF( !aAreaProp[10,2] , "0", "1") OF oIni
+         SET SECTION xSection ENTRY "PrintBeforeBreak" to IIF( !aAreaProp[11,2] , "0", "1") OF oIni
+         SET SECTION xSection ENTRY "PrintAfterBreak"  to IIF( !aAreaProp[12,2] , "0", "1") OF oIni
+         SET SECTION xSection ENTRY "ControlDBF"       to AllTrim( aAreaProp[13,2] ) OF oIni
 
          for i := 1 to 12
-            SET SECTION "General" ENTRY "Formula" + AllTrim(STR(i,2)) to AllTrim( aTmpSource[ i ] ) OF oIni
+            SET SECTION xSection ENTRY "Formula" + AllTrim(STR(i,2)) to AllTrim( aTmpSource[ i ] ) OF oIni
          next
 
       ENDINI
@@ -3947,7 +3962,7 @@ FUNCTION SetAreaProperties( nArea, aAreaProp, aTmpSource, cOldAreaText )
 
    for i := 1 to 13
       AADD( aTmpSource, ;
-         AllTrim( GetPvProfString( "General", "Formula" + AllTrim(STR(i,2)), "", oER:aAreaIni[ nArea ] ) ) )
+         AllTrim( GetDataArea( "General", "Formula" + AllTrim(STR(i,2)), "", oER:aAreaIni[ nArea ] ) ) )
    next
 
    AEval( oGenVar:aDBFile, {|x| IIF( Empty( x[2] ),, AADD( aDbase, AllTrim( x[2] ) ) ) } )
@@ -4286,8 +4301,8 @@ function AreaHide( nArea )
 
    local i, nDifferenz
    local nHideHeight := GetCmInch( 18 )
-   local nAreaHeight := Val( GetPvProfString( "General", "Height", "300", oER:aAreaIni[ nArea ] ) )
-   local nWidth      := Val( GetPvProfString( "General", "Width", "600", oER:aAreaIni[ nArea ] ) )
+   local nAreaHeight := Val( GetDataArea( "General", "Height", "300", oER:aAreaIni[ nArea ] ) )
+   local nWidth      := Val( GetDataArea( "General", "Width", "600", oER:aAreaIni[ nArea ] ) )
 
    oGenVar:aAreaHide[oER:nAktArea] := !oGenVar:aAreaHide[oER:nAktArea]
 
@@ -5112,3 +5127,5 @@ Return oTT
 
 //----------------------------------------------------------------------------//
 
+FUNCTION pausa(xc)
+RETURN msginfo(xc)

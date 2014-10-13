@@ -20,7 +20,9 @@ local cMode
    cMode:= amode[nMode]
 
    if Empty( cRptFile )
-      cRptFile:=  GetFile( GL("Designer Files") + " (*.vrd)|*.vrd|" + ;
+
+        cRptFile:=  GetFile( GL("Designer Files") + " (*.vrd)|*.vrd|" + ;
+                              GL("New Designer Files")+ " (*.erd)|*.erd|"+ ;
                               GL("All Files") + " (*.*)|*.*", GL("Open"), 1 )
 
    endif
@@ -29,6 +31,9 @@ local cMode
       //Return .f.
       lRet  := .F.
    endif
+
+     msginfo( cRptFile   )
+
 
    if lRet
       oReport := ERStart():New(  cRptFile, cPrinter , oDlg )
@@ -131,6 +136,8 @@ METHOD PrintReport() CLASS ERStart
       oInfo := ::oVRD:End()
 
    ENDIF
+
+   msginfo( ::cRptFile   )
 
    EASYREPORT ::oVRD  ;
      NAME ::cRptFile ;

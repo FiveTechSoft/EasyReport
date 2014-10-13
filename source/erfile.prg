@@ -94,6 +94,21 @@ function OpenFile( cFile, lChange, lAddDelNew )
 
       DefineFonts()
 
+          IF oER:lShowPanel
+         //SwichFldD( oEr:oMainWnd, oEr:oPanelD, ) //oER:oFldD )
+         ER_ReportSettings( 1 )
+         //DlgTree( 2 )
+         Dlg_Colors( 3 )
+         Dlg_Fonts( 4 )
+         Er_Databases(,2)
+         ER_Expressions(,,1)
+
+         ER_Inspector1(3 )
+         SwichFldD( oEr:oMainWnd, oEr:oPanelD, ) //oER:oFldD )
+
+      endif
+
+
       if !lChange
          ClientWindows()
       else
@@ -108,11 +123,6 @@ function OpenFile( cFile, lChange, lAddDelNew )
 
       ClearUndoRedo() // and refresh the bar
 
-      cMainTitle      := ALLTRIM( oer:GetDefIni( "General", "Title", "" ) )
-      oEr:oMainWnd:cTitle := MainCaption()
-
-      oER:SetScrollBar()
-
       oEr:oMainWnd:SetMenu( BuildMenu() )
 
       IF oER:lShowPanel
@@ -123,6 +133,7 @@ function OpenFile( cFile, lChange, lAddDelNew )
          Dlg_Fonts( 4 )
          Er_Databases(,2)
          ER_Expressions(,,1)
+
          ER_Inspector1(3 )
          SwichFldD( oEr:oMainWnd, oEr:oPanelD, ) //oER:oFldD )
 

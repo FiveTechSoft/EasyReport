@@ -227,7 +227,7 @@ FUNCTION SetDataArea( cSection, cItem, cItemDef, cAreaIni )
    endif
 
    INI oIni FILE cIni
-       SET SECTION cSection ENTRY cItem TO cItemDef OF oIni
+       SET SECTION xSection ENTRY cItem TO cItemDef OF oIni
    ENDINI
 
 RETURN nil
@@ -418,7 +418,7 @@ return ( cName )
 function MultiItemProperties()
 
    local oDlg, aCbx[1], aGrp[1]
-   local cItemDef  := AllTrim( GetPvProfString( "Items", AllTrim(STR( oER:aSelection[1,2], 5 )), ;
+   local cItemDef  := AllTrim( GetDataArea( "Items", AllTrim(STR( oER:aSelection[1,2], 5 )), ;
                       "", oER:aAreaIni[ oER:aSelection[1,1] ] ) )
    local nTop      := VAL( GetField( cItemDef, 7 ) )
    local nLeft     := VAL( GetField( cItemDef, 8 ) )
@@ -911,7 +911,7 @@ function GetoVar( i, nArea, cAreaIni, lNew )
 
    local oVar := TExStruct():New()
 
-   oVar:AddMember( "cItemDef"   ,, AllTrim( GetPvProfString( "Items", AllTrim(STR(i,5)) , "", cAreaIni ) ) )
+   oVar:AddMember( "cItemDef"   ,, AllTrim( GetDataArea( "Items", AllTrim(STR(i,5)) , "", cAreaIni ) ) )
    oVar:AddMember( "i"          ,, i                                                                       )
    oVar:AddMember( "nArea"      ,, nArea                                                                   )
    oVar:AddMember( "cAreaIni"   ,, cAreaIni                                                                )
@@ -919,8 +919,8 @@ function GetoVar( i, nArea, cAreaIni, lNew )
    oVar:AddMember( "lNew"       ,, lNew                                                                    )
    oVar:AddMember( "lRemoveItem",, .F.                                                                     )
    oVar:AddMember( "cShowExpr"  ,, AllTrim( oER:GetDefIni( "General", "Expressions", "0" ) )    )
-   oVar:AddMember( "nGesWidth"  ,, VAL( GetPvProfString( "General", "Width", "600", cAreaIni ) )           )
-   oVar:AddMember( "nGesHeight" ,, VAL( GetPvProfString( "General", "Height", "300", cAreaIni ) )          )
+   oVar:AddMember( "nGesWidth"  ,, VAL( GetDataArea( "General", "Width", "600", cAreaIni ) )           )
+   oVar:AddMember( "nGesHeight" ,, VAL( GetDataArea( "General", "Height", "300", cAreaIni ) )          )
    oVar:AddMember( "cPicture"   ,, IIF( oER:nMeasure = 2, "999.99", "99999" )                                  )
 
 return ( oVar )
@@ -939,11 +939,14 @@ function GetohVar( i, nArea, cAreaIni, lNew )
    hVar[ "lNew" ]    := lNew
    hVar[ "lRemoveItem" ] := .F.
    hVar[ "cShowExpr" ] := AllTrim( oER:GetDefIni( "General", "Expressions", "0" ) )
-   hVar[ "nGesWidth" ] := VAL( GetPvProfString( "General", "Width", "600", cAreaIni ) )
-   hVar[ "nGesHeight"] := VAL( GetPvProfString( "General", "Height", "300", cAreaIni ) )
+   hVar[ "nGesWidth" ] := VAL( GetDataArea( "General", "Width", "600", cAreaIni ) )
+   hVar[ "nGesHeight"] := VAL( GetDataArea( "General", "Height", "300", cAreaIni ) )
    hVar[ "cPicture" ] := IIF( oER:nMeasure = 2, "999.99", "99999" )
 
 return ( hVar )
+
+
+    GetDataArea( cSection, cData,cDefault, cAreaIni )
 
 //----------------------------------------------------------------------------//
 
@@ -1668,15 +1671,15 @@ return .T.
 function SetItemSize( i, nArea, cAreaIni )
 
    local oIni, nColor, nColFill, nStyle, nPenWidth, nRndWidth, nRndHeight, oItem
-   local cItemDef   := AllTrim( GetPvProfString( "Items", AllTrim(STR(i,5)) , "", cAreaIni ) )
+   local cItemDef   := AllTrim( GetDataArea( "Items", AllTrim(STR(i,5)) , "", cAreaIni ) )
    local cOldDef    := cItemDef
    local aWerte     := GetCoors( oER:aItems[nArea,i]:hWnd )
    local nTop       := GetCmInch( aWerte[1] - oEr:nRulerTop )
    local nLeft      := GetCmInch( aWerte[2] - oER:nRuler )
    local nHeight    := GetCmInch( aWerte[3] - aWerte[1] )
    local nWidth     := GetCmInch( aWerte[4] - aWerte[2] )
-   local nGesWidth  := VAL( GetPvProfString( "General", "Width", "600", cAreaIni ) )
-   local nGesHeight := VAL( GetPvProfString( "General", "Height", "300", cAreaIni ) )
+   local nGesWidth  := VAL( GetDataArea( "General", "Width", "600", cAreaIni ) )
+   local nGesHeight := VAL( GetDataArea( "General", "Height", "300", cAreaIni ) )
    local cTyp       := UPPER(AllTrim( GetField( cItemDef, 1 ) ))
    LOCAL nDecimals := IIF( oER:nMeasure == 2, 2, 0 )
 
@@ -1766,7 +1769,7 @@ return .T.
 function MsgBarItem( nItem, nArea, cAreaIni, nRow, nCol, lResize )
 
    local nTop, nLeft
-   local cItemDef := AllTrim( GetPvProfString( "Items", AllTrim(STR(nItem,5)) , "", cAreaIni ) )
+   local cItemDef := AllTrim( GetDataArea( "Items", AllTrim(STR(nItem,5)) , "", cAreaIni ) )
    local cItemID  := AllTrim(  GetField( cItemDef, 3 ) )
 
    DEFAULT lResize := .F.
@@ -1867,7 +1870,7 @@ function ItemCopy( lCut )
 
       FOR i := 1 TO LEN( oER:aSelection )
 
-         cItemCopy := AllTrim( GetPvProfString( "Items", ;
+         cItemCopy := AllTrim( GetDataArea( "Items", ;
                       AllTrim(STR( oER:aSelection[i,2], 5 )) , "", oER:aAreaIni[ oER:aSelection[i,1] ] ) )
          AADD( aItemCopy, cItemCopy )
 
@@ -1885,8 +1888,7 @@ function ItemCopy( lCut )
 
    ELSE
 
-      cItemCopy    := AllTrim( GetPvProfString( "Items", AllTrim(STR(nAktItem,5)), ;
-                      "", cAreaIni ) )
+      cItemCopy    := AllTrim( GetDataArea( "Items", AllTrim(STR(nAktItem,5)), "", cAreaIni ) )
       nCopyEntryNr := nAktItem
       nCopyAreaNr  := oER:nAktArea
 

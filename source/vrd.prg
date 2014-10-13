@@ -170,6 +170,7 @@ METHOD New( cReportName, lPreview, cPrinter, oWnd, lModal, lPrintIDs, lNoPrint, 
    LOCAL i, y, cDef, oInfoFont, oInfo2Font, cFile, aIniEntries, cDlgTitle
    LOCAL aSay[3], aPrompt[3], aTmpSource, lTmpValue, nTmpValue, cTmpValue
    LOCAL nValue := 0
+   LOCAL xExtension
 
    DEFAULT lPreview     := .F.
    DEFAULT cPrinter     := ""
@@ -225,10 +226,17 @@ METHOD New( cReportName, lPreview, cPrinter, oWnd, lModal, lPrintIDs, lNoPrint, 
    ::aDBPrevRecord    := {}
 
    ::cReportName = cReportName
+
+   xExtension := AllTrim(Upper(cFileExt( cReportName )))
+
    ::oTmpWnd     = oWnd
    ::cDefIni     = VRD_LF2SF( ALLTRIM( cReportName ) )
 
-   ::lNewFormat :=  IF( Upper(cFileExt( cReportName )) ==  "ERD" , .T., .F. )
+   IF Len(xExtension )> 3
+      xExtension := Left(xExtension,3)
+   ENDIF
+
+   ::lNewFormat :=  IF( xExtension ==  "ERD" , .T., .F. )
 
    ::oInfo := VRD_NewStructure()
    ::oInfo:AddMember( "nPages",, 0 )
@@ -612,9 +620,9 @@ METHOD AreaStart( nArea, lPrintArea, aIDs, aStrings, lPageBreak ) CLASS VRD
 
    LOCAL i
    LOCAL nRecords   := IIF( ::aControlDBF[nArea] = 0, 1, ::aDBRecords[ ::aControlDBF[nArea] ] )
-   LOCAL nCondition := VAL( VRD_GetDataArea( "General", "Condition", "1", ::aAreaInis[nArea], self ) )
-   LOCAL nPrBefore  := VAL( VRD_GetDataArea( "General", "PrintBeforeBreak", "0", ::aAreaInis[nArea],self ) )
-   LOCAL nPrAfter   := VAL( VRD_GetDataArea( "General", "PrintAfterBreak" , "0", ::aAreaInis[nArea],self ) )
+   LOCAL nCondition := VAL( VRD_GetDataArea( "General", "Condition", "1", ::aAreaInis[nArea], Self ) )
+   LOCAL nPrBefore  := VAL( VRD_GetDataArea( "General", "PrintBeforeBreak", "0", ::aAreaInis[nArea], Self ) )
+   LOCAL nPrAfter   := VAL( VRD_GetDataArea( "General", "PrintAfterBreak" , "0", ::aAreaInis[nArea], Self ) )
 
    DEFAULT lPageBreak := .F.
 
@@ -629,6 +637,7 @@ METHOD AreaStart( nArea, lPrintArea, aIDs, aStrings, lPageBreak ) CLASS VRD
       nPrBefore = 1 .OR. nPrAfter = 1
       RETURN ( NIL )
    ENDIF
+
 
    FOR i := 1 TO nRecords
 
@@ -1241,6 +1250,7 @@ METHOD PrintArea( nArea, nAddToTop, lPageBreak ) CLASS VRD
    DEFAULT nAddToTop  := 0
    DEFAULT lPageBreak := .T.
 
+
    FOR i := LEN( aIniEntries ) TO 1 STEP -1
 
       nEntry := VAL( SUBSTR( aIniEntries[i], 1, AT( "=", aIniEntries[i] ) - 1 ) )
@@ -1609,7 +1619,7 @@ METHOD GetIniItems( nArea ) CLASS VRD
    ELSE
       IF ::lNewFormat
           aIniEntries    := GetIniSection( ::aAreaInis[ nArea ]+"Items", ::cDefIni )
-      ELSE
+       ELSE
           aIniEntries    := GetIniSection( "Items", ::aAreaInis[ nArea ] )
       ENDIF
       ::nLastIniArea := nArea
@@ -1628,6 +1638,7 @@ METHOD GetItem( nArea, nItemID ) CLASS VRD
 
    LOCAL cItemDef := ALLTRIM( VRD_GetDataArea( "Items", ::GetEntryNr( nArea, nItemID ), ;
                                                "", ::aAreaInis[ nArea ] , Self ) )
+
    LOCAL oItem    := VRDItem():New( cItemDef )
 
 RETURN oItem
