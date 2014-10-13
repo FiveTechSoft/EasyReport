@@ -3505,12 +3505,21 @@ STATIC Function FillTree( oTree, oDlg )
                cAreaFilesDir := oER:cDefIniPath
             endif
 
-           cItemDef := VRD_LF2SF( cAreaFilesDir + ;
-            AllTrim( GetIniEntry( aIniEntries, AllTrim(STR(nEntry,5)) , "" ) ) )
+            IF oER:lNewFormat
+               cItemDef := AllTrim( GetIniEntry( aIniEntries, AllTrim(STR(nEntry,5)) , "" )  )
+
+            ELSE
+               cItemDef := VRD_LF2SF( cAreaFilesDir + ;
+                           AllTrim( GetIniEntry( aIniEntries, AllTrim(STR(nEntry,5)) , "" ) ) )
+
+            ENDIF
+
+
 
             if !Empty( cItemDef )
-
-            cItemDef := IIF( AT( "\", cItemDef ) = 0, ".\", "" ) + cItemDef
+              IF !oER:lNewFormat
+                 cItemDef := IIF( AT( "\", cItemDef ) = 0, ".\", "" ) + cItemDef
+              endif
 
             aElemente := GetAllItems( cItemDef )
             IF !oER:lDClkProperties
@@ -3689,7 +3698,13 @@ function GetAllItems( cAktAreaIni )
 
    local i, cItemDef, cTyp, cName, nShow, nTyp, nDelete, nEntry
    local aWerte      := {}
-   local aIniEntries := GetIniSection( "Items", cAktAreaIni )
+   local aIniEntries
+
+   IF oER:lNewFormat
+      aIniEntries := GetIniSection( cAktAreaIni+"Items", oEr:cDefIni )
+   ELSE
+      aIniEntries := GetIniSection( "Items", cAktAreaIni )
+   ENDIF
 
    for i := 1 to LEN( aIniEntries )
 

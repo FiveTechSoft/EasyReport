@@ -86,7 +86,7 @@ function InsertArea( lBefore, cTitle )
 
    DEFINE DIALOG oDlg NAME "NEWFILENAME" TITLE cTitle
 
-   REDEFINE BUTTON PROMPT GL("&OK") ID 101 OF oDlg ACTION ( lReturn :=  ActionDlgInsertArea( cFile, oDlg ) )
+   REDEFINE BUTTON PROMPT GL("&OK") ID 101 OF oDlg ACTION ( lReturn :=  ActionDlgInsertArea( cFile, oDlg, cDir ) )
 
    REDEFINE BUTTON PROMPT GL("&Cancel") ID 102 OF oDlg ACTION oDlg:End()
 
@@ -138,7 +138,7 @@ return .T.
 
 //-----------------------------------------------------------------------------//
 
-FUNCTION ActionDlgInsertArea( cFile, oDlg )
+FUNCTION ActionDlgInsertArea( cFile, oDlg ,cDir )
    LOCAL lreturn := .f.
    LOCAL aIniEnTries,cArea
 
@@ -179,12 +179,24 @@ function DeleteArea()
          FErase( aVRDSave[oER:nAktArea,1] )
       endif
       DelIniEntry( "Areas", ALLTRIM(STR( oER:nAktArea, 5 )), oER:cDefIni )
-      pausa("borra2")
+      DelallChildWnd()
       OpenFile( oER:cDefIni,, .T. )
-
    endif
 
-return .T.
+   return .T.
+
+//------------------------------------------------------------------------------
+
+FUNCTION DelallChildWnd()
+   LOCAL i
+
+   FOR i=1 TO Len( oER:aWnd )
+      IF !Empty( oER:aWnd[ i ]  )
+         oER:aWnd[ i ]:END()
+         oER:aWnd[ i ]:= nil
+      endif
+   next
+RETURN nil
 
 //-----------------------------------------------------------------------------//
 

@@ -11,6 +11,7 @@ function OpenFile( cFile, lChange, lAddDelNew )
    local i
    local cLongFile     := cFile
    local cMainTitle    := ""
+   LOCAL xExtension
 
    DEFAULT lChange     := .F.
    DEFAULT lAddDelNew  := .F.
@@ -26,11 +27,15 @@ function OpenFile( cFile, lChange, lAddDelNew )
    cLongDefIni := cLongFile
    cFile       := VRD_LF2SF( cLongFile )
 
+   xExtension := cFileExt( cLongFile )
 
+   IF Len(xExtension) >3
+      xExtension := Left(xExtension,3)
+   endif
 
-   IF  Upper(cFileExt( cLongFile )) ==  "ERD"
+   IF  Upper(xExtension ) ==  "ERD"
       oER:lNewFormat := .T.
-   else
+   ELSE
       oER:lNewFormat := .F.
    ENDIF
 
@@ -45,7 +50,7 @@ function OpenFile( cFile, lChange, lAddDelNew )
       //oEr:oMainWnd:End()
       //return .T.
    endif
-   pausa(cFile)
+
    // Aufruf des neuen Reports im gleichen Frame gibt optische Probleme
    if !EMPTY( cFile )
 
