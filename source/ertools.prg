@@ -86,9 +86,7 @@ function InsertArea( lBefore, cTitle )
 
    DEFINE DIALOG oDlg NAME "NEWFILENAME" TITLE cTitle
 
-   REDEFINE BUTTON PROMPT GL("&OK") ID 101 OF oDlg ACTION ;
-      IIF( FILE( cDir + cFile ), (MsgStop( GL("The file already exists."), GL("Stop!") )), ;
-                                 ( lreturn := .T., oDlg:End() ) )
+   REDEFINE BUTTON PROMPT GL("&OK") ID 101 OF oDlg ACTION ( lReturn :=  ActionDlgInsertArea( cFile, oDlg ) )
 
    REDEFINE BUTTON PROMPT GL("&Cancel") ID 102 OF oDlg ACTION oDlg:End()
 
@@ -112,11 +110,21 @@ function InsertArea( lBefore, cTitle )
          endif
       NEXT
 
-      MEMOWRIT( cDir + cFile, ;
-         "[General]" + CRLF + ;
-         "Title=New Area" + CRLF + ;
-         "Width="  + ALLTRIM(STR( oGenVar:aAreaSizes[oER:nAktArea,1], 5, nDecimals )) + CRLF + ;
-         "Height=" + ALLTRIM(STR( oGenVar:aAreaSizes[oER:nAktArea,2], 5, nDecimals )) )
+      IF oER:lNewFormat
+
+         SetDataArea( "General", "Title", "New Area",  ALLTRIM( aAreaInis[nNewArea] ) )
+         SetDataArea( "General", "Width",  ALLTRIM(STR( oGenVar:aAreaSizes[oER:nAktArea,1], 5, nDecimals )) , ALLTRIM( aAreaInis[nNewArea] ) )
+         SetDataArea( "General", "Height", ALLTRIM(STR( oGenVar:aAreaSizes[oER:nAktArea,2], 5, nDecimals )) , ALLTRIM( aAreaInis[nNewArea] ) )
+
+      ELSE
+
+         MEMOWRIT( cDir + cFile, ;
+                  "[General]" + CRLF + ;
+                  "Title=New Area" + CRLF + ;
+                  "Width="  + ALLTRIM(STR( oGenVar:aAreaSizes[oER:nAktArea,1], 5, nDecimals )) + CRLF + ;
+                  "Height=" + ALLTRIM(STR( oGenVar:aAreaSizes[oER:nAktArea,2], 5, nDecimals )) )
+
+      ENDIF
 
       OpenFile( oER:cDefIni,, .T. )
 
@@ -130,13 +138,48 @@ return .T.
 
 //-----------------------------------------------------------------------------//
 
+FUNCTION ActionDlgInsertArea( cFile, oDlg )
+   LOCAL lreturn := .f.
+   LOCAL aIniEnTries,cArea
+
+   IF oEr:lNewFormat
+
+         aIniEntries := GetIniSection( "Areas", oER:cDefIni )
+         FOR i= 1 TO Len( aIniEntries )
+            cArea:= AllTrim( GetPvProfString( "Areas", AllTrim(STR(i,2)), "", oER:cDefIni ) )
+            IF cArea == AllTrim(cFile)
+               MsgStop( GL("The file already exists."), GL("Stop!") )
+               RETURN .f.
+            endif
+         NEXT
+         lreturn := .T.
+         oDlg:End()
+   ELSE
+
+      IF FILE( cDir + cFile )
+         MsgStop( GL("The file already exists."), GL("Stop!") )
+       ELSE
+         lreturn := .T.
+         oDlg:End()
+      endif
+   endif
+return lreturn
+
+//------------------------------------------------------------------------------
+
+
 function DeleteArea()
-
+ LOCAL cAreaIni
    if MsgNoYes( GL("Do you really want to delete this area?"), GL("Select an option") ) = .T.
-
-      FErase( aVRDSave[oER:nAktArea,1] )
+      IF oER:lNewFormat
+         cArea := GetIniEntry( "Areas", ALLTRIM(STR( oER:nAktArea, 5 )), oER:cDefIni )
+         DelIniSection( cArea+"General", oER:cDefIni )
+         DelIniSection( cArea+"Items", oER:cDefIni )
+      ELSE
+         FErase( aVRDSave[oER:nAktArea,1] )
+      endif
       DelIniEntry( "Areas", ALLTRIM(STR( oER:nAktArea, 5 )), oER:cDefIni )
-
+      pausa("borra2")
       OpenFile( oER:cDefIni,, .T. )
 
    endif
@@ -1044,6 +1087,7 @@ FUNCTION RefreshBrwAreaProp(nArea)
    LOCAL aProps:= getAreaProperties(nArea)
    oER:oBrwProp:setArray(aProps)
    oER:oBrwProp:refresh()
+
    oER:oSaySelectedItem:setText( aProps[1,2] )
 Return .T.
 

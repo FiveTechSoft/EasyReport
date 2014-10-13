@@ -32,9 +32,6 @@ local cMode
       lRet  := .F.
    endif
 
-     msginfo( cRptFile   )
-
-
    if lRet
       oReport := ERStart():New(  cRptFile, cPrinter , oDlg )
       oReport:cMode := cMode

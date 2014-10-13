@@ -149,6 +149,8 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
 
    DEFINE MSGITEM oER:oMsgInfo OF oEr:oMainWnd:oMsgBar SIZE 280
 
+   DEFINE MSGITEM oER:oMsgPausa OF oEr:oMainWnd:oMsgBar SIZE 280
+
    oEr:oMainWnd:oMsgBar:KeybOn()
    oEr:oMainWnd:oWndClient:bMouseWheel = { | nKey, nDelta, nXPos, nYPos | ;
                            ER_MouseWheel( nKey, nDelta, nXPos, nYPos ) }
@@ -214,8 +216,11 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
       oER:oFldI:SetColor(  , oEr:nClrPaneTree )
       oER:oFldD:SetColor(  , oEr:nClrPaneTree )
       oER:lNewFormat := .f.
+
+
       DlgTree( 2 )
       ER_Inspector( 3 )
+      RefreshPanelTree()
 
       //oER:oInspector  = TInspector():New()
 
@@ -1847,7 +1852,7 @@ ENDIF
 
    IF oER:lShowPanel
 
-      ER_Inspector( 3 )
+    ItemList()
 
    ENDIF
 
@@ -3459,10 +3464,8 @@ return nil
 //------------------------------------------------------------------------------
 
 FUNCTION RefreshPanelTree()
-
   IF oEr:lShowPanel
      oER:oTree:DeleteAll()
-     //msginfo(1)
      FillTree( oEr:oTree, oEr:oMainWnd )
   ENDIF
 
@@ -3500,9 +3503,11 @@ STATIC Function FillTree( oTree, oDlg )
            endif
            if Empty( cAreaFilesDir )
                cAreaFilesDir := oER:cDefIniPath
-           endif
+            endif
+
            cItemDef := VRD_LF2SF( cAreaFilesDir + ;
             AllTrim( GetIniEntry( aIniEntries, AllTrim(STR(nEntry,5)) , "" ) ) )
+
             if !Empty( cItemDef )
 
             cItemDef := IIF( AT( "\", cItemDef ) = 0, ".\", "" ) + cItemDef
@@ -3614,6 +3619,8 @@ function ListTrees( oTree )
    local cAreaFilesDir := CheckPath( oEr:GetDefIni( "General", "AreaFilesDir", "" ) )
 
    oTr1 := oTree:GetRoot()
+
+   pausa("listree")
 
    for i := 1 to LEN( aIniEntries )
 
@@ -3844,7 +3851,7 @@ return ( nIndex + 9 )
 //------------------------------------------------------------------------------
 
 FUNCTION GetAreaProperties( nArea )
-   LOCAL aAreaProp := Array(13)
+   LOCAL aAreaProp := Array(13,2)
    local cAreaTitle     := oER:aWndTitle[ nArea ]
 
 
@@ -4541,7 +4548,7 @@ CLASS TEasyReport
    DATA lBeta, nDeveloper
    DATA oMru
    DATA lDClkProperties
-   DATA oMsgInfo
+   DATA oMsgInfo,oMsgPausa
    DATA aFonts
    DATA aAreaIni
    DATA aRuler
@@ -4905,8 +4912,6 @@ METHOD FillWindow( nArea, cAreaIni ) CLASS TEasyReport
    local oRulerBmp3
    LOCAL  cTitle
 
-   msginfo(cAreaIni)
-
    IF ::lNewFormat
       aIniEntries := GetIniSection( cAreaIni+"Items", oER:cDefIni )
    ELSE
@@ -4948,7 +4953,7 @@ METHOD FillWindow( nArea, cAreaIni ) CLASS TEasyReport
 
    oER:aWnd[ nArea ]:bPainted   = {| hDC, cPS | ZeichneHintergrund( nArea ) }
 
-   oER:aWnd[ nArea ]:bGotFocus  = { || SetTitleColor( .F., nArea ), RefreshBrwAreaProp(nArea) }
+   oER:aWnd[ nArea ]:bGotFocus  = { || msgpausa( nArea ),SetTitleColor( .F., nArea ), RefreshBrwAreaProp(nArea) }
    oER:aWnd[ nArea ]:bLostFocus = { || SetTitleColor( .T., nArea ) }
 
    oER:aWnd[ nArea ]:bMMoved = {|nRow,nCol,nFlags| ;
@@ -5128,4 +5133,23 @@ Return oTT
 //----------------------------------------------------------------------------//
 
 FUNCTION pausa(xc)
-RETURN msginfo(xc)
+   RETURN msginfo(xc)
+
+//------------------------------------------------------------------------------
+
+FUNCTION msgPausa(xc)
+   LOCAL cText
+   IF ValType(xc) == "N"
+      cText:= AllTrim(Str(xc))
+   ELSE
+      cText:=xc
+   endif
+    oER:oMsgPausa:SetText(cText)
+
+RETURN nil
+
+
+
+
+
+

@@ -45,7 +45,7 @@ function OpenFile( cFile, lChange, lAddDelNew )
       //oEr:oMainWnd:End()
       //return .T.
    endif
-
+   pausa(cFile)
    // Aufruf des neuen Reports im gleichen Frame gibt optische Probleme
    if !EMPTY( cFile )
 
@@ -136,6 +136,8 @@ function OpenFile( cFile, lChange, lAddDelNew )
 
          ER_Inspector1(3 )
          SwichFldD( oEr:oMainWnd, oEr:oPanelD, ) //oER:oFldD )
+
+          RefreshPanelTree()
 
       endif
 

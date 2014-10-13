@@ -145,7 +145,7 @@ return .T.
 
 function DeleteItem( i, nArea, lFromList, lRemove, lFromUndoRedo )
 
-   local cItemDef, cOldDef, oIni, cWert
+   local cItemDef, cOldDef, cWert
    local aFirst    := { .F., 0, 0, 0, 0, 0 }
    local nElemente := 0
    local cAreaIni  := oER:aAreaIni[nArea]
@@ -589,7 +589,7 @@ Return nil
 
 function TextProperties( i, nArea, cAreaIni, lFromList, lNew )
 
-   local oIni, nColor
+   local nColor
    local aCbx[5], aGrp[3], aGet[5], aSay[4]
    local nDefClr, oBtn, oBtn2, oBtn3
  //  local oVar  := GetoVar( i, nArea, cAreaIni, lNew )
@@ -952,7 +952,7 @@ return ( hVar )
 
 function SaveHTextItem( hVar, oItem )
 
-   local lRight, lCenter, nColor, oFont, oIni
+   local lRight, lCenter, nColor, oFont
    LOCAL nArea := hVar["nArea"]
    LOCAL i :=  hVar["i"]
 
@@ -1116,7 +1116,7 @@ return .T.
 
 function ImageProperties( i, nArea, cAreaIni, lFromList, lNew )
 
-   local oIni, aBtn[3], oCbx1, oCbx2, aGet[3], aSay[1], aGrp[2], aSizeSay[2]
+   local aBtn[3], oCbx1, oCbx2, aGet[3], aSay[1], aGrp[2], aSizeSay[2]
    local oVar  := GetoVar( i, nArea, cAreaIni, lNew )
    local oItem := VRDItem():New( oVar:cItemDef )
    local aSize := GetImageSize( oItem:cFile )
@@ -1242,16 +1242,12 @@ return ( aSizes )
 
 function SaveImgItem( oVar, oItem )
 
-   local oIni
-
    oItem:nBorder := IIF( oItem:lBorder , 1, 0 )
    oItem:nShow   := IIF( oItem:lVisible, 1, 0 )
 
    oVar:cItemDef := oItem:Set( .F., oER:nMeasure )
 
-   INI oIni FILE oVar:cAreaIni
-      SET SECTION "Items" ENTRY AllTrim(STR(oVar:i,5)) TO oVar:cItemDef OF oIni
-   ENDINI
+   SetDataArea( "Items", AllTrim(STR(oVar:i,5)), oVar:cItemDef, oVar:cAreaIni )
 
    if oItem:nShow = 1
 
@@ -1276,7 +1272,7 @@ return .T.
 
 function GraphicProperties( i, nArea, cAreaIni, lFromList, lNew )
 
-   local oIni, oBtn, oCmb1, aCbx[2], nColor, nDefClr
+   local oBtn, oCmb1, aCbx[2], nColor, nDefClr
    local aGet[4], aSay[3], aGrp[3]
    local oVar  := GetoVar( i, nArea, cAreaIni, lNew )
    local oItem := VRDItem():New( oVar:cItemDef )
@@ -1437,8 +1433,6 @@ return ( .T. )
 
 function SaveGraItem( oVar, oItem )
 
-   local oIni
-
    oItem:cType  := GetGraphName( ASCAN( oVar:aGraphic, oVar:cGraphic ) )
    oItem:cText  := oVar:cGraphic
    oItem:nStyle := VAL( oVar:cStyle )
@@ -1446,9 +1440,7 @@ function SaveGraItem( oVar, oItem )
 
    oVar:cItemDef := oItem:Set( .F., oER:nMeasure )
 
-   INI oIni FILE oVar:cAreaIni
-      SET SECTION "Items" ENTRY AllTrim(STR(oVar:i,5)) TO oVar:cItemDef OF oIni
-   ENDINI
+   SetDataArea( "Items", AllTrim(STR(oVar:i,5)), oVar:cItemDef, oVar:cAreaIni )
 
    if oItem:nShow = 1
 
@@ -1480,7 +1472,7 @@ return .T.
 
 function BarcodeProperties( i, nArea, cAreaIni, lFromList, lNew )
 
-   local oFont, oIni, lRight, lCenter, nColor
+   local oFont, lRight, lCenter, nColor
    local nDefClr, aBtn[3], aGet[6], aSay[4], aGrp[3], aCbx[2]
    local oVar  := GetoVar( i, nArea, cAreaIni, lNew )
    local oItem := VRDItem():New( oVar:cItemDef )
@@ -1627,16 +1619,14 @@ return ( .T. )
 
 function SaveBarItem( oVar, oItem )
 
-   local lRight, lCenter, nColor, oIni
+   local lRight, lCenter, nColor
 
    oItem:nBCodeType := ASCAN( oVar:aBarcode, oVar:cBarcode )
    oItem:nOrient    := ASCAN( oVar:aOrient, oVar:cOrient )
 
    oVar:cItemDef := oItem:Set( .F., oER:nMeasure )
 
-   INI oIni FILE oVar:cAreaIni
-      SET SECTION "Items" ENTRY AllTrim(STR(oVar:i,5)) TO oVar:cItemDef OF oIni
-   ENDINI
+   SetDataArea( "Items", AllTrim(STR(oVar:i,5)), oVar:cItemDef, oVar:cAreaIni )
 
    lCenter := IIF( oItem:nOrient == 2, .T., .F. )
    lRight  := IIF( oItem:nOrient == 3, .T., .F. )
@@ -1670,7 +1660,7 @@ return .T.
 
 function SetItemSize( i, nArea, cAreaIni )
 
-   local oIni, nColor, nColFill, nStyle, nPenWidth, nRndWidth, nRndHeight, oItem
+   local nColor, nColFill, nStyle, nPenWidth, nRndWidth, nRndHeight, oItem
    local cItemDef   := AllTrim( GetDataArea( "Items", AllTrim(STR(i,5)) , "", cAreaIni ) )
    local cOldDef    := cItemDef
    local aWerte     := GetCoors( oER:aItems[nArea,i]:hWnd )
@@ -1727,9 +1717,7 @@ function SetItemSize( i, nArea, cAreaIni )
 
       endif
 
-      INI oIni FILE cAreaIni
-         SET SECTION "Items" ENTRY AllTrim(STR(i,5)) TO cItemDef OF oIni
-      ENDINI
+      SetDataArea( "Items", AllTrim(STR(i,5)), cItemDef, cAreaIni )
 
       if VAL( GetField( cItemDef, 7  ) ) <> VAL( GetField( cOldDef, 7  ) ) .OR. ;
          VAL( GetField( cItemDef, 8  ) ) <> VAL( GetField( cOldDef, 8  ) ) .OR. ;
@@ -1773,6 +1761,7 @@ function MsgBarItem( nItem, nArea, cAreaIni, nRow, nCol, lResize )
    local cItemID  := AllTrim(  GetField( cItemDef, 3 ) )
 
    DEFAULT lResize := .F.
+
 
    if lResize .AND. LEN( aItemPosition ) <> 0
 
@@ -2019,6 +2008,7 @@ function NewItem( cTyp, nArea, nTmpCopyArea, nTmpCopyEntry, cTmpItemCopy )
       endif
 
    endif
+
    IF oER:lNewFormat
       INI oIni FILE oER:cDefIni
          SET SECTION cAreaIni+"Items" ENTRY AllTrim(STR(nFree,5)) TO cItemDef OF oIni
