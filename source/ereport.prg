@@ -4981,6 +4981,7 @@ METHOD FillWindow( nArea, cAreaIni ) CLASS TEasyReport
    oER:aWnd[ nArea ]:bMMoved = {|nRow,nCol,nFlags| ;
                            MsgBarInfos( nRow, nCol, nArea ), ;
                            MoveSelection( nRow, nCol, oER:aWnd[ nArea ] ) ,;
+                           RefreshBrwAreaProp(nArea),;
                            if(!lScrollVert, ::SetReticule( nRow, nCol, nArea ), ::SetReticule( 0, 0, nArea )),;
                            lScrollVert :=  .F. }
 
@@ -5055,10 +5056,14 @@ METHOD SetReticule( nRow, nCol, nArea ) CLASS TEasyReport
    endif
 
    if lShow
+
       DrawRulerHorzLine( oER:aWnd[ nArea ], nRowPos )
 
       AEval( oER:aWnd, { | oWnd | If( oWnd != nil, DrawRulerVertLine( oWnd, nColPos ),) } )
    endif
+
+
+
 
 return .T.
 

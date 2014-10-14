@@ -27,13 +27,14 @@ function ElementActions( oItem, i, cName, nArea, cAreaIni, cTyp )
 
    oItem:bGotFocus  := {||   SelectItem( i, nArea, cAreaIni ),  RefreshBrwProp( i, cAreaIni )  }
 
-   oItem:bLClicked = { | nRow, nCol, nFlags | ;
+   oItem:bLClicked = { | nRow, nCol, nFlags | pausa(1),;
       If( oGenVar:lItemDlg, ( If( GetKeyState( VK_SHIFT ), MultiItemProperties(), ;
                             ( ItemProperties( i, nArea ), oCurDlg:SetFocus() ) ) ), ;
                             ( SelectItem( i, nArea, cAreaIni ), ;
                               nInfoRow := nRow, nInfoCol := nCol, ;
                               MsgBarItem( i, nArea, cAreaIni, nRow, nCol ) ;
                               ) ) }
+
 
    // AEVAL( oItems:aDots, {|x| x:Show(), BringWindowToTop( x:hWnd ), x:Refresh() } ) }
 
@@ -43,18 +44,21 @@ function ElementActions( oItem, i, cName, nArea, cAreaIni, cTyp )
    // oItems:bResized   := {|| IIF( GetKeyState( VK_SHIFT ), .T., SetItemSize( i, nArea, cAreaIni ) ), ;
    //                         MsgBarItem( i, nArea, cAreaIni,,, .T. ) }
 
-   oItem:bMoved   = { || SetItemSize( i, nArea, cAreaIni ),;
+   oItem:bMoved   = { || SetItemSize( i, nArea, cAreaIni ), ;
+                         RefreshBrwProp( i, cAreaIni ), ;
                          MsgBarItem( i, nArea, cAreaIni,,, .T. ) }
 
-   oItem:bResized = { || SetItemSize( i, nArea, cAreaIni ),;
+   oItem:bResized = { |nrow,ncol| SetItemSize( i, nArea, cAreaIni ),;
+                         RefreshBrwProp( i, cAreaIni ), ;
                          MsgBarItem( i, nArea, cAreaIni,,, .T. ) }
 
-   oItem:bMMoved  = { | nRow, nCol, nFlags, aPoint | ;
+   oItem:bMMoved  = { | nRow, nCol, nFlags, aPoint | msgpausa(nCol), ;
                         aPoint := { nRow, nCol },;
                         aPoint := ClientToScreen( oItem:hWnd, aPoint ),;
                         aPoint := ScreenToClient( oER:aWnd[ nArea ]:hWnd, aPoint ),;
                         nRow := aPoint[ 1 ], nCol := aPoint[ 2 ],;
                         oER:SetReticule( nRow, nCol, nArea ),;
+                        RefreshBrwProp( i, cAreaIni ) ,;
                         MsgBarItem( i, nArea, cAreaIni, nRow, nCol ) }
 
    oItem:bRClicked = { | nRow, nCol, nFlags | oItem:SetFocus(),;
