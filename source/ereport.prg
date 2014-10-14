@@ -1313,6 +1313,10 @@ function BuildMenu()
       ACTION SaveAsFile() ;
       WHEN !Empty( oER:cDefIni )
    //SEPARATOR
+   MENUITEM GL("Save as New Format") ;
+      ACTION SaveAsNewFormat() ;
+      WHEN !Empty( oER:cDefIni ) .AND. !oER:lNewFormat
+
    SEPARATOR
       MENUITEM GL("&Preferences") ;
           ACTION oEr:SetGeneralPreferences()

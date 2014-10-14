@@ -517,6 +517,25 @@ function UpdateItems( nValue, nTyp, lAddValue, aOldValue )
 
 //------------------------------------------------------------------------------
 
+FUNCTION GetItemProperties( nItem, cAreaIni )
+
+   LOCAL aProp:=GetaItemProp( nItem, cAreaIni )
+   LOCAL aItemProp := Array(7)
+   LOCAL cType     := UPPER(ALLTRIM( aProp[ 1 ] ))
+
+    aItemProp[1] := { GL( "Title" ) , aProp[ 2 ] }
+    aItemProp[2] := { GL( "ItemID" ), aProp[ 3 ] }
+    aItemProp[3] := { GL( "Show" )  , aProp[ 4 ] }
+    aItemProp[4] := { GL( "Top" )   , aProp[ 7 ] }
+    aItemProp[5] := { GL( "Left" )  , aProp[ 8 ] }
+    aItemProp[6] := { GL( "Width" ) , aProp[ 9 ] }
+    aItemProp[7] := { GL( "Height" ), aProp[10 ] }
+
+RETURN aItemProp
+
+//------------------------------------------------------------------------------
+
+
 FUNCTION GetTextProperties( nItem, cAreaIni )
 
    LOCAL aProp:=GetaItemProp( nItem, cAreaIni )
@@ -566,20 +585,7 @@ RETURN aTextProp
 //------------------------------------------------------------------------------
 
 FUNCTION RefreshBrwProp( i , cAreaIni )
-   LOCAL cOldDef := GetItemDef( i, cAreaIni  )
-   LOCAL cTyp    := UPPER(AllTrim( GetField( cOldDef, 1 ) ))
-
-   IF cTyp == "TEXT"
-      RefreshBrwTextProp( i , cAreaIni )
-  endif
-
-Return nil
-
-
-//------------------------------------------------------------------------------
-
-FUNCTION RefreshBrwTextProp( nItem, cAreaIni )
-   LOCAL aProps:=GetTextProperties( nItem, cAreaIni )
+   LOCAL aProps:=GetItemProperties( i, cAreaIni )
    oER:oBrwProp:setArray(aProps)
    oER:oBrwProp:refresh(.t.)
    oER:oSaySelectedItem:setText( aProps[1,2] )
@@ -946,8 +952,6 @@ function GetohVar( i, nArea, cAreaIni, lNew )
 return ( hVar )
 
 
-    GetDataArea( cSection, cData,cDefault, cAreaIni )
-
 //----------------------------------------------------------------------------//
 
 function SaveHTextItem( hVar, oItem )
@@ -1128,6 +1132,7 @@ function ImageProperties( i, nArea, cAreaIni, lFromList, lNew )
    REDEFINE GET aGet[2] VAR oItem:cText ID 201 OF oCurDlg WHEN oItem:nEdit <> 0 MEMO
    REDEFINE GET aGet[1] VAR oItem:cFile ID 202 OF oCurDlg WHEN oItem:nEdit <> 0 ;
       VALID ( aSize := GetImageSize( oItem:cFile ), AEVAL( aSizeSay, {|x| x:Refresh() } ), .T. )
+
    REDEFINE BTNBMP ID 150 OF oCurDlg RESOURCE "B_OPEN_16" TRANSPARENT NOBORDER WHEN oItem:nEdit <> 0 ;
       TOOLTIP GL("Open") ACTION ( oItem:cFile := GetImage( oItem:cFile ), aGet[1]:Refresh() )
 

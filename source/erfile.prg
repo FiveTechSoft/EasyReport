@@ -181,6 +181,65 @@ function CreateBackup()
 
 return .T.
 
+//------------------------------------------------------------------------------
+
+FUNCTION SaveAsNewFormat()
+   LOCAL cFile:= oER:cDefIni
+   LOCAL cExtension := Upper(cFileExt( cFile ))
+   LOCAL cNewFile
+   local aIniEntries := GetIniSection( "Areas", oER:cDefIni )
+   LOCAL aDataAreas, n
+   LOCAL aAreaInis:= {}
+   LOCAL cTextfile
+   LOCAL i,cData, oINI
+   LOCAL cText, aValue, aValue2
+
+   IF Len(cExtension) > 3
+      cExtension := Left(cExtension,3)
+   endif
+   IF cExtension == "VRD"
+
+      cNewFile:= cFileNoExt( cFile )+".erd"
+      IF File(cNewFile)
+         if msgYesNo("El fichero ya existe.Lo Borramos")
+            FErase(cNewFile)
+         ELSE
+            msginfo("el proceso no se ha realizado")
+            RETURN .f.
+         endif
+      ENDIF
+
+      CopyFile( cFile, cNewFile )
+
+      cNewFile:= VRD_LF2SF( cNewFile )
+
+      INI oIni File cNewFile
+
+      FOR i= 1 TO Len( aIniEntries )
+         aValue:= hb_atokens(  aIniEntries[i] , "=" )
+         cText := StrTran(aValue[2],".","")
+         SET SECTION "Areas" ENTRY aValue[1] TO cText OF oIni
+         aDataAreas := GetIniSection( "General", VRD_LF2SF(aValue[2]) )
+         FOR n=1 TO Len(aDataAreas)
+            aValue2:= hb_atokens(  aDataAreas[n] , "=" )
+            SET SECTION cText+"General" ENTRY aValue2[1] TO aValue2[2] OF oIni
+         NEXT
+         aDataAreas := GetIniSection( "Items", VRD_LF2SF(aValue[2]) )
+         FOR n=1 TO Len(aDataAreas)
+            aValue2:= hb_atokens(  aDataAreas[n] , "=" )
+            SET SECTION cText+"Items" ENTRY aValue2[1] TO aValue2[2] OF oIni
+         NEXT
+
+      next
+
+      ENDINI
+
+   ENDIF
+
+   Msginfo( "Exportación Realizada")
+
+RETURN nil
+
 //-----------------------------------------------------------------------------
 
 function SaveFile()
