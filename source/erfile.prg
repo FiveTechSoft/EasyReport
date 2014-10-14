@@ -193,13 +193,21 @@ FUNCTION SaveAsNewFormat()
    LOCAL cTextfile
    LOCAL i,cData, oINI
    LOCAL cText, aValue, aValue2
+   local cAreaFilesDir := CheckPath( oEr:GetDefIni( "General", "AreaFilesDir", "" ) )
+
+   if Empty( cAreaFilesDir )
+      cAreaFilesDir := cDefaultPath
+   endif
+   if Empty( cAreaFilesDir )
+      cAreaFilesDir := oER:cDefIniPath
+   endif
 
    IF Len(cExtension) > 3
       cExtension := Left(cExtension,3)
    endif
    IF cExtension == "VRD"
 
-      cNewFile:= cFileNoExt( cFile )+".erd"
+      cNewFile:= oER:cDefIniPath+cFileNoExt( cFile )+".erd"
       IF File(cNewFile)
          if msgYesNo("El fichero ya existe.Lo Borramos")
             FErase(cNewFile)
@@ -216,15 +224,25 @@ FUNCTION SaveAsNewFormat()
       INI oIni File cNewFile
 
       FOR i= 1 TO Len( aIniEntries )
+
          aValue:= hb_atokens(  aIniEntries[i] , "=" )
          cText := StrTran(aValue[2],".","")
          SET SECTION "Areas" ENTRY aValue[1] TO cText OF oIni
-         aDataAreas := GetIniSection( "General", VRD_LF2SF(aValue[2]) )
+
+         pausa(VRD_LF2SF(aValue[2]))
+
+         aDataAreas := GetIniSection( "General", VRD_LF2SF(cAreaFilesDir+aValue[2]) )
+
+
          FOR n=1 TO Len(aDataAreas)
             aValue2:= hb_atokens(  aDataAreas[n] , "=" )
+
+            pausa( cText+"General" )
+            pausa( aValue2[1] ,  aValue2[2] )
+
             SET SECTION cText+"General" ENTRY aValue2[1] TO aValue2[2] OF oIni
          NEXT
-         aDataAreas := GetIniSection( "Items", VRD_LF2SF(aValue[2]) )
+         aDataAreas := GetIniSection( "Items", VRD_LF2SF(cAreaFilesDir+aValue[2]) )
          FOR n=1 TO Len(aDataAreas)
             aValue2:= hb_atokens(  aDataAreas[n] , "=" )
             SET SECTION cText+"Items" ENTRY aValue2[1] TO aValue2[2] OF oIni
