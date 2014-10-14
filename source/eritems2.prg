@@ -12,7 +12,6 @@ MEMVAR cInfoWidth, cInfoHeight
 MEMVAR oEr
 
 STATIC lBoxDraw  := .F.
-
 //------------------------------------------------------------------------------
 
 FUNCTION SelectItem( nItem, nArea, cAreaIni )
