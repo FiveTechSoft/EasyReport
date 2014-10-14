@@ -237,9 +237,6 @@ FUNCTION SaveAsNewFormat()
          FOR n=1 TO Len(aDataAreas)
             aValue2:= hb_atokens(  aDataAreas[n] , "=" )
 
-            pausa( cText+"General" )
-            pausa( aValue2[1] ,  aValue2[2] )
-
             SET SECTION cText+"General" ENTRY aValue2[1] TO aValue2[2] OF oIni
          NEXT
          aDataAreas := GetIniSection( "Items", VRD_LF2SF(cAreaFilesDir+aValue[2]) )
@@ -271,11 +268,9 @@ function SaveFile()
    aVRDSave[102,1] := oER:cGeneralIni
    aVRDSave[102,2] := MEMOREAD( oER:cGeneralIni )
 
-   for nArea := 1 TO LEN( oER:aAreaIni )
-
+   For nArea := 1 TO LEN( oER:aAreaIni )
       aVRDSave[nArea,1] := oER:aAreaIni[nArea]
       aVRDSave[nArea,2] := MEMOREAD( oER:aAreaIni[nArea] )
-
    next
 
    SetSave( .T. )
@@ -286,8 +281,17 @@ return .T.
 
 function SaveAsFile()
 
-   local cFile := GetFile( GL("Designer Files") + " (*.vrd)|*.vrd|" + ;
+   local cFile
+
+   IF oer:lNewFormat
+     cFile := GetFile( GL("Designer Files") + " (*.erd)|*.erd|" + ;
                            GL("All Files") + " (*.*)|*.*", GL("Save as"), 1,, .T. )
+
+   else
+     cFile := GetFile( GL("Designer Files") + " (*.vrd)|*.vrd|" + ;
+                           GL("All Files") + " (*.*)|*.*", GL("Save as"), 1,, .T. )
+
+   endif
 
    if !EMPTY( cFile )
       MsgRun( GL("Please wait..."), ;
@@ -301,37 +305,63 @@ return NIL
 function SaveAs( cFile )
 
    local i, nArea, cAreaFile, cAltDefIni
+   LOCAL cExtension
 
    cLongDefIni := cFile
 
-   if EMPTY( cFileExt( cFile ) )
-      cFile += ".vrd"
-   elseif UPPER( cFileExt( cFile ) ) <> "VRD"
+   IF oEr:lNewFormat
+      cExtension := "erd"
+    //  pausa( "por implementar")
+    //  RETURN .f.
+   ELSE
+       cExtension := "vrd"
+   ENDIF
+
+    if EMPTY( cFileExt( cFile ) )
+      cFile += "."+cExtension
+    elseif UPPER( cFileExt( cFile ) ) != Upper(cExtension)
       cFile := ALLTRIM( cFile )
-      cFile := SUBSTR( cFile, 1, RAT( UPPER(ALLTRIM(cFileExt( cFile ))), UPPER( cFile ) ) - 1 ) + "vrd"
+      cFile := SUBSTR( cFile, 1, RAT( UPPER(ALLTRIM(cFileExt( cFile ))), UPPER( cFile ) ) - 1 ) + cExtension
    endif
 
-   if FILE( VRD_LF2SF( cFile ) )
+    if FILE( VRD_LF2SF( cFile ) )
       if MsgNoYes( GL("The file already exists.") + CRLF + CRLF + ;
                    GL("Overwrite?"), GL("Save as") ) = .F.
          return( .F. )
       else
-         cAltDefIni := VRD_LF2SF( ALLTRIM( cFile ) )
-         IIF( AT( "\", cAltDefIni ) = 0, cAltDefIni := ".\" + cAltDefIni, )
+        IF !oER:lNewFormat
          for i := 1 TO Len( oER:aWnd )
             FErase( VRD_LF2SF( ALLTRIM( GetPvProfString( "Areas", ALLTRIM(STR(i,5)) , "", cAltDefIni ) ) ) )
          next
-         FErase( cAltDefIni )
+        endif
+        FErase( cAltDefIni )
       endif
    endif
 
    CreateNewFile( cFile )
 
-   if ! EMPTY( cFile )
+   IF oEr:lNewFormat
+     if ! EMPTY( cFile )
+        CopyFile( oER:cDefIni, cFile )
+        oER:cDefIni := VRD_LF2SF( ALLTRIM( cFile ) )
+        if AT( "\", oER:cDefIni ) = 0
+              oER:cDefIni := ".\" + oER:cDefIni
+        endif
+         aVRDSave[101,1] := oER:cDefIni
+         MEMOWRIT( aVRDSave[101,1], aVRDSave[101,2] )
+         MEMOWRIT( aVRDSave[102,1], aVRDSave[102,2] )
 
-      oER:cDefIni := VRD_LF2SF( ALLTRIM( cFile ) )
 
-      if AT( "\", oER:cDefIni ) = 0
+     endif
+
+  ELSE
+
+
+     if ! EMPTY( cFile )
+
+
+       oER:cDefIni := VRD_LF2SF( ALLTRIM( cFile ) )
+       if AT( "\", oER:cDefIni ) = 0
          oER:cDefIni := ".\" + oER:cDefIni
       endif
 
@@ -339,42 +369,39 @@ function SaveAs( cFile )
       MEMOWRIT( aVRDSave[101,1], aVRDSave[101,2] )
       MEMOWRIT( aVRDSave[102,1], aVRDSave[102,2] )
 
-      //Alte Areas löschen
       DelIniSection( "Areas", oER:cDefIni )
 
-      //Areas abspeichern
       for nArea := 1 TO LEN( oER:aAreaIni )
 
-         if ! EMPTY( aVRDSave[nArea,1] )
+          if ! EMPTY( aVRDSave[nArea,1] )
 
             cAreaFile := SUBSTR( cFile, 1, LEN( cFile )-2 ) + PADL( ALLTRIM( STR( nArea, 2) ), 2, "0" )
             CreateNewFile( cAreaFile )
 
             aVRDSave[nArea,1] := VRD_LF2SF( cAreaFile )
-            //aVRDSave[nArea,1] := SUBSTR( oER:cDefIni, 1, LEN( oER:cDefIni )-2 ) + ;
-            //                  PADL( ALLTRIM( STR( nArea, 2) ), 2, "0" )
             MEMOWRIT( aVRDSave[nArea,1], aVRDSave[nArea,2] )
-
             oER:aAreaIni[nArea] := aVRDSave[nArea,1]
 
             //Areas in General Ini File ablegen
             WritePProString( "Areas", ALLTRIM(STR( nArea, 3)), cFileName( cAreaFile ), oER:cDefIni )
 
-         endif
+       endif
 
-         //Areapfad speichern
-         WritePProString( "General", "AreaFilesDir", cFilePath( oER:cDefIni ), oER:cDefIni )
+     next
 
-      next
+   ENDIF
 
-      SetSave( .T. )
+     WritePProString( "General", "AreaFilesDir", cFilePath( oER:cDefIni ), oER:cDefIni )
 
-      if VAL( GetPvProfString( "General", "MruList"  , "4", oER:cGeneralIni ) ) > 0
-         oER:oMru:Save( cLongDefIni )
-      endif
+     SetSave( .T. )
+
+     if VAL( GetPvProfString( "General", "MruList"  , "4", oER:cGeneralIni ) ) > 0
+        oER:oMru:Save( cLongDefIni )
+     endif
+
+
 
    endif
-
 
 return .T.
 
