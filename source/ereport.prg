@@ -3502,7 +3502,13 @@ STATIC Function FillTree( oTree, oDlg )
    for i := 1 to LEN( aIniEntries )
       nEntry := EntryNr( aIniEntries[ i ] )
       if nEntry != 0
-           cTitle := oER:aWndTitle[nEntry] //+ " - [ " + GL("Area" ) + " ]"
+
+         cTitle := oER:aWndTitle[nEntry] //+ " - [ " + GL("Area" ) + " ]"
+
+         IF Empty(cTitle)
+            cTitle:= ""
+         endif
+
            oTr1 := oTree:Add( AllTrim(STR(nEntry,5)) + ". " + cTitle , 0 )
            oTr1:Set( , IF( oTr1:IsExpanded() , 1  , 0   )    )
 

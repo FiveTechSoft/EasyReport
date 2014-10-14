@@ -28,22 +28,13 @@ function ElementActions( oItem, i, cName, nArea, cAreaIni, cTyp )
 
    oItem:bGotFocus  := {||   SelectItem( i, nArea, cAreaIni ),  RefreshBrwProp( i, cAreaIni )  }
 
-   oItem:bLClicked = { | nRow, nCol, nFlags | pausa(1),;
-      If( oGenVar:lItemDlg, ( If( GetKeyState( VK_SHIFT ), MultiItemProperties(), ;
+   oItem:bLClicked = { | nRow, nCol, nFlags | ;
+                           If( oGenVar:lItemDlg, ( If( GetKeyState( VK_SHIFT ), MultiItemProperties(), ;
                             ( ItemProperties( i, nArea ), oCurDlg:SetFocus() ) ) ), ;
                             ( SelectItem( i, nArea, cAreaIni ), ;
                               nInfoRow := nRow, nInfoCol := nCol, ;
                               MsgBarItem( i, nArea, cAreaIni, nRow, nCol ) ;
                               ) ) }
-
-
-   // AEVAL( oItems:aDots, {|x| x:Show(), BringWindowToTop( x:hWnd ), x:Refresh() } ) }
-
-   // oItems:bMoved     := {|| IIF( GetKeyState( VK_SHIFT ), .T., SetItemSize( i, nArea, cAreaIni ) ), ;
-   //                         MsgBarItem( i, nArea, cAreaIni,,, .T. ) }
-
-   // oItems:bResized   := {|| IIF( GetKeyState( VK_SHIFT ), .T., SetItemSize( i, nArea, cAreaIni ) ), ;
-   //                         MsgBarItem( i, nArea, cAreaIni,,, .T. ) }
 
    oItem:bMoved   = { || SetItemSize( i, nArea, cAreaIni ), ;
                          RefreshBrwProp( i, cAreaIni ), ;
@@ -53,7 +44,13 @@ function ElementActions( oItem, i, cName, nArea, cAreaIni, cTyp )
                          RefreshBrwProp( i, cAreaIni ), ;
                          MsgBarItem( i, nArea, cAreaIni,,, .T. ) }
 
-   oItem:bMMoved  = { | nRow, nCol, nFlags, aPoint | msgpausa(nCol), ;
+      oItem:bMMoved  = { | nRow, nCol, nFlags, aPoint | ;
+                        oER:SetReticule( nRow, nCol, nArea ),;
+                        RefreshBrwProp( i, cAreaIni ) ,;
+                        MsgBarItem( i, nArea, cAreaIni, nRow, nCol ) }
+
+   /*
+   oItem:bMMoved  = { | nRow, nCol, nFlags, aPoint | ;
                         aPoint := { nRow, nCol },;
                         aPoint := ClientToScreen( oItem:hWnd, aPoint ),;
                         aPoint := ScreenToClient( oER:aWnd[ nArea ]:hWnd, aPoint ),;
@@ -61,6 +58,9 @@ function ElementActions( oItem, i, cName, nArea, cAreaIni, cTyp )
                         oER:SetReticule( nRow, nCol, nArea ),;
                         RefreshBrwProp( i, cAreaIni ) ,;
                         MsgBarItem( i, nArea, cAreaIni, nRow, nCol ) }
+   */
+
+   oItem:bDrag = { |nrow,ncol | oER:SetReticule( nRow, nCol, nArea )  }
 
    oItem:bRClicked = { | nRow, nCol, nFlags | oItem:SetFocus(),;
                          ItemPopupMenu( oItem, i, nArea, nRow, nCol ) }
