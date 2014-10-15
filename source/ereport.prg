@@ -3882,9 +3882,13 @@ return ( nIndex + 9 )
 FUNCTION GetAreaProperties( nArea )
    LOCAL aAreaProp := Array(13,2)
    local cAreaTitle     := oER:aWndTitle[ nArea ]
+   LOCAL aNomProp := {"Title", "Top1", "Top2", "TopVariable", "Width", "Height",;
+                  "Condition", "DelEmptySpace", "BreakBefore", "BreakAfter",;
+                  "PrintBeforeBreak", "PrintAfterBreak", "ControlDBF"  }
 
+   IF !Empty( oER:aAreaIni[ nArea ] )
 
-  IF !Empty( oER:aAreaIni[ nArea ] )
+   oER:oBrwProp:cargo[3] :=  aNomProp
 
    aAreaProp[1] := { GL( "Title" ),;
                      cAreaTitle }

@@ -537,6 +537,7 @@ RETURN aItemProp
 
 FUNCTION RefreshBrwProp( i , cAreaIni )
    LOCAL aProps:=GetItemProperties( i, cAreaIni )
+   oER:oBrwProp:Cargo:= {"item",cAreaIni, i }
    oER:oBrwProp:setArray(aProps)
    oER:oBrwProp:refresh(.t.)
    oER:oSaySelectedItem:setText( aProps[1,2] )

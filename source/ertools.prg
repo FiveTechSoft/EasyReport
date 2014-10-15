@@ -65,13 +65,33 @@ return ( cPath )
 
 //-----------------------------------------------------------------------------//
 
+FUNCTION GetNameArea(nArea)
+LOCAL aAreaInis := GetAreaInis()
+RETURN AllTrim ( aAreaInis[nArea] )
+
+//------------------------------------------------------------------------------
+
+FUNCTION GetAreaInis()
+
+LOCAL i
+local aIniEntries := GetIniSection( "Areas", oER:cDefIni )
+LOCAL aAreaInis := {}
+
+   FOR i := 1 TO Len( oER:aWnd )
+      AADD( aAreaInis, ALLTRIM( GetIniEntry( aIniEntries, ALLTRIM(STR( i, 5 )) , "" ) ) )
+   NEXT
+
+RETURN aAreaInis
+
+//------------------------------------------------------------------------------
+
+
 function InsertArea( lBefore, cTitle )
 
    local i, oGet, oDlg, cTmpFile
-   local aAreaInis   := {}
+   local aAreaInis   := GetAreaInis()
    local lreturn     := .F.
    local cFile       := SPACE( 200 )
-   local aIniEntries := GetIniSection( "Areas", oER:cDefIni )
    local nNewArea    := oER:nAktArea + IIF( lBefore, 0, 1 )
    local cDir        := CheckPath( oER:GetDefIni( "General", "AreaFilesDir", "" ) )
    LOCAL nDecimals   := IIF( oER:nMeasure = 2, 2, 0 )
@@ -79,10 +99,6 @@ function InsertArea( lBefore, cTitle )
    if EMPTY( cDir )
       cDir := cDefaultPath
    endif
-
-   for i := 1 TO Len( oER:aWnd )
-      AADD( aAreaInis, ALLTRIM( GetIniEntry( aIniEntries, ALLTRIM(STR( i, 5 )) , "" ) ) )
-   NEXT
 
    DEFINE DIALOG oDlg NAME "NEWFILENAME" TITLE cTitle
 
@@ -1095,6 +1111,12 @@ Function ER_Inspector( nD, oDlg )
    oER:oBrwProp:lRecordSelector = .T.
    oER:oBrwProp:SetColor( 0, RGB( 224, 236, 255 ) )
    oER:oBrwProp:lHScroll            := .F.
+
+   oER:oBrwProp:aCols[2]:nEditType   := EDIT_GET
+   oER:oBrwProp:aCols[2]:bOnPostEdit := { | oCol, xVal, nKey | ActionPostEdit( nKey, xVal ) }
+
+   oER:oBrwProp:Cargo:= Array(3)
+
    oER:oBrwProp:CreateFromCode()
 
 
@@ -1102,8 +1124,31 @@ RETURN oER:oBrwProp
 
 //------------------------------------------------------------------------------
 
+FUNCTION ActionPostEdit( nKey, xVal )
+   LOCAL nReg := oER:oBrwProp:nArrayAt
+   LOCAL nArea
+   IF nKey == VK_RETURN
+
+      IF oER:oBrwProp:cargo[1] =="area"
+         nArea:= oER:oBrwProp:Cargo[2]
+         SetDataArea( "General", oER:oBrwProp:cargo[3,nReg], xVal , oER:aAreaIni[ nArea ] )
+         oER:aWndTitle[ nArea ] := xVal
+         RefreshBrwAreaProp( nArea )
+      ELSEIF oER:oBrwProp:cargo[1] == "item"
+         pausa( "item "+Str(nReg)+" "+ xVal )
+         pausa( "No implementado" )
+      endif
+      //Customer->First := xVal
+   ENDIF
+
+RETURN nil
+
+//------------------------------------------------------------------------------
+
 FUNCTION RefreshBrwAreaProp(nArea)
    LOCAL aProps:= getAreaProperties(nArea)
+   oER:oBrwProp:Cargo[1]:=  "area"
+   oER:oBrwProp:Cargo[2]:=  nArea
    oER:oBrwProp:setArray(aProps)
    oER:oBrwProp:refresh()
 
