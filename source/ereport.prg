@@ -3933,6 +3933,7 @@ FUNCTION GetAreaProperties( nArea )
 
 RETURN aAreaProp
 
+
 //------------------------------------------------------------------------------
 
 FUNCTION SetAreaProperties( nArea, aAreaProp, aTmpSource, cOldAreaText )
@@ -3966,9 +3967,11 @@ FUNCTION SetAreaProperties( nArea, aAreaProp, aTmpSource, cOldAreaText )
          SET SECTION xSection ENTRY "PrintAfterBreak"  to IIF( !aAreaProp[12,2] , "0", "1") OF oIni
          SET SECTION xSection ENTRY "ControlDBF"       to AllTrim( aAreaProp[13,2] ) OF oIni
 
-         for i := 1 to 12
-            SET SECTION xSection ENTRY "Formula" + AllTrim(STR(i,2)) to AllTrim( aTmpSource[ i ] ) OF oIni
-         next
+         IF !Empty( aTmpSource )
+            for i := 1 to 12
+                SET SECTION xSection ENTRY "Formula" + AllTrim(STR(i,2)) to AllTrim( aTmpSource[ i ] ) OF oIni
+            next
+         ENDIF
 
       ENDINI
 

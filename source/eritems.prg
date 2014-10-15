@@ -531,7 +531,38 @@ FUNCTION GetItemProperties( nItem, cAreaIni )
     aItemProp[6] := { GL( "Width" ) , aProp[ 9 ] }
     aItemProp[7] := { GL( "Height" ), aProp[10 ] }
 
-RETURN aItemProp
+ RETURN aItemProp
+
+//------------------------------------------------------------------------------
+
+FUNCTION SetInterPropItem(nItem )
+   LOCAL nProp:= 0
+   DO CASE
+   CASE nItem == 1
+      nProp := 2
+   CASE nItem == 2
+      nProp := 3
+   CASE nItem == 3
+      nProp := 4
+   CASE nItem == 4
+      nProp := 7
+   CASE nItem == 5
+      nProp := 8
+   CASE nItem == 6
+      nProp := 9
+  CASE nItem == 7
+     nProp := 10
+  ENDCASE
+
+RETURN nProp
+
+//------------------------------------------------------------------------------
+
+FUNCTION SetPropItem( nItem, cAreaIni , nReg , cNewValue )
+   LOCAL cItemDef
+     cItemDef :=  GetItemDef( nItem, cAreaIni )
+     SetField( cItemDef, cNewValue , nreg , "|" )
+RETURN nil
 
 //------------------------------------------------------------------------------
 

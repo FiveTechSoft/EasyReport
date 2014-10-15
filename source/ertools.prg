@@ -1126,17 +1126,30 @@ RETURN oER:oBrwProp
 
 FUNCTION ActionPostEdit( nKey, xVal )
    LOCAL nReg := oER:oBrwProp:nArrayAt
-   LOCAL nArea
+   LOCAL nArea,cAreaIni, nItem
+   local cOldAreaText
+
    IF nKey == VK_RETURN
 
       IF oER:oBrwProp:cargo[1] =="area"
          nArea:= oER:oBrwProp:Cargo[2]
-         SetDataArea( "General", oER:oBrwProp:cargo[3,nReg], xVal , oER:aAreaIni[ nArea ] )
-         oER:aWndTitle[ nArea ] := xVal
+         cOldAreaText  := MEMOREAD( oER:aAreaIni[ nArea ] )
+         oER:oBrwProp:aArrayData[nReg,2] := xVal
+         SetAreaProperties( nArea, oER:oBrwProp:aArrayData , , cOldAreaText )
          RefreshBrwAreaProp( nArea )
+
       ELSEIF oER:oBrwProp:cargo[1] == "item"
-         pausa( "item "+Str(nReg)+" "+ xVal )
+         /*
+         cAreaIni:= oER:oBrwProp:Cargo[2]
+         nItem:= oER:oBrwProp:Cargo[3]
+         oER:oBrwProp:aArrayData[nReg,2] := xVal
+         nReg:=  SetInterPropItem( oER:oBrwProp:nArrayAt )
+
+         SetPropItem( nItem , cAreaIni , nReg , xVal )
+         RefreshBrwProp( nItem , cAreaIni )
+         */
          pausa( "No implementado" )
+
       endif
       //Customer->First := xVal
    ENDIF
@@ -1602,6 +1615,23 @@ function GetField( cString, nNr, cSepChar )
    DEFAULT cSepChar := "|"
 
 return StrToken( cString, nNr, cSepChar )
+
+//------------------------------------------------------------------------------
+
+function SetField( cString, cNewToken, nNr, cSepChar )
+    LOCAL aTokens, cToken
+    LOCAL cNewString:= ""
+   DEFAULT cSepChar := "|"
+
+IF hb_TokenCount(cString,cSepChar) < nNr
+      aTokens:= hb_atokens( cString, cSepChar )
+      aTokens[nNr]:= cNewToken
+      FOR EACH cToken IN aTokens
+           cNewString += cToken+cSepChar
+      NEXT
+      cNewString:=Left( cNewString, Len( cNewString ) - 1 )
+endif
+return cNewString
 
 
 
