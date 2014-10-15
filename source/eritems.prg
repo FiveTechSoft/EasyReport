@@ -44,7 +44,7 @@ function ElementActions( oItem, i, cName, nArea, cAreaIni, cTyp )
                          RefreshBrwProp( i, cAreaIni ), ;
                          MsgBarItem( i, nArea, cAreaIni,,, .T. ) }
 
-      oItem:bMMoved  = { | nRow, nCol, nFlags, aPoint | ;
+   oItem:bMMoved  = { | nRow, nCol, nFlags, aPoint | ;
                         oER:SetReticule( nRow, nCol, nArea ),;
                         RefreshBrwProp( i, cAreaIni ) ,;
                         MsgBarItem( i, nArea, cAreaIni, nRow, nCol ) }
@@ -201,38 +201,31 @@ return .T.
 //----------------------------------------------------------------------------//
 
 FUNCTION GetItemDef( nItem, cAreaIni )
- RETURN  AllTrim(GetDataArea( "Items", AllTrim(STR(nItem,5)),"", cAreaIni ))
+ RETURN  GetDataArea( "Items", AllTrim(STR(nItem,5)),"", cAreaIni )
 
 //------------------------------------------------------------------------------
 
 FUNCTION GetDataArea( cSection, cData,cDefault, cAreaIni )
-   LOCAL cText
 
    IF oER:lNewFormat
-      cText:=  AllTrim( GetPvProfString( cAreaIni+cSection , cData , cDefault,  oER:cDefIni  ) )
-   ELSE
-      cText:=  AllTrim( GetPvProfString( cSection , cData , cDefault, cAreaIni ) )
+      cSection := cAreaIni+cSection
+      cAreaIni := oER:cDefIni
    ENDIF
 
-RETURN cText
+RETURN  AllTrim( GetPvProfString( cSection , cData , cDefault,  cAreaIni ) )
 
 //------------------------------------------------------------------------------
 
 FUNCTION SetDataArea( cSection, cItem, cItemDef, cAreaIni )
-   LOCAL cIni
-   LOCAL xSection
    Local oIni
 
    IF oEr:lNewFormat
-      cIni:= oEr:cDefIni
-      xSection := cAreaIni+ cSection
-  else
-     cIni:= cAreaIni
-     xSection := cSection
+      cAreaIni := oEr:cDefIni
+      cSection := cAreaIni+ cSection
    endif
 
-   INI oIni FILE cIni
-       SET SECTION xSection ENTRY cItem TO cItemDef OF oIni
+   INI oIni FILE cAreaIni
+       SET SECTION cSection ENTRY cItem TO cItemDef OF oIni
    ENDINI
 
 RETURN nil
@@ -240,11 +233,13 @@ RETURN nil
 //------------------------------------------------------------------------------
 
 FUNCTION DelEntryArea( cSection, cItem, cAreaIni )
-     IF oEr:lNewFormat
-        DelIniEntry( cAreaIni+cSection, cItem, oEr:cDefIni )
-     ELSE
-        DelIniEntry( cSection, cItem, cAreaIni )
-     ENDIF
+
+   IF oEr:lNewFormat
+      cAreaIni := oEr:cDefIni
+      cSection := cAreaIni+ cSection
+   endif
+
+   DelIniEntry( cSection, cItem, cAreaIni )
 
 Return nil
 
@@ -331,7 +326,7 @@ RETURN nil
 function ItemPopupMenu( oItem, nItem, nArea, nRow, nCol )
 
    local oMenu
-   LOCAL cItemDef  := AllTrim(GetDataArea(  "Items",  AllTrim(STR(nItem,5)),, oER:aAreaIni[nArea] ))
+   LOCAL cItemDef  := AllTrim( GetDataArea(  "Items",  AllTrim(STR(nItem,5)),, oER:aAreaIni[nArea] ))
    local oItemInfo := VRDItem():New( cItemDef )
 
    MENU oMenu POPUP
@@ -537,55 +532,6 @@ FUNCTION GetItemProperties( nItem, cAreaIni )
     aItemProp[7] := { GL( "Height" ), aProp[10 ] }
 
 RETURN aItemProp
-
-//------------------------------------------------------------------------------
-
-
-FUNCTION GetTextProperties( nItem, cAreaIni )
-
-   LOCAL aProp:=GetaItemProp( nItem, cAreaIni )
-   LOCAL aTextProp := Array(7)
-
-    aTextProp[1] := { GL( "Title" ) , aProp[ 2 ] }
-    aTextProp[2] := { GL( "ItemID" ), aProp[ 3 ] }
-    aTextProp[3] := { GL( "Show" )  , aProp[ 4 ] }
-    aTextProp[4] := { GL( "Top" )   , aProp[ 7 ] }
-    aTextProp[5] := { GL( "Left" )  , aProp[ 8 ] }
-    aTextProp[6] := { GL( "Width" ) , aProp[ 9 ] }
-    aTextProp[7] := { GL( "Height" ), aProp[10 ] }
-
-
-  /*
-   LOCAL cItemDef := ALLTRIM( GetPvProfString( "Items", ALLTRIM(STR(nItem,5)) , "", cAreaIni ) )
-
-   cInfoWidth  := GetField( cItemDef, 9 )
-   cInfoHeight := GetField( cItemDef, 10 )
-
-
-    aTextProp[1] := { GL( "Title" ),;
-                    GetField( cItemDef, 2 ) }
-
-    aTextProp[2] := { GL( "ItemID" ),;
-                    GetField( cItemDef, 3 ) }
-
-    aTextProp[3] := { GL( "Show" ),;
-                     GetField( cItemDef, 4 ) }
-
-
-    aTextProp[4] := { GL( "Top" ),;
-                      GetField( cItemDef, 7 )}
-
-    aTextProp[5] := { GL( "Left" ),;
-                    GetField( cItemDef, 8 ) }
-
-    aTextProp[6] := { GL( "Width" ),;
-                     GetField( cItemDef, 9 ) }
-
-    aTextProp[7] := { GL( "Height" ),;
-                     GetField( cItemDef, 10 ) }
-
-      */
-RETURN aTextProp
 
 //------------------------------------------------------------------------------
 

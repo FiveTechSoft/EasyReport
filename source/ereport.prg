@@ -4988,7 +4988,6 @@ METHOD FillWindow( nArea, cAreaIni ) CLASS TEasyReport
    oER:aWnd[ nArea ]:bMMoved = {|nRow,nCol,nFlags| ;
                            MsgBarInfos( nRow, nCol, nArea ), ;
                            MoveSelection( nRow, nCol, oER:aWnd[ nArea ] ) ,;
-                           RefreshBrwAreaProp(nArea),;
                            if(!lScrollVert, ::SetReticule( nRow, nCol, nArea ), ::SetReticule( 0, 0, nArea )),;
                            lScrollVert :=  .F. }
 

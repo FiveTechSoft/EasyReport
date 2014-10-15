@@ -14,15 +14,10 @@
     barcodes on a window or dialog - but the main work comes from
     Cayetano.
 
-     1.07.2003  1.1.2  VRDBCODE.CH added
     28.10.2002  1.1.1  Command support added
 */
 
-#IFDEF __XPP__
-   #INCLUDE "VRDXPP.ch"
-#ELSE
-   #INCLUDE "FiveWin.ch"
-#ENDIF
+#INCLUDE "FiveWin.ch"
 
 *-- CLASS DEFINITION ---------------------------------------------------------
 *         Name: VRDBarcode
@@ -477,7 +472,7 @@ METHOD InitEAN13() CLASS VRDBarCode
    control := l - control
    k := k + STR( control, 1, 0 )
 
-	// preparacion de la cadena de impresion
+   // preparacion de la cadena de impresion
    cadena := []
    dcha := SUBSTR( k, 8, 6 )
    izda := SUBSTR( k, 2, 6 )
@@ -486,7 +481,7 @@ METHOD InitEAN13() CLASS VRDBarCode
    // barra de delimitacion
    cadena := [101]
 
-	// parte izda
+   // parte izda
    FOR n := 1 TO 6
       numero := VAL(SUBSTR( izda, n, 1 ))
       IF SUBSTR( mascara, n, 1 ) = [o]
@@ -527,7 +522,7 @@ METHOD InitUPC( nLen ) CLASS VRDBarCode
 
    // valid values for nLen are 11,7
    k := LEFT(ALLTRIM( cCode ) + "000000000000", nLen ) // padding with '0'
-	// calculo del digito de control
+   // calculo del digito de control
    // suma de impares
    s1 := 0
    // suma de pares
@@ -553,9 +548,9 @@ METHOD InitUPC( nLen ) CLASS VRDBarCode
    dcha := RIGHT(k, nLen/2 )
    izda := LEFT( k, nLen/2 )
 
-	// barra de delimitacion
+   // barra de delimitacion
    cadena := [101]
-	// parte izda
+   // parte izda
    FOR n := 1 TO nlen/2
       numero := VAL( SUBSTR( izda, n, 1 ) )
       cadena += SUBSTR( izda1, numero * 7 + 1, 7 )

@@ -341,16 +341,18 @@ function SaveAs( cFile )
    CreateNewFile( cFile )
 
    IF oEr:lNewFormat
-     if ! EMPTY( cFile )
-        CopyFile( oER:cDefIni, cFile )
-        oER:cDefIni := VRD_LF2SF( ALLTRIM( cFile ) )
-        if AT( "\", oER:cDefIni ) = 0
-              oER:cDefIni := ".\" + oER:cDefIni
-        endif
-         aVRDSave[101,1] := oER:cDefIni
-         MEMOWRIT( aVRDSave[101,1], aVRDSave[101,2] )
-         MEMOWRIT( aVRDSave[102,1], aVRDSave[102,2] )
 
+      if ! EMPTY( cFile )
+
+        CopyFile( oER:cDefIni, cFile )
+
+        oER:cDefIni := VRD_LF2SF( ALLTRIM( cFile ) )
+        if AT( "\", oER:cDefIni ) == 0
+           oER:cDefIni := ".\" + oER:cDefIni
+        endif
+        aVRDSave[101,1] := oER:cDefIni
+        MEMOWRIT( aVRDSave[101,1], aVRDSave[101,2] )
+        MEMOWRIT( aVRDSave[102,1], aVRDSave[102,2] )
 
      endif
 
@@ -358,7 +360,6 @@ function SaveAs( cFile )
 
 
      if ! EMPTY( cFile )
-
 
        oER:cDefIni := VRD_LF2SF( ALLTRIM( cFile ) )
        if AT( "\", oER:cDefIni ) = 0
@@ -419,11 +420,16 @@ function AskSaveFiles()
                            GL("Save the current report?"), GL("Save"), 35 )
 
       if nSave = 7
+
          MEMOWRIT( aVRDSave[101,1], aVRDSave[101,2] )
          MEMOWRIT( aVRDSave[102,1], aVRDSave[102,2] )
-         for nArea := 1 TO LEN( oER:aAreaIni )
-            MEMOWRIT( aVRDSave[nArea,1], aVRDSave[nArea,2] )
-         next
+
+         IF !oER:lNewFormat
+            for nArea := 1 TO LEN( oER:aAreaIni )
+                MEMOWRIT( aVRDSave[nArea,1], aVRDSave[nArea,2] )
+            next
+         endif
+
       elseif nSave = 6
          SetSaveInfos()
       else

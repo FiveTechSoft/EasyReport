@@ -207,9 +207,7 @@ FUNCTION StopSelection( nRow, nCol, oAktWnd )
                            oER:aItems[oER:nAktArea,i]:nBottom, oER:aItems[oER:nAktArea,i]:nRight }
 
             IF IsIntersectRect( aItemRect, aBoxRect )
-
                ToggleItemSelection( i, oER:nAktArea )
-
             ENDIF
 
          ENDIF
