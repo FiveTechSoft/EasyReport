@@ -99,20 +99,21 @@ function OpenFile( cFile, lChange, lAddDelNew )
 
       DefineFonts()
 
-          IF oER:lShowPanel
+      /*
+      IF oER:lShowPanel
          //SwichFldD( oEr:oMainWnd, oEr:oPanelD, ) //oER:oFldD )
          ER_ReportSettings( 1 )
          //DlgTree( 2 )
          Dlg_Colors( 3 )
          Dlg_Fonts( 4 )
-         Er_Databases(,2)
+         Er_Databases( , 2 )
          ER_Expressions(,,1)
 
-         ER_Inspector1(3 )
+         ER_Inspector1( 3 )
          SwichFldD( oEr:oMainWnd, oEr:oPanelD, ) //oER:oFldD )
 
       endif
-
+      */
 
       if !lChange
          ClientWindows()
@@ -136,13 +137,12 @@ function OpenFile( cFile, lChange, lAddDelNew )
          //DlgTree( 2 )
          Dlg_Colors( 3 )
          Dlg_Fonts( 4 )
-         Er_Databases(,2)
-         ER_Expressions(,,1)
-
-         ER_Inspector1(3 )
+         Er_Databases( , 2 )
+         ER_Expressions( , , 1 )
+         //ER_Inspector1( 3 )
          SwichFldD( oEr:oMainWnd, oEr:oPanelD, ) //oER:oFldD )
 
-          RefreshPanelTree()
+         RefreshPanelTree()
 
       endif
 

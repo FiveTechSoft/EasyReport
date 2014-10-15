@@ -1082,21 +1082,24 @@ return ( creturn )
 //------------------------------------------------------------------------------
 
 Function ER_Inspector( nD, oDlg )
+//LOCAL oDlg   := oER:oFldD:aDialogs[ nD ]
+LOCAL aProps := GetAreaProperties( oER:nAktArea )
+Local oFont
+Local lTr    := .T.
+if oDlg == NIL
+   lTr  := .F.
+endif
 
-   //LOCAL oDlg   := oER:oFldD:aDialogs[ nD ]
-   LOCAL aProps := GetAreaProperties( oER:nAktArea )
-   Local oFont
+DEFAULT oDlg   := oER:oFldD:aDialogs[ nD ]
 
-    DEFAULT oDlg   := oER:oFldD:aDialogs[ nD ]
+DEFINE FONT oFont NAME "Verdana" SIZE 0, -11  //"Segoe UI BOLD"
 
-    DEFINE FONT oFont NAME "Verdana" SIZE 0, -11  //"Segoe UI BOLD"
+if !empty( nD )
+   @ 8, 3 SAY oER:oSaySelectedItem PROMPT "Area/Item" SIZE 140, 20 OF oDlg FONT oFont pixel //COLOR CLR_BLACK//TRANSPARENT //(+ aProps[1,2] FONT oFont
+endif
 
-    if !empty( nD )
-    @ 8, 3 SAY oER:oSaySelectedItem PROMPT "hola" SIZE 140, 20 OF oDlg FONT oFont pixel //COLOR CLR_BLACK//TRANSPARENT //(+ aProps[1,2] FONT oFont
-    endif
-
-    @ if( !empty( nD ), 34.5, 2.5 ), 1 XBROWSE oER:oBrwProp ;
-      SIZE oDlg:nWidth - 1, if( !empty( nD ), Int(oDlg:nHeight/2) - 25, oDlg:nHeight - 25) ;
+@ if( !empty( nD ), 34.5, 2.5 ), 1 XBROWSE oER:oBrwProp ;
+      SIZE oDlg:nWidth - 1, if( lTr, Int(oDlg:nHeight/2) - 25, oDlg:nHeight - 35) ;
       COLSIZES 95, 195 ;
       AUTOCOLS ;
       HEADERS " " + GL("Property"), " " + GL("Value") ;

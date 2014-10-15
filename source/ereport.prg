@@ -299,32 +299,31 @@ Local oFoldnD
 
 DEFAULT nD  := 2
 
-   if empty( nD1 )
-      DEFINE FONT oFont NAME "Verdana" SIZE 0, -10
-      oER:oTree := TTreeView():New( 0, 2, oER:oFldI:aDialogs[ nD ] , 0, , .T., .F.,;
+   DEFINE FONT oFont NAME "Verdana" SIZE 0, -10
+   oER:oTree := TTreeView():New( 0, 2, oER:oFldI:aDialogs[ nD ] , 0, , .T., .F.,;
                                  Int(GetSysMetrics( 0 )/4) - 6 ,;
-                                 Int(oER:oFldI:aDialogs[ nD ]:nHeight/2) ,"",, )
+                                 Int(oER:oFldI:aDialogs[ nD ]:nHeight/(if( !empty(nD1),2,1 ))) ,"",, )
 
-      // oEr:oMainWnd:oLeft  :=   oER:oTree
-      oEr:oTree:SetColor( ,  oEr:nClrPaneTree )
-      oEr:oTree:l3DLook := .F.
-      oEr:oTree:SetFont( oFont )
+   // oEr:oMainWnd:oLeft  :=   oER:oTree
+   oEr:oTree:SetColor( ,  oEr:nClrPaneTree )
+   oEr:oTree:l3DLook := .F.
+   oEr:oTree:SetFont( oFont )
 
-      if lValidFwh( 14.08 )
-         if !empty( oEr:oTree:oFont )
-            nItemH := oEr:oTree:oFont:nHeight * 2
-         else
-            nItemH := 24
-         endif
-         oEr:oTree:SetItemHeight( nItemH )  // o  TvSetItemHeight( oER:oTree:hWnd, nItemH )
+   if lValidFwh( 14.08 )
+      if !empty( oEr:oTree:oFont )
+         nItemH := oEr:oTree:oFont:nHeight * 2
+      else
+         nItemH := 24
       endif
-      oEr:oTree:bMouseWheel = { | nKey, nDelta, nXPos, nYPos | ;
+      oEr:oTree:SetItemHeight( nItemH )  // o  TvSetItemHeight( oER:oTree:hWnd, nItemH )
+   endif
+   oEr:oTree:bMouseWheel = { | nKey, nDelta, nXPos, nYPos | ;
                         ER_MouseWheelTree( nKey, nDelta, nXPos, nYPos ) }
 
-      //oER:oFldI:aDialogs[ nD ]:SetControl( oEr:oTree )
-      //oER:oFldI:Hide()
-   endif
+   //oER:oFldI:aDialogs[ nD ]:SetControl( oEr:oTree )
+   //oER:oFldI:Hide()
 
+   /*
    @ Int(oER:oFldI:aDialogs[ nD ]:nHeight/2)+10, 1 CFOLDEREX oFoldnD ;
        PROMPT GL("&Areas"), GL("&Items") ;
        OF oER:oFldI:aDialogs[ nD ] ;
@@ -337,7 +336,7 @@ DEFAULT nD  := 2
        SEPARATOR 0
 
    ER_Inspector( , oFoldnD:aDialogs[ 1 ] )
-
+   */
 
 Return oEr:oTree
 
