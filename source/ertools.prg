@@ -1,4 +1,4 @@
-﻿#INCLUDE "FiveWin.ch"
+#INCLUDE "FiveWin.ch"
 #INCLUDE "VRD.ch"
 #INCLUDE "Mail.ch"
 
@@ -66,8 +66,12 @@ return ( cPath )
 //-----------------------------------------------------------------------------//
 
 FUNCTION GetNameArea(nArea)
-LOCAL aAreaInis := GetAreaInis()
-RETURN AllTrim ( aAreaInis[nArea] )
+RETURN oEr:aAreaIni[nArea]
+
+//------------------------------------------------------------------------------
+
+FUNCTION getNumArea( cAreaIni )
+RETURN AScan( oEr:aAreaIni,cAreaIni )
 
 //------------------------------------------------------------------------------
 
@@ -1142,23 +1146,19 @@ FUNCTION ActionPostEdit( nKey, xVal )
          RefreshBrwAreaProp( nArea )
 
       ELSEIF oER:oBrwProp:cargo[1] == "item"
-         /*
+
          cAreaIni:= oER:oBrwProp:Cargo[2]
          nItem:= oER:oBrwProp:Cargo[3]
-         oER:oBrwProp:aArrayData[nReg,2] := xVal
-         nReg:=  SetInterPropItem( oER:oBrwProp:nArrayAt )
-
-         SetPropItem( nItem , cAreaIni , nReg , xVal )
+        // oER:oBrwProp:aArrayData[nReg,2] := xVal
+         SetPropItem( nItem , cAreaIni, xVal )
          RefreshBrwProp( nItem , cAreaIni )
-         */
-         pausa( "No implementado" )
+
 
       endif
-      //Customer->First := xVal
+     
    ENDIF
 
 RETURN nil
-
 //------------------------------------------------------------------------------
 
 FUNCTION RefreshBrwAreaProp(nArea)

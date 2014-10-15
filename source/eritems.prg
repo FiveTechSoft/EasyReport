@@ -519,49 +519,54 @@ function UpdateItems( nValue, nTyp, lAddValue, aOldValue )
 
 FUNCTION GetItemProperties( nItem, cAreaIni )
 
-   LOCAL aProp:=GetaItemProp( nItem, cAreaIni )
    LOCAL aItemProp := Array(7)
-   LOCAL cType     := UPPER(ALLTRIM( aProp[ 1 ] ))
+   local oItem := VRDItem():New( GetItemDef( nItem, cAreaIni ) )
 
-    aItemProp[1] := { GL( "Title" ) , aProp[ 2 ] }
-    aItemProp[2] := { GL( "ItemID" ), aProp[ 3 ] }
-    aItemProp[3] := { GL( "Show" )  , aProp[ 4 ] }
-    aItemProp[4] := { GL( "Top" )   , aProp[ 7 ] }
-    aItemProp[5] := { GL( "Left" )  , aProp[ 8 ] }
-    aItemProp[6] := { GL( "Width" ) , aProp[ 9 ] }
-    aItemProp[7] := { GL( "Height" ), aProp[10 ] }
+   LOCAL cType   := UPPER(ALLTRIM( oItem:cType ))
+
+    aItemProp[1] := { GL( "Title" ) , oItem:cText }
+    aItemProp[2] := { GL( "ItemID" ), oItem:nItemID }
+    aItemProp[3] := { GL( "Show" )  , oItem:nShow }
+    aItemProp[4] := { GL( "Top" )   , oItem:nTop }
+    aItemProp[5] := { GL( "Left" )  , oItem:nLeft }
+    aItemProp[6] := { GL( "Width" ) , oItem:nWidth }
+    aItemProp[7] := { GL( "Height" ), oItem:nHeight }
 
  RETURN aItemProp
 
 //------------------------------------------------------------------------------
 
-FUNCTION SetInterPropItem(nItem )
-   LOCAL nProp:= 0
-   DO CASE
-   CASE nItem == 1
-      nProp := 2
-   CASE nItem == 2
-      nProp := 3
-   CASE nItem == 3
-      nProp := 4
-   CASE nItem == 4
-      nProp := 7
-   CASE nItem == 5
-      nProp := 8
-   CASE nItem == 6
-      nProp := 9
-  CASE nItem == 7
-     nProp := 10
-  ENDCASE
-
-RETURN nProp
-
-//------------------------------------------------------------------------------
-
-FUNCTION SetPropItem( nItem, cAreaIni , nReg , cNewValue )
+FUNCTION SetPropItem( nItem, cAreaIni, cNewValue )
    LOCAL cItemDef
-     cItemDef :=  GetItemDef( nItem, cAreaIni )
-     SetField( cItemDef, cNewValue , nreg , "|" )
+   local oItem := VRDItem():New( GetItemDef( nItem, cAreaIni ) )
+   LOCAL nReg:= oER:oBrwProp:nArrayAt
+
+
+    DO CASE
+    CASE nReg == 1
+       oItem:cText:= cNewValue
+
+        CASE nReg == 2
+           oItem:nItemID := cNewValue
+        CASE nReg == 3
+           oItem:nShow := cNewValue
+        CASE nReg == 4
+           oItem:nTop := cNewValue
+        CASE nReg == 5
+            oItem:nLeft := cNewValue
+        CASE nReg == 6
+            oItem:nWidth := cNewValue
+        CASE nReg == 7
+            oItem:nHeight  := cNewValue
+    ENDCASE
+
+    cItemDef := oItem:Set( .f., oER:nMeasure )
+    SetDataArea( "Items", AllTrim(Str(nItem,5)), cItemDef, cAreaIni )
+
+   IF oItem:cType == "TEXT"
+       SetTextObj( oItem, getNumArea( cAreaIni ), nItem )
+   endif
+
 RETURN nil
 
 //------------------------------------------------------------------------------
@@ -952,33 +957,7 @@ function SaveHTextItem( hVar, oItem )
 
    SetDataArea( "Items", AllTrim(STR(i,5)), hVar["cItemDef"],  hVar["cAreaIni"] )
 
-
-   oFont := IIF( oItem:nFont = 0, oEr:oAppFont, oER:aFonts[oItem:nFont] )
-   lCenter := IIF( oItem:nOrient = 2, .T., .F. )
-   lRight  := IIF( oItem:nOrient = 3,  .T., .F. )
-
-   if oItem:lVisible
-
-      oER:aItems[nArea,i]:End()
-      oER:aItems[nArea,i] := ;
-         TSay():New( oEr:nRulerTop + ER_GetPixel( oItem:nTop ), oER:nRuler + ER_GetPixel( oItem:nLeft ), ;
-                     {|| oItem:cText }, oER:aWnd[ nArea ],, ;
-                     oFont, lCenter, lRight, ( oItem:lBorder .OR. oGenVar:lShowBorder ), ;
-                     .T., oER:GetColor( oItem:nColText ), oER:GetColor( oItem:nColPane ), ;
-                     ER_GetPixel( oItem:nWidth ), ER_GetPixel( oItem:nHeight ), ;
-                     .F., .T., .F., .F., .F. )
-
-      oER:aItems[nArea,i]:lDrag := .T.
-      ElementActions( oER:aItems[nArea,i],i, oItem:cText, nArea , hVar["cAreaIni"] )
-      oER:aItems[nArea,i]:SetFocus()
-
-   endif
-
-   if !oItem:lVisible .AND. oER:aItems[nArea,i] <> NIL
-      oER:aItems[nArea,i]:lDrag := .F.
-      oER:aItems[nArea,i]:HideDots()
-      oER:aItems[nArea,i]:End()
-   endif
+   SetTextObj( oItem, nArea, i )
 
    if hVar["lRemoveItem"]
       DelEntryArea( "Items", AllTrim(STR(i,5)), hVar["cAreaIni"] )
@@ -994,7 +973,39 @@ function SaveHTextItem( hVar, oItem )
 
    oCurDlg:SetFocus()
 
-return ( .T. )
+   return ( .T. )
+
+//------------------------------------------------------------------------------
+
+FUNCTION SetTextObj( oItem, nArea, i )
+
+   LOCAL oFont := IIF( oItem:nFont = 0, oEr:oAppFont, oER:aFonts[oItem:nFont] )
+   LOCAL lCenter := IIF( oItem:nOrient = 2, .T., .F. )
+   LOCAL lRight  := IIF( oItem:nOrient = 3,  .T., .F. )
+
+    if oItem:lVisible
+      oER:aItems[nArea,i]:End()
+      oER:aItems[nArea,i] := ;
+         TSay():New( oEr:nRulerTop + ER_GetPixel( oItem:nTop ), oER:nRuler + ER_GetPixel( oItem:nLeft ), ;
+                     {|| oItem:cText }, oER:aWnd[ nArea ],, ;
+                     oFont, lCenter, lRight, ( oItem:lBorder .OR. oGenVar:lShowBorder ), ;
+                     .T., oER:GetColor( oItem:nColText ), oER:GetColor( oItem:nColPane ), ;
+                     ER_GetPixel( oItem:nWidth ), ER_GetPixel( oItem:nHeight ), ;
+                     .F., .T., .F., .F., .F. )
+
+      oER:aItems[nArea,i]:lDrag := .T.
+      ElementActions( oER:aItems[nArea,i], i, oItem:cText, nArea , GetNameArea(nArea) )
+      oER:aItems[nArea,i]:SetFocus()
+
+   endif
+
+   if !oItem:lVisible .AND. oER:aItems[nArea,i] <> NIL
+      oER:aItems[nArea,i]:lDrag := .F.
+      oER:aItems[nArea,i]:HideDots()
+      oER:aItems[nArea,i]:End()
+   endif
+
+ RETURN nil
 
 //------------------------------------------------------------------------------
 /*
