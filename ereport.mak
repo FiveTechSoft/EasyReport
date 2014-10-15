@@ -25,7 +25,8 @@ PRG =        \
 .\ermain.prg \
 .\vrdbcode.prg \
 .\vrditem.prg   \
-.\strings.prg
+.\strings.prg \
+.\TCFoldex.prg
 
 C =            \
 .\cfunc.c      \               

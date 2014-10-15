@@ -143,7 +143,7 @@ return .T.
 FUNCTION ActionDlgInsertArea( cFile, oDlg ,cDir )
    LOCAL lreturn := .f.
    LOCAL aIniEnTries,cArea
-
+   local i
    IF oEr:lNewFormat
 
          FOR i= 1 TO Len( oER:aWnd )
