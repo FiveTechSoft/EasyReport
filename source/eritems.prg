@@ -540,7 +540,7 @@ FUNCTION SetPropItem( nItem, cAreaIni, cNewValue )
    LOCAL cItemDef
    local oItem := VRDItem():New( GetItemDef( nItem, cAreaIni ) )
    LOCAL nReg:= oER:oBrwProp:nArrayAt
-
+   LOCAL nArea := getNumArea( cAreaIni )
 
     DO CASE
         CASE nReg == 1
@@ -563,11 +563,13 @@ FUNCTION SetPropItem( nItem, cAreaIni, cNewValue )
     SetDataArea( "Items", AllTrim(Str(nItem,5)), cItemDef, cAreaIni )
 
    IF oItem:cType == "TEXT"
-      SetTextObj( oItem, getNumArea( cAreaIni ), nItem )
+      SetTextObj( oItem, nArea, nItem )
    ELSEIF  oItem:cType == "IMAGE"
-      SetImgObj( oItem, getNumArea( cAreaIni ), nItem )
+      SetImgObj( oItem, nArea, nItem )
    ELSEIF  oItem:lGraphic
-      SetGraObj( oItem, getNumArea( cAreaIni ), nItem )
+      SetGraObj( oItem, nArea, nItem )
+   ELSEIF oItem:cType = "BARCODE"
+      SetBarcodeItem( oItem, nArea, nItem )
    endif
 
 RETURN nil
@@ -1667,30 +1669,39 @@ function SaveBarItem( oVar, oItem )
    lCenter := IIF( oItem:nOrient == 2, .T., .F. )
    lRight  := IIF( oItem:nOrient == 3, .T., .F. )
 
-   if oItem:nShow = 1
+   SetBarcodeItem( oItem, oVar:nArea, oVar:i )
 
-      oER:aItems[oVar:nArea,oVar:i]:End()
+   SaveItemGeneral( oVar, oItem )
 
-         oER:aItems[oVar:nArea,oVar:i] := TBitmap():New( oEr:nRulerTop + ER_GetPixel( oItem:nTop ), ;
+   return .T.
+
+//------------------------------------------------------------------------------
+
+FUNCTION SetBarcodeItem( oItem, nArea, i )
+
+     if oItem:nShow = 1
+
+      oER:aItems[nArea,i]:End()
+
+         oER:aItems[nArea,i] := TBitmap():New( oEr:nRulerTop + ER_GetPixel( oItem:nTop ), ;
              oER:nRuler + ER_GetPixel( oItem:nLeft ), ER_GetPixel( oItem:nWidth ), ER_GetPixel( oItem:nHeight ), ;
-             "GRAPHIC",, .T., oER:aWnd[oVar:nArea],,, .F., .T.,,, .T.,, .T. )
-         oER:aItems[oVar:nArea,oVar:i]:lTransparent := .T.
+             "GRAPHIC",, .T., oER:aWnd[nArea],,, .F., .T.,,, .T.,, .T. )
+         oER:aItems[nArea,i]:lTransparent := .T.
 
-         oER:aItems[oVar:nArea,oVar:i]:bPainted = {| hDC, cPS | ;
+         oER:aItems[nArea,i]:bPainted = {| hDC, cPS | ;
             DrawBarcode( hDC, AllTrim( oItem:cText ), 0, 0, ;
                          ER_GetPixel( oItem:nWidth ), ER_GetPixel( oItem:nHeight ), ;
                          oItem:nBCodeType, oER:GetColor( oItem:nColText ), oER:GetColor( oItem:nColPane ), ;
                          oItem:nOrient, oItem:lTrans, ER_GetPixel( oItem:nPinWidth ) ) }
 
-      oER:aItems[oVar:nArea,oVar:i]:lDrag := .T.
-      ElementActions( oER:aItems[oVar:nArea,oVar:i], oVar:i, "", oVar:nArea, oVar:cAreaIni )
-      oER:aItems[oVar:nArea,oVar:i]:SetFocus()
+      oER:aItems[nArea,i]:lDrag := .T.
+      ElementActions( oER:aItems[nArea,i], i, "", nArea, GetNameArea(nArea) )
+      oER:aItems[nArea,i]:SetFocus()
 
    endif
 
-   SaveItemGeneral( oVar, oItem )
 
-return .T.
+RETURN nil
 
 //----------------------------------------------------------------------------//
 
