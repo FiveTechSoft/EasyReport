@@ -219,14 +219,18 @@ RETURN  AllTrim( GetPvProfString( cSection , cData , cDefault,  cAreaIni ) )
 FUNCTION SetDataArea( cSection, cItem, cItemDef, cAreaIni )
    Local oIni
 
-   IF oEr:lNewFormat
-      cAreaIni := oEr:cDefIni
-      cSection := cAreaIni+ cSection
-   endif
 
-   INI oIni FILE cAreaIni
-       SET SECTION cSection ENTRY cItem TO cItemDef OF oIni
-   ENDINI
+
+   IF oEr:lNewFormat
+       INI oIni FILE oEr:cDefIni
+           SET SECTION cAreaIni+cSection ENTRY cItem TO cItemDef OF oIni
+       ENDINI
+   else
+
+      INI oIni FILE cAreaIni
+          SET SECTION cSection ENTRY cItem TO cItemDef OF oIni
+      ENDINI
+   endif
 
 RETURN nil
 
@@ -959,6 +963,9 @@ function SaveHTextItem( hVar, oItem )
    oItem:nShow   := IIF( oItem:lVisible, 1, 0 )
 
    hVar["cItemDef"] := oItem:Set( .F., oER:nMeasure )
+
+   pausa("area"+hVar["cAreaIni"] )
+   pausa( "def"+hVar["cItemDef"])
 
    SetDataArea( "Items", AllTrim(STR(i,5)), hVar["cItemDef"],  hVar["cAreaIni"] )
 
