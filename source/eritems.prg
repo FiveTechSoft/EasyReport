@@ -543,9 +543,8 @@ FUNCTION SetPropItem( nItem, cAreaIni, cNewValue )
 
 
     DO CASE
-    CASE nReg == 1
-       oItem:cText:= cNewValue
-
+        CASE nReg == 1
+           oItem:cText := cNewValue
         CASE nReg == 2
            oItem:nItemID := cNewValue
         CASE nReg == 3
@@ -557,14 +556,18 @@ FUNCTION SetPropItem( nItem, cAreaIni, cNewValue )
         CASE nReg == 6
             oItem:nWidth := cNewValue
         CASE nReg == 7
-            oItem:nHeight  := cNewValue
+            oItem:nHeight := cNewValue
     ENDCASE
 
     cItemDef := oItem:Set( .f., oER:nMeasure )
     SetDataArea( "Items", AllTrim(Str(nItem,5)), cItemDef, cAreaIni )
 
    IF oItem:cType == "TEXT"
-       SetTextObj( oItem, getNumArea( cAreaIni ), nItem )
+      SetTextObj( oItem, getNumArea( cAreaIni ), nItem )
+   ELSEIF  oItem:cType == "IMAGE"
+      SetImgObj( oItem, getNumArea( cAreaIni ), nItem )
+   ELSEIF  oItem:lGraphic
+      SetGraObj( oItem, getNumArea( cAreaIni ), nItem )
    endif
 
 RETURN nil
@@ -1248,6 +1251,8 @@ function SaveImgItem( oVar, oItem )
 
    SetDataArea( "Items", AllTrim(STR(oVar:i,5)), oVar:cItemDef, oVar:cAreaIni )
 
+   SetImgObj( oItem, oVar:nArea, oVar:i )
+ /*
    if oItem:nShow = 1
 
       oER:aItems[oVar:nArea,oVar:i]:End()
@@ -1262,10 +1267,32 @@ function SaveImgItem( oVar, oItem )
       oER:aItems[oVar:nArea,oVar:i]:SetFocus()
 
    endif
+   */
 
    SaveItemGeneral( oVar, oItem )
 
 return .T.
+
+//------------------------------------------------------------------------------
+
+FUNCTION SetImgObj( oItem, nArea, i )
+
+   if oItem:nShow = 1
+
+      oER:aItems[nArea,i]:End()
+      oER:aItems[nArea,i] := TImage():New( oEr:nRulerTop + ER_GetPixel( oItem:nTop ), ;
+         oER:nRuler + ER_GetPixel( oItem:nLeft ), ER_GetPixel( oItem:nWidth ), ER_GetPixel( oItem:nHeight ),,, ;
+         IIF( oItem:lBorder, .F., .T. ), oER:aWnd[nArea],,, .F., .T.,,, .T.,, .T. )
+      oER:aItems[nArea,i]:Progress(.F.)
+      oER:aItems[nArea,i]:LoadBmp( VRD_LF2SF( oItem:cFile ) )
+
+      oER:aItems[nArea,i]:lDrag := .T.
+      ElementActions( oER:aItems[nArea,i], i, oItem:cText, nArea, GetNameArea(nArea) )
+      oER:aItems[nArea,i]:SetFocus()
+
+   endif
+
+RETURN nil
 
 //----------------------------------------------------------------------------//
 
@@ -1441,31 +1468,41 @@ function SaveGraItem( oVar, oItem )
 
    SetDataArea( "Items", AllTrim(STR(oVar:i,5)), oVar:cItemDef, oVar:cAreaIni )
 
-   if oItem:nShow = 1
+   SetGraObj( oItem, oVar:nArea, oVar:i )
 
-      oER:aItems[oVar:nArea,oVar:i]:End()
+   SaveItemGeneral( oVar, oItem )
 
-      oER:aItems[oVar:nArea,oVar:i] := TBitmap():New( oEr:nRulerTop + ER_GetPixel( oItem:nTop ), ;
+return .T.
+
+
+//------------------------------------------------------------------------------
+
+FUNCTION SetGraObj( oItem, nArea, i )
+
+     if oItem:nShow = 1
+
+      oER:aItems[nArea,i]:End()
+
+      oER:aItems[nArea,i] := TBitmap():New( oEr:nRulerTop + ER_GetPixel( oItem:nTop ), ;
           oER:nRuler + ER_GetPixel( oItem:nLeft ), ER_GetPixel( oItem:nWidth ), ER_GetPixel( oItem:nHeight ), ;
-          "GRAPHIC",, .T., oER:aWnd[oVar:nArea],,, .F., .T.,,, .T.,, .T. )
-      oER:aItems[oVar:nArea,oVar:i]:lTransparent := .T.
+          "GRAPHIC",, .T., oER:aWnd[nArea],,, .F., .T.,,, .T.,, .T. )
+      oER:aItems[nArea,i]:lTransparent := .T.
 
-      oER:aItems[oVar:nArea,oVar:i]:bPainted = {| hDC, cPS | ;
+      oER:aItems[nArea,i]:bPainted = {| hDC, cPS | ;
          DrawGraphic( hDC, AllTrim(UPPER( oItem:cType )), ;
                       ER_GetPixel( oItem:nWidth ), ER_GetPixel( oItem:nHeight ), ;
                       oER:GetColor( oItem:nColor ), oER:GetColor( oItem:nColFill ), ;
                       oItem:nStyle, oItem:nPenWidth, ;
                       ER_GetPixel( oItem:nRndWidth ), ER_GetPixel( oItem:nRndHeight ) ) }
 
-      oER:aItems[oVar:nArea,oVar:i]:lDrag := .T.
-      ElementActions( oER:aItems[oVar:nArea,oVar:i], oVar:i, "", oVar:nArea, oVar:cAreaIni )
-      oER:aItems[oVar:nArea,oVar:i]:SetFocus()
+      oER:aItems[nArea,i]:lDrag := .T.
+      ElementActions( oER:aItems[nArea,i], i, "", nArea, GetNameArea(nArea) )
+      oER:aItems[nArea,i]:SetFocus()
 
    endif
 
-   SaveItemGeneral( oVar, oItem )
 
-return .T.
+RETURN nil
 
 //----------------------------------------------------------------------------/
 
