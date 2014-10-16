@@ -337,6 +337,14 @@ function GetDBField( oGet, lInsert )
    endif
 
 return .T.
+//------------------------------------------------------------------------------
+
+Function OpenDbf( cFile, cAlias, cVia )
+DEFAULT cVia :=  "DBFNTX"
+DEFAULT cAlias := cfileNoext(cFileNopath(cfile ))
+    cAlias:= cGetNewAlias(cAlias)
+    USE (cfile) VIA (cVia) ALIAS (cAlias) NEW SHARED
+Return cAlias
 
 //-----------------------------------------------------------------------------//
 
@@ -344,7 +352,20 @@ function GetExprFields( cDatabase )
 
    local nSelect := SELECT()
    local aTemp   := {}
+   LOCAL nReg
 
+   LOCAL cAlias:= OpenDbf( cDatabase )
+
+    DO WHILE !EOF()
+      if !EMPTY( (calias)->NAME )
+         AADD( aTemp, ALLTRIM( (cAlias)->NAME ) )
+      endif
+      (cAlias)->(DBSKIP())
+   ENDDO
+
+   close( cAlias )
+
+   /*
    DBUSEAREA( .T.,, cDatabase, "TEMPEXPR" )
 
    DO WHILE !EOF()
@@ -354,7 +375,11 @@ function GetExprFields( cDatabase )
       TEMPEXPR->(DBSKIP())
    ENDDO
 
-   TEMPEXPR->(DBCLOSEAREA())
+
+
+  TEMPEXPR->(DBCLOSEAREA())
+   */
+
    SELECT( nSelect )
 
 return ( aTemp )
@@ -387,6 +412,8 @@ function CreateDbfsExpressions()
      DBCreate( cUserExpr, aUser )
 
   endif
+
+  close all
 
 return nil
 
@@ -982,8 +1009,11 @@ function Expressions( lTake, cAltText )
                  "EXPRESS_FOLDER2"
    endif
 
-   SELECT 0
-   USE ( VRD_LF2SF( cGenExpr ) ) ALIAS "GENEXPR" //SHARED
+
+     IF Select(  "GENEXPR" ) ==0
+       SELECT 0
+       USE ( VRD_LF2SF( cGenExpr ) ) ALIAS "GENEXPR" SHARED
+     endif
 
    REDEFINE LISTBOX oBrw ;
       FIELDS GENEXPR->NAME, GENEXPR->INFO ;
@@ -997,9 +1027,12 @@ function Expressions( lTake, cAltText )
 
    if nShowExpr = 1
 
-   i := 2
+      i := 2
+
+IF Select(  "USEREXPR" ) ==0
    SELECT 0
-   USE ( VRD_LF2SF( cUserExpr ) ) ALIAS "USEREXPR" //SHARED
+   USE ( VRD_LF2SF( cUserExpr ) ) ALIAS "USEREXPR" SHARED
+ENDIF
 
    REDEFINE LISTBOX oBrw2 ;
       FIELDS USEREXPR->NAME, USEREXPR->INFO ;
@@ -1155,7 +1188,7 @@ FUNCTION ActionPostEdit( nKey, xVal )
 
 
       endif
-     
+
    ENDIF
 
 RETURN nil

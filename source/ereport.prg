@@ -2325,7 +2325,7 @@ Local nFonts
    DEFAULT lAll   := .F.
 
    if !lAll
-      if oLbx:ClassName() = "LISTBOX"
+      if oLbx:ClassName() = "TLISTBOX"
          nID := Val(SUBSTR( oLbx:GetItem(oLbx:GetPos()), 1, 2))
       else
           if oLbx:ClassName() = "TXBROWSE"
@@ -2347,7 +2347,7 @@ Local nFonts
    endif
    aGetFonts  := GetFonts()
    aShowFonts := GetFontText( aGetFonts )
-   if oLbx:ClassName() = "LISTBOX"
+   if oLbx:ClassName() = "TLISTBOX"
       oLbx:SetItems( aShowFonts )
    else
       if oLbx:ClassName() = "TXBROWSE"
@@ -2615,24 +2615,24 @@ function PreviewRefresh( oSay, oLbx, oGet )
 
    local nID
 
-   if oLbx:ClassName() = "LISTBOX"
-
-      nID := Val(SUBSTR( oLbx:GetItem(oLbx:GetPos()), 1, 2))
-
+   if oLbx:ClassName() = "TLISTBOX"
+       nID := Val(SUBSTR( oLbx:GetItem(oLbx:GetPos()), 1, 2))
    else
        if oLbx:ClassName() = "TXBROWSE"
           nID  := oLbx:nArrayAt
        endif
    endif
 
-   if !empty( oER:aFonts[nID] ) .and. Valtype( oER:aFonts[nID] ) = "O"
-      oSay:Default()
-      oSay:SetFont( oER:aFonts[nID] )
-      oSay:Refresh()
 
-      oGet:SetFont( oER:aFonts[nID] )
-      oGet:Refresh()
+   if !empty( oER:aFonts[nID] ) .and. Valtype( oER:aFonts[nID] ) = "O"
+         oSay:Default()
+         oSay:SetFont( oER:aFonts[nID] )
+         oSay:Refresh()
+
+         oGet:SetFont( oER:aFonts[nID] )
+         oGet:Refresh()
    endif
+
 
 return .T.
 
@@ -2669,7 +2669,7 @@ function SelectFont( oSay, oLbx, oGet )
    local nCharSet
    local hDC         := oEr:oMainWnd:GetDC()
 
-   if oLbx:ClassName() = "LISTBOX"
+   if oLbx:ClassName() = "TLISTBOX"
       nID := Val(SUBSTR( oLbx:GetItem(oLbx:GetPos()), 1, 2))
    else
        if oLbx:ClassName() = "TXBROWSE"
@@ -2750,7 +2750,7 @@ function SelectFont( oSay, oLbx, oGet )
                                   nEscapement, nOrient,, lItalic, lUnderline, lStrikeOut, ;
                                   nCharSet )
 
-      if oLbx:ClassName() = "LISTBOX"
+      if oLbx:ClassName() = "TLISTBOX"
          nPos := oLbx:GetPos()
          aShowFonts := GetFontText( GetFonts() )
          oLbx:SetItems( aShowFonts )

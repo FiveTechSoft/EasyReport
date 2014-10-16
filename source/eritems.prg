@@ -206,19 +206,20 @@ FUNCTION GetItemDef( nItem, cAreaIni )
 //------------------------------------------------------------------------------
 
 FUNCTION GetDataArea( cSection, cData,cDefault, cAreaIni )
+LOCAL cText
 
-   IF oER:lNewFormat
-      cSection := cAreaIni+cSection
-      cAreaIni := oER:cDefIni
+IF oER:lNewFormat
+     cText:= AllTrim( GetPvProfString(  cAreaIni+cSection , cData , cDefault,  oER:cDefIni ) )
+   ELSE
+     cText:= AllTrim( GetPvProfString( cSection , cData , cDefault,  cAreaIni ) )
    ENDIF
 
-RETURN  AllTrim( GetPvProfString( cSection , cData , cDefault,  cAreaIni ) )
+RETURN cText
 
 //------------------------------------------------------------------------------
 
 FUNCTION SetDataArea( cSection, cItem, cItemDef, cAreaIni )
    Local oIni
-
 
 
    IF oEr:lNewFormat
@@ -239,11 +240,12 @@ RETURN nil
 FUNCTION DelEntryArea( cSection, cItem, cAreaIni )
 
    IF oEr:lNewFormat
-      cAreaIni := oEr:cDefIni
-      cSection := cAreaIni+ cSection
+      DelIniEntry( cAreaIni + cSection , cItem,  oEr:cDefIni )
+   ELSE
+      DelIniEntry( cSection, cItem, cAreaIni )
    endif
 
-   DelIniEntry( cSection, cItem, cAreaIni )
+
 
 Return nil
 
@@ -291,9 +293,10 @@ return .T.
 //----------------------------------------------------------------------------//
 
 function DelItemWithKey( nItem, nArea )
-   LOCAL cAreaIni :=  oER:aItems[nArea]
-   local cItemDef  :=  GetItemDef( nItem, cAreaIni )
+   LOCAL cAreaIni := GetNameArea(nArea)
+   local cItemDef
 
+   cItemDef  :=  GetItemDef( nItem, cAreaIni )
    DeleteItem( nItem, nArea, .T. )
    IF VAL( GetField( cItemDef, 3 ) ) < 0
       DelEntryArea( "Items",  AllTrim(STR(nItem,5) ), cAreaIni )
@@ -963,9 +966,6 @@ function SaveHTextItem( hVar, oItem )
    oItem:nShow   := IIF( oItem:lVisible, 1, 0 )
 
    hVar["cItemDef"] := oItem:Set( .F., oER:nMeasure )
-
-   pausa("area"+hVar["cAreaIni"] )
-   pausa( "def"+hVar["cItemDef"])
 
    SetDataArea( "Items", AllTrim(STR(i,5)), hVar["cItemDef"],  hVar["cAreaIni"] )
 
