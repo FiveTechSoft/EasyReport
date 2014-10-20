@@ -198,6 +198,27 @@ function DeleteItem( i, nArea, lFromList, lRemove, lFromUndoRedo )
 
 return .T.
 
+//------------------------------------------------------------------------------
+
+function CopyAllItemsToArea( nOldArea, nNewArea )
+
+   local i, cDef
+   local nLen := LEN( oER:aItems[nOldArea] )
+   LOCAL cOldArea := GetNameArea(nOldArea)
+   LOCAL cNewArea := GetNameArea(nNewArea)
+
+   if !MsgYesNo( GL("Copy items?"), GL("Select an option") )
+      return (.F.)
+   endif
+   FOR i := 1 TO nLen
+      cDef :=  GetItemDef( i, cOldArea  )
+      if !EMPTY( cDef )
+         SetDataArea( "Items",  AllTrim(Str(i,5)), cDef, cNewArea )
+      endif
+   NEXT
+
+return .T.
+
 //----------------------------------------------------------------------------//
 
 FUNCTION GetItemDef( nItem, cAreaIni )

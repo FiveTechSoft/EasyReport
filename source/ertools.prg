@@ -210,6 +210,77 @@ function DeleteArea()
    endif
 
    return .T.
+   
+//-----------------------------------------------------------------------------//
+
+function DuplicateArea( cTitle )
+
+   local i, oGet, oDlg, cTmpFile
+   local aAreaInis   := GetAreaInis()
+   local lreturn     := .F.
+   local cFile       := SPACE( 200 )
+   local nNewArea    := oER:nAktArea + 1
+   LOCAL nOldArea    := oER:nAktArea
+   local cDir        := CheckPath( oER:GetDefIni( "General", "AreaFilesDir", "" ) )
+   LOCAL nDecimals   := IIF( oER:nMeasure = 2, 2, 0 )
+   LOCAL aAreaProp:=  GetAreaProperties( oER:nAktArea )
+
+   if EMPTY( cDir )
+      cDir := cDefaultPath
+   endif
+
+   DEFINE DIALOG oDlg NAME "NEWFILENAME" TITLE cTitle
+
+   REDEFINE BUTTON PROMPT GL("&OK") ID 101 OF oDlg ACTION ( lReturn :=  ActionDlgInsertArea( cFile, oDlg, cDir ) )
+
+   REDEFINE BUTTON PROMPT GL("&Cancel") ID 102 OF oDlg ACTION oDlg:End()
+
+   REDEFINE SAY PROMPT GL("Name of the new area file") + ":" ID 171 OF oDlg
+
+   REDEFINE GET oGet VAR cFile ID 201 OF oDlg
+
+   ACTIVATE DIALOG oDlg CENTERED
+
+   if lreturn
+
+      nNewArea := IIF( nNewArea < 1, 1, nNewArea )
+      AINS( aAreaInis, nNewArea )
+      aAreaInis[nNewArea] := RTrim( cFile )
+
+      DelIniSection( "Areas", oER:cDefIni )
+
+      for i := 1 TO LEN( aAreaInis )
+         if !EMPTY( aAreaInis[i] )
+            WritePProString( "Areas", ALLTRIM(STR( i, 3 )), ALLTRIM( aAreaInis[i] ), oER:cDefIni )
+         endif
+      NEXT
+
+      IF oER:lNewFormat
+
+         SetDataArea( "General", "Title", "New Area",  ALLTRIM( aAreaInis[nNewArea] ) )
+         SetDataArea( "General", "Width",  ALLTRIM(STR( oGenVar:aAreaSizes[oER:nAktArea,1], 5, nDecimals )) , ALLTRIM( aAreaInis[nNewArea] ) )
+         SetDataArea( "General", "Height", ALLTRIM(STR( oGenVar:aAreaSizes[oER:nAktArea,2], 5, nDecimals )) , ALLTRIM( aAreaInis[nNewArea] ) )
+
+      ELSE
+
+         MEMOWRIT( cDir + cFile, ;
+                  "[General]" + CRLF + ;
+                  "Title=New Area" + CRLF + ;
+                  "Width="  + ALLTRIM(STR( oGenVar:aAreaSizes[oER:nAktArea,1], 5, nDecimals )) + CRLF + ;
+                  "Height=" + ALLTRIM(STR( oGenVar:aAreaSizes[oER:nAktArea,2], 5, nDecimals )) )
+
+      ENDIF
+
+     OpenFile( oER:cDefIni,, .T. )
+     oER:aWnd[ nNewArea ]:SetFocus()
+
+      SetAreaProperties( nNewArea, aAreaProp )
+      CopyAllItemsToArea( nOldArea,nNewArea )
+      oER:FillWindow( nNewArea, oER:aAreaIni[nNewArea] )
+
+   endif
+
+return .T.
 
 //------------------------------------------------------------------------------
 

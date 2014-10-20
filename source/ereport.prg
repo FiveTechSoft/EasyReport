@@ -1543,6 +1543,9 @@ function PopupMenu( nArea, oItem, nRow, nCol, lItem )
 
    MENUITEM GL("Insert Area &after" ) ACTION InsertArea( .F., STRTRAN( GL("Insert Area &after" ), "&" ) )
 
+
+   MENUITEM GL("&Duplicate current Area") ACTION DuplicateArea()
+
    MENUITEM GL("&Delete current Area") ACTION DeleteArea()
 
    SEPARATOR
