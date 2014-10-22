@@ -69,6 +69,8 @@ function ElementActions( oItem, i, cName, nArea, cAreaIni, cTyp )
 
    oItem:bKeyDown   = { | nKey | KeyDownAction( nKey, i, nArea, cAreaIni ) }
 
+   oItem:bPostDelcontrol:= { || DelItemWithKey( i , nArea ) }  
+
    oItem:bLostFocus = { | nRow, nCol, nFlags | ;
                           SelectItem( i, nArea, cAreaIni ), ;
                           nInfoRow := nRow, nInfoCol := nCol, ;
@@ -1016,8 +1018,10 @@ FUNCTION SetTextObj( oItem, nArea, i )
    LOCAL lCenter := IIF( oItem:nOrient = 2, .T., .F. )
    LOCAL lRight  := IIF( oItem:nOrient = 3,  .T., .F. )
 
-    if oItem:lVisible
-      oER:aItems[nArea,i]:End()
+   if oItem:lVisible
+      if !Empty(  oER:aItems[nArea,i])   // añadido por si es nil
+           oER:aItems[nArea,i]:End()
+      endif      
       oER:aItems[nArea,i] := ;
          TSay():New( oEr:nRulerTop + ER_GetPixel( oItem:nTop ), oER:nRuler + ER_GetPixel( oItem:nLeft ), ;
                      {|| oItem:cText }, oER:aWnd[ nArea ],, ;
@@ -2093,7 +2097,16 @@ function NewItem( cTyp, nArea, nTmpCopyArea, nTmpCopyEntry, cTmpItemCopy )
           SET SECTION "Items" ENTRY AllTrim(STR(nFree,5)) TO cItemDef OF oIni
       ENDINI
    endif
+   
+   // movemos esto aqui y lo comentamos abajo 
+   if cTyp <> "COPY"
+      ItemProperties( i, nArea,, .T. )
+   ELSE
+      Add2Undo( "", nFree, nArea )
+   endif
+
    ShowItem( nFree, nArea, cAreaIni, @aFirst, @nElemente )
+   
    oER:aItems[nArea,nFree]:lDrag := .T.
 
    nInfoRow := 0
@@ -2102,11 +2115,11 @@ function NewItem( cTyp, nArea, nTmpCopyArea, nTmpCopyEntry, cTmpItemCopy )
 
    SetSave( .F. )
 
-   if cTyp <> "COPY"
-      ItemProperties( i, nArea,, .T. )
-   ELSE
-      Add2Undo( "", nFree, nArea )
-   endif
+ //  if cTyp <> "COPY"
+ //     ItemProperties( i, nArea,, .T. )
+ //  ELSE
+ //     Add2Undo( "", nFree, nArea )
+ //  endif
 
     RefreshPanelTree()
 
