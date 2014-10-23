@@ -1917,7 +1917,7 @@ RETURN hLanguage
 
 //------------------------------------------------------------------------------
 
-function PrintReport( lPreview, lDeveloper, lPrintDlg, LPrintIDs )
+function PrintReport( lPreview, lDeveloper, lPrintDlg, LPrintIDs, cScript )
 
    local i, oVRD, cCondition
    //local lPrintIDs := IIF( GetPvProfString( "General", "PrintIDs", "0", oER:cDefIni ) = "0", .F., .T. )
