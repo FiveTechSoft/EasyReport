@@ -1952,6 +1952,17 @@ function PrintReport( lPreview, lDeveloper, lPrintDlg, LPrintIDs )
       return( .F. )
    endif
 
+  IF !EMPTY( cScript ) .AND. !FILE( cScript )
+      MsgStop( "Script not found:" + CRLF + CRLF + cScript )
+      QUIT
+   ENDIF
+
+   IF !Empty(cScript)
+
+       RunScript( cScript, oVrd )
+
+   else
+
    //erste Seite
    for i := 1 TO LEN( oVRD:aAreaInis )
       if GetDataArea( "General", "Condition", "0", oVRD:aAreaInis[i] ) <> "4"
@@ -1973,7 +1984,7 @@ function PrintReport( lPreview, lDeveloper, lPrintDlg, LPrintIDs )
       NEXT
 
    endif
-
+endif
    END EASYREPORT oVRD
 
 return .T.
@@ -2385,6 +2396,22 @@ function MultiUndoRedo( nTyp, nCount )
 
 //------------------------------------------------------------------------------
 
+FUNCTION RunScript( cScript, oVrd )
+
+   LOCAL oScript := TErScript():New( MEMOREAD( cScript ) )
+
+   oScript:lPreProcess := .T.
+   oScript:Compile()
+
+   IF !EMPTY( oScript:cError )
+      MsgStop( "Error in script:" + CRLF + CRLF + ALLTRIM( oScript:cError ), "Error" )
+   ELSE
+      oScript:Run( "Script", oVRD )
+   ENDIF
+
+RETURN .T.
+
+//------------------------------------------------------------------------------
 
 Function RndMsg( cCaption, cBmp ,nExpRow  )
    LOCAL nHeight := IF( Empty( cBmp ), 4, 11 )
