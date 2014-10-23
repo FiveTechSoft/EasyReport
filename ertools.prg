@@ -1607,8 +1607,7 @@ function PrintReport( lPreview, lDeveloper, lPrintDlg, LPrintIDs )
 
    local i, oVRD, cCondition
    //local lPrintIDs := IIF( GetPvProfString( "General", "PrintIDs", "0", oER:cDefIni ) = "0", .F., .T. )
-
-   DEFAULT lPrintIDs := .F.
+   //DEFAULT lPrintIDs := .F.
 
    DEFAULT lPreview   := .F.
    DEFAULT lDeveloper := .F.
@@ -1616,6 +1615,10 @@ function PrintReport( lPreview, lDeveloper, lPrintDlg, LPrintIDs )
 
    lpreview := .t. // de momento para ver como sale
    lDeveloper:= .t.   // de momento para ver como sale
+
+    IF Empty( LPrintIDs )
+      LPrintIDs := MsgNoYes("Desea imprimir las id de los objetos ?"  )
+   ENDIF
 
  //  if lDeveloper = .F.
  //     ShellExecute( 0, "Open", ;
