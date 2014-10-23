@@ -2594,3 +2594,82 @@ RETURN oBrw
 
 //------------------------------------------------------------------------------
 
+function OffsetRect( rc, x, y )
+
+rc[1] := rc[1] + y
+rc[2] := rc[2] + x
+rc[3] := rc[3] + y
+rc[4] := rc[4] + x
+
+return rc
+
+//------------------------------------------------------------------------------
+
+FUNCTION DotsSelect( hDC , nTop, nleft, nbottom, nRight )
+
+local aRect
+local nClrBorder
+local nClrPane
+local lFocused := .f.
+LOCAL aDots
+
+  nClrBorder := 0
+  nClrPane   := CLR_WHITE
+
+  aRect:= { nTop, nleft, nbottom, nRight }
+  DrawFocusRect( hDC,aRect[1]-4, aRect[2]-4, aRect[3]+4, aRect[4]+4 )
+
+  aDots := array( 8 )
+  aRect :=  {0,0,6,6}
+  aRect := OffsetRect( aRect, nLeft-7, nTop-7 )
+  aDots[1] := {aRect[1],aRect[2],aRect[3],aRect[4]}
+
+     Ellipse( hDC, aRect[2], aRect[1],aRect[4], aRect[3])
+
+
+  aRect := {0,0,6,6}
+  aRect := OffsetRect( aRect, nLeft + int((nRight - nLeft)/2)-3, nTop-7 )
+  aDots[2] := {aRect[1],aRect[2],aRect[3],aRect[4]}
+
+     Ellipse( hDC, aRect[2], aRect[1],aRect[4], aRect[3])
+
+
+  aRect := {0,0,6,6}
+  aRect := OffsetRect( aRect, nRight+1, nTop-7 )
+  aDots[3] := {aRect[1],aRect[2],aRect[3],aRect[4]}
+
+     Ellipse( hDC, aRect[2], aRect[1],aRect[4], aRect[3])
+
+  aRect := {0,0,6,6}
+  aRect := OffsetRect( aRect, nRight+1 , nTop + int((nBottom - nTop)/2)-3)
+  aDots[4] := {aRect[1],aRect[2],aRect[3],aRect[4]}
+
+     Ellipse( hDC, aRect[2], aRect[1],aRect[4], aRect[3])
+
+  aRect := {0,0,6,6}
+  aRect := OffsetRect( aRect, nRight+1, nBottom+1 )
+  aDots[5] := {aRect[1],aRect[2],aRect[3],aRect[4]}
+
+     Ellipse( hDC, aRect[2], aRect[1],aRect[4], aRect[3])
+
+  aRect := {0,0,6,6}
+  aRect := OffsetRect( aRect, nLeft + int((nRight - nLeft)/2)-3, nBottom+1 )
+  aDots[6] := {aRect[1],aRect[2],aRect[3],aRect[4]}
+
+   Ellipse( hDC, aRect[2], aRect[1],aRect[4], aRect[3])
+
+
+  aRect := {0,0,6,6}
+  aRect := OffsetRect( aRect, nLeft-7, nBottom+1 )
+  aDots[7] := {aRect[1],aRect[2],aRect[3],aRect[4]}
+
+     Ellipse( hDC, aRect[2], aRect[1],aRect[4], aRect[3])
+
+
+  aRect := {0,0,6,6}
+  aRect := OffsetRect( aRect, nLeft-7, nTop + int((nBottom - nTop)/2)-3 )
+  aDots[8] := {aRect[1],aRect[2],aRect[3],aRect[4]}
+
+  Ellipse( hDC, aRect[2], aRect[1],aRect[4], aRect[3])
+
+return nil
