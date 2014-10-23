@@ -424,11 +424,11 @@ METHOD New( cReportName, lPreview, cPrinter, oWnd, lModal, lPrintIDs, lNoPrint, 
             AADD( ::aAreaInis, cDef )
          else
             cFile := VRD_LF2SF( ::cAreaFilesDir + cDef )
-            IF FILE( cFile )
+            IF !FILE( cFile )
                AADD( ::aErrors, "2" + CHR(9) + "Area ini file not found: " + cDef )
+            else
+               AADD( ::aAreaInis, cFile )
             ENDIF
-            AADD( ::aAreaInis, cFile )
-
          endif
 
       ENDIF
