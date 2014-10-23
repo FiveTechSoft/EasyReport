@@ -2107,7 +2107,7 @@ function NewItem( cTyp, nArea, nTmpCopyArea, nTmpCopyEntry, cTmpItemCopy )
       Add2Undo( "", nFree, nArea )
    endif
 
-   ShowItem( nFree, nArea, cAreaIni, @aFirst, @nElemente )
+//   ShowItem( nFree, nArea, cAreaIni, @aFirst, @nElemente )
    
    oER:aItems[nArea,nFree]:lDrag := .T.
 
