@@ -1513,10 +1513,12 @@ return .T.
 
 FUNCTION SetGraObj( oItem, nArea, i )
 
-     if oItem:nShow = 1
-
-      oER:aItems[nArea,i]:End()
-
+  if oItem:nShow = 1
+  
+ 			IF !Empty(  oER:aItems[nArea,i])
+         oER:aItems[nArea,i]:End()
+      endif
+     
       oER:aItems[nArea,i] := TBitmap():New( oEr:nRulerTop + ER_GetPixel( oItem:nTop ), ;
           oER:nRuler + ER_GetPixel( oItem:nLeft ), ER_GetPixel( oItem:nWidth ), ER_GetPixel( oItem:nHeight ), ;
           "GRAPHIC",, .T., oER:aWnd[nArea],,, .F., .T.,,, .T.,, .T. )
@@ -1533,7 +1535,7 @@ FUNCTION SetGraObj( oItem, nArea, i )
       ElementActions( oER:aItems[nArea,i], i, "", nArea, GetNameArea(nArea) )
       oER:aItems[nArea,i]:SetFocus()
 
-   endif
+  endif
 
 
 RETURN nil
