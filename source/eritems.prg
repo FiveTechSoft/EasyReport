@@ -26,7 +26,13 @@ function ElementActions( oItem, i, cName, nArea, cAreaIni, cTyp )
 
    //oItems:bGotFocus  := {|| SelectItem( i, nArea, cAreaIni ), MsgBarInfos( i, cAreaIni ) }
 
-   oItem:bGotFocus  := {||   SelectItem( i, nArea, cAreaIni ),  RefreshBrwProp( i, cAreaIni )  }
+   
+   oItem:bGotFocus  := {||  SelectItem( i, nArea, cAreaIni ), ;
+                            AEval(  oItem:aDots, { | o | o:SetColor( CLR_WHITE, CLR_WHITE ),;
+                                    o:bPainted := { | hdc |  Ellipse( hDC , 1, 1,7,7 )  } } ) ,;
+                            oItem:refresh() ,;
+                            RefreshBrwProp( i, cAreaIni )  }
+
 
    oItem:bLClicked = { | nRow, nCol, nFlags | ;
                            If( oGenVar:lItemDlg, ( If( GetKeyState( VK_SHIFT ), MultiItemProperties(), ;
