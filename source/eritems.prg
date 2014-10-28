@@ -1318,8 +1318,9 @@ return .T.
 FUNCTION SetImgObj( oItem, nArea, i )
 
    if oItem:nShow = 1
-
-      oER:aItems[nArea,i]:End()
+ 			if !Empty(  oER:aItems[nArea,i])
+      		oER:aItems[nArea,i]:End()
+ 			endif     
       oER:aItems[nArea,i] := TImage():New( oEr:nRulerTop + ER_GetPixel( oItem:nTop ), ;
          oER:nRuler + ER_GetPixel( oItem:nLeft ), ER_GetPixel( oItem:nWidth ), ER_GetPixel( oItem:nHeight ),,, ;
          IIF( oItem:lBorder, .F., .T. ), oER:aWnd[nArea],,, .F., .T.,,, .T.,, .T. )
