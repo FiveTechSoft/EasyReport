@@ -3456,6 +3456,7 @@ function ItemList()
 
       oTree:bLDblClick  = { | nRow, nCol, nKeyFlags | ClickListTree( oTree ) }
       oTree:bEraseBkGnd = { || nil }  // to properly erase the tree background
+      oTree:bChanged := {|oTree,oItem| changeListTree( oTree,oItem ) }
 
 
       REDEFINE BUTTON PROMPT GL("&OK") ID 101 OF oDlg ACTION oDlg:End()
@@ -3466,6 +3467,7 @@ function ItemList()
 
      if !empty( oER:oTree )
         if empty( oER:oTree:aItems )
+           oEr:oTree:bChanged := {|oTree,oItem| changeListTree( oTree,oItem ) }
            oEr:oTree:bLDblClick  = { | nRow, nCol, nKeyFlags | ClickListTree( oEr:oTree ) }
            FillTree( oEr:oTree, oEr:oMainWnd )
            //  oEr:oTree:show()
@@ -3719,6 +3721,118 @@ return oTree
 
 //----------------------------------------------------------------------------//
 
+ function changeListTree( oTree,oItem )
+   local nArea , nItem, oLinkArea, cItemDef,  lWert
+   local nLevel  := 0
+   local cPrompt := oTree:GetSelText()
+   local oItem2   := oTree:GetSelected()
+
+   //pausa(cPrompt)
+
+   nLevel  := oItem2:ItemLevel()
+
+      Do Case
+         Case nLevel = 0
+              if !empty( oItem2:oParent )
+                 nArea     := Val( oItem2:GetParent():cPrompt )
+              else
+                 nArea     := Val( oItem2:cPrompt )
+              endif
+              DeactivateItem()
+              IIF( GetKeyState( VK_SHIFT ),, UnSelectAll() )
+               oEr:nAktArea := oER:aWnd[ nArea ]:nArea
+               swichItemsArea( nArea, .t. )
+               oEr:aWnd[nArea]:Setfocus()
+               swichItemsArea( nArea, .f. )
+
+         Case nLevel = 1
+
+              if !empty( oItem2:oParent )
+                       nArea     := Val( oItem2:GetParent():cPrompt )
+                       nItem     := Val( oItem2:cPrompt )
+              endif
+              cItemDef := AllTrim( GetDataArea( "Items", AllTrim(STR(nItem,5)) , "", oER:aAreaIni[ nArea ] ) )
+              if Val( GetField( cItemDef, 4 ) ) != 0
+                     naktItem := nitem
+                    oER:aItems[nArea,nItem]:setfocus()
+               endif
+           Otherwise
+       EndCase
+
+
+
+ /*
+   if cPrompt = GL("Visible") .OR. cPrompt = GL("Item Properties") //.or. !empty( At( ("[ " + GL("Item") + " ]"), cPrompt ) )
+
+      oLinkArea := oItem:GetParent()
+      nItem     := Val( oLinkArea:cPrompt )
+      nArea     := Val( oLinkArea:GetParent():cPrompt )
+
+   endif
+
+   Do Case
+       Case cPrompt = GL("Area Properties")
+
+           nArea     := Val( oItem:GetParent():cPrompt )
+           //oER:nAktArea  := nArea
+           AreaProperties( nArea )
+
+      Case cPrompt = GL("Item Properties")
+           oLinkArea:SetText( ItemProperties( nItem, nArea, .T. ) )
+           cItemDef := AllTrim( GetDataArea( "Items", AllTrim(STR(nItem,5)) , "", oER:aAreaIni[ nArea ] ) )
+           if IsGraphic( UPPER(AllTrim( GetField( cItemDef, 1 ) )) )
+              oLinkArea:set( ,  SetGraphTreeBmp( nItem, oER:aAreaIni[ nArea ] ) )
+           endif
+
+      Case cPrompt = GL("Visible")
+           cItemDef := AllTrim( GetDataArea( "Items", AllTrim(STR(nItem,5)) , "", oER:aAreaIni[ nArea ] ) )
+           lWert    := if( Val( GetField( cItemDef, 4 ) ) = 0, .F., .T. )
+           oItem:Set( , IF( lWert , 4  , 3   )    )
+           DeleteItem( nItem, nArea, .T., lWert )
+
+      Otherwise
+         if oEr:lDClkProperties
+
+              nLevel  := oItem:ItemLevel()
+              //? oItem:Cargo, oItem:cPrompt, oItem:oParent
+              Do Case
+                 Case nLevel = 0
+                    if !empty( oItem:oParent )
+                       nArea     := Val( oItem:GetParent():cPrompt )
+                    else
+                       nArea     := Val( oItem:cPrompt )
+                    endif
+                    //oER:nAktArea  := nArea
+                    oER:aWnd[ nArea ]:setfocus()
+                    RefreshBrwAreaProp(nArea)
+                    oItem:setText( AreaProperties( nArea ) )
+
+                 Case nLevel = 1
+                    oLinkArea  := oItem
+                    if !empty( oItem:oParent )
+                       nArea     := Val( oItem:GetParent():cPrompt )
+                       nItem     := Val( oItem:cPrompt )
+                    endif
+                    //oER:nAktArea  := nArea
+
+                    oER:aItems[nArea,nItem]:setfocus()
+                    oLinkArea:SetText( ItemProperties( nItem, nArea, .T. ) )
+
+                    cItemDef := AllTrim( GetDataArea( "Items", AllTrim(STR(nItem,5)) , "", oER:aAreaIni[ nArea ] ) )
+                    if IsGraphic( UPPER(AllTrim( GetField( cItemDef, 1 ) )) )
+                       oLinkArea:set( ,  SetGraphTreeBmp( nItem, oER:aAreaIni[ nArea ] ) )
+                    endif
+
+                 Otherwise
+              EndCase
+
+           endif
+   EndCase
+ */
+   RETURN nil
+
+//------------------------------------------------------------------------------
+
 function GetAllItems( cAktAreaIni )
 
    local i, cItemDef, cTyp, cName, nShow, nTyp, nDelete, nEntry
@@ -3776,6 +3890,7 @@ function ClickListTree( oTree )
    local cPrompt := oTree:GetSelText()
    local oItem   := oTree:GetSelected()
 
+
    if cPrompt = GL("Visible") .OR. cPrompt = GL("Item Properties") //.or. !empty( At( ("[ " + GL("Item") + " ]"), cPrompt ) )
 
       oLinkArea := oItem:GetParent()
@@ -3817,6 +3932,7 @@ function ClickListTree( oTree )
                        nArea     := Val( oItem:cPrompt )
                     endif
                     //oER:nAktArea  := nArea
+                    oER:aWnd[ nArea ]:setfocus()
                     RefreshBrwAreaProp(nArea)
                     oItem:setText( AreaProperties( nArea ) )
 
@@ -3827,6 +3943,8 @@ function ClickListTree( oTree )
                        nItem     := Val( oItem:cPrompt )
                     endif
                     //oER:nAktArea  := nArea
+
+                    oER:aItems[nArea,nItem]:setfocus()
                     oLinkArea:SetText( ItemProperties( nItem, nArea, .T. ) )
 
                     cItemDef := AllTrim( GetDataArea( "Items", AllTrim(STR(nItem,5)) , "", oER:aAreaIni[ nArea ] ) )
@@ -4998,22 +5116,22 @@ METHOD FillWindow( nArea, cAreaIni ) CLASS TEasyReport
    oRulerBmp1:bLClicked := { |nRow,nCol,nFlags| oEr:nAktArea := oER:aWnd[ nArea ]:nArea, ::oMainWnd:SetFocus() }
    oRulerBmp2:bLClicked := oRulerBmp1:bLClicked
 
-   oER:aWnd[ nArea ]:bPainted   = {| hDC, cPS | ZeichneHintergrund( nArea ) }
+   ::aWnd[ nArea ]:bPainted   = {| hDC, cPS | ZeichneHintergrund( nArea ) }
 
-   oER:aWnd[ nArea ]:bGotFocus  = { || msgpausa( nArea ),SetTitleColor( .F., nArea ), RefreshBrwAreaProp(nArea) }
-   oER:aWnd[ nArea ]:bLostFocus = { || SetTitleColor( .T., nArea ) }
+   ::aWnd[ nArea ]:bGotFocus  = { || msgpausa( nArea ),SetTitleColor( .F., nArea ), RefreshBrwAreaProp(nArea) }
+   ::aWnd[ nArea ]:bLostFocus = { || SetTitleColor( .T., nArea ) }
 
-   oER:aWnd[ nArea ]:bMMoved = {|nRow,nCol,nFlags| ;
+   ::aWnd[ nArea ]:bMMoved = {|nRow,nCol,nFlags| ;
                            MsgBarInfos( nRow, nCol, nArea ), ;
                            MoveSelection( nRow, nCol, oER:aWnd[ nArea ] ) ,;
                            if(!lScrollVert, ::SetReticule( nRow, nCol, nArea ), ::SetReticule( 0, 0, nArea )),;
                            lScrollVert :=  .F. }
 
-   oER:aWnd[ nArea ]:bRClicked = {|nRow,nCol,nFlags| oEr:nAktArea := oER:aWnd[ nArea ]:nArea, ::oMainWnd:SetFocus(),;
+   ::aWnd[ nArea ]:bRClicked = {|nRow,nCol,nFlags| oEr:nAktArea := oER:aWnd[ nArea ]:nArea, ::oMainWnd:SetFocus(),;
                                                  PopupMenu( nArea,, nRow, nCol ) }
 
 
-    oER:aWnd[ nArea ]:bLClicked = {|nRow,nCol,nFlags| DeactivateItem(), ;
+    ::aWnd[ nArea ]:bLClicked = {|nRow,nCol,nFlags| DeactivateItem(), ;
                               IIF( GetKeyState( VK_SHIFT ),, UnSelectAll() ), ;
                               StartSelection( nRow, nCol, oER:aWnd[ nArea ] ), ;
                               oEr:nAktArea := oER:aWnd[ nArea ]:nArea,;
@@ -5022,9 +5140,9 @@ METHOD FillWindow( nArea, cAreaIni ) CLASS TEasyReport
                               swichItemsArea( nArea, .f. )  }
 
 
-   oER:aWnd[ nArea ]:bLButtonUp = {|nRow,nCol,nFlags| StopSelection( nRow, nCol, oER:aWnd[ nArea ] ) }
+   ::aWnd[ nArea ]:bLButtonUp = {|nRow,nCol,nFlags| StopSelection( nRow, nCol, oER:aWnd[ nArea ] ) }
 
-   oER:aWnd[ nArea ]:bKeyDown   = {|nKey| WndKeyDownAction( nKey, nArea, cAreaIni ) }
+   ::aWnd[ nArea ]:bKeyDown   = {|nKey| WndKeyDownAction( nKey, nArea, cAreaIni ) }
 
    oRulerBmp1:bRClicked    := oER:aWnd[ nArea ]:bRClicked
    oRulerBmp2:bRClicked    := oER:aWnd[ nArea ]:bRClicked
