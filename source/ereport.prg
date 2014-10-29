@@ -145,7 +145,6 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
       MENU BuildMenu() ;
       MENUINFO 4
 
-
    SET MESSAGE OF oEr:oMainWnd  CENTERED 2010
 
    DEFINE MSGITEM oER:oMsgInfo OF oEr:oMainWnd:oMsgBar SIZE 280
@@ -161,6 +160,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
 
 
    IF oER:lShowPanel
+
       oER:oPanelI := TPanel():New( 0.1, 0, GetSysMetrics( 1 ) - 138, ;
                                    Int(GetSysMetrics( 0 )/4), ;          // 326
                                    oER:oMainWnd )
@@ -168,6 +168,8 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
       oER:oPanelD := TPanel():New( 0.1, Int( ScreenWidth() - 2*Int(GetSysMetrics( 0 )/4) ) + 2, ;
                               GetSysMetrics( 1 ) - 138 , 3*Int(GetSysMetrics( 0 )/4), ;
                               oER:oMainWnd )
+
+      oer:oPanelD:hide() // mientras estabilizamos la version
 
       if lValidFwh()
 
@@ -214,18 +216,22 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
 
       oEr:oMainWnd:oLeft   :=  oEr:oPanelI   //oER:oFldI
       oEr:oMainWnd:oRight  :=  oEr:oPanelD   //oER:oFldD
+
       oER:oFldI:SetColor(  , oEr:nClrPaneTree )
       oER:oFldD:SetColor(  , oEr:nClrPaneTree )
       oER:lNewFormat := .f.
 
-
       DlgTree( 2 )
       ER_Inspector( 3 )
+
       RefreshPanelTree()
+
+      sysrefresh()
 
       //oER:oInspector  = TInspector():New()
 
    ENDIF
+
 
    ACTIVATE WINDOW oEr:oMainWnd ;
       MAXIMIZED ;
@@ -741,10 +747,13 @@ function BarMenu()
          WHEN !Empty( oER:cDefIni )
    endif
 
-      DEFINE BUTTON RESOURCE "HIDE0", "HIDE1" ;
-                 OF oBar GROUP ;
-         PROMPT FWString( "Hide/Show" ) ;
-         ACTION ( SwichFldD( oEr:oMainWnd, oEr:oPanelD, )) //oER:oFldD, ) )
+   // oculto mientras estabilizamos version .
+  //    DEFINE BUTTON RESOURCE "HIDE0", "HIDE1" ;
+  //               OF oBar GROUP ;
+  //       PROMPT FWString( "Hide/Show" ) ;
+  //       ACTION ( SwichFldD( oEr:oMainWnd, oEr:oPanelD, )) //oER:oFldD, ) )
+
+
 
    // if Val( GetPvProfString( "General", "ShowExitButton", "0", oER:cGeneralIni ) ) = 1
 

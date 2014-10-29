@@ -140,7 +140,8 @@ function OpenFile( cFile, lChange, lAddDelNew )
          Er_Databases( , 2 )
          ER_Expressions( , , 1 )
          //ER_Inspector1( 3 )
-         SwichFldD( oEr:oMainWnd, oEr:oPanelD, ) //oER:oFldD )
+
+      //   SwichFldD( oEr:oMainWnd, oEr:oPanelD, )  // comentado mientras estabilizamos version
 
          RefreshPanelTree()
 
