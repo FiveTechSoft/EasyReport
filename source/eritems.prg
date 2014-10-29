@@ -26,13 +26,23 @@ function ElementActions( oItem, i, cName, nArea, cAreaIni, cTyp )
 
    //oItems:bGotFocus  := {|| SelectItem( i, nArea, cAreaIni ), MsgBarInfos( i, cAreaIni ) }
 
-   oItem:bGotFocus  := {||  SelectItem( i, nArea, cAreaIni ), oItem:checkDots(),;
-                             AEval(  oItem:aDots, { | o | o:SetColor( CLR_WHITE, CLR_WHITE ),;
+
+   oItem:bGotFocus  := {||  SelectItem( i, nArea, cAreaIni ),;
+                          IF( Empty(oItem:aDots),oItem:checkDots(), ) ,;
+                          AEval(  oItem:aDots, { | o | o:SetColor( CLR_WHITE, CLR_WHITE ),;
                                     o:bPainted := { | hdc |  Ellipse( hDC , 1, 1,7,7 )  } } ) ,;
-                            oItem:refresh(),;
-                            RefreshBrwProp( i, cAreaIni )  }
-   
-  oItem:bLClicked = { | nRow, nCol, nFlags | ;
+                          RefreshBrwProp( i, cAreaIni )  }
+
+   //                       oItem:refresh(),;
+   //                       RefreshBrwProp( i, cAreaIni )  }
+
+
+  // oItem:bGotFocus  := {||  SelectItem( i, nArea, cAreaIni ), ;
+  //                        RefreshBrwProp( i, cAreaIni )  }
+
+
+
+   oItem:bLClicked = { | nRow, nCol, nFlags | ;
                            If( oGenVar:lItemDlg, ( If( GetKeyState( VK_SHIFT ), MultiItemProperties(), ;
                             ( ItemProperties( i, nArea ), oCurDlg:SetFocus() ) ) ), ;
                             ( SelectItem( i, nArea, cAreaIni ), ;
@@ -73,12 +83,11 @@ function ElementActions( oItem, i, cName, nArea, cAreaIni, cTyp )
 
    oItem:bKeyDown   = { | nKey | KeyDownAction( nKey, i, nArea, cAreaIni ) }
 
-   oItem:bPostDelcontrol:= { || DelItemWithKey( i , nArea ) }  
+   oItem:bPostDelcontrol:= { || DelItemWithKey( i , nArea ) }
 
-   oItem:bLostFocus = { | nRow, nCol, nFlags | ;
-                          SelectItem( i, nArea, cAreaIni ), ;
-                          nInfoRow := nRow, nInfoCol := nCol, ;
-                          MsgBarItem( i, nArea, cAreaIni, nRow, nCol ) }
+   oItem:bLostFocus = { | nRow, nCol, nFlags |  SelectItem( i, nArea, cAreaIni ), ;
+                                                nInfoRow := nRow, nInfoCol := nCol, ;
+                                                MsgBarItem( i, nArea, cAreaIni, nRow, nCol ) }
 
 //                      ( IIF( GetKeyState( VK_SHIFT ), SelectItem( i, nArea, cAreaIni ), aWnd[ nArea ]:SetFocus() ), ;
 //   oItem:bLostFocus := { || IIF( GetKeyState( VK_SHIFT ), .T.,
@@ -1025,7 +1034,7 @@ FUNCTION SetTextObj( oItem, nArea, i )
    if oItem:lVisible
       if !Empty(  oER:aItems[nArea,i])   // añadido por si es nil
            oER:aItems[nArea,i]:End()
-      endif      
+      endif
       oER:aItems[nArea,i] := ;
          TSay():New( oEr:nRulerTop + ER_GetPixel( oItem:nTop ), oER:nRuler + ER_GetPixel( oItem:nLeft ), ;
                      {|| oItem:cText }, oER:aWnd[ nArea ],, ;
@@ -1037,6 +1046,7 @@ FUNCTION SetTextObj( oItem, nArea, i )
       oER:aItems[nArea,i]:lDrag := .T.
       ElementActions( oER:aItems[nArea,i], i, oItem:cText, nArea , GetNameArea(nArea) )
       oER:aItems[nArea,i]:SetFocus()
+
 
    endif
 
@@ -1316,9 +1326,11 @@ return .T.
 FUNCTION SetImgObj( oItem, nArea, i )
 
    if oItem:nShow = 1
- 			if !Empty(  oER:aItems[nArea,i])
-      		oER:aItems[nArea,i]:End()
- 			endif     
+      if !Empty(  oER:aItems[nArea,i])
+         oER:aItems[nArea,i]:End()
+      ENDIF
+
+
       oER:aItems[nArea,i] := TImage():New( oEr:nRulerTop + ER_GetPixel( oItem:nTop ), ;
          oER:nRuler + ER_GetPixel( oItem:nLeft ), ER_GetPixel( oItem:nWidth ), ER_GetPixel( oItem:nHeight ),,, ;
          IIF( oItem:lBorder, .F., .T. ), oER:aWnd[nArea],,, .F., .T.,,, .T.,, .T. )
@@ -1326,6 +1338,8 @@ FUNCTION SetImgObj( oItem, nArea, i )
       oER:aItems[nArea,i]:LoadBmp( VRD_LF2SF( oItem:cFile ) )
 
       oER:aItems[nArea,i]:lDrag := .T.
+
+
       ElementActions( oER:aItems[nArea,i], i, oItem:cText, nArea, GetNameArea(nArea) )
       oER:aItems[nArea,i]:SetFocus()
 
@@ -1519,11 +1533,11 @@ return .T.
 FUNCTION SetGraObj( oItem, nArea, i )
 
   if oItem:nShow = 1
-  
- 			IF !Empty(  oER:aItems[nArea,i])
+
+          IF !Empty(  oER:aItems[nArea,i])
          oER:aItems[nArea,i]:End()
       endif
-     
+
       oER:aItems[nArea,i] := TBitmap():New( oEr:nRulerTop + ER_GetPixel( oItem:nTop ), ;
           oER:nRuler + ER_GetPixel( oItem:nLeft ), ER_GetPixel( oItem:nWidth ), ER_GetPixel( oItem:nHeight ), ;
           "GRAPHIC",, .T., oER:aWnd[nArea],,, .F., .T.,,, .T.,, .T. )
@@ -2104,16 +2118,15 @@ function NewItem( cTyp, nArea, nTmpCopyArea, nTmpCopyEntry, cTmpItemCopy )
           SET SECTION "Items" ENTRY AllTrim(STR(nFree,5)) TO cItemDef OF oIni
       ENDINI
    endif
-   
-   // movemos esto aqui y lo comentamos abajo 
+
+   // movemos esto aqui y lo comentamos abajo
    if cTyp <> "COPY"
       ItemProperties( i, nArea,, .T. )
    ELSE
       Add2Undo( "", nFree, nArea )
-   endif
+   ENDIF
 
-//   ShowItem( nFree, nArea, cAreaIni, @aFirst, @nElemente )
-   
+   ShowItem( nFree, nArea, cAreaIni, @aFirst, @nElemente )
    oER:aItems[nArea,nFree]:lDrag := .T.
 
    nInfoRow := 0
