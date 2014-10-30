@@ -3644,7 +3644,7 @@ function ItemList()
 return nil
 */
 //----------------------------------------------------------------------------//
-
+/*
 function ListTrees( oTree )
 
    local i, y, oTr1, oTr2, cItemDef, aElemente, nEntry, cTitle
@@ -3718,7 +3718,7 @@ function ListTrees( oTree )
    oTree:Expand()
 
 return oTree
-
+  */
 //----------------------------------------------------------------------------//
 
  function changeListTree( oTree,oItem )
@@ -3754,82 +3754,73 @@ return oTree
               cItemDef := AllTrim( GetDataArea( "Items", AllTrim(STR(nItem,5)) , "", oER:aAreaIni[ nArea ] ) )
               if Val( GetField( cItemDef, 4 ) ) != 0
                      naktItem := nitem
-                    oER:aItems[nArea,nItem]:setfocus()
+                    oER:aItems[nArea,nItem]:Setfocus()
                endif
            Otherwise
        EndCase
 
-
-
- /*
-   if cPrompt = GL("Visible") .OR. cPrompt = GL("Item Properties") //.or. !empty( At( ("[ " + GL("Item") + " ]"), cPrompt ) )
-
-      oLinkArea := oItem:GetParent()
-      nItem     := Val( oLinkArea:cPrompt )
-      nArea     := Val( oLinkArea:GetParent():cPrompt )
-
-   endif
-
-   Do Case
-       Case cPrompt = GL("Area Properties")
-
-           nArea     := Val( oItem:GetParent():cPrompt )
-           //oER:nAktArea  := nArea
-           AreaProperties( nArea )
-
-      Case cPrompt = GL("Item Properties")
-           oLinkArea:SetText( ItemProperties( nItem, nArea, .T. ) )
-           cItemDef := AllTrim( GetDataArea( "Items", AllTrim(STR(nItem,5)) , "", oER:aAreaIni[ nArea ] ) )
-           if IsGraphic( UPPER(AllTrim( GetField( cItemDef, 1 ) )) )
-              oLinkArea:set( ,  SetGraphTreeBmp( nItem, oER:aAreaIni[ nArea ] ) )
-           endif
-
-      Case cPrompt = GL("Visible")
-           cItemDef := AllTrim( GetDataArea( "Items", AllTrim(STR(nItem,5)) , "", oER:aAreaIni[ nArea ] ) )
-           lWert    := if( Val( GetField( cItemDef, 4 ) ) = 0, .F., .T. )
-           oItem:Set( , IF( lWert , 4  , 3   )    )
-           DeleteItem( nItem, nArea, .T., lWert )
-
-      Otherwise
-         if oEr:lDClkProperties
-
-              nLevel  := oItem:ItemLevel()
-              //? oItem:Cargo, oItem:cPrompt, oItem:oParent
-              Do Case
-                 Case nLevel = 0
-                    if !empty( oItem:oParent )
-                       nArea     := Val( oItem:GetParent():cPrompt )
-                    else
-                       nArea     := Val( oItem:cPrompt )
-                    endif
-                    //oER:nAktArea  := nArea
-                    oER:aWnd[ nArea ]:setfocus()
-                    RefreshBrwAreaProp(nArea)
-                    oItem:setText( AreaProperties( nArea ) )
-
-                 Case nLevel = 1
-                    oLinkArea  := oItem
-                    if !empty( oItem:oParent )
-                       nArea     := Val( oItem:GetParent():cPrompt )
-                       nItem     := Val( oItem:cPrompt )
-                    endif
-                    //oER:nAktArea  := nArea
-
-                    oER:aItems[nArea,nItem]:setfocus()
-                    oLinkArea:SetText( ItemProperties( nItem, nArea, .T. ) )
-
-                    cItemDef := AllTrim( GetDataArea( "Items", AllTrim(STR(nItem,5)) , "", oER:aAreaIni[ nArea ] ) )
-                    if IsGraphic( UPPER(AllTrim( GetField( cItemDef, 1 ) )) )
-                       oLinkArea:set( ,  SetGraphTreeBmp( nItem, oER:aAreaIni[ nArea ] ) )
-                    endif
-
-                 Otherwise
-              EndCase
-
-           endif
-   EndCase
- */
    RETURN nil
+
+//------------------------------------------------------------------------------
+
+FUNCTION SetSelectItemTree( oTree, nArea, nItem )
+   LOCAL cPrompt
+   local cTitle, cDef
+
+    cTitle := oER:aWndTitle[nArea]
+    IF Empty(cTitle)
+       cTitle:= ""
+    endif
+    cTitle := AllTrim(STR(nArea,5)) + ". " + cTitle
+
+   IF Empty( nItem )
+      oItem:=ScanTreeArea( oTree, cTitle )
+   ELSE
+      cDef:=  GetItemDef( nItem, oER:aAreaIni[nArea] )
+      cPrompt := AllTrim(Str( nItem ))+ ". " +  AllTrim( GetField( cDef, 2 ) )
+      oItem:= ScanTreeItem( oTree, cTitle, cPrompt )
+   ENDIF
+   IF !Empty(oItem)
+      oTree:Select( oItem )
+   endif
+RETURN nil
+
+//------------------------------------------------------------------------------
+
+static function ScanTreeArea( oTree, cPrompt )
+
+   local oItem, i
+   LOCAL aItems:= oTree:aItems
+   for i := 1 to Len( aItems )
+       oItem = aItems[ i ]
+       IF oItem:cPrompt == cPrompt
+          RETURN oItem
+       endif
+   next
+return nil
+
+//------------------------------------------------------------------------------
+
+static function ScanTreeItem( oTree, nArea, cPrompt )
+
+   local oItem, i, oItem2, n
+   LOCAL aItems:= oTree:aItems
+
+   for i := 1 to Len( aItems )
+      oItem = aItems[ i ]
+      IF oItem:cPrompt == nArea
+         if Len( oItem:aItems ) != 0
+            FOR n=1 TO Len(oItem:aItems)
+               oItem2:=  oItem:aItems[n]
+               IF oItem2:cPrompt == cPrompt
+                   RETURN oItem2
+               endif
+            next
+         endif
+      ENDIF
+   next
+
+return nil
 
 //------------------------------------------------------------------------------
 
@@ -5137,7 +5128,8 @@ METHOD FillWindow( nArea, cAreaIni ) CLASS TEasyReport
                               oEr:nAktArea := oER:aWnd[ nArea ]:nArea,;
                               swichItemsArea( nArea, .t. ) ,;
                               ::oMainWnd:SetFocus() ,;
-                              swichItemsArea( nArea, .f. )  }
+                              swichItemsArea( nArea, .f. ),;
+                              SetSelectItemTree( oER:oTree, nArea )}
 
 
    ::aWnd[ nArea ]:bLButtonUp = {|nRow,nCol,nFlags| StopSelection( nRow, nCol, oER:aWnd[ nArea ] ) }
