@@ -31,7 +31,8 @@ function ElementActions( oItem, i, cName, nArea, cAreaIni, cTyp )
                           IF( Empty(oItem:aDots),oItem:checkDots(), ) ,;
                           AEval(  oItem:aDots, { | o | o:SetColor( CLR_WHITE, CLR_WHITE ),;
                                     o:bPainted := { | hdc |  Ellipse( hDC , 1, 1,7,7 )  } } ) ,;
-                          RefreshBrwProp( i, cAreaIni )  }
+                          RefreshBrwProp( i, cAreaIni ) ,;
+                          SetSelectItemTree( oER:oTree, nArea, i ) }
 
    //                       oItem:refresh(),;
    //                       RefreshBrwProp( i, cAreaIni )  }
@@ -453,6 +454,7 @@ function ItemProperties( i, nArea, lFromList, lNew )
 
    Memory(-1)
    SysRefresh()
+
 
 return ( cName )
 
@@ -1032,10 +1034,13 @@ FUNCTION SetTextObj( oItem, nArea, i )
    LOCAL lRight  := IIF( oItem:nOrient = 3,  .T., .F. )
 
    if oItem:lVisible
-      if !Empty(  oER:aItems[nArea,i])   // añadido por si es nil
-           oER:aItems[nArea,i]:End()
-      endif
-      oER:aItems[nArea,i] := ;
+
+      if !Empty(  oER:aItems[nArea,i])
+         // añadido por si es nil
+         oER:aItems[nArea,i]:HideDots()
+         oER:aItems[nArea,i]:End()
+
+         oER:aItems[nArea,i] := ;
          TSay():New( oEr:nRulerTop + ER_GetPixel( oItem:nTop ), oER:nRuler + ER_GetPixel( oItem:nLeft ), ;
                      {|| oItem:cText }, oER:aWnd[ nArea ],, ;
                      oFont, lCenter, lRight, ( oItem:lBorder .OR. oGenVar:lShowBorder ), ;
@@ -1043,12 +1048,14 @@ FUNCTION SetTextObj( oItem, nArea, i )
                      ER_GetPixel( oItem:nWidth ), ER_GetPixel( oItem:nHeight ), ;
                      .F., .T., .F., .F., .F. )
 
-      oER:aItems[nArea,i]:lDrag := .T.
-      ElementActions( oER:aItems[nArea,i], i, oItem:cText, nArea , GetNameArea(nArea) )
-      oER:aItems[nArea,i]:SetFocus()
+        oER:aItems[nArea,i]:lDrag := .T.
+        ElementActions( oER:aItems[nArea,i], i, oItem:cText, nArea , GetNameArea(nArea) )
 
+        oER:aItems[nArea,i]:SetFocus()
 
+     endif
    endif
+
 
    if !oItem:lVisible .AND. oER:aItems[nArea,i] <> NIL
       oER:aItems[nArea,i]:lDrag := .F.
