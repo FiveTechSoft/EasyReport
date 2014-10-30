@@ -1039,7 +1039,7 @@ FUNCTION SetTextObj( oItem, nArea, i )
          // añadido por si es nil
          oER:aItems[nArea,i]:HideDots()
          oER:aItems[nArea,i]:End()
-
+         sysrefresh()
          oER:aItems[nArea,i] := ;
          TSay():New( oEr:nRulerTop + ER_GetPixel( oItem:nTop ), oER:nRuler + ER_GetPixel( oItem:nLeft ), ;
                      {|| oItem:cText }, oER:aWnd[ nArea ],, ;
@@ -1048,7 +1048,8 @@ FUNCTION SetTextObj( oItem, nArea, i )
                      ER_GetPixel( oItem:nWidth ), ER_GetPixel( oItem:nHeight ), ;
                      .F., .T., .F., .F., .F. )
 
-        oER:aItems[nArea,i]:lDrag := .T.
+         oER:aItems[nArea,i]:lDrag := .T.
+
         ElementActions( oER:aItems[nArea,i], i, oItem:cText, nArea , GetNameArea(nArea) )
 
         oER:aItems[nArea,i]:SetFocus()
