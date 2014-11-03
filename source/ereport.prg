@@ -1,7 +1,6 @@
 #include "FiveWin.ch"
 #include "ttitle.ch"
 
-
 #xcommand @ <nRow>, <nCol> CFOLDEREX [<oFolder>] ;
              [ <of: OF, WINDOW, DIALOG> <oWnd> ] ;
              [ <prm: PROMPT, PROMPTS, ITEMS> <cPrompt,...> ] ;
@@ -610,12 +609,19 @@ RETURN nil
 //------------------------------------------------------------------------------
 
 function BarMenu()
-   LOCAL oBar
+   LOCAL oBar, oMenuProp
    local aBtn[4]
    local lPrompt := ( GetSysMetrics( 0 ) > 800 )
    Local oFont
 
    DEFINE FONT oFont NAME "Tahoma" SIZE 0,-9
+
+
+    MENU oMenuProp POPUP
+         MENUITEM "GO Back" ACTION ItemBack()
+         MENUITEM "GO Front" ACTION ItemFront()
+   ENDMENU
+
 
    DEFINE BUTTONBAR oBar OF oEr:oMainWnd SIZE 70, 70 2010
    oBar:SetFont( oFont )
@@ -629,7 +635,7 @@ function BarMenu()
       OF oBar ;
       PROMPT FWString( "New" ) ;
       TOOLTIP GL("New report") ;
-      ACTION NewReport()
+      ACTION  NewReport()
 
 //  ENDIF
 
@@ -653,7 +659,7 @@ function BarMenu()
          OF oBar ;
          PROMPT FWString( "Preview" ) ;
          TOOLTIP GL("Preview") ;
-         ACTION (  swichFldD( oEr:oMainWnd, oER:oFldD ), ;
+         ACTION ( swichFldD( oEr:oMainWnd, oER:oFldD ), ;
                   if( !Print_erReport(,,2, oEr:oMainWnd ), swichFldD( oEr:oMainWnd, oER:oFldD ,.t.), ) );   //   PrintReport( .T., !oGenVar:lStandalone ) ;
          WHEN Empty( oER:cDefIni ) //;
          //MENU oMenuPreview
@@ -715,7 +721,8 @@ function BarMenu()
       PROMPT FWString( "Properties" ) ;
       TOOLTIP GL("Item Properties") ;
       ACTION IIF( LEN( oER:aSelection ) <> 0, MultiItemProperties(), ItemProperties( nAktItem, oER:nAktArea ) ) ;
-      WHEN !Empty( oER:cDefIni )
+      WHEN !Empty( oER:cDefIni ) ;
+      MENU oMenuProp
 
    if Val( oEr:GetDefIni( "General", "InsertMode", "1" ) ) = 1
       DEFINE BUTTON RESOURCE "B_TEXT32", "B_TEXT32", "B_TEXT321" ;
@@ -967,6 +974,35 @@ function PreviewMenu( oBtn )
    ACTIVATE POPUP oMenu AT aRect[3], aRect[2] OF oBtn
 
 return( oMenu )
+
+//------------------------------------------------------------------------------
+
+FUNCTION itemfront()
+   LOCAL i
+   local nLen := LEN( oER:aItems[oER:nAktArea] )
+   LOCAL cDef
+   FOR i= 1 TO nLen
+      cDef :=  GetItemDef( i, oER:aAreaIni[oER:nAktArea]  )
+      IF !Empty( cDef )
+       IF VAL( GetField( cDef, 4 ) ) != 0
+              IF nAktItem != i
+                 DeleteItem( i, oER:nAktArea, .t., .t. )
+                 DeleteItem( i, oER:nAktArea, .t., .f. )
+              endif
+         endif
+      endif
+  next
+RETURN NIL
+
+FUNCTION itemBack()
+  LOCAL cDef :=  GetItemDef( nAktItem, oER:aAreaIni[oER:nAktArea]  )
+    IF !Empty( cDef )
+       IF VAL( GetField( cDef, 4 ) ) != 0
+          DeleteItem( nAktItem, oER:nAktArea, .t., .t. )
+          DeleteItem( nAktItem, oER:nAktArea, .t., .f. )
+       ENDIF
+   ENDIF
+RETURN nil
 
 //----------------------------------------------------------------------------//
 
@@ -5289,9 +5325,9 @@ Function ER_TooltipAr( nArea, cRuler1 )
    oTT:lSplitHdr   = .T.
    oTT:lBorder     = .T.
 
-Return oTT
+   Return oTT
 
-//----------------------------------------------------------------------------//
+//------------------------------------------------------------------------------
 
 FUNCTION pausa(xc)
    RETURN msginfo(xc)
