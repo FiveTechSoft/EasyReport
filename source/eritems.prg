@@ -86,9 +86,9 @@ function ElementActions( oItem, i, cName, nArea, cAreaIni, cTyp )
 
    oItem:bPostDelcontrol:= { || DelItemWithKey( i , nArea ) }
 
-   oItem:bLostFocus = { | nRow, nCol, nFlags |  IIF( GetKeyState( VK_SHIFT ),  SelectItem( i, nArea, cAreaIni ), ), ;
-                                                nInfoRow := nRow, nInfoCol := nCol, ;
-                                                MsgBarItem( i, nArea, cAreaIni, nRow, nCol ) }
+    oItem:bLostFocus = { | nRow, nCol, nFlags |  ;
+                              nInfoRow := nRow, nInfoCol := nCol, ;
+                              MsgBarItem( i, nArea, cAreaIni, nRow, nCol ) }
    
 return .T.
 
