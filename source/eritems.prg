@@ -86,13 +86,10 @@ function ElementActions( oItem, i, cName, nArea, cAreaIni, cTyp )
 
    oItem:bPostDelcontrol:= { || DelItemWithKey( i , nArea ) }
 
-   oItem:bLostFocus = { | nRow, nCol, nFlags |  SelectItem( i, nArea, cAreaIni ), ;
+   oItem:bLostFocus = { | nRow, nCol, nFlags |  IIF( GetKeyState( VK_SHIFT ),  SelectItem( i, nArea, cAreaIni ), ), ;
                                                 nInfoRow := nRow, nInfoCol := nCol, ;
                                                 MsgBarItem( i, nArea, cAreaIni, nRow, nCol ) }
-
-//                      ( IIF( GetKeyState( VK_SHIFT ), SelectItem( i, nArea, cAreaIni ), aWnd[ nArea ]:SetFocus() ), ;
-//   oItem:bLostFocus := { || IIF( GetKeyState( VK_SHIFT ), .T.,
-
+   
 return .T.
 
 //----------------------------------------------------------------------------//
