@@ -25,11 +25,10 @@ FUNCTION SelectItem( nItem, nArea, cAreaIni )
    nSelArea := nArea
    oER:nAktArea := nArea
 
-   IF GetKeyState( VK_SHIFT )
-      ToggleItemSelection( nItem, nArea )
-   ELSE
+   IF !GetKeyState( VK_SHIFT )
       UnSelectAll()
    ENDIF
+   ToggleItemSelection( nItem, nArea )
 
 RETURN (.T.)
 

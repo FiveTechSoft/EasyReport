@@ -89,7 +89,7 @@ function ElementActions( oItem, i, cName, nArea, cAreaIni, cTyp )
     oItem:bLostFocus = { | nRow, nCol, nFlags |  ;
                               nInfoRow := nRow, nInfoCol := nCol, ;
                               MsgBarItem( i, nArea, cAreaIni, nRow, nCol ) }
-   
+
 return .T.
 
 //----------------------------------------------------------------------------//
@@ -556,6 +556,41 @@ function UpdateItems( nValue, nTyp, lAddValue, aOldValue )
    UnSelectAll( .F. )
 
    return .T.
+
+//------------------------------------------------------------------------------
+
+ function MultiItemsAligh( nTyp )
+    LOCAL cItemDef
+    LOCAL nTop, nLeft, nWidth, nHeight
+    local aOldValue
+
+    IF Len( oER:aSelection ) == 0
+       RETURN nil
+    ENDIF
+
+    cItemDef  := AllTrim( GetDataArea( "Items", AllTrim(STR( oER:aSelection[1,2], 5 )), ;
+                      "", oER:aAreaIni[ oER:aSelection[1,1] ] ) )
+    nTop      := VAL( GetField( cItemDef, 7 ) )
+    nLeft     := VAL( GetField( cItemDef, 8 ) )
+    nWidth    := VAL( GetField( cItemDef, 9 ) )
+    nHeight   := VAL( GetField( cItemDef, 10 ) )
+    aOldValue := { 0, 0, 0, 0 }
+
+   IF nTyp == 1
+      nValue:= nTop
+   ELSEIF nTyp == 2
+      nValue:= nLeft
+   ELSEIF nTyp == 3
+      nValue:= nWidth
+   ELSEIF nTyp == 4
+       nValue:= nHeight
+    ENDIF
+
+
+   UpdateItems( nValue , nTyp, .f., @aOldValue )
+
+return .T.
+
 
 //------------------------------------------------------------------------------
 

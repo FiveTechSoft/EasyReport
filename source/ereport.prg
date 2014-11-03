@@ -620,6 +620,10 @@ function BarMenu()
     MENU oMenuProp POPUP
          MENUITEM "GO Back" ACTION ItemBack()
          MENUITEM "GO Front" ACTION ItemFront()
+         MENUITEM "Aligh TOP" ACTION MultiItemsAligh( 1 )
+         MENUITEM "Aligh Left" ACTION MultiItemsAligh( 2 )
+         MENUITEM "equal Width" ACTION MultiItemsAligh( 3 )
+         MENUITEM "equal Height" ACTION MultiItemsAligh( 4 )
    ENDMENU
 
 
@@ -720,7 +724,7 @@ function BarMenu()
       OF oBar ;
       PROMPT FWString( "Properties" ) ;
       TOOLTIP GL("Item Properties") ;
-      ACTION IIF( LEN( oER:aSelection ) <> 0, MultiItemProperties(), ItemProperties( nAktItem, oER:nAktArea ) ) ;
+      ACTION IIF( LEN( oER:aSelection ) > 1, MultiItemProperties(), ItemProperties( nAktItem, oER:nAktArea ) ) ;
       WHEN !Empty( oER:cDefIni ) ;
       MENU oMenuProp
 
@@ -1472,7 +1476,7 @@ function BuildMenu()
          WHEN !Empty( oER:cDefIni )
       SEPARATOR
       MENUITEM GL("&Item Properties") + chr(9) + GL("Ctrl+I") RESOURCE "B_EDIT" ;
-         ACTION IIF( LEN( oER:aSelection ) <> 0, MultiItemProperties(), ItemProperties( nAktItem, oER:nAktArea ) ) ;
+         ACTION IIF( LEN( oER:aSelection ) > 1, MultiItemProperties(), ItemProperties( nAktItem, oER:nAktArea ) ) ;
          ACCELERATOR ACC_CONTROL, ASC( GL("I") ) ;
          WHEN !Empty( oER:cDefIni )
       ENDMENU
@@ -1566,7 +1570,7 @@ function PopupMenu( nArea, oItem, nRow, nCol, lItem )
 
    if LEN( oER:aSelection ) <> 0 .OR. nAktItem <> 0
       MENUITEM GL("&Item Properties") + chr(9) + GL("Ctrl+I") RESOURCE "B_EDIT" ;
-      ACTION IIF( LEN( oER:aSelection ) <> 0, MultiItemProperties(), ItemProperties( nAktItem, oER:nAktArea ) )
+      ACTION IIF( LEN( oER:aSelection ) > 1, MultiItemProperties(), ItemProperties( nAktItem, oER:nAktArea ) )
    endif
 
    if LEN( oER:aSelection ) <> 0
@@ -2003,7 +2007,7 @@ function WndKeyDownAction( nKey, nArea, cAreaIni )
    endif
 
    //return to edit properties
-   if nKey == VK_RETURN .and. LEN( oER:aSelection ) <> 0
+   if nKey == VK_RETURN .and. LEN( oER:aSelection ) > 1
       MultiItemProperties()
    endif
 
