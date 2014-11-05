@@ -898,7 +898,8 @@ METHOD PrintItem( nArea, nItemID, cValue, nAddToTop, lMemo, nEntry ) CLASS VRD
    IF oItem:cType = "TEXT" .AND. oItem:nShow = 1
 
       cText := ::EvalExpression( oItem:cText )
-      IF .NOT. EMPTY( oItem:cSource ) .AND. ::lNoExpr = .F.
+
+      IF !EMPTY( oItem:cSource ) .AND. !::lNoExpr
          cText := ::EvalSourceCode( oItem:cSource )
       ENDIF
 
@@ -955,9 +956,10 @@ METHOD PrintItem( nArea, nItemID, cValue, nAddToTop, lMemo, nEntry ) CLASS VRD
          nMemoHeight    := aMemo[1]
          lMemoPageBreak := aMemo[2]
       ELSE
+
          ::Say( ::ToPix( nItemTop, .T. ) , ;
                 ::ToPix( nTextLeft, .F. ), ;
-                IIF( cValue = NIL, cText, cValue ), oFont, ;
+                IIF( Empty( cValue ), cText, cValue ), oFont, ;
                 ::ToPix( oItem:nWidth, .F. ), ;
                 ::aColors[ oItem:nColText ], , nPad )
       ENDIF
@@ -1041,7 +1043,7 @@ METHOD PrintItem( nArea, nItemID, cValue, nAddToTop, lMemo, nEntry ) CLASS VRD
       nRight     := ::ToPix( oItem:nWidth, .F. )
 
       cText := ::EvalExpression( oItem:cText )
-      IF .NOT. EMPTY( oItem:cSource ) .AND. ::lNoExpr = .F.
+      IF !EMPTY( oItem:cSource ) .AND. ::lNoExpr = .F.
          cText := ::EvalSourceCode( oItem:cSource )
       ENDIF
 
@@ -1811,12 +1813,18 @@ METHOD SetExpression( cName, cExpression, cInfo ) CLASS VRD
 
 RETURN ( .T. )
 
+//------------------------------------------------------------------------------
 
-*-- METHOD -------------------------------------------------------------------
-*         Name: GetExpression
-*  Description:
-*       Author: Timm Sodtalbers
-*-----------------------------------------------------------------------------
+Function DbfOpen( cFile, cAlias, cVia )
+DEFAULT cVia :=  "DBFNTX"
+DEFAULT cAlias := cfileNoext(cFileNopath(cfile ))
+    cAlias:= cGetNewAlias(cAlias)
+    USE (cfile) VIA (cVia) ALIAS (cAlias) NEW SHARED
+Return cAlias
+
+
+//------------------------------------------------------------------------------
+
 METHOD GetExpression( cName ) CLASS VRD
 
    LOCAL nAltSel, cExprDBF
@@ -1826,9 +1834,7 @@ METHOD GetExpression( cName ) CLASS VRD
    LOCAL cUserExpr   := ::cDataPath + GetPvProfString( "General", "UserExpressions"   , "", ::cDefIni )
    LOCAL cDataExpr   := ::cDataPath + GetPvProfString( "General", "DataExpressions"   , "", ::cDefIni )
 
-  // LOCAL cGenExpr    := ::cDefaultPath + GetPvProfString( "General", "GeneralExpressions", "", ::cDefIni )
-  // LOCAL cUserExpr   := ::cDefaultPath + GetPvProfString( "General", "UserExpressions"   , "", ::cDefIni )
-  // LOCAL cDataExpr   := ::cDefaultPath + GetPvProfString( "General", "DataExpressions"   , "", ::cDefIni )
+   LOCAL cAlias, cZielDbf
 
    DEFAULT cName := ""
 
@@ -1846,39 +1852,37 @@ METHOD GetExpression( cName ) CLASS VRD
    ENDIF
 
    nAltSel := SELECT()
-   SELECT 0
-   USE ( VRD_LF2SF( cExprDBF ) ) ALIAS "EXPRDBF"
 
-   LOCATE FOR EXPRDBF->NAME = SUBSTR( cName, 4 )
+   cAlias:= DbfOpen( VRD_LF2SF( cExprDBF ) )
 
-   IF FOUND()
+   LOCATE FOR AllTrim(( cAlias )->NAME) == AllTrim(SUBSTR( cName, 4 ) )
+
+   IF (calias)->(FOUND())
 
       IF lDatabase = .F.
-
-         cExpression := EXPRDBF->EXPRESSION
-
+         cExpression := ( cAlias )->EXPRESSION
       ELSE
 
          cExpression := ""
 
-         IF .NOT. EMPTY( EXPRDBF->DATABASE ) .AND. ;
-               FILE( VRD_LF2SF( ALLTRIM( EXPRDBF->DATABASE ) ) ) = .T.
+         IF !EMPTY( ( cAlias )->DATABASE ) .AND. ;
+               FILE( VRD_LF2SF( ALLTRIM( ( cAlias )->DATABASE ) ) )
 
-            SELECT 0
-            USE ( VRD_LF2SF( ALLTRIM( EXPRDBF->DATABASE ) ) ) ALIAS "ZIELDBF" VIA ::cRDD
-            GO EXPRDBF->RECORD
+            cZielDbf :=  DbfOpen(  VRD_LF2SF( ALLTRIM( ( cAlias )->DATABASE ) ) , , ::cRDD )
 
-            IF .NOT. EMPTY( EXPRDBF->FIELD )
+            ( cZielDbf )->( DBGoTo( ( cAlias )->RECORD ) )
 
-               IF EXPRDBF->TYPE = "N"
-                  cExpression := ALLTRIM( STR( ZIELDBF->&(ALLTRIM(EXPRDBF->FIELD)), 20, EXPRDBF->DECIMALS ) )
+            IF !EMPTY( ( cAlias )->FIELD )
+
+               IF ( cAlias )->TYPE = "N"
+                  cExpression := ALLTRIM( STR(  ( cZielDbf )->&(ALLTRIM(( cAlias )->FIELD)), 20, ( cAlias )->DECIMALS ) )
                ELSE
-                  cExpression := ZIELDBF->&(ALLTRIM(EXPRDBF->FIELD))
+                  cExpression :=  ( cZielDbf )->&(ALLTRIM(( cAlias )->FIELD))
                ENDIF
 
             ENDIF
 
-            ZIELDBF->(DBCLOSEAREA())
+            ( cZielDbf )->(DBCLOSEAREA())
 
          ENDIF
 
@@ -1886,7 +1890,8 @@ METHOD GetExpression( cName ) CLASS VRD
 
    ENDIF
 
-   EXPRDBF->(DBCLOSEAREA())
+   ( cAlias )->(DBCLOSEAREA())
+
    SELECT( nAltSel )
 
 RETURN ( cExpression )

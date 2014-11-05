@@ -436,21 +436,6 @@ function GetExprFields( cDatabase )
 
    close( cAlias )
 
-   /*
-   DBUSEAREA( .T.,, cDatabase, "TEMPEXPR" )
-
-   DO WHILE !EOF()
-      if !EMPTY( TEMPEXPR->NAME )
-         AADD( aTemp, ALLTRIM( TEMPEXPR->NAME ) )
-      endif
-      TEMPEXPR->(DBSKIP())
-   ENDDO
-
-
-
-  TEMPEXPR->(DBCLOSEAREA())
-   */
-
    SELECT( nSelect )
 
 return ( aTemp )
@@ -1031,12 +1016,15 @@ return ( cReturn )
 
 function Expressions( lTake, cAltText )
 
-   local i, oDlg, oFld, oBrw, oBrw2, oBrw3, oFont, creturn, oSay1, nTyp, oGet1
+   local i, oDlg, oFld, oBrw, oBrw2, oBrw3, oFont, creturn, oSay1, nTyp
    local oBtn1, aBtn[3], aGet[5], cName
    local nAltSel    := SELECT()
    local nShowExpr  := VAL( oER:GetDefIni( "General", "Expressions", "0" ) )
    local cGenExpr   := ALLTRIM( oEr:cDataPath + oER:GetDefIni( "General", "GeneralExpressions", "General.dbf" ) )
    local cUserExpr  := ALLTRIM( oEr:cDataPath + oER:GetDefIni( "General", "UserExpressions", "User.dbf") )
+   LOCAL cAliasGen, cAliasUser
+   LOCAL aVar:= Array(3)
+   LOCAL oGet1, oGet2, oGet3
 
    local aUndo      := {}
    local cErrorFile := ""
@@ -1054,7 +1042,7 @@ function Expressions( lTake, cAltText )
       cErrorFile += cUserExpr + CRLF
    endif
 
-   if .NOT. EMPTY( cErrorFile )
+   if !EMPTY( cErrorFile )
       MsgStop( GL("This file(s) could no be found:") + CRLF + CRLF + cErrorFile, GL("Stop!") )
       return( cAltText )
    endif
@@ -1080,53 +1068,65 @@ function Expressions( lTake, cAltText )
                  "EXPRESS_FOLDER2"
    endif
 
-     IF Select(  "GENEXPR" ) == 0
-        SELECT 0
-        USE ( VRD_LF2SF( cGenExpr ) ) ALIAS "GENEXPR" SHARED
-     endif
+   cAliasGen := OpenDbf( VRD_LF2SF( cGenExpr ) )
+
+
+  //  IF Select(  "GENEXPR" ) == 0
+  //      SELECT 0
+  //      USE ( VRD_LF2SF( cGenExpr ) ) ALIAS "GENEXPR" SHARED
+  //   endif
+
 
    REDEFINE LISTBOX oBrw ;
-      FIELDS GENEXPR->NAME, GENEXPR->INFO ;
+      FIELDS ( cAliasGen )->NAME, ( cAliasGen )->INFO ;
       FIELDSIZES 180, 400 ;
       HEADERS " " + GL("Name"), " " + GL("Description") ;
       ID 301 OF oFld:aDialogs[1] FONT oFont ;
-      ON LEFT DBLCLICK ( creturn := GENEXPR->NAME, nTyp := 1, oDlg:End() )
+      ON LEFT DBLCLICK ( creturn := ( cAliasGen )->NAME, nTyp := 1, oDlg:End() )
 
    oBrw:bKeyDown = { | nKey, nFlags | IIF( nKey == VK_RETURN, ;
-                     EVAL( {|| creturn := GENEXPR->NAME, nTyp := 1, oDlg:End() } ), .T. ) }
+                     EVAL( {|| creturn := ( cAliasGen )->NAME, nTyp := 1, oDlg:End() } ), .T. ) }
 
    if nShowExpr = 1
 
       i := 2
 
-IF Select(  "USEREXPR" ) ==0
-   SELECT 0
-   USE ( VRD_LF2SF( cUserExpr ) ) ALIAS "USEREXPR" SHARED
-ENDIF
+    cAliasUser := OpenDbf( VRD_LF2SF( cUserExpr ) )
+
+//IF Select(  "USEREXPR" ) ==0
+//   SELECT 0
+//   USE ( VRD_LF2SF( cUserExpr ) ) ALIAS "USEREXPR" SHARED
+//ENDIF
+
+    aVar[1]:= ( cAliasUser )->NAME
+    aVar[2]:= ( cAliasUser )->INFO
+    aVar[3] := ( cAliasUser )->EXPRESSION
 
    REDEFINE LISTBOX oBrw2 ;
-      FIELDS USEREXPR->NAME, USEREXPR->INFO ;
+      FIELDS ( cAliasUser )->NAME, ( cAliasUser )->INFO ;
       FIELDSIZES 220, 400 ;
       HEADERS " " + GL("Name"), " " + GL("Description") ;
       ID 301 OF oFld:aDialogs[i] FONT oFont ;
-      ON CHANGE ( oDlg:Update(), aUndo := {} ) ;
-      ON LEFT DBLCLICK ( creturn := USEREXPR->NAME, nTyp := 2, oDlg:End() )
+      ON CHANGE ( cargaUserGet(aVar,cAliasUser ) ,;
+                  oDlg:Update(), aUndo := {} ) ;
+      ON LEFT DBLCLICK ( creturn := ( cAliasUser )->NAME, nTyp := 2, oDlg:End() )
 
    oBrw2:bKeyDown = { | nKey, nFlags | IIF( nKey == VK_RETURN, ;
-                      EVAL( {|| creturn := USEREXPR->NAME, nTyp := 2, oDlg:End() } ), .T. ) }
+                      EVAL( {|| creturn := ( cAliasUser )->NAME, nTyp := 2, oDlg:End() } ), .T. ) }
 
    REDEFINE BUTTON PROMPT GL("&New")    ID 101 OF oFld:aDialogs[i] ;
-      ACTION ( USEREXPR->(DBAPPEND()), oBrw2:Refresh(), oBrw2:GoBottom(), oDlg:Update() )
+      ACTION ( ( cAliasUser )->(DBAPPEND()), oBrw2:Refresh(), oBrw2:GoBottom(), oDlg:Update() )
    REDEFINE BUTTON PROMPT GL("&Delete") ID 102 OF oFld:aDialogs[i] ;
-      ACTION ( USEREXPR->(DBDELETE()), USEREXPR->(DBPACK()), ;
-               USEREXPR->(DBSKIP(-1)), oBrw2:Refresh(), oDlg:Update() )
+      ACTION (  ( cAliasUser )->(rlock()), ( cAliasUser )->(DBDELETE()),( cAliasUser )->(DBUnlock()), ;
+               ( cAliasUser )->(DBGoTop()), oBrw2:gotop(),oBrw2:Refresh(), oDlg:Update() )
 
-   REDEFINE GET           USEREXPR->NAME       ID 201 OF oFld:aDialogs[i] UPDATE ;
-      VALID ( oBrw2:Refresh(), .T. )
-   REDEFINE GET oGet1 VAR USEREXPR->EXPRESSION ID 202 OF oFld:aDialogs[i] UPDATE ;
-      VALID ( oBrw2:Refresh(), .T. )
-   REDEFINE GET           USEREXPR->INFO       ID 203 OF oFld:aDialogs[i] UPDATE ;
-      VALID ( oBrw2:Refresh(), .T. )
+   REDEFINE GET  oGet1 VAR  aVar[1]   ID 201 OF oFld:aDialogs[i] UPDATE ;
+      VALID ( GrabaUserGet(aVar,cAliasUser ), oBrw2:Refresh(), .T. )
+
+   REDEFINE GET oGet2 VAR  aVar[2]   ID 202 OF oFld:aDialogs[i] UPDATE ;
+      VALID ( GrabaUserGet(aVar,cAliasUser ), oBrw2:Refresh(), .T. )
+   REDEFINE GET oGet3 VAR   aVar[3]  ID 203 OF oFld:aDialogs[i] UPDATE ;
+      VALID ( GrabaUserGet(aVar,cAliasUser ), oBrw2:Refresh(), .T. )
 
    REDEFINE BUTTON ID 401 OF oFld:aDialogs[i] ACTION CopyToExpress( "="   , oGet1, @aUndo )
    REDEFINE BUTTON ID 402 OF oFld:aDialogs[i] ACTION CopyToExpress( "<>"  , oGet1, @aUndo )
@@ -1156,7 +1156,7 @@ ENDIF
    REDEFINE BUTTON ID 603 OF oFld:aDialogs[i] ACTION CopyToExpress( "Str(  )"  , oGet1, @aUndo )
 
    REDEFINE BUTTON  PROMPT GL("Check") ID 505 OF oFld:aDialogs[i] ;
-      ACTION CheckExpression( USEREXPR->EXPRESSION )
+      ACTION CheckExpression( ( cAliasUser )->EXPRESSION )
    REDEFINE BUTTON oBtn1 PROMPT GL("Undo") ID 506 OF oFld:aDialogs[i] WHEN LEN( aUndo ) > 0 ;
       ACTION aUndo := UnDoExpression( oGet1, aUndo )
 
@@ -1169,23 +1169,49 @@ ENDIF
    ACTIVATE DIALOG oDlg CENTER ;
       ON INIT IIF( lTake = .F., oSay1:Hide, .T. )
 
-   if .NOT. EMPTY( creturn )
+   if !EMPTY( creturn )
       creturn := "[" + ALLTRIM(STR( nTyp , 1 )) + "]" + ALLTRIM( creturn )
-   ELSEif .NOT. EMPTY( cAltText )
+   ELSEif !EMPTY( cAltText )
       creturn := cAltText
    endif
 
-//   GENEXPR->(DBCLOSEAREA())
 
-//   if nShowExpr = 1
-//      USEREXPR->(DBCLOSEAREA())
-//   endif
+   close( cAliasGen  )
+
+   if nShowExpr = 1
+       close( cAliasUser )
+   endif
 
    SELECT( nAltSel )
    oFont:End()
    aUndo := {}
 
 return ( creturn )
+
+//------------------------------------------------------------------------------
+
+FUNCTION cargaUserGet(aVar,cAliasUser )
+
+    aVar[1]:= ( cAliasUser )->NAME
+    aVar[2]:= ( cAliasUser )->INFO
+    aVar[3] := ( cAliasUser )->EXPRESSION
+
+RETURN
+
+//------------------------------------------------------------------------------
+
+FUNCTION GrabaUserGet(aVar,cAliasUser )
+ IF ( cAliasUser )->( RLock() )
+   ( cAliasUser )->NAME :=  aVar[1]
+   ( cAliasUser )->INFO :=  aVar[2 ]
+   ( cAliasUser )->EXPRESSION :=  aVar[3]
+   (cAliasUser)->( dbUnlock() )
+   RETURN .t.
+ENDIF
+
+RETURN .f.
+
+
 //------------------------------------------------------------------------------
 
 Function ER_Inspector( nD, oDlg )
@@ -1441,7 +1467,7 @@ function ER_Expressions( lTake, cAltText, nD )
 
    @ 4, oFld:aDialogs[i]:nWidth - 190 BTNBMP PROMPT GL("&Delete") ;
             OF oFld:aDialogs[i] SIZE 80, 20 PIXEL ;
-            ACTION ( USEREXPR->(DBDELETE()), USEREXPR->(DBPACK()), ;
+            ACTION ( USEREXPR->(DBDELETE()), ;
                USEREXPR->(DBSKIP(-1)), oBrw2:Refresh(), oDlg:Update() )
 
    @ 30, 1 XBROWSE oBrw2 ;
@@ -1575,9 +1601,7 @@ return lReturn
 //-----------------------------------------------------------------------------
 
 function DBPack()
-
    PACK
-
 return .T.
 
 //-----------------------------------------------------------------------------
@@ -1946,6 +1970,7 @@ function PrintReport( lPreview, lDeveloper, lPrintDlg, LPrintIDs, cScript )
 
    oVRD:LPrintIDs :=  lPrintIDs
    oVrd:lAutoPageBreak := .T.
+   oVrd:lNoExpr = .F.
 
    if oVRD:lDialogCancel
       return( .F. )
