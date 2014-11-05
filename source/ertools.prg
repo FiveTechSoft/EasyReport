@@ -210,7 +210,7 @@ function DeleteArea()
    endif
 
    return .T.
-   
+
 //-----------------------------------------------------------------------------//
 
 function DuplicateArea( cTitle )
@@ -1080,10 +1080,9 @@ function Expressions( lTake, cAltText )
                  "EXPRESS_FOLDER2"
    endif
 
-
-     IF Select(  "GENEXPR" ) ==0
-       SELECT 0
-       USE ( VRD_LF2SF( cGenExpr ) ) ALIAS "GENEXPR" SHARED
+     IF Select(  "GENEXPR" ) == 0
+        SELECT 0
+        USE ( VRD_LF2SF( cGenExpr ) ) ALIAS "GENEXPR" SHARED
      endif
 
    REDEFINE LISTBOX oBrw ;
@@ -1404,7 +1403,7 @@ function ER_Expressions( lTake, cAltText, nD )
    oFld:aDialogs[1]:SetColor( CLR_BLACK, oEr:nClrPaneTree )
    oFld:aDialogs[2]:SetColor( CLR_BLACK, oEr:nClrPaneTree )
    SELECT 0
-   USE ( VRD_LF2SF( cGenExpr ) ) ALIAS "GENEXPR" //SHARED
+   USE ( VRD_LF2SF( cGenExpr ) ) ALIAS "GENEXPR" SHARED
 
    @ 6, 4 SAY oSay1 ;
       PROMPT GL("Please doubleclick an expression to take it over.") ;
@@ -1434,7 +1433,7 @@ function ER_Expressions( lTake, cAltText, nD )
 
    i := 2
    SELECT 0
-   USE ( VRD_LF2SF( cUserExpr ) ) ALIAS "USEREXPR" //SHARED
+   USE ( VRD_LF2SF( cUserExpr ) ) ALIAS "USEREXPR" SHARED
 
    @ 4, oFld:aDialogs[i]:nWidth - 100 BTNBMP PROMPT GL("&New") ;
             OF oFld:aDialogs[i] SIZE 80, 20 PIXEL ;
