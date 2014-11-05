@@ -622,8 +622,10 @@ function BarMenu()
          MENUITEM "GO Front" ACTION ItemFront()
          MENUITEM "Aligh TOP" ACTION MultiItemsAligh( 1 )
          MENUITEM "Aligh Left" ACTION MultiItemsAligh( 2 )
+         MENUITEM "Aligh Right" ACTION MultiItemsAligh( 6 )
          MENUITEM "equal Width" ACTION MultiItemsAligh( 3 )
          MENUITEM "equal Height" ACTION MultiItemsAligh( 4 )
+       //  MENUITEM "MARCA" ACTION UnSelectAll( .F. )
    ENDMENU
 
 

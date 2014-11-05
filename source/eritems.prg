@@ -53,11 +53,13 @@ function ElementActions( oItem, i, cName, nArea, cAreaIni, cTyp )
 
    oItem:bMoved   = { || SetItemSize( i, nArea, cAreaIni ), ;
                          RefreshBrwProp( i, cAreaIni ), ;
-                         MsgBarItem( i, nArea, cAreaIni,,, .T. ) }
+                         MsgBarItem( i, nArea, cAreaIni,,, .T. ),;
+                         oER:aWnd[ nArea ]:refresh()   }
 
    oItem:bResized = { |nrow,ncol| SetItemSize( i, nArea, cAreaIni ),;
                          RefreshBrwProp( i, cAreaIni ), ;
-                         MsgBarItem( i, nArea, cAreaIni,,, .T. ) }
+                         MsgBarItem( i, nArea, cAreaIni,,, .T. ),;
+                         oER:aWnd[ nArea ]:refresh() }
 
    oItem:bMMoved  = { | nRow, nCol, nFlags, aPoint | ;
                         oER:SetReticule( nRow, nCol, nArea ),;
@@ -234,6 +236,11 @@ return .T.
 
 //----------------------------------------------------------------------------//
 
+FUNCTION GetcAreaIni( nArea )
+Return oER:aAreaIni[ nArea ]
+
+//------------------------------------------------------------------------------
+
 FUNCTION GetItemDef( nItem, cAreaIni )
  RETURN  GetDataArea( "Items", AllTrim(STR(nItem,5)),"", cAreaIni )
 
@@ -278,8 +285,6 @@ FUNCTION DelEntryArea( cSection, cItem, cAreaIni )
    ELSE
       DelIniEntry( cSection, cItem, cAreaIni )
    endif
-
-
 
 Return nil
 
@@ -506,6 +511,7 @@ return .T.
 function UpdateItems( nValue, nTyp, lAddValue, aOldValue )
 
    local i, aWerte, nTop, nLeft, nWidth, nHeight
+   local nRight
    local lStop     := .F.
    local nPixValue := ER_GetPixel( nValue )
 
@@ -528,7 +534,8 @@ function UpdateItems( nValue, nTyp, lAddValue, aOldValue )
 
     */
 
-   UnSelectAll( .F. )
+ //  UnSelectAll( .F. )
+
 
    FOR i := 1 TO LEN( oER:aSelection )
 
@@ -543,16 +550,21 @@ function UpdateItems( nValue, nTyp, lAddValue, aOldValue )
       case nTyp = 2 ; IIF( lAddValue, nLeft   += nPixValue, nLeft   := oER:nRuler    + nPixValue )
       case nTyp = 3 ; IIF( lAddValue, nWidth  += nPixValue, nWidth  := nPixValue )
       case nTyp = 4 ; IIF( lAddValue, nHeight += nPixValue, nHeight := nPixValue )
+      CASE nTyp = 6 ; IIF( lAddValue, nLeft   += nPixValue - nWidth , nLeft  :=  oER:nRuler + nPixValue - nWidth )
       endcase
 
       aOldValue[nTyp] := nValue
 
+      oER:aItems[ oER:aSelection[i,1], oER:aSelection[i,2]] :HideDots()
       oER:aItems[ oER:aSelection[i,1], oER:aSelection[i,2]] :Move( nTop, nLeft, nWidth, nHeight, .T. ) //, .T. )
 
       oER:aItems[ oER:aSelection[i,1], oER:aSelection[i,2] ]:Refresh()
+      oER:aWnd[ oER:aSelection[i,1] ]:refresh()
 
    NEXT
 
+   UnSelectAll( .F. )
+   sysrefresh()
    UnSelectAll( .F. )
 
    return .T.
@@ -574,7 +586,7 @@ function UpdateItems( nValue, nTyp, lAddValue, aOldValue )
     nLeft     := VAL( GetField( cItemDef, 8 ) )
     nWidth    := VAL( GetField( cItemDef, 9 ) )
     nHeight   := VAL( GetField( cItemDef, 10 ) )
-    aOldValue := { 0, 0, 0, 0 }
+    aOldValue := { 0, 0, 0, 0, 0, 0 }
 
    IF nTyp == 1
       nValue:= nTop
@@ -583,9 +595,10 @@ function UpdateItems( nValue, nTyp, lAddValue, aOldValue )
    ELSEIF nTyp == 3
       nValue:= nWidth
    ELSEIF nTyp == 4
-       nValue:= nHeight
+      nValue:= nHeight
+   ELSEIF nTyp == 6
+       nValue:= nLeft + nWidth
     ENDIF
-
 
    UpdateItems( nValue , nTyp, .f., @aOldValue )
 
