@@ -679,7 +679,7 @@ Return nil
 function TextProperties( i, nArea, cAreaIni, lFromList, lNew )
 
    local nColor
-   local aCbx[5], aGrp[3], aGet[5], aSay[4]
+   local aCbx[5], aGrp[3], aGet[6], aSay[4]
    local nDefClr, oBtn, oBtn2, oBtn3
  //  local oVar  := GetoVar( i, nArea, cAreaIni, lNew )
    LOCAL hVar  := GetohVar( i, nArea, cAreaIni, lNew )
@@ -715,7 +715,8 @@ function TextProperties( i, nArea, cAreaIni, lFromList, lNew )
 
    nDefClr := oCurDlg:nClrPane
 
-   REDEFINE GET aGet[4] VAR oItem:cText ID 201 OF oCurDlg WHEN oItem:nEdit <> 0 MEMO
+   REDEFINE GET aGet[4] VAR oItem:cText ID 201 OF oCurDlg WHEN oItem:nEdit <> 0  MEMO// ;
+
 
    REDEFINE BTNBMP oBtn2 ID 154 OF oCurDlg NOBORDER RESOURCE "SELECT" TRANSPARENT ;
       TOOLTIP GL("Databases and Expressions") WHEN oItem:nEdit <> 0 ;
@@ -745,9 +746,9 @@ function TextProperties( i, nArea, cAreaIni, lFromList, lNew )
       SPINNER MIN 0.01 MAX hVar["nGesHeight"] - oItem:nTop ;
       VALID oItem:nHeight > 0 .AND. oItem:nTop + oItem:nHeight <= hVar["nGesHeight"]
 
-   REDEFINE COMBOBOX hVar["cOrient"] ITEMS hVar["aOrient"] BITMAPS hVar["aBitmaps"] ID 305 OF oCurDlg ;
-   ON CHANGE ( IF( hVar["cOrient"] == GL("Line-makeup") ,;
-                msgGet("Atención","asigne el interlineado",@ hVar["nInterLine"] ),) )
+   REDEFINE COMBOBOX hVar["cOrient"] ITEMS hVar["aOrient"] BITMAPS hVar["aBitmaps"] ID 305 OF oCurDlg //;
+  // ON CHANGE ( IF( hVar["cOrient"] == GL("Line-makeup") ,;
+   //             msgGet("Atención","asigne el interlineado",@ hVar["nInterLine"] ),) )
 
    REDEFINE CHECKBOX aCbx[3] VAR oItem:lVisible    ID 306 OF oCurDlg WHEN oItem:nDelete <> 0
    REDEFINE CHECKBOX aCbx[4] VAR oItem:lMultiLine  ID 307 OF oCurDlg
@@ -765,6 +766,9 @@ function TextProperties( i, nArea, cAreaIni, lFromList, lNew )
    REDEFINE GET aGet[3] VAR oItem:nFont    ID 503 OF oCurDlg PICTURE "9999" SPINNER MIN 1 MAX 20 ;
       ON CHANGE aSay[3]:Refresh() ;
       VALID     ( aSay[3]:Refresh(), .T. )
+
+   REDEFINE GET aGet[4] VAR hVar["nInterLine"] ID 504 OF oCurDlg PICTURE "99.99" SPINNER MIN 0.01 MAX 2.99
+
 
    REDEFINE CHECKBOX aCbx[1] VAR oItem:lBorder ID 601 OF oCurDlg
    REDEFINE CHECKBOX aCbx[2] VAR oItem:lTrans  ID 602 OF oCurDlg
@@ -792,7 +796,7 @@ function TextProperties( i, nArea, cAreaIni, lFromList, lNew )
    REDEFINE BTNBMP RESOURCE "SELECT" TRANSPARENT NOBORDER ID 153 OF oCurDlg ;
       ACTION ( oItem:nFont := ShowFontChoice( oItem:nFont ), aGet[3]:Refresh(), aSay[3]:Refresh() )
 
-   REDEFINE BUTTON PROMPT GL("&OK")     ID 101 OF oCurDlg ;
+   REDEFINE BUTTON PROMPT GL("&OK")  ID 101 OF oCurDlg ;
       ACTION ( oGenVar:lDlgSave := .T., oGenVar:lItemDlg := .F., oCurDlg:End() )
 
    REDEFINE BUTTON PROMPT GL("&Cancel") ID 102 OF oCurDlg ;
@@ -835,6 +839,7 @@ function TextProperties( i, nArea, cAreaIni, lFromList, lNew )
    REDEFINE SAY PROMPT GL("Text color:")       ID 176 OF oCurDlg
    REDEFINE SAY PROMPT GL("Background color:") ID 177 OF oCurDlg
    REDEFINE SAY PROMPT GL("Font") +":"         ID 178 OF oCurDlg
+   REDEFINE SAY PROMPT GL("Interline") +":"    ID 179 OF oCurDlg
 
    REDEFINE SAY PROMPT oER:cMeasure ID 181 OF oCurDlg
    REDEFINE SAY PROMPT oER:cMeasure ID 182 OF oCurDlg
@@ -854,11 +859,14 @@ function TextProperties( i, nArea, cAreaIni, lFromList, lNew )
                 aCbx[2]:SetText( GL("Transparent") ), ;
                 aCbx[3]:SetText( GL("Visible") ), ;
                 aCbx[4]:SetText( GL("Multiline") ), ;
-                aCbx[5]:SetText( GL("Variable height") ) ) ;
+                aCbx[5]:SetText( GL("Variable height") ) , ;
+                DlgBarTitle( oCurDlg, GL("Text Properties"), "B_EDIT32",44 ) ) ;
+                ON PAINT  DlgStatusBar(oCurDlg, 68,, .t. )  ;
       VALID ( IIF( oGenVar:lDlgSave, SaveHTextItem( hVar, oItem ), oGenVar:lItemDlg := .F. ), ;
               oGenVar:lDlgSave := .F., SetItemDlg() )
 
    oCurDlg:bMoved := {|| SetItemDlg() }
+
 
 return ( .T. )
 
