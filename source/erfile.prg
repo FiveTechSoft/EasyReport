@@ -137,8 +137,8 @@ function OpenFile( cFile, lChange, lAddDelNew )
          //DlgTree( 2 )
          Dlg_Colors( 3 )
          Dlg_Fonts( 4 )
-         Er_Databases( , 2 )
-         ER_Expressions( , , 1 )
+         //  Er_Databases( , 2 )
+         //  ER_Expressions( , , 1 )
          //ER_Inspector1( 3 )
 
       //   SwichFldD( oEr:oMainWnd, oEr:oPanelD, )  // comentado mientras estabilizamos version

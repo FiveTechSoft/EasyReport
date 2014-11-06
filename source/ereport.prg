@@ -164,11 +164,11 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
                                    Int(GetSysMetrics( 0 )/4), ;          // 326
                                    oER:oMainWnd )
 
-      oER:oPanelD := TPanel():New( 0.1, Int( ScreenWidth() - 2*Int(GetSysMetrics( 0 )/4) ) + 2, ;
-                              GetSysMetrics( 1 ) - 138 , 3*Int(GetSysMetrics( 0 )/4), ;
-                              oER:oMainWnd )
+   //   oER:oPanelD := TPanel():New( 0.1, Int( ScreenWidth() - 2*Int(GetSysMetrics( 0 )/4) ) + 2, ;
+   //                           GetSysMetrics( 1 ) - 138 , 3*Int(GetSysMetrics( 0 )/4), ;
+   //                           oER:oMainWnd )
 
-      oer:oPanelD:hide() // mientras estabilizamos la version
+   //   oer:oPanelD:hide() // mientras estabilizamos la version
 
       if lValidFwh()
 
@@ -182,15 +182,15 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
        PIXEL ;
        SEPARATOR 0
 
-       @ 0.2, 1 CFOLDEREX oER:oFldD ;
-       PROMPT GL("&Expressions"), GL("&Databases"), GL("&Inspector") ; //, GL("&Fields"), GL("Fil&ters") ;
-       OF oEr:oPanelD ; //oEr:oMainWnd ;
-       SIZE Int(GetSysMetrics( 0 )/4), GetSysMetrics( 1 ) - 138 ;
-       OPTION 1 ;
-       TAB HEIGHT 34 ;
-       BITMAPS { "B_ITEMLIST16", "B_EDIT2" } ; //, "B_AREA", "B_AREA" } ;
-       PIXEL ;
-       SEPARATOR 0
+    //   @ 0.2, 1 CFOLDEREX oER:oFldD ;
+    //   PROMPT GL("&Expressions"), GL("&Databases"), GL("&Inspector") ; //, GL("&Fields"), GL("Fil&ters") ;
+    //   OF oEr:oPanelD ; //oEr:oMainWnd ;
+    //   SIZE Int(GetSysMetrics( 0 )/4), GetSysMetrics( 1 ) - 138 ;
+    //   OPTION 1 ;
+    //   TAB HEIGHT 34 ;
+    //   BITMAPS { "B_ITEMLIST16", "B_EDIT2" } ; //, "B_AREA", "B_AREA" } ;
+    //   PIXEL ;
+    //   SEPARATOR 0
 
       else
 
@@ -201,27 +201,27 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
        OPTION 2 ;
        PIXEL
 
-       @ 0.2, 1 FOLDER oER:oFldD ;
-       PROMPT GL("&Expressions"), GL("&Databases") ; //, GL("&Fields"), GL("Fil&ters") ;
-       OF oEr:oPanelD ;  //oEr:oMainWnd ;
-       SIZE Int(GetSysMetrics( 0 )/4), GetSysMetrics( 1 ) - 138 ;
-       OPTION 1 ;
-       PIXEL
+    //   @ 0.2, 1 FOLDER oER:oFldD ;
+    //   PROMPT GL("&Expressions"), GL("&Databases") ; //, GL("&Fields"), GL("Fil&ters") ;
+    //   OF oEr:oPanelD ;  //oEr:oMainWnd ;
+    //   SIZE Int(GetSysMetrics( 0 )/4), GetSysMetrics( 1 ) - 138 ;
+    //   OPTION 1 ;
+    //   PIXEL
 
       endif
 
       oER:oPanelI:SetColor(  , oEr:nClrPaneTree )
-      oER:oPanelD:SetColor(  , oEr:nClrPaneTree )
+   //   oER:oPanelD:SetColor(  , oEr:nClrPaneTree )
 
       oEr:oMainWnd:oLeft   :=  oEr:oPanelI   //oER:oFldI
       oEr:oMainWnd:oRight  :=  oEr:oPanelD   //oER:oFldD
 
       oER:oFldI:SetColor(  , oEr:nClrPaneTree )
-      oER:oFldD:SetColor(  , oEr:nClrPaneTree )
+    //  oER:oFldD:SetColor(  , oEr:nClrPaneTree )
       oER:lNewFormat := .f.
 
       DlgTree( 2 )
-      ER_Inspector( 3 )
+   //   ER_Inspector( 3 )
 
       RefreshPanelTree()
 
@@ -275,7 +275,7 @@ return nil
 //------------------------------------------------------------------------------
 
 Function SwichFldD( oWnd, oFld, lSetVisible  )
-
+  /*
   Local   nWidth      := GetSysMetrics( 1 ) - 1
   DEFAULT lSetVisible := !ofld:isVisible()
 
@@ -292,7 +292,7 @@ Function SwichFldD( oWnd, oFld, lSetVisible  )
   oWnd:resize()
   oWnd:SetFocus()
   //oWnd:oWndClient:oVScroll:Refresh()
-
+    */
 RETURN nil
 
 //----------------------------------------------------------------------------//
@@ -4050,7 +4050,7 @@ FUNCTION GetAreaProperties( nArea )
 
    IF !Empty( oER:aAreaIni[ nArea ] )
 
-   oER:oBrwProp:cargo[3] :=  aNomProp
+  // oER:oBrwProp:cargo[3] :=  aNomProp
 
    aAreaProp[1] := { GL( "Title" ),;
                      cAreaTitle }

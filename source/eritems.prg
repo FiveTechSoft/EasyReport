@@ -24,7 +24,6 @@ function ElementActions( oItem, i, cName, nArea, cAreaIni, cTyp )
    oItem:bLDblClick = { || If( GetKeyState( VK_SHIFT ), MultiItemProperties(), ;
                              ( ItemProperties( i, nArea ), oCurDlg:SetFocus() ) ) }
 
-   //oItems:bGotFocus  := {|| SelectItem( i, nArea, cAreaIni ), MsgBarInfos( i, cAreaIni ) }
 
 
    oItem:bGotFocus  := {||  SelectItem( i, nArea, cAreaIni ),;
@@ -33,13 +32,6 @@ function ElementActions( oItem, i, cName, nArea, cAreaIni, cTyp )
                                     o:bPainted := { | hdc |  Ellipse( hDC , 1, 1,7,7 )  } } ) ,;
                           RefreshBrwProp( i, cAreaIni ) ,;
                           SetSelectItemTree( oER:oTree, nArea, i ) }
-
-   //                       oItem:refresh(),;
-   //                       RefreshBrwProp( i, cAreaIni )  }
-
-
-  // oItem:bGotFocus  := {||  SelectItem( i, nArea, cAreaIni ), ;
-  //                        RefreshBrwProp( i, cAreaIni )  }
 
 
 
@@ -667,11 +659,13 @@ RETURN nil
 //------------------------------------------------------------------------------
 
 FUNCTION RefreshBrwProp( i , cAreaIni )
+   /*
    LOCAL aProps:=GetItemProperties( i, cAreaIni )
    oER:oBrwProp:Cargo:= {"item",cAreaIni, i }
    oER:oBrwProp:setArray(aProps)
    oER:oBrwProp:refresh(.t.)
    oER:oSaySelectedItem:setText( aProps[1,2] )
+   */
 Return nil
 
 //----------------------------------------------------------------------------//

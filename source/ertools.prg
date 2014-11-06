@@ -1292,6 +1292,7 @@ RETURN nil
 //------------------------------------------------------------------------------
 
 FUNCTION RefreshBrwAreaProp(nArea)
+   /*
    LOCAL aProps:= getAreaProperties(nArea)
    oER:oBrwProp:Cargo[1]:=  "area"
    oER:oBrwProp:Cargo[2]:=  nArea
@@ -1299,6 +1300,7 @@ FUNCTION RefreshBrwAreaProp(nArea)
    oER:oBrwProp:refresh()
 
    oER:oSaySelectedItem:setText( aProps[1,2] )
+   */
 Return .T.
 
 //------------------------------------------------------------------------------
@@ -1363,6 +1365,8 @@ function ER_Expressions( lTake, cAltText, nD )
 
 
    local nCol
+   LOCAL cAliasGen, cAliasUsr
+
    //local aRDD      := { "DBFNTX", "COMIX", "DBFCDX" }
 
    DEFAULT cAltText := ""
@@ -1380,7 +1384,7 @@ function ER_Expressions( lTake, cAltText, nD )
       cErrorFile += cUserExpr + CRLF
    endif
 
-   if .NOT. EMPTY( cErrorFile )
+   if !EMPTY( cErrorFile )
       MsgStop( GL("This file(s) could no be found:") + CRLF + CRLF + cErrorFile, GL("Stop!") )
       return( cAltText )
    endif
@@ -1429,8 +1433,12 @@ function ER_Expressions( lTake, cAltText, nD )
 
    oFld:aDialogs[1]:SetColor( CLR_BLACK, oEr:nClrPaneTree )
    oFld:aDialogs[2]:SetColor( CLR_BLACK, oEr:nClrPaneTree )
-   SELECT 0
-   USE ( VRD_LF2SF( cGenExpr ) ) ALIAS "GENEXPR" SHARED
+
+
+   cAliasGen := OpenDbf(  VRD_LF2SF( cGenExpr )  )
+
+  // SELECT 0
+  // USE ( VRD_LF2SF( cGenExpr ) ) ALIAS "GENEXPR" SHARED
 
    @ 6, 4 SAY oSay1 ;
       PROMPT GL("Please doubleclick an expression to take it over.") ;
@@ -1441,48 +1449,51 @@ function ER_Expressions( lTake, cAltText, nD )
    @ 30, 1 XBROWSE oBrw ;
       OF oFld:aDialogs[1] ;
       SIZE oFld:aDialogs[1]:nWidth - 1, oFld:aDialogs[1]:nHeight - 70 ;
-      FIELDS GENEXPR->NAME, GENEXPR->INFO ;
+      FIELDS ( cAliasGen )->NAME, ( cAliasGen )->INFO ;
       COLSIZES 95, 195 ;
       HEADERS " " + GL("Name"), " " + GL("Description") ;
       FONT oFont PIXEL ; //NOBORDER  ;
-      ON LEFT DBLCLICK ( creturn := GENEXPR->NAME, nTyp := 1, oDlg:End() )
+      ON LEFT DBLCLICK ( creturn := ( cAliasGen )->NAME, nTyp := 1, oDlg:End() )
 
    oBrw:lRecordSelector   := .F.
    oBrw:lHScroll          := .F.
    //oBrw:lVScroll          := .F.
 
    oBrw:bKeyDown = { | nKey, nFlags | IIF( nKey == VK_RETURN, ;
-                     EVAL( {|| creturn := GENEXPR->NAME, nTyp := 1, oDlg:End() } ), .T. ) }
+                     EVAL( {|| creturn := ( cAliasGen )->NAME, nTyp := 1, oDlg:End() } ), .T. ) }
 
    oBrw:CreateFromCode()
 
    if nShowExpr = 1
 
    i := 2
-   SELECT 0
-   USE ( VRD_LF2SF( cUserExpr ) ) ALIAS "USEREXPR" SHARED
+
+   cAliasUsr := OpenDbf(  VRD_LF2SF( cUserExpr )  )
+
+  // SELECT 0
+  // USE ( VRD_LF2SF( cUserExpr ) ) ALIAS "USEREXPR" SHARED
 
    @ 4, oFld:aDialogs[i]:nWidth - 100 BTNBMP PROMPT GL("&New") ;
             OF oFld:aDialogs[i] SIZE 80, 20 PIXEL ;
-            ACTION ( USEREXPR->(DBAPPEND()), oBrw2:Refresh(), oBrw2:GoBottom(), oDlg:Update() )
+            ACTION ( ( cAliasUsr )->(DBAPPEND()), oBrw2:Refresh(), oBrw2:GoBottom(), oDlg:Update() )
 
    @ 4, oFld:aDialogs[i]:nWidth - 190 BTNBMP PROMPT GL("&Delete") ;
             OF oFld:aDialogs[i] SIZE 80, 20 PIXEL ;
-            ACTION ( USEREXPR->(DBDELETE()), ;
-               USEREXPR->(DBSKIP(-1)), oBrw2:Refresh(), oDlg:Update() )
+            ACTION ( ( cAliasUsr )->(DBDELETE()), ;
+               ( cAliasUsr )->(DBSKIP(-1)), oBrw2:Refresh(), oDlg:Update() )
 
    @ 30, 1 XBROWSE oBrw2 ;
       OF oFld:aDialogs[i] ;
       SIZE oFld:aDialogs[i]:nWidth - 1, Int( ( oFld:aDialogs[i]:nHeight - 1 ) / 2 ) - 60 ;
-      FIELDS USEREXPR->NAME, USEREXPR->INFO ;
+      FIELDS ( cAliasUsr )->NAME, ( cAliasUsr )->INFO ;
       COLSIZES 95, 195 ;
       HEADERS " " + GL("Name"), " " + GL("Description") ;
       FONT oFont PIXEL NOBORDER ;
       ON CHANGE ( oDlg:Update(), aUndo := {} ) ;
-      ON LEFT DBLCLICK ( creturn := USEREXPR->NAME, nTyp := 2, oDlg:End() )
+      ON LEFT DBLCLICK ( creturn := ( cAliasUsr )->NAME, nTyp := 2, oDlg:End() )
 
    oBrw2:bKeyDown = { | nKey, nFlags | IIF( nKey == VK_RETURN, ;
-                      EVAL( {|| creturn := USEREXPR->NAME, nTyp := 2, oDlg:End() } ), .T. ) }
+                      EVAL( {|| creturn := ( cAliasUsr )->NAME, nTyp := 2, oDlg:End() } ), .T. ) }
 
    oBrw2:lRecordSelector   := .F.
    oBrw2:lHScroll          := .F.
@@ -1496,7 +1507,7 @@ function ER_Expressions( lTake, cAltText, nD )
       OF oFld:aDialogs[i] FONT oFont PIXEL TRANSPARENT
 
    //nFil += 20
-   @ nFil, 71 GET oGet0 VAR USEREXPR->NAME OF oFld:aDialogs[i] UPDATE PIXEL ;
+   @ nFil, 71 GET oGet0 VAR ( cAliasUsr )->NAME OF oFld:aDialogs[i] UPDATE PIXEL ;
       SIZE oFld:aDialogs[i]:nWidth - 71, 16 ;
       FONT oFont ;
       VALID ( oBrw2:Refresh(), .T. )
@@ -1507,7 +1518,7 @@ function ER_Expressions( lTake, cAltText, nD )
       OF oFld:aDialogs[i] FONT oFont PIXEL TRANSPARENT
 
    nFil += 20
-   @ nFil, 1 GET oGet1 VAR USEREXPR->EXPRESSION  OF oFld:aDialogs[i] UPDATE PIXEL ;
+   @ nFil, 1 GET oGet1 VAR ( cAliasUsr )->EXPRESSION  OF oFld:aDialogs[i] UPDATE PIXEL ;
       SIZE oFld:aDialogs[i]:nWidth - 1, 48 ;
       FONT oFont ;
       VALID ( oBrw2:Refresh(), .T. )
@@ -1518,7 +1529,7 @@ function ER_Expressions( lTake, cAltText, nD )
       OF oFld:aDialogs[i] FONT oFont PIXEL TRANSPARENT
 
    nFil += 20
-   @ nFil, 1 GET oGet2 VAR USEREXPR->INFO OF oFld:aDialogs[i] UPDATE PIXEL ;
+   @ nFil, 1 GET oGet2 VAR ( cAliasUsr )->INFO OF oFld:aDialogs[i] UPDATE PIXEL ;
       SIZE oFld:aDialogs[i]:nWidth - 1, 48 ;
       FONT oFont ;
       VALID ( oBrw2:Refresh(), .T. )
@@ -1547,7 +1558,7 @@ function ER_Expressions( lTake, cAltText, nD )
 
    @ oFld:aDialogs[i]:nHeight - 24 , oFld:aDialogs[i]:nWidth - 110 BTNBMP PROMPT GL("Check") ;
             OF oFld:aDialogs[i] SIZE 100, 20 PIXEL ;
-            ACTION CheckExpression( USEREXPR->EXPRESSION )
+            ACTION CheckExpression( ( cAliasUsr )->EXPRESSION )
 
    @ oFld:aDialogs[i]:nHeight - 24 , 10 BTNBMP PROMPT GL("Undo") ;
             WHEN LEN( aUndo ) > 0 ;
