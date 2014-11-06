@@ -761,7 +761,7 @@ function TextProperties( i, nArea, cAreaIni, lFromList, lNew )
       ON CHANGE aSay[3]:Refresh() ;
       VALID     ( aSay[3]:Refresh(), .T. )
 
-   REDEFINE GET aGet[4] VAR hVar["nInterLine"] ID 504 OF oCurDlg PICTURE "99.99" SPINNER MIN 0.01 MAX 2.99
+   REDEFINE GET aGet[6] VAR hVar["nInterLine"] ID 504 OF oCurDlg PICTURE "99.99" SPINNER MIN 0.01 MAX 2.99
 
 
    REDEFINE CHECKBOX aCbx[1] VAR oItem:lBorder ID 601 OF oCurDlg
