@@ -695,6 +695,11 @@ function TextProperties( i, nArea, cAreaIni, lFromList, lNew )
    hVar[ "aColors" ]:= GetAllColors()
    hVar[ "aBitmaps"]:= { "ALIGN_LEFT", "ALIGN_CENTER", "ALIGN_RIGHT", "ALIGN_BLOCK", "ALIGN_WRAP" }
 
+   hVar["nInterLine"] := oItem:nInterLine
+   IF hVar["nInterLine"] == 0
+       hVar["nInterLine"]:= 0.2
+   endif
+
  /*
    oVar:AddMember( "aOrient"    ,, { GL("Left"), GL("Center"), GL("Right"), ;
                                      GL("Flush justified"), GL("Line-makeup") } )
@@ -740,7 +745,9 @@ function TextProperties( i, nArea, cAreaIni, lFromList, lNew )
       SPINNER MIN 0.01 MAX hVar["nGesHeight"] - oItem:nTop ;
       VALID oItem:nHeight > 0 .AND. oItem:nTop + oItem:nHeight <= hVar["nGesHeight"]
 
-   REDEFINE COMBOBOX hVar["cOrient"] ITEMS hVar["aOrient"] BITMAPS hVar["aBitmaps"] ID 305 OF oCurDlg
+   REDEFINE COMBOBOX hVar["cOrient"] ITEMS hVar["aOrient"] BITMAPS hVar["aBitmaps"] ID 305 OF oCurDlg ;
+   ON CHANGE ( IF( hVar["cOrient"] == GL("Line-makeup") ,;
+                msgGet("Atención","asigne el interlineado",@ hVar["nInterLine"] ),) )
 
    REDEFINE CHECKBOX aCbx[3] VAR oItem:lVisible    ID 306 OF oCurDlg WHEN oItem:nDelete <> 0
    REDEFINE CHECKBOX aCbx[4] VAR oItem:lMultiLine  ID 307 OF oCurDlg
@@ -1047,6 +1054,7 @@ function SaveHTextItem( hVar, oItem )
    oItem:nBorder := IIF( oItem:lBorder , 1, 0 )
    oItem:nTrans  := IIF( oItem:lTrans  , 1, 0 )
    oItem:nShow   := IIF( oItem:lVisible, 1, 0 )
+   oItem:nInterLine := hVar["nInterLine"]
 
    hVar["cItemDef"] := oItem:Set( .F., oER:nMeasure )
 

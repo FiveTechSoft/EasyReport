@@ -42,6 +42,7 @@ CLASS VRDItem
    DATA nFont         // Font number
    DATA lMultiLine    // For printing memo fields
    DATA lVariHeight   // For printing memo fields
+   DATA nInterLine INIT 0.2 // for interlines
 
    //Only for type: Text, Image and barcode
    DATA cSource       // Source code which will be interpreted during run time
@@ -151,7 +152,7 @@ METHOD New( cItemDef, oVRD, nArea, nItemID ) CLASS VRDItem
       ::cSTransparent := ALLTRIM( VRD_GetField( cItemDef, 30 ) )
       ::cSVariHeight  := ALLTRIM( VRD_GetField( cItemDef, 31 ) )
       ::lVariHeight   := ( VAL( VRD_GetField( cItemDef, 32 ) ) = 1 )
-
+      ::nInterLine    :=  VAL( VRD_GetField( cItemDef, 33 ) )
    ELSEIF ::cType = "IMAGE"
 
       ::cFile         := ALLTRIM( VRD_GetField( cItemDef, 11 ) )
@@ -262,7 +263,8 @@ METHOD Set( lSaveItem, nMeasure ) CLASS VRDItem
                   ALLTRIM( ::cSPrBorder    )    + "|" + ;
                   ALLTRIM( ::cSTransparent )    + "|" + ;
                   ALLTRIM( ::cSVariHeight  )    + "|" + ;
-                  IIF( ::lVariHeight, "1", "0" )
+                  IIF( ::lVariHeight, "1", "0" ) + "|" + ;
+                  AllTrim(Str( ::nInterLine ,4,2 ))
 
    ELSEIF ::cType = "IMAGE"
 

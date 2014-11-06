@@ -134,7 +134,7 @@ CLASS VRD
    METHOD CheckPath( cPath )
 
    //For memo justification
-   METHOD SayMemoJust( nTop, nLeft, nWidth, nHeight, cText, oFont, nColor, nOrient )
+   METHOD SayMemoJust( nTop, nLeft, nWidth, nHeight, cText, oFont, nColor, nOrient, nInterLine )
    METHOD MemoText( cText, nLength, oFont )
    METHOD MemoTextPLeft( cText, nPixels, oFont )
    METHOD MemoTextSpaces( cText )
@@ -951,7 +951,8 @@ METHOD PrintItem( nArea, nItemID, cValue, nAddToTop, lMemo, nEntry ) CLASS VRD
                                     oFont, ;
                                     ::aColors[ oItem:nColText ], ;
                                     oItem:nOrient, ;
-                                    oItem:lVariHeight )
+                                    oItem:lVariHeight, ;
+                                    oItem:nInterLine )
          ENDIF
          nMemoHeight    := aMemo[1]
          lMemoPageBreak := aMemo[2]
@@ -1460,14 +1461,18 @@ RETURN { nTmpHeight, lMemoPageBreak }
 *  Description:
 *       Author: Timm Sodtalbers
 *-----------------------------------------------------------------------------
-METHOD SayMemoJust( nTop, nLeft, nWidth, nHeight, cText, oFont, nColor, nOrient, lVariHeight ) CLASS VRD
+METHOD SayMemoJust( nTop, nLeft, nWidth, nHeight, cText, oFont, nColor, nOrient, lVariHeight, nInterLine ) CLASS VRD
 
    LOCAL i, nSpaces
    LOCAL nTmpHeight     := 0
    LOCAL lMemoPageBreak := .F.
    LOCAL aText          := ::MemoText( cText, nWidth, oFont )
    LOCAL nLines         := LEN( aText )
-   LOCAL aAbstand       := ::oPrn:Cmtr2Pix( 0.2, 0.2 )
+   LOCAL aAbstand
+
+   DEFAULT nInterLine := 0.2
+
+   aAbstand   := ::oPrn:Cmtr2Pix( nInterLine, nInterLine )
 
    FOR i := 1 TO nLines
 
