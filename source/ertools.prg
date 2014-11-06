@@ -1099,8 +1099,8 @@ function Expressions( lTake, cAltText )
 //ENDIF
 
     aVar[1]:= ( cAliasUser )->NAME
-    aVar[2]:= ( cAliasUser )->INFO
-    aVar[3] := ( cAliasUser )->EXPRESSION
+    aVar[2] := ( cAliasUser )->EXPRESSION
+    aVar[3]:= ( cAliasUser )->INFO
 
    REDEFINE LISTBOX oBrw2 ;
       FIELDS ( cAliasUser )->NAME, ( cAliasUser )->INFO ;
@@ -1128,37 +1128,37 @@ function Expressions( lTake, cAltText )
    REDEFINE GET oGet3 VAR   aVar[3]  ID 203 OF oFld:aDialogs[i] UPDATE ;
       VALID ( GrabaUserGet(aVar,cAliasUser ), oBrw2:Refresh(), .T. )
 
-   REDEFINE BUTTON ID 401 OF oFld:aDialogs[i] ACTION CopyToExpress( "="   , oGet1, @aUndo )
-   REDEFINE BUTTON ID 402 OF oFld:aDialogs[i] ACTION CopyToExpress( "<>"  , oGet1, @aUndo )
-   REDEFINE BUTTON ID 403 OF oFld:aDialogs[i] ACTION CopyToExpress( "<"   , oGet1, @aUndo )
-   REDEFINE BUTTON ID 404 OF oFld:aDialogs[i] ACTION CopyToExpress( ">"   , oGet1, @aUndo )
-   REDEFINE BUTTON ID 405 OF oFld:aDialogs[i] ACTION CopyToExpress( "<="  , oGet1, @aUndo )
-   REDEFINE BUTTON ID 406 OF oFld:aDialogs[i] ACTION CopyToExpress( ">="  , oGet1, @aUndo )
-   REDEFINE BUTTON ID 407 OF oFld:aDialogs[i] ACTION CopyToExpress( "=="  , oGet1, @aUndo )
-   REDEFINE BUTTON ID 408 OF oFld:aDialogs[i] ACTION CopyToExpress( "("   , oGet1, @aUndo )
-   REDEFINE BUTTON ID 409 OF oFld:aDialogs[i] ACTION CopyToExpress( ")"   , oGet1, @aUndo )
-   REDEFINE BUTTON ID 410 OF oFld:aDialogs[i] ACTION CopyToExpress( '"'   , oGet1, @aUndo )
-   REDEFINE BUTTON ID 411 OF oFld:aDialogs[i] ACTION CopyToExpress( "!"   , oGet1, @aUndo )
-   REDEFINE BUTTON ID 412 OF oFld:aDialogs[i] ACTION CopyToExpress( "$"   , oGet1, @aUndo )
-   REDEFINE BUTTON ID 413 OF oFld:aDialogs[i] ACTION CopyToExpress( "+"   , oGet1, @aUndo )
-   REDEFINE BUTTON ID 414 OF oFld:aDialogs[i] ACTION CopyToExpress( "-"   , oGet1, @aUndo )
-   REDEFINE BUTTON ID 415 OF oFld:aDialogs[i] ACTION CopyToExpress( "*"   , oGet1, @aUndo )
-   REDEFINE BUTTON ID 416 OF oFld:aDialogs[i] ACTION CopyToExpress( "/"   , oGet1, @aUndo )
-   REDEFINE BUTTON ID 417 OF oFld:aDialogs[i] ACTION CopyToExpress( ".T." , oGet1, @aUndo )
-   REDEFINE BUTTON ID 418 OF oFld:aDialogs[i] ACTION CopyToExpress( ".F." , oGet1, @aUndo )
+   REDEFINE BUTTON ID 401 OF oFld:aDialogs[i] ACTION CopyToExpress( "="   , oGet2, @aUndo )
+   REDEFINE BUTTON ID 402 OF oFld:aDialogs[i] ACTION CopyToExpress( "<>"  , oGet2, @aUndo )
+   REDEFINE BUTTON ID 403 OF oFld:aDialogs[i] ACTION CopyToExpress( "<"   , oGet2, @aUndo )
+   REDEFINE BUTTON ID 404 OF oFld:aDialogs[i] ACTION CopyToExpress( ">"   , oGet2, @aUndo )
+   REDEFINE BUTTON ID 405 OF oFld:aDialogs[i] ACTION CopyToExpress( "<="  , oGet2, @aUndo )
+   REDEFINE BUTTON ID 406 OF oFld:aDialogs[i] ACTION CopyToExpress( ">="  , oGet2, @aUndo )
+   REDEFINE BUTTON ID 407 OF oFld:aDialogs[i] ACTION CopyToExpress( "=="  , oGet2, @aUndo )
+   REDEFINE BUTTON ID 408 OF oFld:aDialogs[i] ACTION CopyToExpress( "("   , oGet2, @aUndo )
+   REDEFINE BUTTON ID 409 OF oFld:aDialogs[i] ACTION CopyToExpress( ")"   , oGet2, @aUndo )
+   REDEFINE BUTTON ID 410 OF oFld:aDialogs[i] ACTION CopyToExpress( '"'   , oGet2, @aUndo )
+   REDEFINE BUTTON ID 411 OF oFld:aDialogs[i] ACTION CopyToExpress( "!"   , oGet2, @aUndo )
+   REDEFINE BUTTON ID 412 OF oFld:aDialogs[i] ACTION CopyToExpress( "$"   , oGet2, @aUndo )
+   REDEFINE BUTTON ID 413 OF oFld:aDialogs[i] ACTION CopyToExpress( "+"   , oGet2, @aUndo )
+   REDEFINE BUTTON ID 414 OF oFld:aDialogs[i] ACTION CopyToExpress( "-"   , oGet2, @aUndo )
+   REDEFINE BUTTON ID 415 OF oFld:aDialogs[i] ACTION CopyToExpress( "*"   , oGet2, @aUndo )
+   REDEFINE BUTTON ID 416 OF oFld:aDialogs[i] ACTION CopyToExpress( "/"   , oGet2, @aUndo )
+   REDEFINE BUTTON ID 417 OF oFld:aDialogs[i] ACTION CopyToExpress( ".T." , oGet2, @aUndo )
+   REDEFINE BUTTON ID 418 OF oFld:aDialogs[i] ACTION CopyToExpress( ".F." , oGet2, @aUndo )
 
-   REDEFINE BUTTON ID 502 OF oFld:aDialogs[i] ACTION CopyToExpress( ".or." , oGet1, @aUndo )
-   REDEFINE BUTTON ID 503 OF oFld:aDialogs[i] ACTION CopyToExpress( ".and.", oGet1, @aUndo )
-   REDEFINE BUTTON ID 504 OF oFld:aDialogs[i] ACTION CopyToExpress( ".not.", oGet1, @aUndo )
+   REDEFINE BUTTON ID 502 OF oFld:aDialogs[i] ACTION CopyToExpress( ".or." , oGet2, @aUndo )
+   REDEFINE BUTTON ID 503 OF oFld:aDialogs[i] ACTION CopyToExpress( ".and.", oGet2, @aUndo )
+   REDEFINE BUTTON ID 504 OF oFld:aDialogs[i] ACTION CopyToExpress( ".not.", oGet2, @aUndo )
 
-   REDEFINE BUTTON ID 601 OF oFld:aDialogs[i] ACTION CopyToExpress( "If( , , )", oGet1, @aUndo )
-   REDEFINE BUTTON ID 602 OF oFld:aDialogs[i] ACTION CopyToExpress( "Val(  )"  , oGet1, @aUndo )
-   REDEFINE BUTTON ID 603 OF oFld:aDialogs[i] ACTION CopyToExpress( "Str(  )"  , oGet1, @aUndo )
+   REDEFINE BUTTON ID 601 OF oFld:aDialogs[i] ACTION CopyToExpress( "If( , , )", oGet2, @aUndo )
+   REDEFINE BUTTON ID 602 OF oFld:aDialogs[i] ACTION CopyToExpress( "Val(  )"  , oGet2, @aUndo )
+   REDEFINE BUTTON ID 603 OF oFld:aDialogs[i] ACTION CopyToExpress( "Str(  )"  , oGet2, @aUndo )
 
    REDEFINE BUTTON  PROMPT GL("Check") ID 505 OF oFld:aDialogs[i] ;
       ACTION CheckExpression( ( cAliasUser )->EXPRESSION )
    REDEFINE BUTTON oBtn1 PROMPT GL("Undo") ID 506 OF oFld:aDialogs[i] WHEN LEN( aUndo ) > 0 ;
-      ACTION aUndo := UnDoExpression( oGet1, aUndo )
+      ACTION aUndo := UnDoExpression( oGet2, aUndo )
 
    REDEFINE SAY ID 170 OF oFld:aDialogs[i] PROMPT GL("Name") + ":"
    REDEFINE SAY ID 171 OF oFld:aDialogs[i] PROMPT GL("Expression") + ":"
@@ -1192,9 +1192,10 @@ return ( creturn )
 
 FUNCTION cargaUserGet(aVar,cAliasUser )
 
-    aVar[1]:= ( cAliasUser )->NAME
-    aVar[2]:= ( cAliasUser )->INFO
-    aVar[3] := ( cAliasUser )->EXPRESSION
+   aVar[1]:= ( cAliasUser )->NAME
+   aVar[2] := ( cAliasUser )->EXPRESSION
+   aVar[3]:= ( cAliasUser )->INFO
+
 
 RETURN
 
@@ -1202,9 +1203,9 @@ RETURN
 
 FUNCTION GrabaUserGet(aVar,cAliasUser )
  IF ( cAliasUser )->( RLock() )
-   ( cAliasUser )->NAME :=  aVar[1]
-   ( cAliasUser )->INFO :=  aVar[2 ]
-   ( cAliasUser )->EXPRESSION :=  aVar[3]
+    ( cAliasUser )->NAME :=  aVar[1]
+    ( cAliasUser )->EXPRESSION :=  aVar[2]
+    ( cAliasUser )->INFO :=  aVar[3 ]
    (cAliasUser)->( dbUnlock() )
    RETURN .t.
 ENDIF
