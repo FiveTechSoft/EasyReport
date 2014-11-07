@@ -500,15 +500,21 @@ Function Dlg_Fonts( i )
             UPDATE FONT oER:aFonts[ 1 ] MEMO ;
             SIZE oER:oFldI:aDialogs[ i ]:nWidth - 15, 116 PIXEL
 
-   @ oER:oFldI:aDialogs[ i ]:nHeight - 40 , oER:oFldI:aDialogs[ i ]:nWidth - 110 BTNBMP oBtn1 ;
+   @ oER:oFldI:aDialogs[ i ]:nHeight - 70 , oER:oFldI:aDialogs[ i ]:nWidth - 110 BTNBMP oBtn1 ;
             PROMPT GL("Borrar Font") ;
             OF oER:oFldI:aDialogs[ i ] SIZE 100, 20 PIXEL ;
             ACTION ( DelFont( oLbx, .T. ) )
 
-   @ oER:oFldI:aDialogs[ i ]:nHeight - 40, 8  BTNBMP oBtn2 ;
+   oBtn1:bClrGrad := oER:bClrBtnGrad
+   oBtn1:nClrText := oER:bClrBtnText
+
+   @ oER:oFldI:aDialogs[ i ]:nHeight - 70, 8  BTNBMP oBtn2 ;
             PROMPT GL("Borrar Todos Fonts") ;
             OF oER:oFldI:aDialogs[ i ] SIZE 100, 20 PIXEL ;
             ACTION ( DelFont( oLbx, .T. ) )
+
+   oBtn2:bClrGrad := oER:bClrBtnGrad
+   oBtn2:nClrText := oER:bClrBtnText
 
 RETURN nil
 
@@ -3035,7 +3041,7 @@ function ER_ReportSettings( nD )
    oDlg := oER:oFldI:aDialogs[ nD ]
    oDlg:SetColor( CLR_BLACK, oEr:nClrPaneTree )
 
-   @ oDlg:nHeight - 40, oDlg:nWidth - 110 BUTTON oBtn1 PROMPT GL("&OK") ;
+   @ oDlg:nHeight - 70, oDlg:nWidth - 110 BUTTON oBtn1 PROMPT GL("&OK") ;
      OF oDlg FONT oFont SIZE 80, 20 ;
      PIXEL ACTION  GrabaReportSetting( .T., aFormat,;
                              cFormat, nDecimals, nWidth, nHeight, nTop,   ;
@@ -4730,6 +4736,7 @@ CLASS TEasyReport
    DATA bClrBar
    DATA aClrDialogs, nDlgTextCol, nDlgBackCol
    DATA nClrPaneTree
+   DATA bClrBtnGrad, bClrBtnText
    DATA nMeasure, cMeasure
    DATA oAppFont
    DATA lShowPanel
@@ -4808,6 +4815,14 @@ METHOD New() CLASS TEasyReport
    //                                   { 0.50, nRGB( 225, 225, 225 ), nRGB( 185, 185, 185 ) } },;
    //                                 { { 0.40, nRGB( 68, 68, 68 ), nRGB( 109, 109, 109 ) }, ;
    //                                   { 0.60, nRGB( 109, 109, 109 ), nRGB( 116, 116, 116 ) } } ) }
+
+   ::bClrBtnText := { | lInvert | If( ! lInvert,nRGB( 0, 0, 0 ), nRGB( 255, 255, 255 ) ) }
+   ::bClrBtnGrad := { | lInvert | If( ! lInvert,;
+                                  { { 0.60, nRGB( 254, 254, 254 ), nRGB( 225, 225, 225 ) },;
+                                    { 0.40, nRGB( 225 ,225, 225 ), nRGB( 185, 185, 185 ) } },;
+                                  { { 0.40, nRGB( 67, 68, 68 ), nRGB( 109, 109, 109 ) }, ;
+                                    { 0.60, nRGB( 109, 109, 109 ), nRGB( 116, 116, 116 ) } } ) }
+
 
    ::aClrDialogs = { { 1, RGB( 199, 216, 237 ), RGB( 237, 242, 248 ) } }
 
