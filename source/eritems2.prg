@@ -34,6 +34,17 @@ RETURN (.T.)
 
 //------------------------------------------------------------------------------
 
+FUNCTION IsItemSelected( nItem, nArea )
+
+   LOCAL nSelSearch := ASCAN( oER:aSelection, {| aVal | aVal[1] = nArea .AND. aVal[2] = nItem } )
+   IF nSelSearch > 0
+      RETURN .T.
+   ENDIF
+
+RETURN .F.
+
+//------------------------------------------------------------------------------
+
 FUNCTION ToggleItemSelection( nItem, nArea )
 
    LOCAL nSelSearch := ASCAN( oER:aSelection, {| aVal | aVal[1] = nArea .AND. aVal[2] = nItem } )
