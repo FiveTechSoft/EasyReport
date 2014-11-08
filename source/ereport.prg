@@ -3813,7 +3813,7 @@ return oTree
 
 FUNCTION SetSelectItemTree( oTree, nArea, nItem )
    LOCAL cPrompt
-   local cTitle, cDef
+   local cTitle, cDef, oITem
 
     cTitle := oER:aWndTitle[nArea]
     IF Empty(cTitle)

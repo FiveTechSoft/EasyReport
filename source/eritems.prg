@@ -567,6 +567,7 @@ function UpdateItems( nValue, nTyp, lAddValue, aOldValue )
     LOCAL cItemDef
     LOCAL nTop, nLeft, nWidth, nHeight
     local aOldValue
+    local nValue
 
     IF Len( oER:aSelection ) == 0
        RETURN nil
