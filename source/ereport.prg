@@ -624,8 +624,8 @@ function BarMenu()
 
 
     MENU oMenuProp POPUP
-         MENUITEM "GO Back" ACTION ItemBack()
-         MENUITEM "GO Front" ACTION ItemFront()
+         MENUITEM "GO Back" RESOURCE "GO_BOTTOM" ACTION ItemBack()
+         MENUITEM "GO Front" RESOURCE "GO_TOP" ACTION ItemFront()
          MENUITEM "Aligh TOP"  RESOURCE "MULTI_TOP" ACTION MultiItemsAligh( 1 )
          MENUITEM "Aligh Left" RESOURCE "MULTI_LEFT" ACTION MultiItemsAligh( 2 )
          MENUITEM "Aligh Right" RESOURCE "MULTI_RIGHT" ACTION MultiItemsAligh( 6 )
