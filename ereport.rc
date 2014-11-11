@@ -20,7 +20,13 @@ LANGUAGE LANG_GERMAN, SUBLANG_GERMAN
 MULTI_RIGHT        BITMAP         "./bitmaps/16right.bmp"
 
 LANGUAGE LANG_GERMAN, SUBLANG_GERMAN
-MULTI_TOP         BITMAP         "./bitmaps/16top.bmp"
+GO_TOP         BITMAP            "./bitmaps/16top.bmp"
+
+LANGUAGE LANG_GERMAN, SUBLANG_GERMAN
+GO_BOTTOM         BITMAP         "./bitmaps/bottom.bmp"
+
+LANGUAGE LANG_GERMAN, SUBLANG_GERMAN
+MULTI_TOP         BITMAP         "./bitmaps/top.bmp"
 
 LANGUAGE LANG_GERMAN, SUBLANG_GERMAN
 ALIGN_BLOCK        BITMAP         "./bitmaps/bitmap1.bmp"
