@@ -12,6 +12,16 @@
 //
 // Bitmap resources
 //
+
+LANGUAGE LANG_GERMAN, SUBLANG_GERMAN
+MULTI_LEFT         BITMAP         "./bitmaps/16left2.bmp"
+
+LANGUAGE LANG_GERMAN, SUBLANG_GERMAN
+MULTI_RIGHT        BITMAP         "./bitmaps/16right.bmp"
+
+LANGUAGE LANG_GERMAN, SUBLANG_GERMAN
+MULTI_TOP         BITMAP         "./bitmaps/16top.bmp"
+
 LANGUAGE LANG_GERMAN, SUBLANG_GERMAN
 ALIGN_BLOCK        BITMAP         "./bitmaps/bitmap1.bmp"
 
