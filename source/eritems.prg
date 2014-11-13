@@ -2,7 +2,6 @@
 #INCLUDE "Folder.ch"
 #INCLUDE "FiveWin.ch"
 
-
 MEMVAR nAktItem, nSelArea //, aSelection, nAktArea,
 MEMVAR nRuler, nRulerTop
 MEMVAR cItemCopy, aSelectCopy, aItemCopy, nXMove, nYMove
@@ -390,10 +389,10 @@ function ItemPopupMenu( oItem, nItem, nArea, nRow, nCol )
    MENUITEM GL("&Paste") + chr(9) + GL("Ctrl+V") ;
       ACTION ItemPaste() ;
       WHEN !EMPTY( cItemCopy )
-
-   SEPARATOR
+ SEPARATOR
    MENUITEM "Bloquea control"    ACTION  (  oER:aItems[ nArea , nItem ]:lDrag := .F. ,;
                                             oER:aItems[ nArea , nItem ]:HideDots() )
+
    MENUITEM "Desbloquea control"  ACTION (  oER:aItems[ nArea , nItem ]:lDrag := .T. ,;
                                             oER:aItems[ nArea , nItem ]:ShowDots() )
 
@@ -1110,9 +1109,9 @@ FUNCTION SetTextObj( oItem, nArea, i )
                      ER_GetPixel( oItem:nWidth ), ER_GetPixel( oItem:nHeight ), ;
                      .F., .T., .F., .F., .F. )
 
-        oER:aItems[nArea,i]:lDrag := .T.
-        oER:aItems[nArea,i]:lWantClick = .T.
-
+         oER:aItems[nArea,i]:lDrag := .T.
+         oER:aItems[nArea,i]:lWantClick = .T.
+         
         ElementActions( oER:aItems[nArea,i], i, oItem:cText, nArea , GetNameArea(nArea) )
 
         oER:aItems[nArea,i]:SetFocus()
@@ -2286,10 +2285,10 @@ function ShowItem( i, nArea, cAreaIni, aFirst, nElemente, aIniEntries, nIndex )
             lCenter, lRight, ( nBorder = 1 .OR. oGenVar:lShowBorder ), .T., ;
             oER:GetColor( nColText ), oER:GetColor( nColPane ), nWidth, nHeight, .F., .T., .F., .F., .F. )
 
-        oER:aItems[nArea,i]:lWantClick = .T.
+         oER:aItems[nArea,i]:lWantClick = .T.
 
          SetBKMode( oEr:oMainWnd:hDC, 0 )
-
+         
          cTool := " Tipo:        " + Chr( 9 ) + "TSAY" + CRLF + ;
                   " Top:         " + Chr( 9 ) + Str( nTop, 10 ) + CRLF + ;
                   " Left:        " + Chr( 9 ) + Str( nLeft, 10 ) + CRLF + ;
@@ -2502,3 +2501,209 @@ function IsGraphic( cTyp )
 return ( lreturn )
 
 //----------------------------------------------------------------------------//
+
+//------------------------------------------------------------------------------
+
+ FUNCTION MultiSize( nModo )
+
+
+local oShape
+local n, nLen
+local nMaxWidth  := 0
+local nMaxHeight := 0
+local nMinWidth
+local nMinHeight
+LOCAL oSelected := oER:aItems[ oER:aSelection[1,1], oER:aSelection[1,2]]
+local nWidth  := oSelected:nWidth
+local nHeight := oSelected:nHeight
+
+   IF Len( oER:aSelection ) == 0
+       RETURN nil
+    ENDIF
+
+ nLen := len(oER:aSelection )
+
+
+nMaxWidth  := oSelected:nWidth
+nMaxHeight := oSelected:nHeight
+nMinWidth  := oSelected:nWidth
+nMinHeight := oSelected:nHeight
+
+for n := 2 to nLen
+    oSelected := oER:aItems[ oER:aSelection[n,1], oER:aSelection[n,2]]
+    nMaxWidth  := Max(oSelected:nWidth , nMaxWidth )
+    nMaxHeight := Max(oSelected:nHeight, nMaxHeight)
+    nMinWidth  := Min(oSelected:nWidth , nMinWidth )
+    nMinHeight := Min(oSelected:nHeight, nMinHeight)
+
+next
+
+
+for n := 1 to nLen
+
+    oShape := oER:aItems[ oER:aSelection[n,1], oER:aSelection[n,2]]
+
+    do case
+       case nModo == 1                                                 //  1 "Mismo alto"
+            oShape:SetSize(                 , nHeight            )
+       case nModo == 2                                                 //  2 "Mismo ancho"
+            oShape:SetSize(           nWidth,                    )
+       case nModo == 3                                                 //  3 "Máximo alto"
+            oShape:SetSize(                 , nMaxHeight         )
+       case nModo == 4                                                 //  4 "Máximo ancho"
+            oShape:SetSize( nMaxWidth,                           )
+       case nModo == 5                                                 //  5 "Mínimo alto"
+            oShape:SetSize(                 , nMinHeight         )
+       case nModo == 6                                                 //  6 "Mínimo ancho"
+            oShape:SetSize( nMinWidth,                           )
+       case nModo == 7                                                 //  7 "Igual tamaño"
+            oShape:SetSize(          nWidth,             nHeight)
+    endcase
+
+ next
+
+//  oER:aWnd[ oER:aSelection[i,1] ]:refresh()
+
+
+return nil
+//------------------------------------------------------------------------------
+
+FUNCTION MultiAlign( nTo )
+
+local nTop
+local nLeft
+local nBottom
+local nRight
+local n, nLen, n2,i
+local oShape
+local nMedTop, nMedLeft
+local nMX, nMY
+local nTramo
+LOCAL oSelected, oItem 
+LOCAL aItemsSelected:= {}
+
+IF Len( oER:aSelection ) == 0
+       RETURN nil
+ ENDIF
+
+oSelected := oER:aItems[ oER:aSelection[1,1], oER:aSelection[1,2]]
+oItem := oSelected
+
+nMedTop  := oItem:nTop  + ((oItem:nBottom-oItem:nTop ) / 2 )
+nMedLeft := oItem:nLeft + ((oItem:nRight-oItem:nLeft ) / 2 )
+
+nLen := len( oER:aSelection )
+
+FOR n=1 TO nLen
+   AAdd( aItemsSelected, oER:aItems[ oER:aSelection[n,1], oER:aSelection[n,2]] )
+next
+
+for n := 1 to nLen
+
+    oShape := aItemsSelected[n]
+
+    if n == 1
+       nTop    := oShape:nTop
+       nLeft   := oShape:nLeft
+       nBottom := oShape:nBottom
+       nRight  := oShape:nRight
+    else
+       nTop    := min(oShape:nTop, nTop    )
+       nLeft   := min(oShape:nLeft   , nLeft   )
+       nBottom := max(oShape:nBottom , nBottom )
+       nRight  := max(oShape:nRight  , nRight  )
+    endif
+
+next
+
+for n := 1 to nLen
+
+    oShape := aItemsSelected[n]
+
+    do case
+       case nTo == 2  // alinear todos al que esté mas arriba
+            ItemGotoY(oShape, nTop )
+
+       case nTo == 4
+            ItemGotoX(oShape,  nRight - oShape:nWidth )
+
+       case nTo == 6
+            ItemGotoY(oShape, nBottom - oShape:nHeight )
+
+       case nTo == 8
+            ItemGotoX(oshape, nLeft )
+
+       case nTo == 9  // al Left centro del principal
+
+            if oShape == oItem
+               loop
+            endif
+
+            nMX := ((oShape:nRight-oShape:nLeft)/2)
+            ItemGotoX( oshape, nMedLeft-nMX )
+
+       case nTo == 10 // al top centro del principal
+
+            if oShape == oItem
+               loop
+            endif
+
+            nMY := ((oShape:nBottom-oShape:nTop)/2)
+            itemGotoY(oShape, nMedTop-nMY )
+
+       case nTo == 12  // alinear todos al que esté mas arriba
+            ItemGotoY( oShape, oItem:nTop )
+
+       case nTo == 14
+            itemGotoX( oShape, oItem:nRight - oShape:nWidth )
+
+       case nTo == 16
+            itemGotoY( oShape, oItem:nBottom - oShape:nHeight )
+
+       case nTo == 18
+            itemGotoX( oShape, oItem:nLeft )
+
+       case nTo == 20  // repartir horizontal
+            aItemsSelected  := asort( aItemsSelected,,,{|x,y| x:nLeft < y:nLeft } )
+            nTramo := ( aItemsSelected[nLen]:nLeft - aItemsSelected[1]:nLeft ) / (nLen-1)
+            for n2 := 2 to nLen - 1
+                itemGotoX( aItemsSelected[n2] ,aItemsSelected:nLeft +  ( nTramo * (n2 - 1) ) )
+            next
+
+       case nTo == 21  // repartir vertical
+
+           aItemsSelected:= asort( aItemsSelected,,,{|x,y| x:nTop < y:nTop } )
+            nTramo := ( aItemsSelected[nLen]:nTop - aItemsSelected[1]:nTop ) / (nLen-1)
+            for n2 := 2 to nLen - 1
+               ItemGotoY( aItemsSelected[n2]   , aItemsSelected[1]:nTop +  ( nTramo * (n2 - 1) ) )
+            next
+
+    endcase
+
+next
+
+
+
+return nil
+
+//------------------------------------------------------------------------------
+
+FUNCTION ItemGotoX( oItem, nCol )
+
+local nWidth := oItem:nWidth
+
+oItem:nLeft := nCol
+oItem:nBottom := oItem:nLeft + nWidth
+
+return nil
+
+//------------------------------------------------------------------------------
+
+FUNCTION ItemGotoY( oItem,nRow )
+
+local nHeight := oItem:nHeight
+
+oitem:nTop := nRow
+oitem:nRight:= oitem:nTop + nHeight
+
+return nil

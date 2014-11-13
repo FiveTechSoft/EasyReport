@@ -1,6 +1,8 @@
 #include "FiveWin.ch"
 #include "ttitle.ch"
 
+
+
 #xcommand @ <nRow>, <nCol> CFOLDEREX [<oFolder>] ;
              [ <of: OF, WINDOW, DIALOG> <oWnd> ] ;
              [ <prm: PROMPT, PROMPTS, ITEMS> <cPrompt,...> ] ;
@@ -622,16 +624,38 @@ function BarMenu()
 
    DEFINE FONT oFont NAME "Tahoma" SIZE 0,-9
 
-
     MENU oMenuProp POPUP
          MENUITEM "GO Back" RESOURCE "GO_BOTTOM" ACTION ItemBack()
          MENUITEM "GO Front" RESOURCE "GO_TOP" ACTION ItemFront()
-         MENUITEM "Aligh TOP"  RESOURCE "MULTI_TOP" ACTION MultiItemsAligh( 1 )
-         MENUITEM "Aligh Left" RESOURCE "MULTI_LEFT" ACTION MultiItemsAligh( 2 )
-         MENUITEM "Aligh Right" RESOURCE "MULTI_RIGHT" ACTION MultiItemsAligh( 6 )
-         MENUITEM "equal Width" ACTION MultiItemsAligh( 3 )
-         MENUITEM "equal Height" ACTION MultiItemsAligh( 4 )
-       //  MENUITEM "MARCA" ACTION UnSelectAll( .F. )
+         SEPARATOR
+          MENUITEM "Alinear a"
+       MENU
+           MENUITEM "Arriba"  RESOURCE "MULTI_TOP"  ACTION MultiAlign(  2 )               
+           MENUITEM "Abajo"     ACTION MultiAlign(  6 )               // NAME "al_down"
+           MENUITEM "Mas Izquierda" RESOURCE "MULTI_LEFT" ACTION MultiAlign(  8 )             
+           MENUITEM "Derecha"  RESOURCE "MULTI_RIGHT" ACTION  MultiAlign(  4 )           
+           SEPARATOR
+           MENUITEM "Arriba del principal"    ACTION MultiAlign(  12 ) // NAME "al_top"
+           MENUITEM "Abajo del principal"     ACTION MultiAlign(  16 ) // NAME "al_down"
+           MENUITEM "Izquierda del principal" ACTION MultiAlign(  18 ) // NAME "al_left"
+           MENUITEM "Derecha del principal"   ACTION MultiAlign(  14 ) // NAME "al_right"
+           MENUITEM "Centrado al ancho del principal"   ACTION MultiAlign( 9 )
+           MENUITEM "Centrado al alto del principal"   ACTION MultiAlign( 10 )
+       ENDMENU
+
+         SEPARATOR
+          MENUITEM "Tamaño"
+           MENU
+              MENUITEM "Mismo alto"             ACTION MultiSize( 1 ) //NAME "samehe"
+              MENUITEM "Mismo ancho"            ACTION MultiSize( 2 ) //NAME "samewi"
+              MENUITEM "Igual que el principal" ACTION MultiSize( 7 ) //NAME "samebo"
+              SEPARATOR
+              MENUITEM "Máximo alto"            ACTION MultiSize( 3 )
+              MENUITEM "Máximo ancho"           ACTION MultiSize( 4 )
+              MENUITEM "Mínimo alto"            ACTION MultiSize( 5 )
+              MENUITEM "Mínimo ancho"           ACTION MultiSize( 6 )
+
+         ENDMENU
    ENDMENU
 
 
