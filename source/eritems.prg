@@ -391,6 +391,12 @@ function ItemPopupMenu( oItem, nItem, nArea, nRow, nCol )
       ACTION ItemPaste() ;
       WHEN !EMPTY( cItemCopy )
 
+   SEPARATOR
+   MENUITEM "Bloquea control"    ACTION  (  oER:aItems[ nArea , nItem ]:lDrag := .F. ,;
+                                            oER:aItems[ nArea , nItem ]:HideDots() )
+   MENUITEM "Desbloquea control"  ACTION (  oER:aItems[ nArea , nItem ]:lDrag := .T. ,;
+                                            oER:aItems[ nArea , nItem ]:ShowDots() )
+
    ENDMENU
 
    nRow += oItem:nTop
@@ -1104,7 +1110,8 @@ FUNCTION SetTextObj( oItem, nArea, i )
                      ER_GetPixel( oItem:nWidth ), ER_GetPixel( oItem:nHeight ), ;
                      .F., .T., .F., .F., .F. )
 
-         oER:aItems[nArea,i]:lDrag := .T.
+        oER:aItems[nArea,i]:lDrag := .T.
+        oER:aItems[nArea,i]:lWantClick = .T.
 
         ElementActions( oER:aItems[nArea,i], i, oItem:cText, nArea , GetNameArea(nArea) )
 
@@ -2278,6 +2285,8 @@ function ShowItem( i, nArea, cAreaIni, aFirst, nElemente, aIniEntries, nIndex )
             {|| cName }, oER:aWnd[nArea], , oFont, ;
             lCenter, lRight, ( nBorder = 1 .OR. oGenVar:lShowBorder ), .T., ;
             oER:GetColor( nColText ), oER:GetColor( nColPane ), nWidth, nHeight, .F., .T., .F., .F., .F. )
+
+        oER:aItems[nArea,i]:lWantClick = .T.
 
          SetBKMode( oEr:oMainWnd:hDC, 0 )
 
