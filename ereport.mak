@@ -1,8 +1,8 @@
 #Borland makefile for EasyReport, (c) FiveTech Software 2014
 
 HBDIR=c:\harbour
-BCDIR=c:\bcc582
-FWDIR=c:\fwH
+BCDIR=c:\bcc7
+FWDIR=c:\fwteam
 #FWDIR=c:\fwTeam
 
 #change these paths as needed
@@ -66,6 +66,10 @@ ereport.exe  : $(OBJS) $(COBJS) ereport.res
    echo $(HBDIR)\lib\hbcplr.lib + >> b32.bc
    echo $(HBDIR)\lib\png.lib + >> b32.bc
    echo $(HBDIR)\lib\hbzlib.lib + >> b32.bc
+   echo $(HBDIR)\lib\hbziparc.lib + >> b32.bc
+   echo $(HBDIR)\lib\hbmzip.lib + >> b32.bc
+   echo $(HBDIR)\lib\hbzlib.lib + >> b32.bc
+   echo $(HBDIR)\lib\minizip.lib + >> b32.bc   	
    echo $(HBDIR)\lib\xhb.lib + >> b32.bc
 
    echo $(BCDIR)\lib\cw32.lib + >> b32.bc
@@ -74,7 +78,8 @@ ereport.exe  : $(OBJS) $(COBJS) ereport.res
    echo $(BCDIR)\lib\psdk\nddeapi.lib + >> b32.bc
    echo $(BCDIR)\lib\psdk\iphlpapi.lib + >> b32.bc
    echo $(BCDIR)\lib\psdk\msimg32.lib + >> b32.bc
-   echo $(BCDIR)\lib\psdk\rasapi32.lib, >> b32.bc
+   echo $(BCDIR)\lib\psdk\rasapi32.lib + >> b32.bc
+   echo $(BCDIR)\lib\psdk\shell32.lib, >> b32.bc
 
    echo ereport.res >> b32.bc
    $(BCDIR)\bin\ilink32 -Gn -aa -Tpe -s @b32.bc
@@ -91,4 +96,4 @@ ereport.exe  : $(OBJS) $(COBJS) ereport.res
   del tmp
 
 ereport.res : ereport.rc
-  $(BCDIR)\bin\brc32.exe -r -I$(BCDIR)\include ereport.rc
+  $(BCDIR)\bin\brc32.exe -r -I$(BCDIR)\include\windows\sdk ereport.rc
