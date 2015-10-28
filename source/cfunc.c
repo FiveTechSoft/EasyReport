@@ -2,8 +2,6 @@
 #include <windows.h>
 #include <hbapi.h>
 
-#define _FWH_1408_
-
 // Controls mouse-resizing types in design mode
 #define RES_NW             1
 #define RES_N              2
@@ -33,7 +31,6 @@ HB_FUNC( SHOWGRID ) // hDC, @cPS, wGridWidth, wGridHeight, wWidth, wHeight, wTop
          SetPixel( hDC, wCol, wRow, 0 );
 }
 
-#if ! defined( _FWH_1408_ )
 //----------------------------------------------------------------------------//
 
 HB_FUNC( CTRLDRAWFOCUS )  // ( hWnd, nOriginRow, nOriginCol, nMRow, nMCol, nMResize )
@@ -183,10 +180,92 @@ HB_FUNC( CTRLDRAWFOCUS )  // ( hWnd, nOriginRow, nOriginCol, nMRow, nMCol, nMRes
    DeleteObject( hReg );
    DeleteObject( hBr );
 }
-#endif
 
 //----------------------------------------------------------------------------//
 
+HB_FUNC( DOTSADJUST ) // ( hWndParent, hDot1, hDot2, ... ) --> nil
+{
+
+      HWND hWndParent = ( HWND ) hb_parnl( 1 );
+      HWND hWndDot1   = ( HWND ) hb_parnl( 2 );
+      HWND hWndDot2   = ( HWND ) hb_parnl( 3 );
+      HWND hWndDot3   = ( HWND ) hb_parnl( 4 );
+      HWND hWndDot4   = ( HWND ) hb_parnl( 5 );
+      HWND hWndDot5   = ( HWND ) hb_parnl( 6 );
+      HWND hWndDot6   = ( HWND ) hb_parnl( 7 );
+      HWND hWndDot7   = ( HWND ) hb_parnl( 8 );
+      HWND hWndDot8   = ( HWND ) hb_parnl( 9 );
+      HWND hWndDialog = GetParent( hWndParent );
+
+   RECT rct ;
+   POINT pt;
+
+   GetWindowRect( hWndParent, &rct );
+
+   pt.y = -9 ;
+   pt.x = -9 ;
+   ClientToScreen( hWndParent, &pt );
+   ScreenToClient( hWndDialog, &pt );
+   SetWindowPos( hWndDot1, HWND_TOP, pt.x, pt.y, 8,8, SWP_NOACTIVATE );
+   InvalidateRect( hWndDot1, 0, TRUE );
+
+   pt.y = -9;
+   pt.x = ( ( rct.right - rct.left ) / 2 )-4 ;
+
+   ClientToScreen( hWndParent, &pt );
+   ScreenToClient( hWndDialog, &pt );
+   SetWindowPos( hWndDot2, HWND_TOP, pt.x, pt.y, 8, 8, SWP_NOACTIVATE );
+   InvalidateRect( hWndDot2, 0, TRUE );
+
+   pt.y = -9;
+   pt.x = rct.right - rct.left ;
+   ClientToScreen( hWndParent, &pt );
+   ScreenToClient( hWndDialog, &pt );
+   SetWindowPos( hWndDot3, HWND_TOP, pt.x, pt.y, 8, 8, SWP_NOACTIVATE );
+   InvalidateRect( hWndDot3, 0, TRUE );
+
+   pt.y = ( ( rct.bottom - rct.top ) / 2 )-4 ;
+   pt.x = rct.right - rct.left ;
+   ClientToScreen( hWndParent, &pt );
+   ScreenToClient( hWndDialog, &pt );
+   SetWindowPos( hWndDot4, HWND_TOP, pt.x, pt.y, 8, 8, SWP_NOACTIVATE );
+   InvalidateRect( hWndDot4, 0, TRUE );
+
+   pt.y = rct.bottom - rct.top ;
+   pt.x = rct.right - rct.left ;
+   ClientToScreen( hWndParent, &pt );
+   ScreenToClient( hWndDialog, &pt );
+   SetWindowPos( hWndDot5, HWND_TOP, pt.x, pt.y, 8, 8, SWP_NOACTIVATE );
+   InvalidateRect( hWndDot5, 0, TRUE );
+
+   pt.y = rct.bottom - rct.top ;
+   pt.x = ( ( rct.right - rct.left ) / 2 )-4 ;
+   ClientToScreen( hWndParent, &pt );
+   ScreenToClient( hWndDialog, &pt );
+   SetWindowPos( hWndDot6, HWND_TOP, pt.x, pt.y, 8, 8, SWP_NOACTIVATE );
+   InvalidateRect( hWndDot6, 0, TRUE );
+
+   pt.y = rct.bottom - rct.top ;
+   pt.x = -9;
+   ClientToScreen( hWndParent, &pt );
+   ScreenToClient( hWndDialog, &pt );
+   SetWindowPos( hWndDot7, HWND_TOP, pt.x, pt.y, 8, 8, SWP_NOACTIVATE );
+ //  InvalidateRect( hWndDot7, 0, TRUE );
+
+   pt.y = ( ( rct.bottom - rct.top ) / 2 )-4;
+   pt.x = -9;
+   ClientToScreen( hWndParent, &pt );
+   ScreenToClient( hWndDialog, &pt );
+   SetWindowPos( hWndDot8, HWND_TOP, pt.x, pt.y, 8,8, SWP_NOACTIVATE );
+   InvalidateRect( hWndDot8, 0, TRUE );
+
+
+   //DrawFocusRect( hDC , &rctt );
+
+}
+
+//----------------------------------------------------------------------------//
+/*
 HB_FUNC( DOTSADJUST ) // ( hWndParent, hDot1, hDot2, ... ) --> nil
 {
    HWND hWndParent = ( HWND ) hb_parnl( 1 );
@@ -268,5 +347,7 @@ HB_FUNC( DOTSADJUST ) // ( hWndParent, hDot1, hDot2, ... ) --> nil
    SetWindowPos( hWndDot8, HWND_TOP, pt.x, pt.y, 5, 5, SWP_NOACTIVATE );
    InvalidateRect( hWndDot8, 0, TRUE );
 }
+
+*/
 
 //----------------------------------------------------------------------------//
