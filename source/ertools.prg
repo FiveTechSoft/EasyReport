@@ -47,8 +47,8 @@ MEMVAR oER
 
 //-----------------------------------------------------------------------------//
 
-function GetFreeSystemResources()
-return 0
+//function GetFreeSystemResources()
+//return 0
 
 
 //-----------------------------------------------------------------------------//
@@ -1192,12 +1192,12 @@ return ( creturn )
 
 FUNCTION cargaUserGet(aVar,cAliasUser )
 
-   aVar[1]:= ( cAliasUser )->NAME
+   aVar[1] := ( cAliasUser )->NAME
    aVar[2] := ( cAliasUser )->EXPRESSION
-   aVar[3]:= ( cAliasUser )->INFO
+   aVar[3] := ( cAliasUser )->INFO
 
 
-RETURN
+  RETURN NIL
 
 //------------------------------------------------------------------------------
 

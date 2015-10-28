@@ -3180,11 +3180,11 @@ FUNCTION vrd_ERStart( cRptFile, lPreview ) // FiveTech
 RETURN ( NIL )
  */
 
-DLL32 Function apiFindFst(lpFilename AS LPSTR, @cWin32DataInfo AS LPSTR) AS LONG PASCAL ;
-   FROM "FindFirstFileA" LIB "KERNEL32.DLL"
+//DLL32 Function apiFindFst(lpFilename AS LPSTR, @cWin32DataInfo AS LPSTR) AS LONG PASCAL ;
+//   FROM "FindFirstFileA" LIB "KERNEL32.DLL"
 
-DLL32 Function apiFindCls(nHandle AS LONG) AS BOOL PASCAL ;
-   FROM "FindClose" LIB "KERNEL32.DLL"
+//DLL32 Function apiFindCls(nHandle AS LONG) AS BOOL PASCAL ;
+//   FROM "FindClose" LIB "KERNEL32.DLL"
 
 DLL32 FUNCTION GetPPSection( cSection AS LPSTR, @cData AS LPSTR, ;
                              nSize AS DWORD, cFile AS LPSTR ) ;
@@ -3196,8 +3196,8 @@ DLL32 Function FullPathName( lpszFile AS LPSTR, cchPath AS DWORD,;
                lpszPath AS LPSTR, @nFilePos AS PTR ) AS DWORD ;
                PASCAL FROM "GetFullPathNameA" LIB "kernel32.dll"
 
-DLL32 FUNCTION MoveFile( Source_file AS LPSTR, Target_file AS LPSTR ) ;
-   AS BOOL FROM "MoveFileA" LIB "Kernel32.dll"
+//DLL32 FUNCTION MoveFile( Source_file AS LPSTR, Target_file AS LPSTR ) ;
+//   AS BOOL FROM "MoveFileA" LIB "Kernel32.dll"
 
 //DLL32 FUNCTION DelFile( cFileName AS LPSTR ) ;
 //   AS BOOL PASCAL FROM "DeleteFileA" LIB "kernel32.dll"
@@ -3221,5 +3221,5 @@ DLL32 FUNCTION RegQueryValueExA( nhKey      AS LONG   , ;
                                  @nResSize  AS PTR    ) ;
          AS LONG PASCAL LIB "ADVAPI32.DLL"
 
-DLL32 FUNCTION RegCloseKey( nhKey AS LONG ) AS LONG PASCAL LIB "ADVAPI32.DLL"
+// DLL32 FUNCTION RegCloseKey( nhKey AS LONG ) AS LONG PASCAL LIB "ADVAPI32.DLL"
 

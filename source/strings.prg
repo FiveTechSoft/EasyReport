@@ -309,90 +309,91 @@ static aStrings := { ;
 
 static aMissing := {}
 
-//----------------------------------------------------------------------------//
-
-function FWString( cString , lMessage ,cFileName )
-   local nAt
-   LOCAL lshort := .f.
-   local cText := Space(30)
-   LOCAL aNames:= {}
-
-   DEFAULT lMessage := .t.
-   DEFAULT cFileName := cFilePath( GetModuleFileName( GetInstance() ) ) + ;
-                        "fwstrings.ini"
-
-   if LanguageID() == 1
-      return cString
-   ELSE
-
-      if '&' $ cString
-         lshort := .t.
-         cString  := StrTran( cString, '&', '' )
-      ENDIF
-
-      if ( nAt := AScan( aStrings, { | aString | Upper( aString[ 1 ] ) == Upper( cString ) } ) ) != 0
-          if Len( aStrings[ nAt ] ) >= LanguageID()
-             return  IF( lshort, '&',"") + IfNil( aStrings[ nAt ][ LanguageID() ], cString )
-          endif
-      else
-
-           IF Len(hIniStrings) > 0
-
-              IF HHasKey( hIniStrings, cString )
-                  if Len( hIniStrings[ cString ] ) >= LanguageID()
-                        aNames:= hIniStrings[ cString ]
-                        IF Empty( aNames [ LanguageID() ] )
-                           msgGet("Atención", "AAdd string '"+ cString +"' for language " + { "EN", "ES", "FR", "PT", "DE", "IT" }[ LanguageID() ] , @cText)
-                           aNames[ LanguageID() ]  :=  AllTrim(cText)
-                           hIniStrings[ cString ] := aNames
-
-                           FWSaveHStrings( cFileName , hIniStrings )
-                           Refresh_hIniStrings( cFileName )
-                           return  IF( lshort, '&',"") + IfNil(  aNames[ LanguageID() ], cString )
-
-                        else
-                           RETURN  IF( lshort, '&',"") + aNames [ LanguageID() ]
-                        endif
-                  endif
-              ELSE
-                   hIniStrings[cString]:= {cString,,,,, }
-
-                   FWSaveHStrings( cFileName , hIniStrings )
-                   Refresh_hIniStrings( cFileName )
-                   RETURN  IF( lshort, '&',"") + cString
-                ENDIF
-
-           ENDIF
-
-      endif
-
-      if lMessage
-         MsgInfo( FWString( "The string" ) + ': "' + cString + '" ' + ;
-               FWString( "for language" ) + " " + ;
-               { "EN", "ES", "FR", "PT", "DE", "IT" }[ LanguageID() ] + CRLF + ;
-               FWString( "defined from" ) + ": " + ProcName( 1 ) + " " + ;
-               FWString( "line" ) + " " + ;
-               AllTrim( Str( ProcLine( 1 ) ) ) + " in " + ProcFile( 1 ) + CRLF + ;
-               FWString( "is not defined in FWH strings" ) + CRLF + ;
-               FWString( "Please add it to FWH\source\function\strings.prg" ) )
-      endif
-
-
-      AAdd( aMissing,  IF( lshort, '&',"") + cString )
-   endif
-
-return cString
-//----------------------------------------------------------------------------//
-
-function FWSetLanguage( nNewLanguage )
-
-   local nOldLanguage := LanguageID()
-
-   if ! Empty( nNewLanguage )
-      nLanguage = Max( 1, Min( nNewLanguage, Len( aStrings[ 1 ] ) ) )
-   endif
-
- return nOldLanguage
+////----------------------------------------------------------------------------//
+//
+//function FWString( cString , lMessage ,cFileName )
+//   local nAt
+//   LOCAL lshort := .f.
+//   local cText := Space(30)
+//   LOCAL aNames:= {}
+//
+//   DEFAULT lMessage := .t.
+//   DEFAULT cFileName := cFilePath( GetModuleFileName( GetInstance() ) ) + ;
+//                        "fwstrings.ini"
+//
+//   if LanguageID() == 1
+//      return cString
+//   ELSE
+//
+//      if '&' $ cString
+//         lshort := .t.
+//         cString  := StrTran( cString, '&', '' )
+//      ENDIF
+//
+//      if ( nAt := AScan( aStrings, { | aString | Upper( aString[ 1 ] ) == Upper( cString ) } ) ) != 0
+//          if Len( aStrings[ nAt ] ) >= LanguageID()
+//             return  IF( lshort, '&',"") + IfNil( aStrings[ nAt ][ LanguageID() ], cString )
+//          endif
+//      else
+//
+//           IF Len(hIniStrings) > 0
+//
+//              IF HHasKey( hIniStrings, cString )
+//                  if Len( hIniStrings[ cString ] ) >= LanguageID()
+//                        aNames:= hIniStrings[ cString ]
+//                        IF Empty( aNames [ LanguageID() ] )
+//                           msgGet("Atención", "AAdd string '"+ cString +"' for language " + { "EN", "ES", "FR", "PT", "DE", "IT" }[ LanguageID() ] , @cText)
+//                           aNames[ LanguageID() ]  :=  AllTrim(cText)
+//                           hIniStrings[ cString ] := aNames
+//
+//                           FWSaveHStrings( cFileName , hIniStrings )
+//                           Refresh_hIniStrings( cFileName )
+//                           return  IF( lshort, '&',"") + IfNil(  aNames[ LanguageID() ], cString )
+//
+//                        else
+//                           RETURN  IF( lshort, '&',"") + aNames [ LanguageID() ]
+//                        endif
+//                  endif
+//              ELSE
+//                   hIniStrings[cString]:= {cString,,,,, }
+//
+//                   FWSaveHStrings( cFileName , hIniStrings )
+//                   Refresh_hIniStrings( cFileName )
+//                   RETURN  IF( lshort, '&',"") + cString
+//                ENDIF
+//
+//           ENDIF
+//
+//      endif
+//
+//      if lMessage
+//         MsgInfo( FWString( "The string" ) + ': "' + cString + '" ' + ;
+//               FWString( "for language" ) + " " + ;
+//               { "EN", "ES", "FR", "PT", "DE", "IT" }[ LanguageID() ] + CRLF + ;
+//               FWString( "defined from" ) + ": " + ProcName( 1 ) + " " + ;
+//               FWString( "line" ) + " " + ;
+//               AllTrim( Str( ProcLine( 1 ) ) ) + " in " + ProcFile( 1 ) + CRLF + ;
+//               FWString( "is not defined in FWH strings" ) + CRLF + ;
+//               FWString( "Please add it to FWH\source\function\strings.prg" ) )
+//      endif
+//
+//
+//      AAdd( aMissing,  IF( lshort, '&',"") + cString )
+//   endif
+//
+//return cString
+//
+////----------------------------------------------------------------------------//
+//
+//function FWSetLanguage( nNewLanguage )
+//
+//   local nOldLanguage := LanguageID()
+//
+//   if ! Empty( nNewLanguage )
+//      nLanguage = Max( 1, Min( nNewLanguage, Len( aStrings[ 1 ] ) ) )
+//   endif
+//
+// return nOldLanguage
 
 //------------------------------------------------------------------------------
 
@@ -407,44 +408,44 @@ FUNCTION Refresh_hIniStrings( cFileName )
 
 RETURN nil
 
-//----------------------------------------------------------------------------//
-
-function FWAddLanguage( aLang, nLang )
-
-   if ValType( aLang ) == 'A' .and. ! Empty( aLang )
-      aStrings    := ArrTranspose( aStrings )
-      if nLang == nil .or. nLang > Len( aStrings )
-         AAdd( aStrings, aLang )
-         nLang := Len( aStrings )
-      else
-         aStrings[ nLang ] := aLang
-      endif
-      aStrings    := ArrTranspose( aStrings )
-      FWSetLanguage( nLang )
-   endif
-
-return nLang
-
-//----------------------------------------------------------------------------//
-
-function FWMissingStrings()
-
-   local cResult := ""
-
-   AEval( aMissing, { | cString | cResult += Space( 7 ) + '{ "' + cString + ;
-                                  '", "" },;' + CRLF } )
-   if ! Empty( cResult )
-      MemoEdit( cResult, "Copy and paste in FWH\source\function\strings.prg" )
-   endif
-
-return cResult
-
-//----------------------------------------------------------------------------//
-
-function FWAddString( aString, aNewStrings )
-   DEFAULT aNewStrings := aStrings
-return AAdd( aNewStrings, aString )
-
+////----------------------------------------------------------------------------//
+//
+//function FWAddLanguage( aLang, nLang )
+//
+//   if ValType( aLang ) == 'A' .and. ! Empty( aLang )
+//      aStrings    := ArrTranspose( aStrings )
+//      if nLang == nil .or. nLang > Len( aStrings )
+//         AAdd( aStrings, aLang )
+//         nLang := Len( aStrings )
+//      else
+//         aStrings[ nLang ] := aLang
+//      endif
+//      aStrings    := ArrTranspose( aStrings )
+//      FWSetLanguage( nLang )
+//   endif
+//
+//return nLang
+//
+////----------------------------------------------------------------------------//
+//
+//function FWMissingStrings()
+//
+//   local cResult := ""
+//
+//   AEval( aMissing, { | cString | cResult += Space( 7 ) + '{ "' + cString + ;
+//                                  '", "" },;' + CRLF } )
+//   if ! Empty( cResult )
+//      MemoEdit( cResult, "Copy and paste in FWH\source\function\strings.prg" )
+//   endif
+//
+//return cResult
+//
+////----------------------------------------------------------------------------//
+//
+//function FWAddString( aString, aNewStrings )
+//   DEFAULT aNewStrings := aStrings
+//return AAdd( aNewStrings, aString )
+//
 //------------------------------------------------------------------------------
 
 function FWGetStrings()
@@ -462,70 +463,70 @@ static function LanguageID()
 
 return nLanguage
 
-//----------------------------------------------------------------------------//
-
-function FWLoadStrings( cFileName, lFindDuplicates )
-
-   local cLine, n := 1
-   LOCAL aNames:= {}
-   LOCAL cName
- //  LOCAL i := 0
-
-   DEFAULT lfindDuplicates := .t.
-   DEFAULT cFileName := cFilePath( GetModuleFileName( GetInstance() ) ) + ;
-                        "fwstrings.ini"
-
-   while ! Empty( cLine := GetPvProfString( "strings", AllTrim( Str( n++ ) ), "", cFileName ) )
-
-      aNames:=   { AllTrim( StrToken( cLine, 1, "|" ) ),;
-                        AllTrim( StrToken( cLine, 2, "|" ) ),;
-                        AllTrim( StrToken( cLine, 3, "|" ) ),;
-                        AllTrim( StrToken( cLine, 4, "|" ) ),;
-                        AllTrim( StrToken( cLine, 5, "|" ) ),;
-                        AllTrim( StrToken( cLine, 6, "|" ) ) }
-
-      hIniStrings[aNames[1]]:= aNames
-
-   end
-
-   IF lFindDuplicates
-
-      FOR n = 1 TO Len(aStrings)
-         cName:= aStrings[n,1 ]
-         IF HHasKey( hIniStrings, cName )
-
-            HB_HDEL( hIniStrings, cName )
-          //  i++
-         endif
-
-      NEXT
-    //  msginfo("borradas "+AllTrim(Str(i))+" claves")
-      FWSaveHStrings( cFileName  , hIniStrings  )
-
-   ENDIF
-
-
-RETURN nil
-
-
-//----------------------------------------------------------------------------//
-
-function FWSaveStrings( cFileName  , aNewStrings )
-
-   local cText := "[strings]" + CRLF, n
-
-   DEFAULT aNewStrings := aStrings
-   DEFAULT cFileName := cFilePath( GetModuleFileName( GetInstance() ) ) + ;
-                                   "fwstrings.ini"
-
-  for n = 1 to Len( aNewStrings )
-      cText += AllTrim( Str( n ) ) + "="
-      AEval( aNewStrings[ n ], { | c | cText += If( c != nil, c, "" ) + "|" } )
-      cText += CRLF
-  next
-  MemoWrit( cFileName , cText )
-
-return nil
+////----------------------------------------------------------------------------//
+//
+//function FWLoadStrings( cFileName, lFindDuplicates )
+//
+//   local cLine, n := 1
+//   LOCAL aNames:= {}
+//   LOCAL cName
+// //  LOCAL i := 0
+//
+//   DEFAULT lfindDuplicates := .t.
+//   DEFAULT cFileName := cFilePath( GetModuleFileName( GetInstance() ) ) + ;
+//                        "fwstrings.ini"
+//
+//   while ! Empty( cLine := GetPvProfString( "strings", AllTrim( Str( n++ ) ), "", cFileName ) )
+//
+//      aNames:=   { AllTrim( StrToken( cLine, 1, "|" ) ),;
+//                        AllTrim( StrToken( cLine, 2, "|" ) ),;
+//                        AllTrim( StrToken( cLine, 3, "|" ) ),;
+//                        AllTrim( StrToken( cLine, 4, "|" ) ),;
+//                        AllTrim( StrToken( cLine, 5, "|" ) ),;
+//                        AllTrim( StrToken( cLine, 6, "|" ) ) }
+//
+//      hIniStrings[aNames[1]]:= aNames
+//
+//   end
+//
+//   IF lFindDuplicates
+//
+//      FOR n = 1 TO Len(aStrings)
+//         cName:= aStrings[n,1 ]
+//         IF HHasKey( hIniStrings, cName )
+//
+//            HB_HDEL( hIniStrings, cName )
+//          //  i++
+//         endif
+//
+//      NEXT
+//    //  msginfo("borradas "+AllTrim(Str(i))+" claves")
+//      FWSaveHStrings( cFileName  , hIniStrings  )
+//
+//   ENDIF
+//
+//
+//RETURN nil
+//
+//
+////----------------------------------------------------------------------------//
+//
+//function FWSaveStrings( cFileName  , aNewStrings )
+//
+//   local cText := "[strings]" + CRLF, n
+//
+//   DEFAULT aNewStrings := aStrings
+//   DEFAULT cFileName := cFilePath( GetModuleFileName( GetInstance() ) ) + ;
+//                                   "fwstrings.ini"
+//
+//  for n = 1 to Len( aNewStrings )
+//      cText += AllTrim( Str( n ) ) + "="
+//      AEval( aNewStrings[ n ], { | c | cText += If( c != nil, c, "" ) + "|" } )
+//      cText += CRLF
+//  next
+//  MemoWrit( cFileName , cText )
+//
+//return nil
 
 //------------------------------------------------------------------------------
 
@@ -570,15 +571,14 @@ DEFAULT cFileName := cFilePath( GetModuleFileName( GetInstance() ) ) + ;
 
 return nil
 
-//------------------------------------------------------------------------------
-
-
-function FWEditStrings( aNewStrings )
-  DEFAULT aNewStrings:= aSTrings
-
-  XBROWSER aStrings FASTEDIT AUTOSORT SETUP BrwSetup( oBrw ) // RECID
-
-return nil
+////------------------------------------------------------------------------------
+//
+//function FWEditStrings( aNewStrings )
+//  DEFAULT aNewStrings:= aSTrings
+//
+//  XBROWSER aStrings FASTEDIT AUTOSORT SETUP BrwSetup( oBrw ) // RECID
+//
+//return nil
 
 //----------------------------------------------------------------------------//
 
