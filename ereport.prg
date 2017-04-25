@@ -1,6 +1,8 @@
 #include "FiveWin.ch"
 #include "ttitle.ch"
 
+
+
 #xcommand @ <nRow>, <nCol> CFOLDEREX [<oFolder>] ;
              [ <of: OF, WINDOW, DIALOG> <oWnd> ] ;
              [ <prm: PROMPT, PROMPTS, ITEMS> <cPrompt,...> ] ;
@@ -164,11 +166,11 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
                                    Int(GetSysMetrics( 0 )/4), ;          // 326
                                    oER:oMainWnd )
 
-      oER:oPanelD := TPanel():New( 0.1, Int( ScreenWidth() - 2*Int(GetSysMetrics( 0 )/4) ) + 2, ;
-                              GetSysMetrics( 1 ) - 138 , 3*Int(GetSysMetrics( 0 )/4), ;
-                              oER:oMainWnd )
+   //   oER:oPanelD := TPanel():New( 0.1, Int( ScreenWidth() - 2*Int(GetSysMetrics( 0 )/4) ) + 2, ;
+   //                           GetSysMetrics( 1 ) - 138 , 3*Int(GetSysMetrics( 0 )/4), ;
+   //                           oER:oMainWnd )
 
-      oer:oPanelD:hide() // mientras estabilizamos la version
+   //   oer:oPanelD:hide() // mientras estabilizamos la version
 
       if lValidFwh()
 
@@ -182,15 +184,15 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
        PIXEL ;
        SEPARATOR 0
 
-       @ 0.2, 1 CFOLDEREX oER:oFldD ;
-       PROMPT GL("&Expressions"), GL("&Databases"), GL("&Inspector") ; //, GL("&Fields"), GL("Fil&ters") ;
-       OF oEr:oPanelD ; //oEr:oMainWnd ;
-       SIZE Int(GetSysMetrics( 0 )/4), GetSysMetrics( 1 ) - 138 ;
-       OPTION 1 ;
-       TAB HEIGHT 34 ;
-       BITMAPS { "B_ITEMLIST16", "B_EDIT2" } ; //, "B_AREA", "B_AREA" } ;
-       PIXEL ;
-       SEPARATOR 0
+    //   @ 0.2, 1 CFOLDEREX oER:oFldD ;
+    //   PROMPT GL("&Expressions"), GL("&Databases"), GL("&Inspector") ; //, GL("&Fields"), GL("Fil&ters") ;
+    //   OF oEr:oPanelD ; //oEr:oMainWnd ;
+    //   SIZE Int(GetSysMetrics( 0 )/4), GetSysMetrics( 1 ) - 138 ;
+    //   OPTION 1 ;
+    //   TAB HEIGHT 34 ;
+    //   BITMAPS { "B_ITEMLIST16", "B_EDIT2" } ; //, "B_AREA", "B_AREA" } ;
+    //   PIXEL ;
+    //   SEPARATOR 0
 
       else
 
@@ -201,27 +203,27 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
        OPTION 2 ;
        PIXEL
 
-       @ 0.2, 1 FOLDER oER:oFldD ;
-       PROMPT GL("&Expressions"), GL("&Databases") ; //, GL("&Fields"), GL("Fil&ters") ;
-       OF oEr:oPanelD ;  //oEr:oMainWnd ;
-       SIZE Int(GetSysMetrics( 0 )/4), GetSysMetrics( 1 ) - 138 ;
-       OPTION 1 ;
-       PIXEL
+    //   @ 0.2, 1 FOLDER oER:oFldD ;
+    //   PROMPT GL("&Expressions"), GL("&Databases") ; //, GL("&Fields"), GL("Fil&ters") ;
+    //   OF oEr:oPanelD ;  //oEr:oMainWnd ;
+    //   SIZE Int(GetSysMetrics( 0 )/4), GetSysMetrics( 1 ) - 138 ;
+    //   OPTION 1 ;
+    //   PIXEL
 
       endif
 
       oER:oPanelI:SetColor(  , oEr:nClrPaneTree )
-      oER:oPanelD:SetColor(  , oEr:nClrPaneTree )
+   //   oER:oPanelD:SetColor(  , oEr:nClrPaneTree )
 
       oEr:oMainWnd:oLeft   :=  oEr:oPanelI   //oER:oFldI
       oEr:oMainWnd:oRight  :=  oEr:oPanelD   //oER:oFldD
 
       oER:oFldI:SetColor(  , oEr:nClrPaneTree )
-      oER:oFldD:SetColor(  , oEr:nClrPaneTree )
+    //  oER:oFldD:SetColor(  , oEr:nClrPaneTree )
       oER:lNewFormat := .f.
 
       DlgTree( 2 )
-      ER_Inspector( 3 )
+   //   ER_Inspector( 3 )
 
       RefreshPanelTree()
 
@@ -275,7 +277,7 @@ return nil
 //------------------------------------------------------------------------------
 
 Function SwichFldD( oWnd, oFld, lSetVisible  )
-
+  /*
   Local   nWidth      := GetSysMetrics( 1 ) - 1
   DEFAULT lSetVisible := !ofld:isVisible()
 
@@ -292,7 +294,7 @@ Function SwichFldD( oWnd, oFld, lSetVisible  )
   oWnd:resize()
   oWnd:SetFocus()
   //oWnd:oWndClient:oVScroll:Refresh()
-
+    */
 RETURN nil
 
 //----------------------------------------------------------------------------//
@@ -500,15 +502,21 @@ Function Dlg_Fonts( i )
             UPDATE FONT oER:aFonts[ 1 ] MEMO ;
             SIZE oER:oFldI:aDialogs[ i ]:nWidth - 15, 116 PIXEL
 
-   @ oER:oFldI:aDialogs[ i ]:nHeight - 40 , oER:oFldI:aDialogs[ i ]:nWidth - 110 BTNBMP oBtn1 ;
+   @ oER:oFldI:aDialogs[ i ]:nHeight - 70 , oER:oFldI:aDialogs[ i ]:nWidth - 110 BTNBMP oBtn1 ;
             PROMPT GL("Borrar Font") ;
             OF oER:oFldI:aDialogs[ i ] SIZE 100, 20 PIXEL ;
             ACTION ( DelFont( oLbx, .T. ) )
 
-   @ oER:oFldI:aDialogs[ i ]:nHeight - 40, 8  BTNBMP oBtn2 ;
+   oBtn1:bClrGrad := oER:bClrBtnGrad
+   oBtn1:nClrText := oER:bClrBtnText
+
+   @ oER:oFldI:aDialogs[ i ]:nHeight - 70, 8  BTNBMP oBtn2 ;
             PROMPT GL("Borrar Todos Fonts") ;
             OF oER:oFldI:aDialogs[ i ] SIZE 100, 20 PIXEL ;
             ACTION ( DelFont( oLbx, .T. ) )
+
+   oBtn2:bClrGrad := oER:bClrBtnGrad
+   oBtn2:nClrText := oER:bClrBtnText
 
 RETURN nil
 
@@ -616,14 +624,38 @@ function BarMenu()
 
    DEFINE FONT oFont NAME "Tahoma" SIZE 0,-9
 
+    MENU oMenuProp POPUP 2007
+         MENUITEM "GO Back" RESOURCE "GO_BOTTOM" ACTION ItemBack()
+         MENUITEM "GO Front" RESOURCE "GO_TOP" ACTION ItemFront()
+         SEPARATOR
+          MENUITEM "Alinear a"
+       MENU
+           MENUITEM "Arriba"  RESOURCE "MULTI_TOP"  ACTION MultiAlign(  2 )               
+           MENUITEM "Abajo"     ACTION MultiAlign(  6 )               // NAME "al_down"
+           MENUITEM "Mas Izquierda" RESOURCE "MULTI_LEFT" ACTION MultiAlign(  8 )             
+           MENUITEM "Derecha"  RESOURCE "MULTI_RIGHT" ACTION  MultiAlign(  4 )           
+           SEPARATOR
+           MENUITEM "Arriba del principal"    ACTION MultiAlign(  12 ) // NAME "al_top"
+           MENUITEM "Abajo del principal"     ACTION MultiAlign(  16 ) // NAME "al_down"
+           MENUITEM "Izquierda del principal" ACTION MultiAlign(  18 ) // NAME "al_left"
+           MENUITEM "Derecha del principal"   ACTION MultiAlign(  14 ) // NAME "al_right"
+           MENUITEM "Centrado al ancho del principal"   ACTION MultiAlign( 9 )
+           MENUITEM "Centrado al alto del principal"   ACTION MultiAlign( 10 )
+       ENDMENU
 
-    MENU oMenuProp POPUP
-         MENUITEM "GO Back" ACTION ItemBack()
-         MENUITEM "GO Front" ACTION ItemFront()
-         MENUITEM "Aligh TOP" ACTION MultiItemsAligh( 1 )
-         MENUITEM "Aligh Left" ACTION MultiItemsAligh( 2 )
-         MENUITEM "equal Width" ACTION MultiItemsAligh( 3 )
-         MENUITEM "equal Height" ACTION MultiItemsAligh( 4 )
+         SEPARATOR
+          MENUITEM "Tamaño"
+           MENU
+              MENUITEM "Mismo alto"             ACTION MultiSize( 1 ) //NAME "samehe"
+              MENUITEM "Mismo ancho"            ACTION MultiSize( 2 ) //NAME "samewi"
+              MENUITEM "Igual que el principal" ACTION MultiSize( 7 ) //NAME "samebo"
+              SEPARATOR
+              MENUITEM "Máximo alto"            ACTION MultiSize( 3 )
+              MENUITEM "Máximo ancho"           ACTION MultiSize( 4 )
+              MENUITEM "Mínimo alto"            ACTION MultiSize( 5 )
+              MENUITEM "Mínimo ancho"           ACTION MultiSize( 6 )
+
+         ENDMENU
    ENDMENU
 
 
@@ -708,7 +740,7 @@ function BarMenu()
    endif
 
    if Val( oEr:GetDefIni( "General", "EditAreaProperties", "1" ) ) = 1
-      MENU oMenuAreas POPUP
+      MENU oMenuAreas POPUP 2007
       ENDMENU
 
       DEFINE BUTTON oBtnAreas RESOURCE "B_AREA32", "B_AREA32", "B_AREA321" ;
@@ -724,7 +756,7 @@ function BarMenu()
       OF oBar ;
       PROMPT FWString( "Properties" ) ;
       TOOLTIP GL("Item Properties") ;
-      ACTION IIF( LEN( oER:aSelection ) <> 0, MultiItemProperties(), ItemProperties( nAktItem, oER:nAktArea ) ) ;
+      ACTION IIF( LEN( oER:aSelection ) > 1, MultiItemProperties(), ItemProperties( nAktItem, oER:nAktArea ) ) ;
       WHEN !Empty( oER:cDefIni ) ;
       MENU oMenuProp
 
@@ -963,7 +995,7 @@ function PreviewMenu( oBtn )
    local oMenu
    local aRect := GetClientRect( oBtn:hWnd )
 
-   MENU oMenu POPUP
+   MENU oMenu POPUP 2007
 
       MENUITEM GL("Pre&view") + chr(9) + GL("Ctrl+P") ;
          ACCELERATOR ACC_CONTROL, ASC( GL("P") ) ;
@@ -1320,7 +1352,7 @@ function ShowAreasOnBar()
       oMenuAreas:End()
    endif
 
-   MENU oMenuAreas POPUP
+   MENU oMenuAreas POPUP 2007
       for n = 1 to Len( oER:aWndTitle )
          if ! Empty( oER:aWndTitle[ n ] )
             MENUITEM oER:aWndTitle[ n ] ;
@@ -1476,7 +1508,7 @@ function BuildMenu()
          WHEN !Empty( oER:cDefIni )
       SEPARATOR
       MENUITEM GL("&Item Properties") + chr(9) + GL("Ctrl+I") RESOURCE "B_EDIT" ;
-         ACTION IIF( LEN( oER:aSelection ) <> 0, MultiItemProperties(), ItemProperties( nAktItem, oER:nAktArea ) ) ;
+         ACTION IIF( LEN( oER:aSelection ) > 1, MultiItemProperties(), ItemProperties( nAktItem, oER:nAktArea ) ) ;
          ACCELERATOR ACC_CONTROL, ASC( GL("I") ) ;
          WHEN !Empty( oER:cDefIni )
       ENDMENU
@@ -1566,11 +1598,11 @@ function PopupMenu( nArea, oItem, nRow, nCol, lItem )
 
    DEFAULT lItem := .F.
 
-   MENU oMenu POPUP
+   MENU oMenu POPUP 2007
 
    if LEN( oER:aSelection ) <> 0 .OR. nAktItem <> 0
       MENUITEM GL("&Item Properties") + chr(9) + GL("Ctrl+I") RESOURCE "B_EDIT" ;
-      ACTION IIF( LEN( oER:aSelection ) <> 0, MultiItemProperties(), ItemProperties( nAktItem, oER:nAktArea ) )
+      ACTION IIF( LEN( oER:aSelection ) > 1, MultiItemProperties(), ItemProperties( nAktItem, oER:nAktArea ) )
    endif
 
    if LEN( oER:aSelection ) <> 0
@@ -2007,7 +2039,7 @@ function WndKeyDownAction( nKey, nArea, cAreaIni )
    endif
 
    //return to edit properties
-   if nKey == VK_RETURN .and. LEN( oER:aSelection ) <> 0
+   if nKey == VK_RETURN .and. LEN( oER:aSelection ) > 1
       MultiItemProperties()
    endif
 
@@ -3033,7 +3065,7 @@ function ER_ReportSettings( nD )
    oDlg := oER:oFldI:aDialogs[ nD ]
    oDlg:SetColor( CLR_BLACK, oEr:nClrPaneTree )
 
-   @ oDlg:nHeight - 40, oDlg:nWidth - 110 BUTTON oBtn1 PROMPT GL("&OK") ;
+   @ oDlg:nHeight - 70, oDlg:nWidth - 110 BUTTON oBtn1 PROMPT GL("&OK") ;
      OF oDlg FONT oFont SIZE 80, 20 ;
      PIXEL ACTION  GrabaReportSetting( .T., aFormat,;
                              cFormat, nDecimals, nWidth, nHeight, nTop,   ;
@@ -3805,7 +3837,7 @@ return oTree
 
 FUNCTION SetSelectItemTree( oTree, nArea, nItem )
    LOCAL cPrompt
-   local cTitle, cDef
+   local cTitle, cDef, oITem
 
     cTitle := oER:aWndTitle[nArea]
     IF Empty(cTitle)
@@ -4048,7 +4080,7 @@ FUNCTION GetAreaProperties( nArea )
 
    IF !Empty( oER:aAreaIni[ nArea ] )
 
-   oER:oBrwProp:cargo[3] :=  aNomProp
+  // oER:oBrwProp:cargo[3] :=  aNomProp
 
    aAreaProp[1] := { GL( "Title" ),;
                      cAreaTitle }
@@ -4728,6 +4760,7 @@ CLASS TEasyReport
    DATA bClrBar
    DATA aClrDialogs, nDlgTextCol, nDlgBackCol
    DATA nClrPaneTree
+   DATA bClrBtnGrad, bClrBtnText
    DATA nMeasure, cMeasure
    DATA oAppFont
    DATA lShowPanel
@@ -4806,6 +4839,14 @@ METHOD New() CLASS TEasyReport
    //                                   { 0.50, nRGB( 225, 225, 225 ), nRGB( 185, 185, 185 ) } },;
    //                                 { { 0.40, nRGB( 68, 68, 68 ), nRGB( 109, 109, 109 ) }, ;
    //                                   { 0.60, nRGB( 109, 109, 109 ), nRGB( 116, 116, 116 ) } } ) }
+
+   ::bClrBtnText := { | lInvert | If( ! lInvert,nRGB( 0, 0, 0 ), nRGB( 255, 255, 255 ) ) }
+   ::bClrBtnGrad := { | lInvert | If( ! lInvert,;
+                                  { { 0.60, nRGB( 254, 254, 254 ), nRGB( 225, 225, 225 ) },;
+                                    { 0.40, nRGB( 225 ,225, 225 ), nRGB( 185, 185, 185 ) } },;
+                                  { { 0.40, nRGB( 67, 68, 68 ), nRGB( 109, 109, 109 ) }, ;
+                                    { 0.60, nRGB( 109, 109, 109 ), nRGB( 116, 116, 116 ) } } ) }
+
 
    ::aClrDialogs = { { 1, RGB( 199, 216, 237 ), RGB( 237, 242, 248 ) } }
 
