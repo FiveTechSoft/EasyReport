@@ -71,6 +71,7 @@ ereport.exe  : $(OBJS) $(COBJS) ereport.res
    echo $(HBDIR)\lib\hbzlib.lib + >> b32.bc
    echo $(HBDIR)\lib\minizip.lib + >> b32.bc   	
    echo $(HBDIR)\lib\xhb.lib + >> b32.bc
+   echo $(HBDIR)\lib\hbpcre.lib + >> b32.bc
 
    echo $(BCDIR)\lib\cw32.lib + >> b32.bc
    echo $(BCDIR)\lib\import32.lib + >> b32.bc
