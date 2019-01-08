@@ -2220,7 +2220,9 @@ function Undo()
       if oItemInfo:nShow = 1
          oER:aItems[ TMPUNDO->AREANR, TMPUNDO->ENTRYNR ] := NIL
          ShowItem( TMPUNDO->ENTRYNR, TMPUNDO->AREANR, oER:aAreaIni[ TMPUNDO->AREANR ], aFirst, nElemente )
-         oER:aItems[ TMPUNDO->AREANR, TMPUNDO->ENTRYNR ]:lDrag := .T.
+         if oER:aItems[ TMPUNDO->AREANR, TMPUNDO->ENTRYNR ] != nil
+            oER:aItems[ TMPUNDO->AREANR, TMPUNDO->ENTRYNR ]:lDrag := .T.
+         endif   
       endif
 
    endif

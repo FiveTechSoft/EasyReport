@@ -1,8 +1,6 @@
 #include "FiveWin.ch"
 #include "ttitle.ch"
 
-
-
 #xcommand @ <nRow>, <nCol> CFOLDEREX [<oFolder>] ;
              [ <of: OF, WINDOW, DIALOG> <oWnd> ] ;
              [ <prm: PROMPT, PROMPTS, ITEMS> <cPrompt,...> ] ;
@@ -158,8 +156,6 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
 
    BarMenu()
 
-
-
    IF oER:lShowPanel
 
       oER:oPanelI := TPanel():New( 0.1, 0, GetSysMetrics( 1 ) - 138, ;
@@ -238,7 +234,6 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
       MAXIMIZED ;
       ON RESIZE if(!Empty(oER:oTree),oER:oTree:refresh( .T. ), ) ;
       ON INIT ( SetMainWnd(), IniMainWindow(), ;
-                IIF( Empty( oER:cDefIni ), OpenFile(,,.T.), (  OpenFile(oER:cDefIni,,.T.), oER:SetScrollBar() ) ), ;
                 StartMessage(), SetSave( .T. ), ClearUndoRedo(),;
                 oEr:oMainWnd:SetFocus() ) ;
       VALID ( AEVal( oER:aWnd, { |o| if( o <> nil, o:End(), ) } ), AskSaveFiles() )
@@ -274,6 +269,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
    endif
 
 return nil
+
 //------------------------------------------------------------------------------
 
 Function SwichFldD( oWnd, oFld, lSetVisible  )
@@ -697,7 +693,7 @@ function BarMenu()
          TOOLTIP GL("Preview") ;
          ACTION ( swichFldD( oEr:oMainWnd, oER:oFldD ), ;
                   if( !Print_erReport(,,2, oEr:oMainWnd ), swichFldD( oEr:oMainWnd, oER:oFldD ,.t.), ) );   //   PrintReport( .T., !oGenVar:lStandalone ) ;
-         WHEN Empty( oER:cDefIni ) //;
+         WHEN ! Empty( oER:cDefIni ) //;
          //MENU oMenuPreview
 
    DEFINE BUTTON RESOURCE "print", "print", "print1" ;
@@ -1501,7 +1497,7 @@ function BuildMenu()
       MENUITEM GL("Insert &Graphic") + chr(9) + GL("Ctrl+G") RESOURCE "B_GRAPHIC" ;
          ACCELERATOR ACC_CONTROL, ASC( GL("G") ) ;
          ACTION NewItem( "GRAPHIC", oER:nAktArea ) ;
-         WHEN !Empty( oER:cDefIni )
+         WHEN ! Empty( oER:cDefIni )
       MENUITEM GL("Insert &Barcode") + chr(9) + GL("Ctrl+B") RESOURCE "B_BARCODE" ;
          ACCELERATOR ACC_CONTROL, ASC( ("B") ) ;
          ACTION NewItem( "BARCODE", oER:nAktArea ) ;
@@ -1510,17 +1506,17 @@ function BuildMenu()
       MENUITEM GL("&Item Properties") + chr(9) + GL("Ctrl+I") RESOURCE "B_EDIT" ;
          ACTION IIF( LEN( oER:aSelection ) > 1, MultiItemProperties(), ItemProperties( nAktItem, oER:nAktArea ) ) ;
          ACCELERATOR ACC_CONTROL, ASC( GL("I") ) ;
-         WHEN !Empty( oER:cDefIni )
+         WHEN ! Empty( oER:cDefIni )
       ENDMENU
 
 
    if Val( oEr:GetDefIni( "General", "InsertAreas", "1" ) ) = 1
       MENUITEM GL("&Areas")
       MENU
-      MENUITEM GL("Insert Area &before") ACTION InsertArea( .T., STRTRAN( GL("Insert Area &before"), "&" ) )
-      MENUITEM GL("Insert Area &after" ) ACTION InsertArea( .F., STRTRAN( GL("Insert Area &after" ), "&" ) )
+      MENUITEM GL("Insert Area &before") ACTION InsertArea( .T., STRTRAN( GL("Insert Area &before"), "&" ) ) WHEN ! Empty( oER:cDefIni )
+      MENUITEM GL("Insert Area &after" ) ACTION InsertArea( .F., STRTRAN( GL("Insert Area &after" ), "&" ) ) WHEN ! Empty( oER:cDefIni )
       SEPARATOR
-      MENUITEM GL("&Delete current Area") ACTION DeleteArea()
+      MENUITEM GL("&Delete current Area") ACTION DeleteArea() WHEN ! Empty( oER:cDefIni )
       SEPARATOR
       if Val( oEr:GetDefIni( "General", "EditAreaProperties", "1" ) ) = 1
          MENUITEM GL("&Area Properties") + chr(9) + GL("Ctrl+A") RESOURCE "B_AREA" ;
@@ -1582,7 +1578,7 @@ function BuildMenu()
    endif
 
    MENUITEM GL("&About") ;
-      ACTION Msginfo( "easyreport for FW" )
+      ACTION Msginfo( "EasyReport for FWH" )
    ENDMENU
 
    ENDMENU
