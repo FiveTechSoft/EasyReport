@@ -1,0 +1,8 @@
+*.bak
+*.log
+*.obj
+*.o
+*.map
+*.ppo
+*.tds
+

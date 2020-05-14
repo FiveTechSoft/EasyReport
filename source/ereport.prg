@@ -48,6 +48,7 @@ STATIC aTmpSource
 
 //Entscheidet ob die Graphikelemente neu gezeichnet werden sollen
 STATIC lDraGraphic := .T.
+STATIC cFontName   := "Calibri"  // "Verdana"
 
 MEMVAR cLongDefIni, cDefaultPath
 MEMVAR nAktItem, nSelArea  //, aSelection, nAktArea
@@ -170,7 +171,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
 
       if lValidFwh()
 
-       @ 0.2, 1 CFOLDEREX oER:oFldI ;
+       @ 0.2, 1 FOLDEREX oER:oFldI ;
        PROMPT GL("&Report Settings"), GL("&Items"), GL("Colors"), GL("Fonts") ;
        OF oEr:oPanelI ; //oEr:oMainWnd ;
        SIZE Int(GetSysMetrics( 0 )/4), GetSysMetrics( 1 ) - 138 ;    //326
@@ -180,7 +181,7 @@ function Main( P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15 
        PIXEL ;
        SEPARATOR 0
 
-    //   @ 0.2, 1 CFOLDEREX oER:oFldD ;
+    //   @ 0.2, 1 FOLDEREX oER:oFldD ;
     //   PROMPT GL("&Expressions"), GL("&Databases"), GL("&Inspector") ; //, GL("&Fields"), GL("Fil&ters") ;
     //   OF oEr:oPanelD ; //oEr:oMainWnd ;
     //   SIZE Int(GetSysMetrics( 0 )/4), GetSysMetrics( 1 ) - 138 ;
@@ -302,7 +303,7 @@ Local oFoldnD
 
 DEFAULT nD  := 2
 
-   DEFINE FONT oFont NAME "Verdana" SIZE 0, -10
+   DEFINE FONT oFont NAME cFontName SIZE 0, -10
    oER:oTree := TTreeView():New( 0, 2, oER:oFldI:aDialogs[ nD ] , 0, , .T., .F.,;
                                  Int(GetSysMetrics( 0 )/4) - 6 ,;
                                  Int(oER:oFldI:aDialogs[ nD ]:nHeight/(if( !empty(nD1),2,1 ))) ,"",, )
@@ -327,7 +328,7 @@ DEFAULT nD  := 2
    //oER:oFldI:Hide()
 
    /*
-   @ Int(oER:oFldI:aDialogs[ nD ]:nHeight/2)+10, 1 CFOLDEREX oFoldnD ;
+   @ Int(oER:oFldI:aDialogs[ nD ]:nHeight/2)+10, 1 FOLDEREX oFoldnD ;
        PROMPT GL("&Areas"), GL("&Items") ;
        OF oER:oFldI:aDialogs[ nD ] ;
        SIZE Int(GetSysMetrics( 0 )/4), Int(oER:oFldI:aDialogs[ nD ]:nHeight/2) - 10 ;    //326
@@ -363,7 +364,7 @@ Function Dlg_Colors( i )
    //oER:oFldI:aDialogs[ i ]:SetColor( CLR_BLACK, oEr:nClrPaneTree )
    nDefClr := oER:oFldI:aDialogs[ i ]:nClrPane
 
-   DEFINE FONT ofont NAME "Verdana" Size 0,-14
+   DEFINE FONT ofont NAME cFontName Size 0,-14
 
    @ 02,025 SAY "Color"     OF oER:oFldI:aDialogs[ i ] FONT oFont PIXEL TRANSPARENT
    @ 02,095 SAY "Valor"  OF oER:oFldI:aDialogs[ i ] FONT oFont PIXEL TRANSPARENT
@@ -449,7 +450,7 @@ Function Dlg_Fonts( i )
    //oER:oFldI:aDialogs[ i ]:SetColor( CLR_BLACK, oEr:nClrPaneTree )
    nDefClr := oER:oFldI:aDialogs[ i ]:nClrPane
 
-   DEFINE FONT oFont NAME "Verdana" Size 0,-14
+   DEFINE FONT oFont NAME cFontName Size 0,-14
 
    /*
    @ 25, 8 LISTBOX oLbx VAR cFont ITEMS aShowFonts OF oER:oFldI:aDialogs[ i ] ;
@@ -577,7 +578,7 @@ Function Dlg_Fonts( i )
       cFontText += CHR( i )
    next
 
-   DEFINE FONT oFont NAME "Verdana" Size 0,-14
+   DEFINE FONT oFont NAME cFontName Size 0,-14
 
    @ 10,010 SAY  GL("Font") OF oDlg FONT oFont PIXEL TRANSPARENT
 
@@ -620,7 +621,7 @@ function BarMenu()
 
    DEFINE FONT oFont NAME "Tahoma" SIZE 0,-9
 
-    MENU oMenuProp POPUP
+    MENU oMenuProp POPUP 2007
          MENUITEM "GO Back" RESOURCE "GO_BOTTOM" ACTION ItemBack()
          MENUITEM "GO Front" RESOURCE "GO_TOP" ACTION ItemFront()
          SEPARATOR
@@ -736,7 +737,7 @@ function BarMenu()
    endif
 
    if Val( oEr:GetDefIni( "General", "EditAreaProperties", "1" ) ) = 1
-      MENU oMenuAreas POPUP
+      MENU oMenuAreas POPUP 2007
       ENDMENU
 
       DEFINE BUTTON oBtnAreas RESOURCE "B_AREA32", "B_AREA32", "B_AREA321" ;
@@ -991,7 +992,7 @@ function PreviewMenu( oBtn )
    local oMenu
    local aRect := GetClientRect( oBtn:hWnd )
 
-   MENU oMenu POPUP
+   MENU oMenu POPUP 2007
 
       MENUITEM GL("Pre&view") + chr(9) + GL("Ctrl+P") ;
          ACCELERATOR ACC_CONTROL, ASC( GL("P") ) ;
@@ -1348,7 +1349,7 @@ function ShowAreasOnBar()
       oMenuAreas:End()
    endif
 
-   MENU oMenuAreas POPUP
+   MENU oMenuAreas POPUP 2007
       for n = 1 to Len( oER:aWndTitle )
          if ! Empty( oER:aWndTitle[ n ] )
             MENUITEM oER:aWndTitle[ n ] ;
@@ -1594,7 +1595,7 @@ function PopupMenu( nArea, oItem, nRow, nCol, lItem )
 
    DEFAULT lItem := .F.
 
-   MENU oMenu POPUP
+   MENU oMenu POPUP 2007
 
    if LEN( oER:aSelection ) <> 0 .OR. nAktItem <> 0
       MENUITEM GL("&Item Properties") + chr(9) + GL("Ctrl+I") RESOURCE "B_EDIT" ;
@@ -3055,7 +3056,7 @@ function ER_ReportSettings( nD )
    Local oFont
 
    DEFAULT nD := 1
-   //DEFINE FONT oFont NAME "Verdana" SIZE 0, -10
+   //DEFINE FONT oFont NAME cFontName SIZE 0, -10
    oFont := oER:oMainWnd:oFont
 
    oDlg := oER:oFldI:aDialogs[ nD ]
